@@ -2,6 +2,10 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+
+
+
 
 export default function NewTournamentPage() {
   const router = useRouter()
@@ -11,25 +15,52 @@ export default function NewTournamentPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState<'success' | 'error' | ''>('')
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
-
+  
+    // Basic validation
+    if (!name.trim() || !startDate || !endDate) {
+      toast.error('Please fill in all fields')
+      setLoading(false)
+      return
+    }
+  
+    if (new Date(startDate) > new Date(endDate)) {
+      toast.error('Start date cannot be after end date')
+      setLoading(false)
+      return
+    }
+  
     const { data, error } = await supabase.from('tournaments').insert({
       name,
       start_date: startDate,
       end_date: endDate,
     })
-
+  
     if (error) {
-      setError(error.message)
+      toast.error(`❌ ${error.message}`)
     } else {
-      router.push('/admin/tournaments')
+      toast.success('✅ Tournament created successfully!', {
+        icon: '⚽',
+        style: {
+          borderRadius: '8px',
+          background: '#333',
+          color: '#fff',
+        },})
+      setTimeout(() => {
+        router.push('/admin/tournaments')
+      }, 1000)
     }
-
+  
     setLoading(false)
   }
+  
+  
 
   return (
     <div className="form-container">
@@ -53,8 +84,25 @@ export default function NewTournamentPage() {
         <button type="submit" disabled={loading}>
           {loading ? 'Creating...' : 'Create Tournament'}
         </button>
+        {/* ✅ SUCCESS / ERROR MESSAGE GOES HERE */}
+        {message && (
+            <p
+            style={{
+                color: messageType === 'error' ? 'red' : 'green',
+                marginTop: '1rem',
+                fontWeight: 'bold',
+            }}
+            >
+            {message}
+            </p>
+        )}
+        
         {error && <p style={{ color: 'red' }}>{error}</p>}
       </form>
     </div>
+
+    
   )
+
+  
 }
