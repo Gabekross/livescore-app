@@ -1,0 +1,59 @@
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+  
+  .heading {
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tournamentList {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .tournamentItem {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    transition: background 0.25s ease;
+  }
+  
+  .tournamentItem:hover {
+    background-color: #f0f8ff;
+  }
+  
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .tournamentItem a {
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: #0070f3;
+  }
+  
+  .meta {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .badge {
+    display: inline-block;
+    background-color: #e60023;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+  

@@ -6,10 +6,12 @@ import toast from 'react-hot-toast'
 import styles from '@/styles/components/TournamentForm.module.scss'
 
 
-const [message, setMessage] = useState('')
-const [messageType, setMessageType] = useState<'success' | 'error' | ''>('')
+
 
 export default function NewTournamentPage() {
+
+  const [message, setMessage] = useState('')
+  const [messageType, setMessageType] = useState<'success' | 'error' | ''>('')
   const router = useRouter()
   const [name, setName] = useState('')
   const [startDate, setStartDate] = useState('')

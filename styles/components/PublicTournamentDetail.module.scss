@@ -1,0 +1,51 @@
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+  
+  .heading {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    text-align: center;
+  }
+  
+  .meta {
+    font-size: 1rem;
+    color: #444;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+  
+  .subheading {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+  
+  .stageList {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .stageList li {
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+  }
+  
+  .stageList li:hover {
+    background-color: #f0f8ff;
+  }
+  
+  .stageList li a {
+    color: #0070f3;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  

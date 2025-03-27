@@ -1,0 +1,112 @@
+.container {
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.heading {
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.newLink {
+  display: inline-block;
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: #0a74da;
+  color: #fff;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.stageList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stageItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  background-color: #fff;
+}
+
+.metaInfo {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editButton,
+.deleteButton {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+.editButton {
+  background-color: #4caf50;
+  color: white;
+  text-decoration: none;
+}
+
+.deleteButton {
+  background-color: #e53935;
+  color: white;
+}
+
+.backButton {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #0a74da;
+  text-decoration: none;
+  font-weight: 500;
+}
+.groupTeams {
+  margin: 0.5rem 0 1rem 1.5rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.groupTeamItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.groupTeamItem img {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
+}
+.linkRow {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}

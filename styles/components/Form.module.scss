@@ -1,0 +1,125 @@
+.formContainer {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  .heading {
+    text-align: center;
+    margin-bottom: 1.25rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .label {
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+  
+  .input {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-top: 0.25rem;
+    font-size: 1rem;
+    width: 100%;
+  }
+  
+  .button {
+    padding: 0.6rem 1.5rem;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin-top: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .button:disabled {
+    background-color: #444;
+    cursor: not-allowed;
+  }
+  
+  .buttonRow {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .cancelButton {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-decoration: none;
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cancelButton:hover {
+    background-color: #e0e0e0;
+  }
+  .teamCard {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  .teamCard:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .backButton {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #0070f3;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .backButton:hover {
+    text-decoration: underline;
+  }
+  
+  .assignedBlock {
+    background-color: #f5f7fa;
+    padding: 1rem 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  .assignedBlock h3 {
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .assignedList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .assignedItem {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: #222;
+  }
+  

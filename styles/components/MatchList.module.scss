@@ -1,0 +1,42 @@
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .heading {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .matchList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .matchItem {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+  }
+  
+  .teams {
+    font-weight: 600;
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .details {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.4;
+  }
+  
