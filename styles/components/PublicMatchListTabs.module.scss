@@ -1,0 +1,163 @@
+.container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #111;
+    color: white;
+  }
+  
+  .heading {
+    text-align: center;
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    gap: 1rem;
+  }
+  
+  .tab {
+    padding: 0.5rem 1rem;
+    background: #222;
+    color: #aaa;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .tab:hover {
+    background: #333;
+  }
+  
+  .active {
+    background: #0070f3;
+    color: white;
+  }
+  
+  .tournamentList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .tournamentLink {
+    padding: 0.4rem 0.75rem;
+    background: #000;
+    border: 1px solid #444;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  
+  .tournamentLink:hover {
+    background: #1a1a1a;
+  }
+  
+  .matchList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .matchRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #000;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid #222;
+  
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+  }
+  
+  .status {
+    flex: 0 0 5rem;
+    color: #aaa;
+    font-weight: 600;
+  }
+  
+  .live {
+    color: #00ff73;
+  }
+  
+  .team {
+    flex: 1 1 30%;
+    text-align: center;
+  
+    @media (max-width: 600px) {
+      text-align: left;
+    }
+  }
+  
+  .score {
+    flex: 0 0 3rem;
+    text-align: center;
+    font-weight: bold;
+  }
+  .tabRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .tab {
+    padding: 0.5rem 1rem;
+    background: #222;
+    color: #aaa;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .active {
+    background: #33805b;
+    color: white;
+  }
+  
+  .tournamentDropdown {
+    position: relative;
+  }
+  
+  .dropdownMenu {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: #111;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 0.25rem;
+    z-index: 1000;
+  }
+  
+  .dropdownItem {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: white;
+    transition: background 0.2s;
+  }
+  
+  .dropdownItem:hover {
+    background: #222;
+  }
+  .p{font-family: 'Lucida Sans';
+    
+  }

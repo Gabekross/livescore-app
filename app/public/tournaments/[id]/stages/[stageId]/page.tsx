@@ -3,8 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 import styles from '@/styles/components/PublicStageDetail.module.scss'
 import GroupStandings from '@/components/GroupStandings'
+import TournamentStandings from '@/components/TournamentStandings'
 
 interface Group {
   id: string
@@ -99,35 +101,13 @@ export default function PublicStageDetailPage() {
     <div className={styles.container}>
       <h1 className={styles.heading}>Matches & Standings</h1>
 
-      {/* Today’s Matches */}
-      {todaysMatches.length > 0 && (
-        <div className={styles.todaysMatches}>
-          <h2 className={styles.groupName} onClick={() => setShowToday((prev) => !prev)}>
-            🗓️ Today’s Matches {showToday ? '▾' : '▸'}
-          </h2>
-
-          {showToday && (
-            <div className={styles.matches}>
-              {todaysMatches.map((match) => (
-                <div key={match.id} className={styles.matchRow}>
-                  <span className={`${styles.status} ${match.status === 'ongoing' ? styles.live : ''}`}>
-                    {match.status === 'finished'
-                      ? 'FT'
-                      : match.status === 'ongoing'
-                      ? 'LIVE'
-                      : new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                  <span className={styles.team}>{match.home_team.name}</span>
-                  <span className={styles.score}>
-                    {match.home_score ?? '-'} – {match.away_score ?? '-'}
-                  </span>
-                  <span className={styles.team}>{match.away_team.name}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {/* ✅ Link to full tournament standings */}
+      <Link
+        href={`/public/tournaments/${id}/standings`}
+        className={styles.standingsLink}
+      >
+        🏆 View Full Tournament Standings →
+      </Link>
 
       {/* Upcoming Matches */}
       {upcomingMatches.length > 0 && (
@@ -147,6 +127,35 @@ export default function PublicStageDetailPage() {
                       hour: '2-digit',
                       minute: '2-digit',
                     })}
+                  </span>
+                  <span className={styles.team}>{match.home_team.name}</span>
+                  <span className={styles.score}>
+                    {match.home_score ?? '-'} – {match.away_score ?? '-'}
+                  </span>
+                  <span className={styles.team}>{match.away_team.name}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Today’s Matches */}
+      {todaysMatches.length > 0 && (
+        <div className={styles.todaysMatches}>
+          <h2 className={styles.groupName} onClick={() => setShowToday((prev) => !prev)}>
+            🗓️ Today’s Matches {showToday ? '▾' : '▸'}
+          </h2>
+          {showToday && (
+            <div className={styles.matches}>
+              {todaysMatches.map((match) => (
+                <div key={match.id} className={styles.matchRow}>
+                  <span className={`${styles.status} ${match.status === 'ongoing' ? styles.live : ''}`}>
+                    {match.status === 'finished'
+                      ? 'FT'
+                      : match.status === 'ongoing'
+                      ? 'LIVE'
+                      : new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                   <span className={styles.team}>{match.home_team.name}</span>
                   <span className={styles.score}>
@@ -197,12 +206,14 @@ export default function PublicStageDetailPage() {
                   <p className={styles.noMatch}>No matches in this group yet.</p>
                 )}
               </div>
-
               <GroupStandings groupId={group.id} />
             </>
           )}
         </div>
       ))}
+
+      {/* Still included below if needed */}
+      <TournamentStandings tournamentId={id as string} />
     </div>
   )
 }
