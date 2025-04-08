@@ -177,7 +177,7 @@ export default function PublicMatchesPage() {
             <p>No matches found.</p>
           ) : (
             filteredMatches.map((match) => (
-              <Link key={match.id} href={`/public/matches/${match.id}`} className={styles.matchCard}>
+              <Link key={match.id} href={`/public/matches/${match.id}`} className={styles.card}>
                 <div className={styles.matchMeta}>
                   <span className={`${styles.status} ${match.status === 'ongoing' ? styles.live : ''}`}>
                     {match.status === 'finished'

@@ -284,3 +284,59 @@
     }
   }
   
+  .card {
+    background-color: #1b1b1b;
+    border: 1px solid #333;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #f1f1f1;
+    font-family: 'Inter', sans-serif;
+    flex-wrap: wrap;
+    text-decoration: none;
+  }
+  
+  .status {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #bbb;
+    font-weight: 500;
+  }
+  
+  .teams {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-weight: 500;
+    gap: 0.3rem;
+  }
+  
+  .score {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  
+  @media (max-width: 600px) {
+    .card {
+      padding: 0.75rem;
+    }
+  
+    .score {
+      font-size: 1.4rem;
+    }
+  
+    .teams {
+      font-size: 0.95rem;
+    }
+  
+    .status {
+      font-size: 0.75rem;
+    }
+  }
+  
