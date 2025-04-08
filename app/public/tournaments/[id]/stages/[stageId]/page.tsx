@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
 import styles from '@/styles/components/PublicStageDetail.module.scss'
 import GroupStandings from '@/components/GroupStandings'
 import TournamentStandings from '@/components/TournamentStandings'
@@ -30,15 +30,14 @@ export default function PublicStageDetailPage() {
   const { id, stageId } = useParams()
   const [groups, setGroups] = useState<Group[]>([])
   const [matchesByGroup, setMatchesByGroup] = useState<Record<string, Match[]>>({})
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
-  const [showToday, setShowToday] = useState<boolean>(true)
-  const [showUpcoming, setShowUpcoming] = useState<boolean>(true)
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({tournament: true})
+  const [showToday, setShowToday] = useState(true)
+  const [showUpcoming, setShowUpcoming] = useState(true)
+
+  const today = new Date().toISOString().split('T')[0]
 
   const toggleGroup = (groupId: string) => {
-    setExpandedGroups(prev => ({
-      ...prev,
-      [groupId]: !prev[groupId],
-    }))
+    setExpandedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }))
   }
 
   useEffect(() => {
@@ -83,8 +82,6 @@ export default function PublicStageDetailPage() {
     fetchMatches()
   }, [stageId])
 
-  const today = new Date().toISOString().split('T')[0]
-
   const todaysMatches = Object.values(matchesByGroup)
     .flat()
     .filter((match) => match.match_date.startsWith(today))
@@ -99,39 +96,32 @@ export default function PublicStageDetailPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>Matches & Standings</h1>
+      <div className={styles.header}>
+        <h1>🏟️ Tournament Matches & Standings</h1>
+        <Link href="/public/matches" className={styles.backLink}>
+          ← Back to Tournament List
+        </Link>
+      </div>
 
-      {/* ✅ Link to full tournament standings */}
-      <Link
-        href={`/public/tournaments/${id}/standings`}
-        className={styles.standingsLink}
-      >
-        🏆 View Full Tournament Standings →
-      </Link>
-
-      {/* Upcoming Matches */}
       {upcomingMatches.length > 0 && (
-        <div className={styles.upcomingMatches}>
-          <h2 className={styles.groupName} onClick={() => setShowUpcoming((prev) => !prev)}>
+        <div className={styles.block}>
+          <h2 onClick={() => setShowUpcoming(!showUpcoming)}>
             📅 Upcoming Matches {showUpcoming ? '▾' : '▸'}
           </h2>
-
           {showUpcoming && (
-            <div className={styles.matches}>
-              {upcomingMatches.map((match) => (
+            <div className={styles.matchList}>
+              {upcomingMatches.map(match => (
                 <div key={match.id} className={styles.matchRow}>
                   <span className={styles.status}>
                     {new Date(match.match_date).toLocaleString('en-GB', {
                       day: '2-digit',
                       month: 'short',
                       hour: '2-digit',
-                      minute: '2-digit',
+                      minute: '2-digit'
                     })}
                   </span>
                   <span className={styles.team}>{match.home_team.name}</span>
-                  <span className={styles.score}>
-                    {match.home_score ?? '-'} – {match.away_score ?? '-'}
-                  </span>
+                  <span className={styles.score}>{match.home_score ?? '-'} – {match.away_score ?? '-'}</span>
                   <span className={styles.team}>{match.away_team.name}</span>
                 </div>
               ))}
@@ -140,15 +130,14 @@ export default function PublicStageDetailPage() {
         </div>
       )}
 
-      {/* Today’s Matches */}
       {todaysMatches.length > 0 && (
-        <div className={styles.todaysMatches}>
-          <h2 className={styles.groupName} onClick={() => setShowToday((prev) => !prev)}>
+        <div className={styles.block}>
+          <h2 onClick={() => setShowToday(!showToday)}>
             🗓️ Today’s Matches {showToday ? '▾' : '▸'}
           </h2>
           {showToday && (
-            <div className={styles.matches}>
-              {todaysMatches.map((match) => (
+            <div className={styles.matchList}>
+              {todaysMatches.map(match => (
                 <div key={match.id} className={styles.matchRow}>
                   <span className={`${styles.status} ${match.status === 'ongoing' ? styles.live : ''}`}>
                     {match.status === 'finished'
@@ -158,9 +147,7 @@ export default function PublicStageDetailPage() {
                       : new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                   <span className={styles.team}>{match.home_team.name}</span>
-                  <span className={styles.score}>
-                    {match.home_score ?? '-'} – {match.away_score ?? '-'}
-                  </span>
+                  <span className={styles.score}>{match.home_score ?? '-'} – {match.away_score ?? '-'}</span>
                   <span className={styles.team}>{match.away_team.name}</span>
                 </div>
               ))}
@@ -169,16 +156,15 @@ export default function PublicStageDetailPage() {
         </div>
       )}
 
-      {/* Group Section */}
       {groups.map((group) => (
-        <div key={group.id} className={styles.groupBlock}>
-          <h2 className={styles.groupName} onClick={() => toggleGroup(group.id)}>
+        <div key={group.id} className={styles.block}>
+          <h2 className={styles.groupHeader} onClick={() => toggleGroup(group.id)}>
             {group.name} {expandedGroups[group.id] ? '▾' : '▸'}
           </h2>
 
           {expandedGroups[group.id] && (
             <>
-              <div className={styles.matches}>
+              <div className={styles.matchList}>
                 {matchesByGroup[group.id]?.length > 0 ? (
                   matchesByGroup[group.id].map((match) => (
                     <div key={match.id} className={styles.matchRow}>
@@ -193,7 +179,7 @@ export default function PublicStageDetailPage() {
                               hour: '2-digit',
                               minute: '2-digit',
                               hour12: false,
-                            }).replace(',', '')}
+                            })}
                       </span>
                       <span className={styles.team}>{match.home_team.name}</span>
                       <span className={styles.score}>
@@ -206,14 +192,23 @@ export default function PublicStageDetailPage() {
                   <p className={styles.noMatch}>No matches in this group yet.</p>
                 )}
               </div>
+
               <GroupStandings groupId={group.id} />
             </>
           )}
         </div>
       ))}
 
-      {/* Still included below if needed */}
-      <TournamentStandings tournamentId={id as string} />
+      <div className={styles.block}>
+        <h2 onClick={() => setExpandedGroups(prev => ({ ...prev, tournament: !prev.tournament }))}>
+          🏆 Tournament Standings {expandedGroups.tournament ? '▾' : '▸'}
+        </h2>
+
+        {expandedGroups.tournament && (
+          <TournamentStandings tournamentId={id as string} />
+        )}
+      </div>
+
     </div>
   )
 }

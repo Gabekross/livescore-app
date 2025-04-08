@@ -1,127 +1,99 @@
 .container {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 1rem;
-    background-color: #111;
-    color: #eee;
-  }
-  
-  .heading {
-    font-size: 1.8rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #fff;
-  }
-  
-  /* Group Header */
-  .groupName {
-    font-size: 1.2rem;
-    font-weight: 600;
-    background: #000;
-    color: #fff;
-    padding: 0.75rem 1rem;
-    cursor: pointer;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    transition: background 0.25s ease, transform 0.15s ease;
-    user-select: none;
-  }
-  
-  .groupName:hover {
-    background: #1a1a1a;
-    transform: scale(1.01);
-  }
-  
-  /* Animation container */
-  .groupBlock {
-    margin-bottom: 2rem;
-    border-bottom: 1px solid #333;
-    overflow: hidden;
-    transition: all 0.4s ease-in-out;
-  }
-  
-  /* Match layout */
-  .matchRow {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #000;
-    color: #fff;
-    padding: 0.6rem 1rem;
-    border-bottom: 1px solid #222;
-    font-size: 0.95rem;
-    font-family: 'Segoe UI', sans-serif;
-  
-    @media (max-width: 600px) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.25rem;
-    }
-  }
-  
-  .status {
-    flex: 0 0 4.5rem;
-    font-weight: 600;
-    color: #999;
-  }
-  
-  .live {
-    color: #00ff73;
-    font-weight: bold;
-  }
-  
-  .team {
-    flex: 1 1 30%;
-    text-align: center;
-    font-weight: 500;
-  
-    @media (max-width: 600px) {
-      text-align: left;
-      width: 100%;
-    }
-  }
-  
-  .score {
-    flex: 0 0 3.5rem;
-    text-align: center;
-    font-weight: 700;
-    font-size: 1.05rem;
-  
-    @media (max-width: 600px) {
-      text-align: left;
-    }
-  }
-  
-  .noMatch {
-    padding: 0.5rem 1rem;
-    color: #999;
-  }
-  
+  padding: 2rem 1rem;
+  max-width: 960px;
+  margin: auto;
+  color: #f0f0f0;
+  background-color: #111;
+}
 
-  .table {
-    background: #111;
-    color: white;
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    font-size: 0.9rem;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 1.5rem;
+    color: #fff;
   }
-  
-  .table th,
-  .table td {
-    border: 1px solid #333;
-    padding: 0.5rem;
-    text-align: center;
+}
+
+.backLink {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.6rem;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 5px;
+
+  &:hover {
+    background: #333;
   }
-  
-  .table th {
-    background-color: #222;
-    font-weight: 600;
-    color: #ddd;
+}
+
+.block {
+  margin-bottom: 2rem;
+}
+
+.block h2 {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.groupHeader {
+  font-weight: bold;
+  color: #eee;
+  padding-top: 1rem;
+  cursor: pointer;
+}
+
+.matchList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.matchRow {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 0.6rem;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.team {
+  flex: 1;
+  text-align: center;
+  font-weight: 500;
+}
+
+.score {
+  font-size: 1.2rem;
+  font-weight: bold;
+  flex: 0 0 80px;
+  text-align: center;
+}
+
+.status {
+  flex: 0 0 70px;
+  font-size: 0.85rem;
+  color: #bbb;
+  font-weight: 500;
+
+  &.live {
+    color: #ff4d4d;
   }
-  
-  .table tr:nth-child(even) {
-    background-color: #1a1a1a;
-  }
-  
-  
+}
+
+.noMatch {
+  color: #888;
+  padding: 0.5rem;
+  text-align: center;
+}

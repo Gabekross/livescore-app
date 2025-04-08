@@ -73,36 +73,35 @@ export default function TournamentStandings({ tournamentId }: { tournamentId: st
         teamMap[t.id] = t.name
   })
 
+  const merged: Record<string, Standing> = {}
 
-    const merged: Record<string, Standing> = {}
-
-    rows?.forEach(s => {
-      const name = teamMap[s.team_id] || `Team ${s.team_id.slice(0, 4)}`
-      if (!merged[s.team_id]) {
-        merged[s.team_id] = {
-          team_id: s.team_id,
-          team_name: name,
-          mp: s.played,
-          w: s.wins,
-          d: s.draws,
-          l: s.losses,
-          gf: s.goals_for,
-          ga: s.goals_against,
-          gd: s.goal_difference,
-          pts: s.points,
-        }
-      } else {
-        const team = merged[s.team_id]
-        team.mp += s.played
-        team.w += s.wins
-        team.d += s.draws
-        team.l += s.losses
-        team.gf += s.goals_for
-        team.ga += s.goals_against
-        team.gd = team.gf - team.ga
-        team.pts += s.points
+  rows?.forEach(s => {
+    const name = teamMap[s.team_id] || `Team ${s.team_id.slice(0, 4)}`
+    if (!merged[s.team_id]) {
+      merged[s.team_id] = {
+        team_id: s.team_id,
+        team_name: name,
+        mp: s.played,
+        w: s.wins,
+        d: s.draws,
+        l: s.losses,
+        gf: s.goals_for,
+        ga: s.goals_against,
+        gd: s.goal_difference,
+        pts: s.points,
       }
-    })
+    } else {
+      const team = merged[s.team_id]
+      team.mp += s.played
+      team.w += s.wins
+      team.d += s.draws
+      team.l += s.losses
+      team.gf += s.goals_for
+      team.ga += s.goals_against
+      team.gd = team.gf - team.ga
+      team.pts += s.points
+    }
+  })
 
 
       const sorted = Object.values(merged).sort((a, b) => {
