@@ -27,3 +27,24 @@
 .backLink:hover {
   color: #fff;
 }
+@media (max-width: 768px) {
+  .standingsContainer {
+    overflow-x: auto;
+  }
+
+  .table {
+    min-width: 600px;
+    font-size: 0.85rem;
+  }
+
+  th,
+  td {
+    padding: 0.4rem;
+  }
+
+  .heading {
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+}
