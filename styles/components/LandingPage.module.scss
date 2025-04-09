@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 1.5rem;
+    min-height: 100vh;
+    background-color: #121212;
+    color: #fff;
+  }
+  
+  .heading {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .subheading {
+    font-size: 1rem;
+    color: #aaa;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .linkCard {
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    text-align: center;
+    color: white;
+    font-size: 1.1rem;
+    text-decoration: none;
+    transition: 0.2s ease;
+  
+    &:hover {
+      background-color: #333;
+      transform: scale(1.02);
+    }
+  }
+  
