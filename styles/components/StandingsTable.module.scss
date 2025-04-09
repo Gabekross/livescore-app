@@ -1,38 +1,43 @@
 .standingsContainer {
-    margin-top: 1.5rem;
-  }
-  
-  .heading {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-  
-  .table {
-    background: #111;
-    color: white;
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .table th,
-  .table td {
-    border: 1px solid #333;
-    padding: 0.5rem;
+  margin-top: 2rem;
+  overflow-x: auto;
+}
+
+.heading {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #1e1e1e;
+  color: #fff;
+
+  th,
+  td {
+    padding: 0.4rem;
     text-align: center;
+    border: 1px solid #444;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  
-  .table th {
-    background-color: #222;
-    font-weight: 600;
-    color: #ddd;
+
+  th {
+    background-color: #333;
   }
-  
-  .table tr:nth-child(even) {
-    background-color: #1a1a1a;
+
+  tbody tr:nth-child(even) {
+    background-color: #2c2c2c;
   }
+
+  tbody tr:hover {
+    background-color: #3a3a3a;
+  }
+}
+
   @media (max-width: 768px) {
     .standingsContainer {
       overflow-x: auto;
@@ -43,20 +48,10 @@
       font-size: 0.85rem;
     }
   
-    th,
-    td {
-      padding: 0.4rem;
-    }
-  
+
     .heading {
       font-size: 1rem;
       text-align: center;
       margin-top: 1rem;
     }
   }
-  td, th {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
