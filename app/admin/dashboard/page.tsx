@@ -23,7 +23,7 @@ export default function AdminDashboardPage() {
           <span className={styles.hint}>(via stage)</span>
         </Link>
         <Link href="#" className={styles.card}>
-          📅 Match Calendar (coming soon)
+          📅 Matches Calendar (coming soon)
         </Link>
       </div>
     </div>
