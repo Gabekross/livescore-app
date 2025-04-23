@@ -204,13 +204,19 @@ export default function PublicMatchesPage() {
                 </div>
                 <div className={styles.teams}>
                   <span>
-                    {match.home_team.logo_url && <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />} {match.home_team.name}
+                    {match.home_team.logo_url && (
+                      <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
+                    )}
+                    {match.home_team.name}
                   </span>
                   <span className={styles.score}>
                     {match.home_score ?? '-'} – {match.away_score ?? '-'}
                   </span>
                   <span>
-                    {match.away_team.logo_url && <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />} {match.away_team.name}
+                    {match.away_team.logo_url && (
+                      <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
+                    )}
+                    {match.away_team.name}
                   </span>
                 </div>
               </Link>
