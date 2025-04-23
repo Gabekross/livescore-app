@@ -32,72 +32,81 @@ export default function PublicStageDetailPage() {
   const [groups, setGroups] = useState<Group[]>([])
   const [matchesByGroup, setMatchesByGroup] = useState<Record<string, Match[]>>({})
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
-  const [showToday, setShowToday] = useState<boolean>(true)
-  const [showUpcoming, setShowUpcoming] = useState<boolean>(true)
+  const [showToday, setShowToday] = useState(true)
+  const [showUpcoming, setShowUpcoming] = useState(true)
   const [allStages, setAllStages] = useState<{ id: string; stage_name: string }[]>([])
-  const [selectedStageName, setSelectedStageName] = useState<string>('')
+  const [selectedStageName, setSelectedStageName] = useState('')
 
   const toggleGroup = (groupId: string) => {
-    setExpandedGroups(prev => ({
-      ...prev,
-      [groupId]: !prev[groupId],
-    }))
+    setExpandedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }))
+  }
+
+  const fetchStages = async () => {
+    const { data, error } = await supabase
+      .from('tournament_stages')
+      .select('id, stage_name')
+      .eq('tournament_id', id)
+
+    if (!error && data) {
+      setAllStages(data)
+      const selectedStage = data.find(stage => stage.id === stageId)
+      setSelectedStageName(selectedStage?.stage_name || '')
+    }
+  }
+
+  const fetchGroups = async () => {
+    const { data } = await supabase
+      .from('groups')
+      .select('id, name, stage_id')
+      .eq('stage_id', stageId)
+    setGroups(data || [])
+  }
+
+  const fetchMatches = async () => {
+    const { data } = await supabase
+      .from('matches')
+      .select(`
+        id,
+        match_date,
+        venue,
+        status,
+        group_id,
+        home_score,
+        away_score,
+        home_team:home_team_id(id, name),
+        away_team:away_team_id(id, name)
+      `)
+
+    if (data) {
+      const grouped: Record<string, Match[]> = {}
+      data.forEach(match => {
+        const groupId = match.group_id
+        const home = Array.isArray(match.home_team) ? match.home_team[0] : match.home_team
+        const away = Array.isArray(match.away_team) ? match.away_team[0] : match.away_team
+        const cleanMatch = { ...match, home_team: home, away_team: away }
+        if (!grouped[groupId]) grouped[groupId] = []
+        grouped[groupId].push(cleanMatch)
+      })
+      setMatchesByGroup(grouped)
+    }
   }
 
   useEffect(() => {
-    const fetchStages = async () => {
-      const { data, error } = await supabase
-        .from('tournament_stages')
-        .select('id, stage_name')
-        .eq('tournament_id', id)
-
-      if (!error && data) {
-        setAllStages(data)
-        const selectedStage = data.find(stage => stage.id === stageId)
-        setSelectedStageName(selectedStage?.stage_name || '')
-      }
-    }
-
-    const fetchGroups = async () => {
-      const { data } = await supabase
-        .from('groups')
-        .select('id, name, stage_id')
-        .eq('stage_id', stageId)
-      setGroups(data || [])
-    }
-
-    const fetchMatches = async () => {
-      const { data } = await supabase
-        .from('matches')
-        .select(`
-          id,
-          match_date,
-          venue,
-          status,
-          group_id,
-          home_score,
-          away_score,
-          home_team:home_team_id(id, name),
-          away_team:away_team_id(id, name)
-        `)
-
-      if (data) {
-        const grouped: Record<string, Match[]> = {}
-        data.forEach((match) => {
-          const groupId = match.group_id
-          const home = Array.isArray(match.home_team) ? match.home_team[0] : match.home_team
-          const away = Array.isArray(match.away_team) ? match.away_team[0] : match.away_team
-          const cleanMatch = { ...match, home_team: home, away_team: away }
-          if (!grouped[groupId]) grouped[groupId] = []
-          grouped[groupId].push(cleanMatch)
-        })
-        setMatchesByGroup(grouped)
-      }
-    }
-
     fetchStages()
     fetchGroups()
     fetchMatches()
+
+    // Realtime: Live update match scores
+    const subscription = supabase
+      .channel('public:matches')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'matches' }, () => {
+        fetchMatches()
+      })
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(subscription)
+    }
   }, [id, stageId])
 
   const today = new Date().toISOString().split('T')[0]
@@ -110,8 +119,7 @@ export default function PublicStageDetailPage() {
     .flat()
     .filter((match) => {
       const matchDate = new Date(match.match_date)
-      const now = new Date()
-      return matchDate > now && match.status === 'scheduled'
+      return matchDate > new Date() && match.status === 'scheduled'
     })
 
   return (
@@ -145,17 +153,13 @@ export default function PublicStageDetailPage() {
           <h2 className={styles.groupName} onClick={() => setShowUpcoming((prev) => !prev)}>
             📅 Upcoming Matches {showUpcoming ? '▾' : '▸'}
           </h2>
-
           {showUpcoming && (
             <div className={styles.matches}>
               {upcomingMatches.map((match) => (
                 <div key={match.id} className={styles.matchRow}>
                   <span className={styles.status}>
                     {new Date(match.match_date).toLocaleString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      hour: '2-digit',
-                      minute: '2-digit',
+                      day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
                     })}
                   </span>
                   <span className={styles.team}>{match.home_team.name}</span>
@@ -184,7 +188,10 @@ export default function PublicStageDetailPage() {
                       ? 'FT'
                       : match.status === 'ongoing'
                       ? 'LIVE'
-                      : new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      : new Date(match.match_date).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                   </span>
                   <span className={styles.team}>{match.home_team.name}</span>
                   <span className={styles.score}>
@@ -234,6 +241,8 @@ export default function PublicStageDetailPage() {
                   <p className={styles.noMatch}>No matches in this group yet.</p>
                 )}
               </div>
+
+              {/* ✅ Only show group standings during Preliminaries */}
               {selectedStageName === 'Preliminaries' && <GroupStandings groupId={group.id} />}
             </>
           )}
