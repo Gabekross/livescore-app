@@ -25,7 +25,7 @@ export default function TournamentStandings({
   selectedStageName: string
 }) {
   const [standings, setStandings] = useState<Standing[]>([])
-  const [isLive, setIsLive] = useState<boolean>(selectedStageName === 'QQQ')
+  const [isLive, setIsLive] = useState(true)
 
   const fetchAndSetStandings = async () => {
     const { data: stages } = await supabase
@@ -44,54 +44,80 @@ export default function TournamentStandings({
     const groupIds = groups?.map((g) => g.id) || []
     if (groupIds.length === 0) return
 
-    const { data: rows } = await supabase
-      .from('group_standings')
-      .select('*')
+    const { data: matches } = await supabase
+      .from('matches')
+      .select(`
+        id,
+        group_id,
+        status,
+        home_team_id,
+        away_team_id,
+        home_score,
+        away_score
+      `)
       .in('group_id', groupIds)
+      .neq('status', 'scheduled')
 
-    const teamIds = [...new Set(rows?.map((r) => r.team_id) || [])]
-
-    const { data: teamInfo } = await supabase
+    const { data: teams } = await supabase
       .from('teams')
       .select('id, name')
-      .in('id', teamIds)
 
     const teamMap: Record<string, string> = {}
-    teamInfo?.forEach((t) => {
+    teams?.forEach((t) => {
       teamMap[t.id] = t.name
     })
 
-    const merged: Record<string, Standing> = {}
+    const temp: Record<string, Standing> = {}
 
-    rows?.forEach((s) => {
-      const name = teamMap[s.team_id] || `Team ${s.team_id.slice(0, 4)}`
-      if (!merged[s.team_id]) {
-        merged[s.team_id] = {
-          team_id: s.team_id,
-          team_name: name,
-          mp: s.played,
-          w: s.wins,
-          d: s.draws,
-          l: s.losses,
-          gf: s.goals_for,
-          ga: s.goals_against,
-          gd: s.goals_for - s.goals_against,
-          pts: s.points,
-        }
-      } else {
-        const team = merged[s.team_id]
-        team.mp += s.played
-        team.w += s.wins
-        team.d += s.draws
-        team.l += s.losses
-        team.gf += s.goals_for
-        team.ga += s.goals_against
-        team.gd = team.gf - team.ga
-        team.pts += s.points
+    matches?.forEach((m) => {
+      if (m.home_score === null || m.away_score === null) return
+
+      const homeId = m.home_team_id
+      const awayId = m.away_team_id
+
+      const home = temp[homeId] ?? {
+        team_id: homeId,
+        team_name: teamMap[homeId] ?? `Team ${homeId.slice(0, 4)}`,
+        mp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0,
       }
+
+      const away = temp[awayId] ?? {
+        team_id: awayId,
+        team_name: teamMap[awayId] ?? `Team ${awayId.slice(0, 4)}`,
+        mp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0,
+      }
+
+      home.mp += 1
+      away.mp += 1
+
+      home.gf += m.home_score
+      home.ga += m.away_score
+      away.gf += m.away_score
+      away.ga += m.home_score
+
+      if (m.home_score > m.away_score) {
+        home.w += 1
+        away.l += 1
+        home.pts += 3
+      } else if (m.home_score < m.away_score) {
+        away.w += 1
+        home.l += 1
+        away.pts += 3
+      } else {
+        home.d += 1
+        away.d += 1
+        home.pts += 1
+        away.pts += 1
+      }
+
+      home.gd = home.gf - home.ga
+      away.gd = away.gf - away.ga
+
+      temp[homeId] = home
+      temp[awayId] = away
     })
 
-    const sorted = Object.values(merged).sort((a, b) => {
+    const sorted = Object.values(temp).sort((a, b) => {
       if (b.pts !== a.pts) return b.pts - a.pts
       if (b.gd !== a.gd) return b.gd - a.gd
       return b.gf - a.gf
@@ -111,11 +137,11 @@ export default function TournamentStandings({
 
     const channel = supabase
       .channel('realtime-tournament-standings')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'group_standings' },
-        () => fetchAndSetStandings()
-      )
+      .on('postgres_changes', {
+        event: '*',
+        schema: 'public',
+        table: 'matches',
+      }, () => fetchAndSetStandings())
       .subscribe()
 
     return () => {
