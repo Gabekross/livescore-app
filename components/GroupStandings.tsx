@@ -20,20 +20,41 @@ interface StandingRow {
 export default function GroupStandings({ groupId }: { groupId: string }) {
   const [standings, setStandings] = useState<StandingRow[]>([])
 
-  useEffect(() => {
-    const fetchStandings = async () => {
-      const { data, error } = await supabase.rpc('get_group_standings', {
-        group_input: groupId,
-      })
+  const fetchAndSetStandings = async () => {
+    const { data, error } = await supabase.rpc('get_group_standings', {
+      group_input: groupId,
+    })
 
-      if (error) {
-        console.error('Error loading standings:', error)
-      } else {
-        setStandings(data)
-      }
+    if (!error) {
+      setStandings(data)
+    } else {
+      console.error('Error loading group standings:', error)
     }
+  }
 
-    if (groupId) fetchStandings()
+  useEffect(() => {
+    if (!groupId) return
+    fetchAndSetStandings()
+
+    const channel = supabase
+      .channel(`group-standings-${groupId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'matches',
+          filter: `group_id=eq.${groupId}`,
+        },
+        () => {
+          fetchAndSetStandings()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [groupId])
 
   if (!standings.length) return <p>No results yet.</p>
