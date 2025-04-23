@@ -20,108 +20,105 @@ interface Standing {
 export default function TournamentStandings({ tournamentId }: { tournamentId: string }) {
   const [standings, setStandings] = useState<Standing[]>([])
 
-  const fetchStandings = async () => {
-    console.log('Fetching standings for tournament:', tournamentId)
-
-    const { data: stages, error: stageError } = await supabase
-      .from('tournament_stages')
-      .select('id')
-      .eq('tournament_id', tournamentId)
-
-    if (stageError) console.error('Stage error:', stageError)
-    const stageIds = stages?.map(s => s.id) || []
-    if (stageIds.length === 0) return
-
-    const { data: groups, error: groupError } = await supabase
-      .from('groups')
-      .select('id')
-      .in('stage_id', stageIds)
-
-    if (groupError) console.error('Group error:', groupError)
-    const groupIds = groups?.map(g => g.id) || []
-    if (groupIds.length === 0) return
-
-    const { data: rows, error: standingError } = await supabase
-      .from('group_standings')
-      .select('*')
-      .in('group_id', groupIds)
-
-    if (standingError) console.error('Standings error:', standingError)
-
-    const teamIds = [...new Set(rows?.map(r => r.team_id) || [])]
-    const { data: teamInfo } = await supabase
-      .from('teams')
-      .select('id, name')
-      .in('id', teamIds)
-
-    const teamMap: Record<string, string> = {}
-    teamInfo?.forEach(t => {
-      teamMap[t.id] = t.name
-    })
-
-    const merged: Record<string, Standing> = {}
-    rows?.forEach(s => {
-      const name = teamMap[s.team_id] || `Team ${s.team_id.slice(0, 4)}`
-      if (!merged[s.team_id]) {
-        merged[s.team_id] = {
-          team_id: s.team_id,
-          team_name: name,
-          mp: s.played,
-          w: s.wins,
-          d: s.draws,
-          l: s.losses,
-          gf: s.goals_for,
-          ga: s.goals_against,
-          gd: s.goal_difference,
-          pts: s.points,
-        }
-      } else {
-        const team = merged[s.team_id]
-        team.mp += s.played
-        team.w += s.wins
-        team.d += s.draws
-        team.l += s.losses
-        team.gf += s.goals_for
-        team.ga += s.goals_against
-        team.gd = team.gf - team.ga
-        team.pts += s.points
-      }
-    })
-
-    const sorted = Object.values(merged).sort((a, b) => {
-      if (b.pts !== a.pts) return b.pts - a.pts
-      if (b.gd !== a.gd) return b.gd - a.gd
-      return b.gf - a.gf
-    })
-
-    setStandings(sorted)
-  }
-
   useEffect(() => {
-    if (!tournamentId) return
+    const fetchStandings = async () => {
+      // Step 1: Get stages
+      const { data: stages, error: stageError } = await supabase
+        .from('tournament_stages')
+        .select('id')
+        .eq('tournament_id', tournamentId)
+
+      if (stageError) {
+        console.error('Stage error:', stageError)
+        return
+      }
+
+      const stageIds = stages?.map(s => s.id) || []
+      if (stageIds.length === 0) return
+
+      // Step 2: Get groups
+      const { data: groups, error: groupError } = await supabase
+        .from('groups')
+        .select('id')
+        .in('stage_id', stageIds)
+
+      if (groupError) {
+        console.error('Group error:', groupError)
+        return
+      }
+
+      const groupIds = groups?.map(g => g.id) || []
+      if (groupIds.length === 0) return
+
+      // Step 3: Get standings
+      const { data: rows, error: standingError } = await supabase
+        .from('group_standings')
+        .select('*')
+        .in('group_id', groupIds)
+
+      if (standingError) {
+        console.error('Standings error:', standingError)
+        return
+      }
+
+      // Step 4: Filter out non-finished matches (played = 0)
+      const filteredRows = rows?.filter(r => r.played > 0) || []
+
+      // Step 5: Get team names
+      const teamIds = [...new Set(filteredRows.map(r => r.team_id))]
+      const { data: teamInfo } = await supabase
+        .from('teams')
+        .select('id, name')
+        .in('id', teamIds)
+
+      const teamMap: Record<string, string> = {}
+      teamInfo?.forEach(t => {
+        teamMap[t.id] = t.name
+      })
+
+      // Step 6: Merge standings
+      const merged: Record<string, Standing> = {}
+      filteredRows.forEach(s => {
+        const name = teamMap[s.team_id] || `Team ${s.team_id.slice(0, 4)}`
+        if (!merged[s.team_id]) {
+          merged[s.team_id] = {
+            team_id: s.team_id,
+            team_name: name,
+            mp: s.played,
+            w: s.wins,
+            d: s.draws,
+            l: s.losses,
+            gf: s.goals_for,
+            ga: s.goals_against,
+            gd: s.goals_for - s.goals_against,
+            pts: s.points,
+          }
+        } else {
+          const team = merged[s.team_id]
+          team.mp += s.played
+          team.w += s.wins
+          team.d += s.draws
+          team.l += s.losses
+          team.gf += s.goals_for
+          team.ga += s.goals_against
+          team.gd = team.gf - team.ga
+          team.pts += s.points
+        }
+      })
+
+      // Step 7: Sort
+      const sorted = Object.values(merged).sort((a, b) => {
+        if (b.pts !== a.pts) return b.pts - a.pts
+        if (b.gd !== a.gd) return b.gd - a.gd
+        return b.gf - a.gf
+      })
+
+      setStandings(sorted)
+    }
 
     fetchStandings()
-
-    const channel = supabase
-      .channel(`realtime-tournament-${tournamentId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'matches',
-          filter: `tournament_id=eq.${tournamentId}`,
-        },
-        () => {
-          console.log('Tournament match updated, refreshing standings...')
-          fetchStandings()
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
+    const interval = setInterval(fetchStandings, 30000)
+    return () => clearInterval(interval)
   }, [tournamentId])
 
   if (standings.length === 0) {
