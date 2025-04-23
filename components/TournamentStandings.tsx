@@ -28,7 +28,7 @@ export default function TournamentStandings({ tournamentId }: { tournamentId: st
       .select('id, stage_name')
       .eq('tournament_id', tournamentId)
 
-    const prelimStageIds = (stages || []).filter(s => s.stage_name.toLowerCase() === 'preliminaries').map(s => s.id)
+    const prelimStageIds = (stages || []).filter(s => s.stage_name.toLowerCase() === 'QQQ').map(s => s.id)
 
     if (prelimStageIds.length === 0) {
       setTitle('📌 Final Preliminaries Standings')
