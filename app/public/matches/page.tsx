@@ -15,8 +15,8 @@ interface Match {
   home_score: number | null
   away_score: number | null
   tournament_id: string
-  home_team: { id: string; name: string }
-  away_team: { id: string; name: string }
+  home_team: { id: string; name: string; logo_url?: string }
+  away_team: { id: string; name: string; logo_url?: string }
 }
 
 interface Tournament {
@@ -51,8 +51,8 @@ export default function PublicMatchesPage() {
         tournament_id,
         home_score,
         away_score,
-        home_team:home_team_id(id, name),
-        away_team:away_team_id(id, name)
+        home_team:home_team_id(id, name, logo_url),
+        away_team:away_team_id(id, name, logo_url)
       `)
       .order('match_date', { ascending: true })
 
@@ -92,16 +92,12 @@ export default function PublicMatchesPage() {
   useEffect(() => {
     fetchTournaments()
     fetchMatches()
-  
+
     const channel = supabase
       .channel('public-matches')
       .on(
         'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'matches',
-        },
+        { event: 'UPDATE', schema: 'public', table: 'matches' },
         (payload) => {
           const updated = payload.new
           setMatches((prev) =>
@@ -110,12 +106,11 @@ export default function PublicMatchesPage() {
         }
       )
       .subscribe()
-  
+
     return () => {
       supabase.removeChannel(channel)
     }
   }, [])
-  
 
   useEffect(() => {
     const handler = () => {
@@ -180,12 +175,10 @@ export default function PublicMatchesPage() {
             Show only LIVE
           </label>
         </div>
-        
+
         {selectedTournament && (
-  <TournamentQuickLink tournamentId={selectedTournament} tournaments={tournaments} />
-)}
-
-
+          <TournamentQuickLink tournamentId={selectedTournament} tournaments={tournaments} />
+        )}
 
         <div className={styles.matchList}>
           {filteredMatches.length === 0 ? (
@@ -210,11 +203,15 @@ export default function PublicMatchesPage() {
                   <span className={styles.venue}>📍 {match.venue || 'TBD'}</span>
                 </div>
                 <div className={styles.teams}>
-                  <span>{match.home_team.name}</span>
+                  <span>
+                    {match.home_team.logo_url && <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />} {match.home_team.name}
+                  </span>
                   <span className={styles.score}>
                     {match.home_score ?? '-'} – {match.away_score ?? '-'}
                   </span>
-                  <span>{match.away_team.name}</span>
+                  <span>
+                    {match.away_team.logo_url && <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />} {match.away_team.name}
+                  </span>
                 </div>
               </Link>
             ))

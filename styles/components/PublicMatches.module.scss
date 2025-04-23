@@ -1,30 +1,37 @@
 .wrapper {
-    display: flex;
-    min-height: 100vh;
-    background: #111;
-    color: #eee;
-    font-family: 'Segoe UI', sans-serif;
+  display: flex;
+  min-height: 100vh;
+  background: #111;
+  color: #eee;
+  font-family: 'Segoe UI', sans-serif;
+  flex-direction: row;
+  padding: 1rem;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
-  
-  .sidebar {
-    width: 200px;
-    padding: 1rem;
-    background: #1c1c1c;
-    border-right: 1px solid #333;
-  
-    h3 {
-      margin-bottom: 1rem;
-      font-size: 1rem;
-      text-transform: uppercase;
-      color: #aaa;
-    }
-  
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-  
+}
+
+.sidebar {
+  width: 200px;
+  padding: 1rem;
+  background: #1c1c1c;
+  border-radius: 8px;
+  border-right: 1px solid #333;
+
+  h3 {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
     li button {
       display: block;
       width: 100%;
@@ -36,11 +43,11 @@
       cursor: pointer;
       border-radius: 4px;
       transition: background 0.2s ease;
-  
+
       &:hover {
         background: #333;
       }
-  
+
       &.activeTab {
         background: #555;
         font-weight: bold;
@@ -48,295 +55,131 @@
       }
     }
   }
-  
-  .container {
-    flex: 1;
-    padding: 2rem 1rem;
-    max-width: 900px;
-    margin: auto;
-  }
-  .container {
-    flex: 1;
-    padding: 2rem 1rem;
-    max-width: 900px;
-    margin: 0 auto;
-    align-self: flex-start;
-  }
-  
-  
-  .heading {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
-  .topControls {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    gap: 1rem;
-  }
-  
-  .tabs {
-    display: flex;
-    gap: 0.5rem;
-  
-    button {
-      background: #222;
-      color: #eee;
-      padding: 0.4rem 1rem;
-      border: 1px solid #444;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-  
-      &.activeTab {
-        background: #555;
-        font-weight: bold;
-        color: #fff;
-      }
-  
-      &:hover {
-        background: #333;
-      }
-    }
-  }
-  
-  .toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.9rem;
-  }
-  
-  .matchList {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1rem;
-  }
-  
-  .matchCard {
-    background: #1e1e1e;
-    border: 1px solid #333;
-    border-radius: 8px;
-    padding: 1rem;
-    color: #fff;
-    text-decoration: none;
-    display: block;
-    transition: background 0.2s;
-  
-    &:hover {
-      background: #2a2a2a;
-    }
-  }
-  
-  .matchMeta {
-    font-size: 0.85rem;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-  
-    .status {
-      font-weight: bold;
-    }
-  
-    .live {
-      color: #ff5050;
-    }
-  
-    .venue {
-      color: #bbb;
-    }
-  }
-  
-  .teams {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.1rem;
-  }
-  
-  .score {
-    font-weight: bold;
-    font-size: 1.4rem;
-    color: #fff;
-  }
-  
-  .backToTop {
-    position: fixed;
-    bottom: 1.5rem;
-    right: 1.5rem;
-    background: #333;
-    color: white;
-    border: none;
-    padding: 0.7rem 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    transition: background 0.2s;
-  
-    &:hover {
-      background: #555;
-    }
-  }
-  @media (max-width: 768px) {
-    .wrapper {
-      flex-direction: column;
-    }
-  
-    .sidebar {
-      width: 100%;
-      border-right: none;
-      border-bottom: 1px solid #333;
-  
-      ul {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-  
-      li button {
-        width: auto;
-        padding: 0.4rem 0.75rem;
-      }
-    }
-  
-    .container {
-      padding: 1rem;
-    }
-  
-    .topControls {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-  
-    .tabs {
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-  
-    .teams {
-      flex-direction: column;
-      align-items: flex-start;
-  
-      span {
-        margin-bottom: 0.25rem;
-      }
-  
-      .score {
-        font-size: 1.2rem;
-        margin: 0.25rem 0;
-      }
-    }
-  
-    .matchMeta {
-      flex-direction: column;
-      gap: 0.2rem;
-    }
-  
-    .backToTop {
-      right: 1rem;
-      bottom: 1rem;
-      padding: 0.6rem 0.8rem;
-      font-size: 0.9rem;
-    }
-  }
-  
-  .tournamentHeader {
-    background: #1c1c1c;
-    border: 1px solid #333;
-    padding: 1rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  
-    p {
-      margin: 0;
-      color: #ccc;
-      font-size: 0.95rem;
-  
-      strong {
-        color: #fff;
-      }
-    }
-  }
-  
-  .tournamentLink {
-    background: #333;
-    color: #fff;
-    padding: 0.5rem 0.75rem;
+}
+
+.container {
+  flex: 1;
+  padding: 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.heading {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.topControls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+
+  button {
+    background: #222;
+    color: #eee;
+    padding: 0.4rem 1rem;
+    border: 1px solid #444;
     border-radius: 4px;
-    font-size: 0.85rem;
-    text-decoration: none;
-    transition: background 0.2s;
-  
-    &:hover {
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &.activeTab {
       background: #555;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    &:hover {
+      background: #333;
     }
   }
-  
-  .card {
-    background-color: #1b1b1b;
-    border: 1px solid #333;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #f1f1f1;
-    font-family: 'Inter', sans-serif;
-    flex-wrap: wrap;
-    text-decoration: none;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.matchList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background-color: #1e1e1e;
+  padding: 0.5rem; // Height reduced
+  border-radius: 8px;
+  text-decoration: none;
+  color: #fff;
+  border: 1px solid #333;
+  transition: transform 0.2s ease;
+  min-height: 120px;
+
+  &:hover {
+    transform: scale(1.02);
   }
-  
-  .status {
-    flex: 1;
-    font-size: 0.9rem;
-    color: #bbb;
-    font-weight: 500;
-  }
-  
-  .teams {
-    flex: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    font-weight: 500;
-    gap: 0.3rem;
-  }
-  
-  .score {
-    font-size: 1.8rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-  
-  @media (max-width: 600px) {
-    .card {
-      padding: 0.75rem;
-    }
-  
-    .score {
-      font-size: 1.4rem;
-    }
-  
-    .teams {
-      font-size: 0.95rem;
-    }
-  
-    .status {
-      font-size: 0.75rem;
-    }
-  }
-  
+}
+
+.matchMeta {
+  font-size: 0.75rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  justify-content: space-between;
+  color: #ccc;
+}
+
+.live {
+  color: #ff3c3c;
+  font-weight: bold;
+}
+
+.venue {
+  opacity: 0.7;
+}
+
+.teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  gap: 0.5rem;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.3rem;
+}
+
+.score {
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.backToTop {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: #0070f3;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1000;
+}
