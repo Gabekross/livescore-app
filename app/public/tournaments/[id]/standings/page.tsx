@@ -16,7 +16,7 @@ export default function TournamentStandingsPage() {
 
       <h1 className={styles.heading}>Tournament Standings</h1>
 
-      <TournamentStandings tournamentId={id as string} stageName={''} />
+     <TournamentStandings tournamentId={id as string} selectedStageName= "" />
     </div>
   )
 }

@@ -35,6 +35,7 @@ export default function PublicStageDetailPage() {
   const [showToday, setShowToday] = useState<boolean>(true)
   const [showUpcoming, setShowUpcoming] = useState<boolean>(true)
   const [allStages, setAllStages] = useState<{ id: string; stage_name: string }[]>([])
+  const [selectedStageName, setSelectedStageName] = useState<string>('')
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups(prev => ({
@@ -50,7 +51,11 @@ export default function PublicStageDetailPage() {
         .select('id, stage_name')
         .eq('tournament_id', id)
 
-      if (!error) setAllStages(data || [])
+      if (!error && data) {
+        setAllStages(data)
+        const selectedStage = data.find(stage => stage.id === stageId)
+        setSelectedStageName(selectedStage?.stage_name || '')
+      }
     }
 
     const fetchGroups = async () => {
@@ -95,40 +100,6 @@ export default function PublicStageDetailPage() {
     fetchMatches()
   }, [id, stageId])
 
-  // 🔁 Realtime Match Updates
-  useEffect(() => {
-    const channel = supabase
-      .channel('stage-detail-realtime')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'matches',
-        },
-        (payload) => {
-          const updated = payload.new
-          if (!updated.group_id) return
-
-          setMatchesByGroup(prev => {
-            const updatedMatches = prev[updated.group_id]?.map(m =>
-              m.id === updated.id ? { ...m, ...updated } : m
-            ) || []
-
-            return {
-              ...prev,
-              [updated.group_id]: updatedMatches,
-            }
-          })
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [stageId])
-
   const today = new Date().toISOString().split('T')[0]
 
   const todaysMatches = Object.values(matchesByGroup)
@@ -147,7 +118,6 @@ export default function PublicStageDetailPage() {
     <div className={styles.container}>
       <h1 className={styles.heading}>Matches & Standings</h1>
 
-      {/* Stage Dropdown */}
       <div className={styles.stageSelector}>
         <label htmlFor="stage-select">Select Stage:</label>
         {allStages.length === 0 ? (
@@ -170,12 +140,12 @@ export default function PublicStageDetailPage() {
         )}
       </div>
 
-      {/* Upcoming Matches */}
       {upcomingMatches.length > 0 && (
         <div className={styles.upcomingMatches}>
           <h2 className={styles.groupName} onClick={() => setShowUpcoming((prev) => !prev)}>
             📅 Upcoming Matches {showUpcoming ? '▾' : '▸'}
           </h2>
+
           {showUpcoming && (
             <div className={styles.matches}>
               {upcomingMatches.map((match) => (
@@ -200,7 +170,6 @@ export default function PublicStageDetailPage() {
         </div>
       )}
 
-      {/* Today’s Matches */}
       {todaysMatches.length > 0 && (
         <div className={styles.todaysMatches}>
           <h2 className={styles.groupName} onClick={() => setShowToday((prev) => !prev)}>
@@ -215,10 +184,7 @@ export default function PublicStageDetailPage() {
                       ? 'FT'
                       : match.status === 'ongoing'
                       ? 'LIVE'
-                      : new Date(match.match_date).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                      : new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                   </span>
                   <span className={styles.team}>{match.home_team.name}</span>
                   <span className={styles.score}>
@@ -232,7 +198,6 @@ export default function PublicStageDetailPage() {
         </div>
       )}
 
-      {/* Group Matches & Standings */}
       {groups.map((group) => (
         <div key={group.id} className={styles.groupBlock}>
           <h2 className={styles.groupName} onClick={() => toggleGroup(group.id)}>
@@ -269,18 +234,13 @@ export default function PublicStageDetailPage() {
                   <p className={styles.noMatch}>No matches in this group yet.</p>
                 )}
               </div>
-              <GroupStandings groupId={group.id} />
+              {selectedStageName === 'Preliminaries' && <GroupStandings groupId={group.id} />}
             </>
           )}
         </div>
       ))}
 
-      {/* Tournament Standings */}
-      <TournamentStandings
-  tournamentId={id as string}
-  stageName={allStages.find(s => s.id === stageId)?.stage_name || ''}
-/>
-
+      <TournamentStandings tournamentId={id as string} selectedStageName={selectedStageName} />
     </div>
   )
 }

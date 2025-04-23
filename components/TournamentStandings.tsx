@@ -19,20 +19,22 @@ interface Standing {
 
 export default function TournamentStandings({
   tournamentId,
-  stageName,
+  selectedStageName,
 }: {
   tournamentId: string
-  stageName: string
+  selectedStageName: string
 }) {
   const [standings, setStandings] = useState<Standing[]>([])
+  const [isLive, setIsLive] = useState(true)
 
-  const fetchStandings = async () => {
+  const fetchAndSetStandings = async () => {
     const { data: stages } = await supabase
       .from('tournament_stages')
       .select('id')
       .eq('tournament_id', tournamentId)
 
     const stageIds = stages?.map((s) => s.id) || []
+    if (stageIds.length === 0) return
 
     const { data: groups } = await supabase
       .from('groups')
@@ -40,6 +42,7 @@ export default function TournamentStandings({
       .in('stage_id', stageIds)
 
     const groupIds = groups?.map((g) => g.id) || []
+    if (groupIds.length === 0) return
 
     const { data: rows } = await supabase
       .from('group_standings')
@@ -98,24 +101,39 @@ export default function TournamentStandings({
   }
 
   useEffect(() => {
-    fetchStandings()
-    if (stageName === 'QQQ') {
-      const interval = setInterval(() => {
-        fetchStandings()
-      }, 30000)
-      return () => clearInterval(interval)
+    setIsLive(selectedStageName.toLowerCase() === 'preliminaries')
+  }, [selectedStageName])
+
+  useEffect(() => {
+    fetchAndSetStandings()
+
+    if (!isLive) return
+
+    const channel = supabase
+      .channel('realtime-standings')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'group_standings' },
+        () => fetchAndSetStandings()
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
     }
-  }, [tournamentId, stageName])
+  }, [tournamentId, isLive])
+
+  const title = isLive
+    ? '🏆 Tournament Standings'
+    : '📌 Final Preliminaries Standings'
 
   if (standings.length === 0) {
-    return <p style={{ color: 'gray', textAlign: 'center' }}>Tournament standings not available yet.</p>
+    return <p style={{ color: 'gray', textAlign: 'center' }}>{title} not available yet.</p>
   }
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>
-        {stageName === 'QQQ' ? '🏆 Tournament Standings' : '📌 Final Preliminaries Standings'}
-      </h2>
+      <h2 className={styles.heading}>{title}</h2>
       <table className={styles.table}>
         <thead>
           <tr>
