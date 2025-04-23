@@ -92,15 +92,30 @@ export default function PublicMatchesPage() {
   useEffect(() => {
     fetchTournaments()
     fetchMatches()
-
-    const interval = setInterval(() => {
-      if (document.visibilityState === 'visible') {
-        fetchMatches()
-      }
-    }, 30000)
-
-    return () => clearInterval(interval)
+  
+    const channel = supabase
+      .channel('public-matches')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'matches',
+        },
+        (payload) => {
+          const updated = payload.new
+          setMatches((prev) =>
+            prev.map((m) => (m.id === updated.id ? { ...m, ...updated } : m))
+          )
+        }
+      )
+      .subscribe()
+  
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [])
+  
 
   useEffect(() => {
     const handler = () => {
