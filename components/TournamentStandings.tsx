@@ -101,7 +101,7 @@ export default function TournamentStandings({
   }
 
   useEffect(() => {
-    setIsLive(selectedStageName.toLowerCase() === 'preliminaries')
+    setIsLive(selectedStageName === 'QQQ')
   }, [selectedStageName])
 
   useEffect(() => {
