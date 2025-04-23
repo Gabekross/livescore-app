@@ -25,7 +25,7 @@ export default function TournamentStandings({
   selectedStageName: string
 }) {
   const [standings, setStandings] = useState<Standing[]>([])
-  const [isLive, setIsLive] = useState<boolean>(selectedStageName === 'Preliminaries')
+  const [isLive, setIsLive] = useState<boolean>(selectedStageName === 'QQQ')
 
   const fetchAndSetStandings = async () => {
     const { data: stages } = await supabase
@@ -101,7 +101,7 @@ export default function TournamentStandings({
   }
 
   useEffect(() => {
-    setIsLive(selectedStageName === 'Preliminaries')
+    setIsLive(selectedStageName === 'QQQ')
   }, [selectedStageName])
 
   useEffect(() => {
