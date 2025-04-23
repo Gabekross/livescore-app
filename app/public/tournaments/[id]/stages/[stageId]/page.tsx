@@ -276,7 +276,11 @@ export default function PublicStageDetailPage() {
       ))}
 
       {/* Tournament Standings */}
-      <TournamentStandings tournamentId={id as string} />
+      <TournamentStandings
+  tournamentId={id as string}
+  stageName={allStages.find(s => s.id === stageId)?.stage_name || ''}
+/>
+
     </div>
   )
 }

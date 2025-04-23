@@ -17,50 +17,50 @@ interface Standing {
   pts: number
 }
 
-export default function TournamentStandings({ tournamentId }: { tournamentId: string }) {
+export default function TournamentStandings({
+  tournamentId,
+  stageName,
+}: {
+  tournamentId: string
+  stageName: string
+}) {
   const [standings, setStandings] = useState<Standing[]>([])
-  const [title, setTitle] = useState('🏆 Tournament Standings')
-  const [shouldUpdate, setShouldUpdate] = useState(true)
 
   const fetchStandings = async () => {
     const { data: stages } = await supabase
       .from('tournament_stages')
-      .select('id, stage_name')
+      .select('id')
       .eq('tournament_id', tournamentId)
 
-    const prelimStageIds = (stages || []).filter(s => s.stage_name === 'QQQ').map(s => s.id)
-
-    if (prelimStageIds.length === 0) {
-      setTitle('📌 Final Preliminaries Standings')
-      setShouldUpdate(false)
-      return
-    }
+    const stageIds = stages?.map((s) => s.id) || []
 
     const { data: groups } = await supabase
       .from('groups')
       .select('id')
-      .in('stage_id', prelimStageIds)
+      .in('stage_id', stageIds)
 
-    const groupIds = groups?.map(g => g.id) || []
+    const groupIds = groups?.map((g) => g.id) || []
 
     const { data: rows } = await supabase
       .from('group_standings')
       .select('*')
       .in('group_id', groupIds)
 
-    const teamIds = [...new Set(rows?.map(r => r.team_id) || [])]
+    const teamIds = [...new Set(rows?.map((r) => r.team_id) || [])]
+
     const { data: teamInfo } = await supabase
       .from('teams')
       .select('id, name')
       .in('id', teamIds)
 
     const teamMap: Record<string, string> = {}
-    teamInfo?.forEach(t => {
+    teamInfo?.forEach((t) => {
       teamMap[t.id] = t.name
     })
 
     const merged: Record<string, Standing> = {}
-    rows?.forEach(s => {
+
+    rows?.forEach((s) => {
       const name = teamMap[s.team_id] || `Team ${s.team_id.slice(0, 4)}`
       if (!merged[s.team_id]) {
         merged[s.team_id] = {
@@ -94,22 +94,18 @@ export default function TournamentStandings({ tournamentId }: { tournamentId: st
       return b.gf - a.gf
     })
 
-    setTitle('🏆 Tournament Standings')
-    setShouldUpdate(true)
     setStandings(sorted)
   }
 
   useEffect(() => {
     fetchStandings()
-
-    const interval = setInterval(() => {
-      if (document.visibilityState === 'visible' && shouldUpdate) {
+    if (stageName === 'QQQ') {
+      const interval = setInterval(() => {
         fetchStandings()
-      }
-    }, 30000)
-
-    return () => clearInterval(interval)
-  }, [tournamentId, shouldUpdate])
+      }, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [tournamentId, stageName])
 
   if (standings.length === 0) {
     return <p style={{ color: 'gray', textAlign: 'center' }}>Tournament standings not available yet.</p>
@@ -117,7 +113,9 @@ export default function TournamentStandings({ tournamentId }: { tournamentId: st
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>{title}</h2>
+      <h2 className={styles.heading}>
+        {stageName === 'QQQ' ? '🏆 Tournament Standings' : '📌 Final Preliminaries Standings'}
+      </h2>
       <table className={styles.table}>
         <thead>
           <tr>
