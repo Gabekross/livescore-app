@@ -243,7 +243,7 @@ export default function PublicStageDetailPage() {
               </div>
 
               {/* ✅ Only show group standings during Preliminaries */}
-              {selectedStageName === 'Preliminaries' && <GroupStandings groupId={group.id} />}
+              {selectedStageName === 'QQQ' && <GroupStandings groupId={group.id} />}
             </>
           )}
         </div>
