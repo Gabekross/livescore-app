@@ -1,218 +1,3 @@
-// 'use client'
-
-// import { useEffect, useState } from 'react'
-// import { useParams } from 'next/navigation'
-// import Link from 'next/link'
-// import { supabase } from '@/lib/supabase'
-// import styles from '@/styles/components/PublicStageDetail.module.scss'
-// import GroupStandings from '@/components/GroupStandings'
-// import TournamentStandings from '@/components/TournamentStandings'
-
-// interface Group {
-//   id: string
-//   name: string
-//   stage_id: string
-// }
-
-// interface Match {
-//   id: string
-//   match_date: string
-//   venue?: string
-//   status: string
-//   home_score: number | null
-//   away_score: number | null
-//   group_id: string
-//   home_team: { id: string; name: string }
-//   away_team: { id: string; name: string }
-// }
-
-// export default function PublicStageDetailPage() {
-//   const { id, stageId } = useParams()
-//   const [groups, setGroups] = useState<Group[]>([])
-//   const [matchesByGroup, setMatchesByGroup] = useState<Record<string, Match[]>>({})
-//   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({tournament: true})
-//   const [showToday, setShowToday] = useState(true)
-//   const [showUpcoming, setShowUpcoming] = useState(true)
-
-//   const today = new Date().toISOString().split('T')[0]
-
-//   const toggleGroup = (groupId: string) => {
-//     setExpandedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }))
-//   }
-
-//   useEffect(() => {
-//     const fetchGroups = async () => {
-//       const { data } = await supabase
-//         .from('groups')
-//         .select('id, name, stage_id')
-//         .eq('stage_id', stageId)
-//       setGroups(data || [])
-//     }
-
-//     const fetchMatches = async () => {
-//       const { data } = await supabase
-//         .from('matches')
-//         .select(`
-//           id,
-//           match_date,
-//           venue,
-//           status,
-//           group_id,
-//           home_score,
-//           away_score,
-//           home_team:home_team_id(id, name),
-//           away_team:away_team_id(id, name)
-//         `)
-
-//       if (data) {
-//         const grouped: Record<string, Match[]> = {}
-//         data.forEach((match) => {
-//           const groupId = match.group_id
-//           const home = Array.isArray(match.home_team) ? match.home_team[0] : match.home_team
-//           const away = Array.isArray(match.away_team) ? match.away_team[0] : match.away_team
-//           const cleanMatch = { ...match, home_team: home, away_team: away }
-//           if (!grouped[groupId]) grouped[groupId] = []
-//           grouped[groupId].push(cleanMatch)
-//         })
-//         setMatchesByGroup(grouped)
-//       }
-//     }
-
-//     fetchGroups()
-//     fetchMatches()
-//   }, [stageId])
-
-//   const todaysMatches = Object.values(matchesByGroup)
-//     .flat()
-//     .filter((match) => match.match_date.startsWith(today))
-
-//   const upcomingMatches = Object.values(matchesByGroup)
-//     .flat()
-//     .filter((match) => {
-//       const matchDate = new Date(match.match_date)
-//       const now = new Date()
-//       return matchDate > now && match.status === 'scheduled'
-//     })
-
-//   return (
-//     <div className={styles.container}>
-//       <div className={styles.header}>
-//         <h1>🏟️ Tournament Matches & Standings</h1>
-//         <Link href="/public/matches" className={styles.backLink}>
-//           ← Back to Tournament List
-//         </Link>
-//       </div>
-
-//       {upcomingMatches.length > 0 && (
-//         <div className={styles.block}>
-//           <h2 onClick={() => setShowUpcoming(!showUpcoming)}>
-//             📅 Upcoming Matches {showUpcoming ? '▾' : '▸'}
-//           </h2>
-//           {showUpcoming && (
-//             <div className={styles.matchList}>
-//               {upcomingMatches.map(match => (
-//                 <div key={match.id} className={styles.matchRow}>
-//                   <span className={styles.status}>
-//                     {new Date(match.match_date).toLocaleString('en-GB', {
-//                       day: '2-digit',
-//                       month: 'short',
-//                       hour: '2-digit',
-//                       minute: '2-digit'
-//                     })}
-//                   </span>
-//                   <span className={styles.team}>{match.home_team.name}</span>
-//                   <span className={styles.score}>{match.home_score ?? '-'} – {match.away_score ?? '-'}</span>
-//                   <span className={styles.team}>{match.away_team.name}</span>
-//                 </div>
-//               ))}
-//             </div>
-//           )}
-//         </div>
-//       )}
-
-//       {todaysMatches.length > 0 && (
-//         <div className={styles.block}>
-//           <h2 onClick={() => setShowToday(!showToday)}>
-//             🗓️ Today’s Matches {showToday ? '▾' : '▸'}
-//           </h2>
-//           {showToday && (
-//             <div className={styles.matchList}>
-//               {todaysMatches.map(match => (
-//                 <div key={match.id} className={styles.matchRow}>
-//                   <span className={`${styles.status} ${match.status === 'ongoing' ? styles.live : ''}`}>
-//                     {match.status === 'finished'
-//                       ? 'FT'
-//                       : match.status === 'ongoing'
-//                       ? 'LIVE'
-//                       : new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-//                   </span>
-//                   <span className={styles.team}>{match.home_team.name}</span>
-//                   <span className={styles.score}>{match.home_score ?? '-'} – {match.away_score ?? '-'}</span>
-//                   <span className={styles.team}>{match.away_team.name}</span>
-//                 </div>
-//               ))}
-//             </div>
-//           )}
-//         </div>
-//       )}
-
-//       {groups.map((group) => (
-//         <div key={group.id} className={styles.block}>
-//           <h2 className={styles.groupHeader} onClick={() => toggleGroup(group.id)}>
-//             {group.name} {expandedGroups[group.id] ? '▾' : '▸'}
-//           </h2>
-
-//           {expandedGroups[group.id] && (
-//             <>
-//               <div className={styles.matchList}>
-//                 {matchesByGroup[group.id]?.length > 0 ? (
-//                   matchesByGroup[group.id].map((match) => (
-//                     <div key={match.id} className={styles.matchRow}>
-//                       <span className={`${styles.status} ${match.status === 'ongoing' ? styles.live : ''}`}>
-//                         {match.status === 'finished'
-//                           ? 'FT'
-//                           : match.status === 'ongoing'
-//                           ? 'LIVE'
-//                           : new Date(match.match_date).toLocaleDateString('en-GB', {
-//                               day: '2-digit',
-//                               month: 'short',
-//                               hour: '2-digit',
-//                               minute: '2-digit',
-//                               hour12: false,
-//                             })}
-//                       </span>
-//                       <span className={styles.team}>{match.home_team.name}</span>
-//                       <span className={styles.score}>
-//                         {match.home_score ?? '-'} – {match.away_score ?? '-'}
-//                       </span>
-//                       <span className={styles.team}>{match.away_team.name}</span>
-//                     </div>
-//                   ))
-//                 ) : (
-//                   <p className={styles.noMatch}>No matches in this group yet.</p>
-//                 )}
-//               </div>
-
-//               <GroupStandings groupId={group.id} />
-//             </>
-//           )}
-//         </div>
-//       ))}
-
-//       <div className={styles.block}>
-//         <h2 onClick={() => setExpandedGroups(prev => ({ ...prev, tournament: !prev.tournament }))}>
-//           🏆 Tournament Standings {expandedGroups.tournament ? '▾' : '▸'}
-//         </h2>
-
-//         {expandedGroups.tournament && (
-//           <TournamentStandings tournamentId={id as string} />
-//         )}
-//       </div>
-
-//     </div>
-//   )
-// }
-
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -310,6 +95,40 @@ export default function PublicStageDetailPage() {
     fetchMatches()
   }, [id, stageId])
 
+  // 🔁 Realtime Match Updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('stage-detail-realtime')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'matches',
+        },
+        (payload) => {
+          const updated = payload.new
+          if (!updated.group_id) return
+
+          setMatchesByGroup(prev => {
+            const updatedMatches = prev[updated.group_id]?.map(m =>
+              m.id === updated.id ? { ...m, ...updated } : m
+            ) || []
+
+            return {
+              ...prev,
+              [updated.group_id]: updatedMatches,
+            }
+          })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [stageId])
+
   const today = new Date().toISOString().split('T')[0]
 
   const todaysMatches = Object.values(matchesByGroup)
@@ -357,7 +176,6 @@ export default function PublicStageDetailPage() {
           <h2 className={styles.groupName} onClick={() => setShowUpcoming((prev) => !prev)}>
             📅 Upcoming Matches {showUpcoming ? '▾' : '▸'}
           </h2>
-
           {showUpcoming && (
             <div className={styles.matches}>
               {upcomingMatches.map((match) => (
@@ -397,7 +215,10 @@ export default function PublicStageDetailPage() {
                       ? 'FT'
                       : match.status === 'ongoing'
                       ? 'LIVE'
-                      : new Date(match.match_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      : new Date(match.match_date).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                   </span>
                   <span className={styles.team}>{match.home_team.name}</span>
                   <span className={styles.score}>
@@ -454,7 +275,7 @@ export default function PublicStageDetailPage() {
         </div>
       ))}
 
-      {/* Overall Tournament Standings */}
+      {/* Tournament Standings */}
       <TournamentStandings tournamentId={id as string} />
     </div>
   )
