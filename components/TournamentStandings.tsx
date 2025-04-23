@@ -25,7 +25,7 @@ export default function TournamentStandings({
   selectedStageName: string
 }) {
   const [standings, setStandings] = useState<Standing[]>([])
-  const [isLive, setIsLive] = useState(true)
+  const [isLive, setIsLive] = useState<boolean>(selectedStageName === 'Preliminaries')
 
   const fetchAndSetStandings = async () => {
     const { data: stages } = await supabase
@@ -75,7 +75,7 @@ export default function TournamentStandings({
           l: s.losses,
           gf: s.goals_for,
           ga: s.goals_against,
-          gd: s.goal_difference,
+          gd: s.goals_for - s.goals_against,
           pts: s.points,
         }
       } else {
@@ -101,7 +101,7 @@ export default function TournamentStandings({
   }
 
   useEffect(() => {
-    setIsLive(selectedStageName === 'QQQ')
+    setIsLive(selectedStageName === 'Preliminaries')
   }, [selectedStageName])
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function TournamentStandings({
     if (!isLive) return
 
     const channel = supabase
-      .channel('realtime-standings')
+      .channel('realtime-tournament-standings')
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'group_standings' },
@@ -123,9 +123,7 @@ export default function TournamentStandings({
     }
   }, [tournamentId, isLive])
 
-  const title = isLive
-    ? '🏆 Tournament Standings'
-    : '📌 Final Preliminaries Standings'
+  const title = isLive ? '🏆 Tournament Standings' : '📌 Final Preliminaries Standings'
 
   if (standings.length === 0) {
     return <p style={{ color: 'gray', textAlign: 'center' }}>{title} not available yet.</p>
