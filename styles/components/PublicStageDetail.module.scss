@@ -196,7 +196,8 @@
 .live {
   color: #ff1744;
   animation: pulse 1s infinite alternate;
-  font-weight: bold;
+  color: #ff3c3c;
+    font-weight: bold;
 }
 
 @keyframes pulse {
