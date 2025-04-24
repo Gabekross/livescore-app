@@ -35,61 +35,32 @@ export default function PublicMatchesPage() {
   const [onlyLive, setOnlyLive] = useState(false)
   const [showTopButton, setShowTopButton] = useState(false)
 
-  const fetchTournaments = async () => {
-    const { data } = await supabase.from('tournaments').select('id, name')
-    setTournaments(data || [])
-  }
-
-  const fetchMatches = async () => {
-    const { data } = await supabase
-      .from('matches')
-      .select(`
-        id,
-        match_date,
-        venue,
-        status,
-        tournament_id,
-        home_score,
-        away_score,
-        home_team:home_team_id(id, name, logo_url),
-        away_team:away_team_id(id, name, logo_url)
-      `)
-      .order('match_date', { ascending: true })
-
-    if (data) {
-      const parsed = data.map((match) => ({
-        ...match,
-        home_team: Array.isArray(match.home_team) ? match.home_team[0] : match.home_team,
-        away_team: Array.isArray(match.away_team) ? match.away_team[0] : match.away_team,
-      }))
-      setMatches(parsed)
-    }
-  }
-
-  const filterMatches = () => {
-    const now = new Date()
-    const today = now.toISOString().split('T')[0]
-
-    let filtered = [...matches]
-
-    if (selectedTournament) {
-      filtered = filtered.filter((m) => m.tournament_id === selectedTournament)
-    }
-
-    if (selectedTab === 'today') {
-      filtered = filtered.filter((m) => m.match_date.startsWith(today))
-    } else if (selectedTab === 'upcoming') {
-      filtered = filtered.filter((m) => new Date(m.match_date) > now && m.status === 'scheduled')
-    }
-
-    if (onlyLive) {
-      filtered = filtered.filter((m) => m.status === 'ongoing')
-    }
-
-    return filtered
-  }
-
   useEffect(() => {
+    const fetchTournaments = async () => {
+      const { data } = await supabase.from('tournaments').select('id, name')
+      setTournaments(data || [])
+    }
+
+    const fetchMatches = async () => {
+      const { data } = await supabase
+        .from('matches')
+        .select(`
+          id, match_date, venue, status, tournament_id, home_score, away_score,
+          home_team:home_team_id(id, name, logo_url),
+          away_team:away_team_id(id, name, logo_url)
+        `)
+        .order('match_date', { ascending: true })
+
+      if (data) {
+        const parsed = data.map((match) => ({
+          ...match,
+          home_team: Array.isArray(match.home_team) ? match.home_team[0] : match.home_team,
+          away_team: Array.isArray(match.away_team) ? match.away_team[0] : match.away_team,
+        }))
+        setMatches(parsed)
+      }
+    }
+
     fetchTournaments()
     fetchMatches()
 
@@ -109,18 +80,14 @@ export default function PublicMatchesPage() {
   }, [])
 
   useEffect(() => {
-    const handler = () => {
-      setShowTopButton(window.scrollY > 300)
-    }
+    const handler = () => setShowTopButton(window.scrollY > 300)
     window.addEventListener('scroll', handler)
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab)
-    router.push(`/public/matches?tab=${tab}${selectedTournament ? `&tournament=${selectedTournament}` : ''}`, {
-      scroll: false,
-    })
+    router.push(`/public/matches?tab=${tab}${selectedTournament ? `&tournament=${selectedTournament}` : ''}`, { scroll: false })
   }
 
   const handleTournamentChange = (tournamentId: string) => {
@@ -128,19 +95,27 @@ export default function PublicMatchesPage() {
     router.push(`/public/matches?tab=${selectedTab}&tournament=${tournamentId}`, { scroll: false })
   }
 
-  const filteredMatches = filterMatches()
+  const filteredMatches = matches.filter(match => {
+    const now = new Date()
+    const today = now.toISOString().split('T')[0]
+
+    let keep = true
+    if (selectedTournament && match.tournament_id !== selectedTournament) keep = false
+    if (selectedTab === 'today' && !match.match_date.startsWith(today)) keep = false
+    if (selectedTab === 'upcoming' && (new Date(match.match_date) <= now || match.status !== 'scheduled')) keep = false
+    if (onlyLive && match.status !== 'ongoing') keep = false
+
+    return keep
+  })
 
   return (
     <div className={styles.wrapper}>
       <aside className={styles.sidebar}>
         <h3>Tournaments</h3>
         <ul>
-          {tournaments.map((t) => (
+          {tournaments.map(t => (
             <li key={t.id}>
-              <button
-                className={t.id === selectedTournament ? styles.activeTab : ''}
-                onClick={() => handleTournamentChange(t.id)}
-              >
+              <button className={t.id === selectedTournament ? styles.activeTab : ''} onClick={() => handleTournamentChange(t.id)}>
                 {t.name}
               </button>
             </li>
@@ -153,12 +128,8 @@ export default function PublicMatchesPage() {
 
         <div className={styles.topControls}>
           <div className={styles.tabs}>
-            {['all', 'today', 'upcoming'].map((tab) => (
-              <button
-                key={tab}
-                className={selectedTab === tab ? styles.activeTab : ''}
-                onClick={() => handleTabChange(tab)}
-              >
+            {['all', 'today', 'upcoming'].map(tab => (
+              <button key={tab} className={selectedTab === tab ? styles.activeTab : ''} onClick={() => handleTabChange(tab)}>
                 {tab === 'all' ? 'All' : tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
             ))}
@@ -170,15 +141,13 @@ export default function PublicMatchesPage() {
           </label>
         </div>
 
-        {selectedTournament && (
-          <TournamentQuickLink tournamentId={selectedTournament} tournaments={tournaments} />
-        )}
+        {selectedTournament && <TournamentQuickLink tournamentId={selectedTournament} tournaments={tournaments} />}
 
         <div className={styles.matchList}>
           {filteredMatches.length === 0 ? (
             <p>No matches found.</p>
           ) : (
-            filteredMatches.map((match) => (
+            filteredMatches.map(match => (
               <Link key={match.id} href={`/public/matches/${match.id}`} className={styles.card}>
                 <div className={styles.matchMeta}>
                   <span className={`${styles.status} ${match.status === 'ongoing' ? styles.live : ''}`}>
@@ -196,25 +165,21 @@ export default function PublicMatchesPage() {
                   </span>
                   <span className={styles.venue}>📍 {match.venue || 'TBD'}</span>
                 </div>
-
                 <div className={styles.teams}>
-                  <span>
-                    {match.home_team.logo_url && (
-                      <img src={match.home_team.logo_url} alt="Home Logo" className={styles.logo} />
-                    )}
-                    {match.home_team.name}
-                  </span>
-
-                  <span className={styles.score}>
-                    {match.home_score ?? '-'} – {match.away_score ?? '-'}
-                  </span>
-
-                  <span>
-                    {match.away_team.logo_url && (
-                      <img src={match.away_team.logo_url} alt="Away Logo" className={styles.logo} />
-                    )}
-                    {match.away_team.name}
-                  </span>
+                  <div className={styles.teamLine}>
+                    <span className={styles.teamInfo}>
+                      {match.home_team.logo_url && <img src={match.home_team.logo_url} className={styles.logo} alt="Home logo" />}
+                      {match.home_team.name}
+                    </span>
+                    <span className={styles.score}>{match.home_score ?? '-'}</span>
+                  </div>
+                  <div className={styles.teamLine}>
+                    <span className={styles.teamInfo}>
+                      {match.away_team.logo_url && <img src={match.away_team.logo_url} className={styles.logo} alt="Away logo" />}
+                      {match.away_team.name}
+                    </span>
+                    <span className={styles.score}>{match.away_score ?? '-'}</span>
+                  </div>
                 </div>
               </Link>
             ))
@@ -222,10 +187,7 @@ export default function PublicMatchesPage() {
         </div>
 
         {showTopButton && (
-          <button
-            className={styles.backToTop}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
+          <button className={styles.backToTop} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             ↑ Back to Top
           </button>
         )}
