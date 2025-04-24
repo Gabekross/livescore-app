@@ -35,43 +35,76 @@ export default function PublicMatchesPage() {
   const [onlyLive, setOnlyLive] = useState(false)
   const [showTopButton, setShowTopButton] = useState(false)
 
+  const fetchTournaments = async () => {
+    const { data } = await supabase.from('tournaments').select('id, name')
+    setTournaments(data || [])
+  }
+
+  const fetchMatches = async () => {
+    const { data } = await supabase
+      .from('matches')
+      .select(`
+        id,
+        match_date,
+        venue,
+        status,
+        tournament_id,
+        home_score,
+        away_score,
+        home_team:home_team_id(id, name, logo_url),
+        away_team:away_team_id(id, name, logo_url)
+      `)
+      .order('match_date', { ascending: true })
+
+    if (data) {
+      const parsed = data.map((match) => ({
+        ...match,
+        home_team: Array.isArray(match.home_team) ? match.home_team[0] : match.home_team,
+        away_team: Array.isArray(match.away_team) ? match.away_team[0] : match.away_team,
+      }))
+      setMatches(parsed)
+    }
+  }
+
+  const filterMatches = () => {
+    const now = new Date()
+    const today = now.toISOString().split('T')[0]
+
+    let filtered = [...matches]
+
+    if (selectedTournament) {
+      filtered = filtered.filter(m => m.tournament_id === selectedTournament)
+    }
+
+    if (selectedTab === 'today') {
+      filtered = filtered.filter(m => m.match_date.startsWith(today))
+    } else if (selectedTab === 'upcoming') {
+      filtered = filtered.filter(m => new Date(m.match_date) > now && m.status === 'scheduled')
+    }
+
+    if (onlyLive) {
+      filtered = filtered.filter(m => m.status === 'ongoing')
+    }
+
+    return filtered
+  }
+
   useEffect(() => {
-    const fetchTournaments = async () => {
-      const { data } = await supabase.from('tournaments').select('id, name')
-      setTournaments(data || [])
-    }
-
-    const fetchMatches = async () => {
-      const { data } = await supabase
-        .from('matches')
-        .select(`
-          id, match_date, venue, status, tournament_id, home_score, away_score,
-          home_team:home_team_id(id, name, logo_url),
-          away_team:away_team_id(id, name, logo_url)
-        `)
-        .order('match_date', { ascending: true })
-
-      if (data) {
-        const parsed = data.map((match) => ({
-          ...match,
-          home_team: Array.isArray(match.home_team) ? match.home_team[0] : match.home_team,
-          away_team: Array.isArray(match.away_team) ? match.away_team[0] : match.away_team,
-        }))
-        setMatches(parsed)
-      }
-    }
-
     fetchTournaments()
     fetchMatches()
 
     const channel = supabase
       .channel('public-matches')
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'matches' }, (payload) => {
-        const updated = payload.new
-        setMatches((prev) =>
-          prev.map((m) => (m.id === updated.id ? { ...m, ...updated } : m))
-        )
-      })
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'matches' },
+        (payload) => {
+          const updated = payload.new
+          setMatches((prev) =>
+            prev.map((m) => (m.id === updated.id ? { ...m, ...updated } : m))
+          )
+        }
+      )
       .subscribe()
 
     return () => {
@@ -80,7 +113,9 @@ export default function PublicMatchesPage() {
   }, [])
 
   useEffect(() => {
-    const handler = () => setShowTopButton(window.scrollY > 300)
+    const handler = () => {
+      setShowTopButton(window.scrollY > 300)
+    }
     window.addEventListener('scroll', handler)
     return () => window.removeEventListener('scroll', handler)
   }, [])
@@ -95,18 +130,7 @@ export default function PublicMatchesPage() {
     router.push(`/public/matches?tab=${selectedTab}&tournament=${tournamentId}`, { scroll: false })
   }
 
-  const filteredMatches = matches.filter(match => {
-    const now = new Date()
-    const today = now.toISOString().split('T')[0]
-
-    let keep = true
-    if (selectedTournament && match.tournament_id !== selectedTournament) keep = false
-    if (selectedTab === 'today' && !match.match_date.startsWith(today)) keep = false
-    if (selectedTab === 'upcoming' && (new Date(match.match_date) <= now || match.status !== 'scheduled')) keep = false
-    if (onlyLive && match.status !== 'ongoing') keep = false
-
-    return keep
-  })
+  const filteredMatches = filterMatches()
 
   return (
     <div className={styles.wrapper}>
@@ -115,7 +139,10 @@ export default function PublicMatchesPage() {
         <ul>
           {tournaments.map(t => (
             <li key={t.id}>
-              <button className={t.id === selectedTournament ? styles.activeTab : ''} onClick={() => handleTournamentChange(t.id)}>
+              <button
+                className={t.id === selectedTournament ? styles.activeTab : ''}
+                onClick={() => handleTournamentChange(t.id)}
+              >
                 {t.name}
               </button>
             </li>
@@ -129,25 +156,35 @@ export default function PublicMatchesPage() {
         <div className={styles.topControls}>
           <div className={styles.tabs}>
             {['all', 'today', 'upcoming'].map(tab => (
-              <button key={tab} className={selectedTab === tab ? styles.activeTab : ''} onClick={() => handleTabChange(tab)}>
+              <button
+                key={tab}
+                className={selectedTab === tab ? styles.activeTab : ''}
+                onClick={() => handleTabChange(tab)}
+              >
                 {tab === 'all' ? 'All' : tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
             ))}
           </div>
 
           <label className={styles.toggle}>
-            <input type="checkbox" checked={onlyLive} onChange={() => setOnlyLive(!onlyLive)} />
+            <input
+              type="checkbox"
+              checked={onlyLive}
+              onChange={() => setOnlyLive(!onlyLive)}
+            />
             Show only LIVE
           </label>
         </div>
 
-        {selectedTournament && <TournamentQuickLink tournamentId={selectedTournament} tournaments={tournaments} />}
+        {selectedTournament && (
+          <TournamentQuickLink tournamentId={selectedTournament} tournaments={tournaments} />
+        )}
 
         <div className={styles.matchList}>
           {filteredMatches.length === 0 ? (
             <p>No matches found.</p>
           ) : (
-            filteredMatches.map(match => (
+            filteredMatches.map((match) => (
               <Link key={match.id} href={`/public/matches/${match.id}`} className={styles.card}>
                 <div className={styles.matchMeta}>
                   <span className={`${styles.status} ${match.status === 'ongoing' ? styles.live : ''}`}>
@@ -165,20 +202,41 @@ export default function PublicMatchesPage() {
                   </span>
                   <span className={styles.venue}>📍 {match.venue || 'TBD'}</span>
                 </div>
-                <div className={styles.teams}>
-                  <div className={styles.teamLine}>
-                    <span className={styles.teamInfo}>
-                      {match.home_team.logo_url && <img src={match.home_team.logo_url} className={styles.logo} alt="Home logo" />}
-                      {match.home_team.name}
-                    </span>
-                    <span className={styles.score}>{match.home_score ?? '-'}</span>
+
+                {/* Desktop Layout */}
+                <div className={styles.teamsDesktop}>
+                  <div className={styles.teamLeft}>
+                    {match.home_team.logo_url && (
+                      <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
+                    )}
+                    <span>{match.home_team.name}</span>
                   </div>
-                  <div className={styles.teamLine}>
-                    <span className={styles.teamInfo}>
-                      {match.away_team.logo_url && <img src={match.away_team.logo_url} className={styles.logo} alt="Away logo" />}
-                      {match.away_team.name}
-                    </span>
-                    <span className={styles.score}>{match.away_score ?? '-'}</span>
+                  <div className={styles.score}>
+                    {match.home_score ?? '-'} – {match.away_score ?? '-'}
+                  </div>
+                  <div className={styles.teamRight}>
+                    <span>{match.away_team.name}</span>
+                    {match.away_team.logo_url && (
+                      <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
+                    )}
+                  </div>
+                </div>
+
+                {/* Mobile Layout */}
+                <div className={styles.teamsMobile}>
+                  <div className={styles.row}>
+                    {match.home_team.logo_url && (
+                      <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
+                    )}
+                    <span className={styles.name}>{match.home_team.name}</span>
+                    <span className={styles.mobileScore}>{match.home_score ?? '-'}</span>
+                  </div>
+                  <div className={styles.row}>
+                    {match.away_team.logo_url && (
+                      <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
+                    )}
+                    <span className={styles.name}>{match.away_team.name}</span>
+                    <span className={styles.mobileScore}>{match.away_score ?? '-'}</span>
                   </div>
                 </div>
               </Link>
@@ -187,7 +245,10 @@ export default function PublicMatchesPage() {
         </div>
 
         {showTopButton && (
-          <button className={styles.backToTop} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+          <button
+            className={styles.backToTop}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
             ↑ Back to Top
           </button>
         )}

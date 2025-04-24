@@ -21,8 +21,8 @@ interface Match {
   home_score: number | null
   away_score: number | null
   group_id: string
-  home_team: { id: string; name: string }
-  away_team: { id: string; name: string }
+  home_team: { id: string; name: string; logo_url?: string }
+  away_team: { id: string; name: string; logo_url?: string }
 }
 
 export default function PublicStageDetailPage() {
@@ -73,8 +73,8 @@ export default function PublicStageDetailPage() {
         group_id,
         home_score,
         away_score,
-        home_team:home_team_id(id, name),
-        away_team:away_team_id(id, name)
+        home_team:home_team_id(id, name, logo_url),
+        away_team:away_team_id(id, name, logo_url)
       `)
 
     if (data) {
@@ -162,11 +162,21 @@ export default function PublicStageDetailPage() {
                       day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
                     })}
                   </span>
-                  <span className={styles.team}>{match.home_team.name}</span>
+                  <span className={styles.team}>
+                    {match.home_team.logo_url && (
+                      <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
+                    )}
+                    {match.home_team.name}
+                  </span>
                   <span className={styles.score}>
                     {match.home_score ?? '-'} – {match.away_score ?? '-'}
                   </span>
-                  <span className={styles.team}>{match.away_team.name}</span>
+                  <span className={styles.team}>
+                    {match.away_team.logo_url && (
+                      <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
+                    )}
+                    {match.away_team.name}
+                  </span>
                 </div>
               ))}
             </div>
@@ -193,11 +203,21 @@ export default function PublicStageDetailPage() {
                           minute: '2-digit',
                         })}
                   </span>
-                  <span className={styles.team}>{match.home_team.name}</span>
+                  <span className={styles.team}>
+                    {match.home_team.logo_url && (
+                      <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
+                    )}
+                    {match.home_team.name}
+                  </span>
                   <span className={styles.score}>
                     {match.home_score ?? '-'} – {match.away_score ?? '-'}
                   </span>
-                  <span className={styles.team}>{match.away_team.name}</span>
+                  <span className={styles.team}>
+                    {match.away_team.logo_url && (
+                      <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
+                    )}
+                    {match.away_team.name}
+                  </span>
                 </div>
               ))}
             </div>
@@ -230,11 +250,21 @@ export default function PublicStageDetailPage() {
                               hour12: false,
                             }).replace(',', '')}
                       </span>
-                      <span className={styles.team}>{match.home_team.name}</span>
+                      <span className={styles.team}>
+                        {match.home_team.logo_url && (
+                          <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
+                        )}
+                        {match.home_team.name}
+                      </span>
                       <span className={styles.score}>
                         {match.home_score ?? '-'} – {match.away_score ?? '-'}
                       </span>
-                      <span className={styles.team}>{match.away_team.name}</span>
+                      <span className={styles.team}>
+                        {match.away_team.logo_url && (
+                          <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
+                        )}
+                        {match.away_team.name}
+                      </span>
                     </div>
                   ))
                 ) : (

@@ -196,6 +196,7 @@
 .live {
   color: #ff1744;
   animation: pulse 1s infinite alternate;
+  font-weight: bold;
 }
 
 @keyframes pulse {
@@ -233,4 +234,11 @@
     width: 100%;
     text-align: left;
   }
+}
+.logo {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.35rem;
 }
