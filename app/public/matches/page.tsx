@@ -73,17 +73,17 @@ export default function PublicMatchesPage() {
     let filtered = [...matches]
 
     if (selectedTournament) {
-      filtered = filtered.filter(m => m.tournament_id === selectedTournament)
+      filtered = filtered.filter((m) => m.tournament_id === selectedTournament)
     }
 
     if (selectedTab === 'today') {
-      filtered = filtered.filter(m => m.match_date.startsWith(today))
+      filtered = filtered.filter((m) => m.match_date.startsWith(today))
     } else if (selectedTab === 'upcoming') {
-      filtered = filtered.filter(m => new Date(m.match_date) > now && m.status === 'scheduled')
+      filtered = filtered.filter((m) => new Date(m.match_date) > now && m.status === 'scheduled')
     }
 
     if (onlyLive) {
-      filtered = filtered.filter(m => m.status === 'ongoing')
+      filtered = filtered.filter((m) => m.status === 'ongoing')
     }
 
     return filtered
@@ -95,16 +95,12 @@ export default function PublicMatchesPage() {
 
     const channel = supabase
       .channel('public-matches')
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'matches' },
-        (payload) => {
-          const updated = payload.new
-          setMatches((prev) =>
-            prev.map((m) => (m.id === updated.id ? { ...m, ...updated } : m))
-          )
-        }
-      )
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'matches' }, (payload) => {
+        const updated = payload.new
+        setMatches((prev) =>
+          prev.map((m) => (m.id === updated.id ? { ...m, ...updated } : m))
+        )
+      })
       .subscribe()
 
     return () => {
@@ -122,7 +118,9 @@ export default function PublicMatchesPage() {
 
   const handleTabChange = (tab: string) => {
     setSelectedTab(tab)
-    router.push(`/public/matches?tab=${tab}${selectedTournament ? `&tournament=${selectedTournament}` : ''}`, { scroll: false })
+    router.push(`/public/matches?tab=${tab}${selectedTournament ? `&tournament=${selectedTournament}` : ''}`, {
+      scroll: false,
+    })
   }
 
   const handleTournamentChange = (tournamentId: string) => {
@@ -137,7 +135,7 @@ export default function PublicMatchesPage() {
       <aside className={styles.sidebar}>
         <h3>Tournaments</h3>
         <ul>
-          {tournaments.map(t => (
+          {tournaments.map((t) => (
             <li key={t.id}>
               <button
                 className={t.id === selectedTournament ? styles.activeTab : ''}
@@ -155,7 +153,7 @@ export default function PublicMatchesPage() {
 
         <div className={styles.topControls}>
           <div className={styles.tabs}>
-            {['all', 'today', 'upcoming'].map(tab => (
+            {['all', 'today', 'upcoming'].map((tab) => (
               <button
                 key={tab}
                 className={selectedTab === tab ? styles.activeTab : ''}
@@ -167,11 +165,7 @@ export default function PublicMatchesPage() {
           </div>
 
           <label className={styles.toggle}>
-            <input
-              type="checkbox"
-              checked={onlyLive}
-              onChange={() => setOnlyLive(!onlyLive)}
-            />
+            <input type="checkbox" checked={onlyLive} onChange={() => setOnlyLive(!onlyLive)} />
             Show only LIVE
           </label>
         </div>
@@ -202,19 +196,22 @@ export default function PublicMatchesPage() {
                   </span>
                   <span className={styles.venue}>📍 {match.venue || 'TBD'}</span>
                 </div>
+
                 <div className={styles.teams}>
                   <span>
                     {match.home_team.logo_url && (
-                      <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
+                      <img src={match.home_team.logo_url} alt="Home Logo" className={styles.logo} />
                     )}
                     {match.home_team.name}
                   </span>
+
                   <span className={styles.score}>
                     {match.home_score ?? '-'} – {match.away_score ?? '-'}
                   </span>
+
                   <span>
                     {match.away_team.logo_url && (
-                      <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
+                      <img src={match.away_team.logo_url} alt="Away Logo" className={styles.logo} />
                     )}
                     {match.away_team.name}
                   </span>
