@@ -168,7 +168,7 @@ export default function PublicStageDetailPage() {
       <h1 className={styles.heading}>Matches & Standings</h1>
 
       <div className={styles.stageSelector}>
-        <label htmlFor="stage-select">Select Stage:</label>
+        <label htmlFor="stage-select" className={styles.groupName}>Select Stage : </label>
         <select
           id="stage-select"
           value={stageId}
