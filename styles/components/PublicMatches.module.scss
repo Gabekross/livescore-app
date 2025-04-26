@@ -24,7 +24,7 @@
   border-right: 1px solid #333;
   font-weight: bold;
   align-items: center; /* 🆕 center content horizontally */
-  text-align: center; /* 🆕 center text inside */
+  
 
   h3 {
     margin-bottom: 1rem;
@@ -309,7 +309,6 @@
 
   .teamsMobile {
     display: block;
-    padding: 0.2rem 0; /* 🛠️ Reduce spacing inside each team line */
   }
 
   .card {
@@ -324,17 +323,4 @@
     padding: 1rem;
    
   }
-  .container {
-    padding: 0.5rem; /* 🛠️ Smaller overall padding */
-  }
-  .card {
-    padding: 0.2rem; /* 🛠️ Reduce inside padding */
-    margin-bottom: 0.1rem; /* 🛠️ Reduce vertical spacing between cards */
-    border-radius: 8px; /* 🛠️ Slightly tighter corners (optional) */
-  }
-  
-  .matchMeta {
-    margin-bottom: 0.3rem; /* 🛠️ Less spacing between status and teams */
-  }
-
 }
