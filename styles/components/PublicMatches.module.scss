@@ -16,10 +16,12 @@
 
 .sidebar {
   width: 200px;
-  padding: 1rem;
+  padding: 1.0rem;
   background: #1c1c1c;
   border-radius: 8px;
   border-right: 1px solid #333;
+  align-items: center; /* 🆕 center content horizontally */
+  text-align: center; /* 🆕 center text inside */
 
   h3 {
     margin-bottom: 1rem;
