@@ -19,6 +19,9 @@ export default function AdminTournamentList() {
 
   return (
     <div className={styles.container}>
+         <Link href={`/admin/dashboard`} className={styles.backButton}>
+        ← Back to Dashboard
+      </Link>
       <h1 className={styles.heading}>Admin – Tournaments</h1>
 
       <Link href="/admin/tournaments/new" className={styles.newButton}>

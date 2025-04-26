@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/MatchEdit.module.scss'
+import Link from 'next/link'
 
 export default function EditMatchPage() {
   const { matchId, id, stageId, groupId } = useParams()
@@ -96,6 +97,10 @@ export default function EditMatchPage() {
 
   return (
     <div className={styles.container}>
+          <Link href={`/admin/tournaments/${id}/stages/`} className={styles.backButton}>
+        ← Back to Stages
+      </Link>
+      
       <h2 className={styles.heading}>Edit Match</h2>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div>

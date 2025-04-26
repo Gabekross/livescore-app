@@ -6,7 +6,6 @@ import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import GroupStandings from '@/components/GroupStandings'
-
 import styles from '@/styles/components/StageList.module.scss'
 
 interface Stage {
@@ -170,16 +169,16 @@ export default function TournamentStagesPage() {
     <div className={styles.container}>
       <div className={styles.headerRow}>
         <Link href="/admin/tournaments" className={styles.backButton}>
-          ← Back to Tournaments
+          ← Back
         </Link>
         <h2 className={styles.heading}>{tournament?.name ?? 'Tournament'}</h2>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link href={`/admin/tournaments/${id}/stages/new`} className={styles.newLink}>
-          + Add New Stage
+      <div className={styles.topActions}>
+        <Link href={`/admin/tournaments/${id}/stages/new`} className={styles.primaryButton}>
+          ➕ Add New Stage
         </Link>
-        <button onClick={handleDeleteTournament} className={styles.deleteButton}>
+        <button onClick={handleDeleteTournament} className={styles.dangerButton}>
           🗑️ Delete Tournament
         </button>
       </div>
@@ -187,42 +186,48 @@ export default function TournamentStagesPage() {
       <ul className={styles.stageList}>
         {stages.map((stage) => (
           <li key={stage.id} className={styles.stageItem}>
-            <div>
+            <div className={styles.stageInfo}>
               <strong>{stage.stage_name}</strong>
-              <div className={styles.metaInfo}>
+              <div className={styles.meta}>
                 <span>Order: {stage.order_number}</span>
                 <span>Groups: {stage.group_count ?? 0}</span>
               </div>
             </div>
-            <div className={styles.actions}>
-              <Link href={`/admin/tournaments/${id}/stages/edit/${stage.id}`} className={styles.editButton}>
-                Edit
+            <div className={styles.stageActions}>
+              <Link href={`/admin/tournaments/${id}/stages/edit/${stage.id}`} className={styles.secondaryButton}>
+                ✏️ Edit
               </Link>
-              <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/new`} className={styles.newLink}>
-                + Add Group
+              <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/new`} className={styles.primaryButtonSmall}>
+                ➕ Add Group
               </Link>
-              <button onClick={() => handleDeleteStage(stage.id)} className={styles.deleteButton}>
-                Delete
+              <button onClick={() => handleDeleteStage(stage.id)} className={styles.dangerButtonSmall}>
+                🗑️ Delete
               </button>
             </div>
 
             {groups[stage.id]?.length > 0 && (
-              <ul style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
+              <ul className={styles.groupList}>
                 {groups[stage.id].map((group) => (
-                  <li key={group.id}>
-                    • {group.name}{' '}
-                    <button onClick={() => toggleGroupVisibility(group.id)} style={{ marginLeft: 8 }}>
-                      {expandedGroups[group.id] ? '▾ Hide Teams' : '▸ Show Teams'}
-                    </button>
+                  <li key={group.id} className={styles.groupItem}>
+                    <div className={styles.groupHeader}>
+                      <span>• {group.name}</span>
+                      <button
+                        onClick={() => toggleGroupVisibility(group.id)}
+                        className={styles.toggleButton}
+                      >
+                        {expandedGroups[group.id] ? '▾ Hide Teams' : '▸ Show Teams'}
+                      </button>
+                    </div>
+
                     {expandedGroups[group.id] && groupTeamMap[group.id] && (
-                      <ul style={{ marginLeft: '1rem', marginTop: '0.3rem' }}>
+                      <ul className={styles.teamList}>
                         {groupTeamMap[group.id].map((team) => (
-                          <li key={team.id} style={{ display: 'flex', alignItems: 'center' }}>
+                          <li key={team.id} className={styles.teamItem}>
                             {team.logo_url && (
                               <img
                                 src={team.logo_url}
                                 alt={team.name}
-                                style={{ width: 20, height: 20, borderRadius: '50%', marginRight: 6 }}
+                                className={styles.teamLogo}
                               />
                             )}
                             {team.name}
@@ -230,7 +235,7 @@ export default function TournamentStagesPage() {
                         ))}
                       </ul>
                     )}
-                    <br />
+
                     <div className={styles.linkRow}>
                       <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/assign-teams`}>
                         🎯 Assign Teams
@@ -239,12 +244,11 @@ export default function TournamentStagesPage() {
                         ⚽ Create Match
                       </Link>
                       <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches`}>
-                         📅 View Matches
+                        📅 View Matches
                       </Link>
                       {/* Add this 👇 below the group name */}
-                      <GroupStandings groupId={group.id} />
+                      {/* <GroupStandings groupId={group.id} /> */}
                     </div>
-
                   </li>
                 ))}
               </ul>

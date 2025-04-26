@@ -53,6 +53,9 @@ export default function MatchListPage() {
 
   return (
     <div className={styles.container}>
+          <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
+        ← Back to Stages
+      </Link>
       <h2 className={styles.heading}>Matches in Group</h2>
       {matches.length === 0 ? (
         <p>No matches scheduled yet.</p>
