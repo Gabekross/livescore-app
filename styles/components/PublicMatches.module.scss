@@ -29,6 +29,7 @@
     font-size: 1rem;
     text-transform: uppercase;
     color: #aaa;
+    color: #eee;
   }
 
   ul {
@@ -66,6 +67,11 @@
   padding: 1rem;
   max-width: 1000px;
   margin: 0 auto;
+  margin: 0 auto;
+  display: flex; /* 🆕 */
+  flex-direction: column; /* 🆕 */
+  align-items: center; /* 🆕 center content horizontally */
+  text-align: center; /* 🆕 center text inside */
 }
 
 .heading {
@@ -78,6 +84,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  justify-content: center; /* 🆕 center buttons */
   align-items: center;
   margin-bottom: 1rem;
   gap: 1rem;

@@ -127,7 +127,7 @@ export default function TournamentStandings({
   }
 
   useEffect(() => {
-    setIsLive(selectedStageName === 'QQQ')
+    setIsLive(selectedStageName === 'Preliminary')
   }, [selectedStageName])
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export default function TournamentStandings({
     }
   }, [tournamentId, isLive])
 
-  const title = isLive ? '🏆 Tournament Standings' : '📌 Final Preliminaries Standings'
+  const title = isLive ? '🏆 Tournament Standings' : '📌 Final Preliminary Standings'
 
   if (standings.length === 0) {
     return <p style={{ color: 'gray', textAlign: 'center' }}>{title} not available yet.</p>
