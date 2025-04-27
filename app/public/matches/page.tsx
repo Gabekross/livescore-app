@@ -149,8 +149,13 @@ export default function PublicMatchesPage() {
           ))}
         </ul>
       </aside>
+    
+
 
       <main className={styles.container}>
+      {selectedTournament && (
+          <TournamentQuickLink tournamentId={selectedTournament} tournaments={tournaments} />
+        )}
         <h1 className={styles.heading}>⚽ Matches</h1>
 
         <div className={styles.topControls}>
@@ -175,10 +180,6 @@ export default function PublicMatchesPage() {
             Show only LIVE
           </label>
         </div>
-
-        {selectedTournament && (
-          <TournamentQuickLink tournamentId={selectedTournament} tournaments={tournaments} />
-        )}
 
         <div className={styles.matchList}>
           {filteredMatches.length === 0 ? (
