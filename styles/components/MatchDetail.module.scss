@@ -165,29 +165,54 @@
   }
 }
 
+// .teamsContainer {
+//   display: flex;
+//   flex-direction: column;
+//   gap: 2rem;
+//   width: 100%;
+//   flex-wrap: wrap;
+//   align-items: center;
+
+//   @media (min-width: 768px) {
+//     flex-direction: row;
+//     justify-content: space-around;
+//   }
+// }
+
+// .teamSection {
+//   background: #1e1e1e;
+//   border-radius: 8px;
+//   padding: 1rem;
+//   width: 100%;
+//   max-width: 100%;
+//   margin: auto;
+
+
+
+//   h3 {
+//     margin-bottom: 1rem;
+//     font-size: 1.2rem;
+//     text-align: center;
+//   }
+// }
 .teamsContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Force horizontal layout */
+  flex-wrap: wrap;     /* Allow wrapping on smaller screens */
+  justify-content: center;
   gap: 2rem;
   width: 100%;
-  flex-wrap: wrap;
-  align-items: center;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: space-around;
-  }
 }
 
 .teamSection {
   background: #1e1e1e;
   border-radius: 8px;
   padding: 1rem;
-  width: 100%;
-  max-width: 100%;
+  flex: 1 1 300px; /* Grow/shrink with a base width */
+  max-width: 400px;
   margin: auto;
 
-  @media (min-width: 768px) {
+    @media (min-width: 768px) {
     max-width: 400px;
   }
 
@@ -197,6 +222,7 @@
     text-align: center;
   }
 }
+
 
 .playerList {
   list-style: none;
