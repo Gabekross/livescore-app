@@ -127,7 +127,7 @@ export default function MatchDetailPage() {
 
       <div className={styles.teamsContainer}>
         <div className={styles.teamSection}>
-          <h3>🏠 {match.home_team.name}</h3>
+          <h3> {match.home_team.name}</h3>
           <ul className={styles.playerList}>
             {homePlayers.map((player) => (
               <li key={player.id}>
@@ -143,7 +143,7 @@ export default function MatchDetailPage() {
         </div>
 
         <div className={styles.teamSection}>
-          <h3>🚩 {match.away_team.name}</h3>
+          <h3> {match.away_team.name}</h3>
           <ul className={styles.playerList}>
             {awayPlayers.map((player) => (
               <li key={player.id}>
