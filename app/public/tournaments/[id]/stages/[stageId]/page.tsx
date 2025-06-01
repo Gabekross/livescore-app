@@ -123,8 +123,6 @@ export default function PublicStageDetailPage() {
             ? 'FT'
             : match.status === 'ongoing'
             ? 'LIVE'
-            : match.status === 'halftime'
-            ? 'HALFTIME'
             : new Date(match.match_date).toLocaleString('en-GB', {
                 day: '2-digit',
                 month: 'short',

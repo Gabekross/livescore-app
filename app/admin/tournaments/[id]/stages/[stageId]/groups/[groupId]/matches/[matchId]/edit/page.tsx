@@ -147,7 +147,6 @@ export default function EditMatchPage() {
             <option value="scheduled">Scheduled</option>
             <option value="ongoing">Ongoing</option>
             <option value="finished">Finished</option>
-            <option value="halftime">Halftime</option>
           </select>
         </div>
 
