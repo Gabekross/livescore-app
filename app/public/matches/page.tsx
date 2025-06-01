@@ -193,6 +193,8 @@ export default function PublicMatchesPage() {
                       ? 'FT'
                       : match.status === 'ongoing'
                       ? 'LIVE'
+                      : match.status === 'halftime'
+                      ? 'HALFTIME'
                       : new Date(match.match_date).toLocaleDateString('en-GB', {
                           day: '2-digit',
                           month: 'short',
