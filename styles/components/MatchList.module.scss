@@ -85,3 +85,17 @@
     }
   }
   
+  .deleteButton {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  margin-left: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  &:hover {
+    background: #d9363e;
+  }
+}
