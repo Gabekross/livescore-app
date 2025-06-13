@@ -217,7 +217,7 @@ export default function PublicStageDetailPage() {
                 {matchesByGroup[group.id]?.map(m => <MatchCard key={m.id} match={m} />)}
               </div>
 
-              {selectedStageName === 'Preliminary' && <GroupStandings groupId={group.id} />}
+              {selectedStageName === 'Group Stage' && <GroupStandings groupId={group.id} />}
             </>
           )}
         </div>
