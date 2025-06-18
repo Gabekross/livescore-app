@@ -18,6 +18,8 @@ interface Stage {
 interface Tournament {
   id: string
   name: string
+  start_date?: string
+  end_date?: string
 }
 
 interface Group {
@@ -40,6 +42,10 @@ export default function TournamentStagesPage() {
   const [groupTeamMap, setGroupTeamMap] = useState<Record<string, Team[]>>({})
   const [tournament, setTournament] = useState<Tournament | null>(null)
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
+  const [editingStageId, setEditingStageId] = useState<string | null>(null)
+  const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
+  const [stageNameDraft, setStageNameDraft] = useState('')
+  const [groupNameDraft, setGroupNameDraft] = useState('')
 
   const toggleGroupVisibility = (groupId: string) => {
     setExpandedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }))
@@ -48,50 +54,32 @@ export default function TournamentStagesPage() {
   const fetchTournament = async () => {
     const { data, error } = await supabase
       .from('tournaments')
-      .select('id, name')
+      .select('id, name, start_date, end_date')
       .eq('id', id)
       .single()
 
-    if (error) {
-      console.error('Error fetching tournament:', error)
-    } else {
-      setTournament(data)
-    }
+    if (!error && data) setTournament(data)
   }
 
   const fetchStages = async () => {
-    if (!id || typeof id !== 'string') {
-      console.error('No valid tournament ID')
-      return
-    }
-
     const { data, error } = await supabase
       .from('tournament_stages')
       .select('*')
       .eq('tournament_id', id)
-      .order('order_number', { ascending: true })
+      .order('order_number')
 
-    if (error) {
-      console.error('Supabase error loading stages:', error)
-      toast.error('Error loading stages')
-      return
+    if (!error && data) {
+      const enrichedStages = await Promise.all(
+        data.map(async (stage) => {
+          const { count } = await supabase
+            .from('groups')
+            .select('*', { count: 'exact', head: true })
+            .eq('stage_id', stage.id)
+          return { ...stage, group_count: count ?? 0 }
+        })
+      )
+      setStages(enrichedStages)
     }
-
-    const enrichedStages = await Promise.all(
-      data.map(async (stage: any) => {
-        const { count: groupCount } = await supabase
-          .from('groups')
-          .select('*', { count: 'exact', head: true })
-          .eq('stage_id', stage.id)
-
-        return {
-          ...stage,
-          group_count: groupCount ?? 0,
-        }
-      })
-    )
-
-    setStages(enrichedStages)
   }
 
   const fetchGroups = async () => {
@@ -99,18 +87,14 @@ export default function TournamentStagesPage() {
       .from('groups')
       .select('id, name, stage_id')
 
-    if (error) {
-      console.error('Error fetching groups:', error)
-      return
+    if (!error && data) {
+      const grouped = data.reduce((acc: Record<string, Group[]>, group: Group) => {
+        if (!acc[group.stage_id]) acc[group.stage_id] = []
+        acc[group.stage_id].push(group)
+        return acc
+      }, {})
+      setGroups(grouped)
     }
-
-    const grouped = data.reduce((acc: Record<string, Group[]>, group: Group) => {
-      if (!acc[group.stage_id]) acc[group.stage_id] = []
-      acc[group.stage_id].push(group)
-      return acc
-    }, {})
-
-    setGroups(grouped)
   }
 
   const fetchGroupTeams = async () => {
@@ -165,6 +149,36 @@ export default function TournamentStagesPage() {
     }
   }
 
+  const handleSaveStageName = async (stageId: string) => {
+    const { error } = await supabase
+      .from('tournament_stages')
+      .update({ stage_name: stageNameDraft })
+      .eq('id', stageId)
+
+    if (!error) {
+      toast.success('Stage name updated')
+      setEditingStageId(null)
+      fetchStages()
+    } else {
+      toast.error('Failed to update stage name')
+    }
+  }
+
+  const handleSaveGroupName = async (groupId: string) => {
+    const { error } = await supabase
+      .from('groups')
+      .update({ name: groupNameDraft })
+      .eq('id', groupId)
+
+    if (!error) {
+      toast.success('Group name updated')
+      setEditingGroupId(null)
+      fetchGroups()
+    } else {
+      toast.error('Failed to update group name')
+    }
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.headerRow}>
@@ -187,11 +201,29 @@ export default function TournamentStagesPage() {
         {stages.map((stage) => (
           <li key={stage.id} className={styles.stageItem}>
             <div className={styles.stageInfo}>
-              <strong>{stage.stage_name}</strong>
-              <div className={styles.meta}>
-                <span>Order: {stage.order_number}</span>
-                <span>Groups: {stage.group_count ?? 0}</span>
-              </div>
+              {editingStageId === stage.id ? (
+                <>
+                  <input
+                    className={styles.stageNameInput}
+                    value={stageNameDraft}
+                    onChange={(e) => setStageNameDraft(e.target.value)}
+                  />
+                  <button onClick={() => handleSaveStageName(stage.id)}>💾 Save</button>
+                  <button onClick={() => setEditingStageId(null)}>❌ Cancel</button>
+                </>
+              ) : (
+                <>
+                  <strong>{stage.stage_name}</strong>
+                  <button onClick={() => {
+                    setStageNameDraft(stage.stage_name)
+                    setEditingStageId(stage.id)
+                  }}>✏️ Edit</button>
+                </>
+              )}
+            </div>
+            <div className={styles.meta}>
+              <span>Order: {stage.order_number}</span>
+              <span>Groups: {stage.group_count ?? 0}</span>
             </div>
             <div className={styles.stageActions}>
               <Link href={`/admin/tournaments/${id}/stages/edit/${stage.id}`} className={styles.secondaryButton}>
@@ -210,13 +242,25 @@ export default function TournamentStagesPage() {
                 {groups[stage.id].map((group) => (
                   <li key={group.id} className={styles.groupItem}>
                     <div className={styles.groupHeader}>
-                      <span>• {group.name}</span>
-                      <button
-                        onClick={() => toggleGroupVisibility(group.id)}
-                        className={styles.toggleButton}
-                      >
-                        {expandedGroups[group.id] ? '▾ Hide Teams' : '▸ Show Teams'}
-                      </button>
+                      {editingGroupId === group.id ? (
+                        <>
+                          <input
+                            className={styles.groupNameInput}
+                            value={groupNameDraft}
+                            onChange={(e) => setGroupNameDraft(e.target.value)}
+                          />
+                          <button onClick={() => handleSaveGroupName(group.id)}>💾 Save</button>
+                          <button onClick={() => setEditingGroupId(null)}>❌ Cancel</button>
+                        </>
+                      ) : (
+                        <>
+                          <span>• {group.name}</span>
+                          <button onClick={() => {
+                            setGroupNameDraft(group.name)
+                            setEditingGroupId(group.id)
+                          }}>✏️ Edit</button>
+                        </>
+                      )}
                     </div>
 
                     {expandedGroups[group.id] && groupTeamMap[group.id] && (
@@ -246,8 +290,6 @@ export default function TournamentStagesPage() {
                       <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches`}>
                         📅 View Matches
                       </Link>
-                      {/* Add this 👇 below the group name */}
-                      {/* <GroupStandings groupId={group.id} /> */}
                     </div>
                   </li>
                 ))}
