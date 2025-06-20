@@ -20,16 +20,31 @@
 }
 
 /* === PLAYER NAME - TOUCHES BOTTOM === */
+// .playerNameBelow {
+//   position: absolute;
+//   top: 100%;
+//   transform: translateY(0.1rem);
+//   font-weight: 500;
+//   color: white;
+//   white-space: nowrap;
+//   line-height: 1;
+//   font-size: 0.58rem;
+// }
 .playerNameBelow {
   position: absolute;
   top: 100%;
   transform: translateY(0.1rem);
-  font-weight: 500;
+  font-weight: 520;
   color: white;
-  white-space: nowrap;
   line-height: 1;
   font-size: 0.58rem;
+  text-align: center;
+
+  white-space: normal;         // ✅ allow line wrapping
+  word-break: break-word;      // ✅ break long words
+  max-width: 48px;             // ✅ prevent overflow
 }
+
 
 /* === STAT ICONS ON DOT CORNERS === */
 .statsTopLeft,
@@ -195,8 +210,13 @@
     font-size: 0.55rem;
   }
 
+  // .playerNameBelow {
+  //   font-size: 0.45rem;
+  // }
+
   .playerNameBelow {
     font-size: 0.45rem;
+    max-width: 36px;
   }
 
   .statsTopLeft,
