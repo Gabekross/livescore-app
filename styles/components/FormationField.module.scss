@@ -23,100 +23,61 @@
   position: absolute;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  width: 52px;
-  height: 52px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-align: center;
-  line-height: 52px;
-  z-index: 2;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   color: white;
+  z-index: 2;
 }
 
-/* === Dot Backgrounds === */
-.homeDot {
-  background-color: #1e90ff; // DodgerBlue
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.awayDot {
-  background-color: #dc143c; // Crimson
-  
-}
-
-/* === Number in Dot === */
 .playerNumber {
-  font-size: 0.9rem;
   font-weight: bold;
 }
 
-/* === Player Name & Stats === */
+/* === Name Labels === */
 .playerNameTop {
   position: absolute;
-  bottom: 38px;
+  bottom: 60px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.58rem;
   font-weight: 500;
   color: white;
   white-space: nowrap;
+  line-height: 1;
 }
 
 .playerNameBottom {
   position: absolute;
-  top: 38px;
+  top: 60px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.58rem;
   font-weight: 500;
   color: white;
   white-space: nowrap;
-}
-
-.iconsTop {
-  position: absolute;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.7rem;
-  color: white;
-  white-space: nowrap;
-}
-
-.iconsBottom {
-  position: absolute;
-  top: 62px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.7rem;
-  color: white;
-  white-space: nowrap;
+  line-height: 1;
 }
 
 .playerNameBelow {
   position: absolute;
-  top: 28px;
+  top: 48px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.58rem;
   font-weight: 500;
   color: white;
   white-space: nowrap;
+  line-height: 1;
 }
 
-.iconsBelow {
-  position: absolute;
-  top: 52px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.7rem;
-  color: white;
-  white-space: nowrap;
+/* === Dot Backgrounds === */
+.homeDot {
+  background-color: #1e90ff;
+  background: rgba(0, 0, 0, 0.4);
 }
 
+.awayDot {
+  background-color: #dc143c;
+}
 
 /* === Team Labels === */
 .teamLabelTop,
@@ -135,12 +96,12 @@
 
 .teamLabelTop {
   top: 0;
-  justify-content: flex-start; // away team
+  justify-content: flex-start;
 }
 
 .teamLabelBottom {
   bottom: 0;
-  justify-content: flex-start; // home team
+  justify-content: flex-start;
 }
 
 /* === Logos === */
@@ -152,80 +113,88 @@
   margin: 0 0.5rem;
 }
 
+/* === Density Scaling === */
+.dense .playerDot {
+  width: 42px;
+  height: 42px;
+  font-size: 0.7rem;
+  line-height: 42px;
+}
+
+.dense .playerNumber {
+  font-size: 0.65rem;
+}
+
+.dense .playerNameTop,
+.dense .playerNameBottom,
+.dense .playerNameBelow {
+  font-size: 0.48rem;
+}
+
+.medium .playerDot {
+  width: 48px;
+  height: 48px;
+  font-size: 0.8rem;
+  line-height: 48px;
+}
+
+.medium .playerNumber {
+  font-size: 0.7rem;
+}
+
+.medium .playerNameTop,
+.medium .playerNameBottom,
+.medium .playerNameBelow {
+  font-size: 0.52rem;
+}
+
+.spacious .playerDot {
+  width: 56px;
+  height: 56px;
+  font-size: 1rem;
+  line-height: 56px;
+}
+
+.spacious .playerNumber {
+  font-size: 0.85rem;
+}
+
+.spacious .playerNameTop,
+.spacious .playerNameBottom,
+.spacious .playerNameBelow {
+  font-size: 0.6rem;
+}
+
 /* === Mobile View === */
 @media (max-width: 600px) {
-  .playerDot {
-    width: 30px;
-    height: 30px;
-    font-size: 0.60rem;
-    line-height: 30px;
+  .dense .playerDot {
+    width: 28px;
+    height: 28px;
+    font-size: 0.55rem;
+    line-height: 28px;
+  }
+
+  .medium .playerDot {
+    width: 34px;
+    height: 34px;
+    font-size: 0.6rem;
+    line-height: 34px;
+  }
+
+  .spacious .playerDot {
+    width: 40px;
+    height: 40px;
+    font-size: 0.65rem;
+    line-height: 40px;
   }
 
   .playerNumber {
-    font-size: 0.75rem;
+    font-size: 0.55rem;
   }
 
   .playerNameTop,
-  .playerNameBottom {
-    font-size: 0.50rem;
+  .playerNameBottom,
+  .playerNameBelow {
+    font-size: 0.45rem;
   }
-
-  .iconsTop,
-  .iconsBottom {
-    font-size: 0.4rem;
-  }
-
-  .teamLogo {
-    width: 24px;
-    height: 24px;
-  }
-
-  .teamLabelTop,
-  .teamLabelBottom {
-    font-size: 0.75rem;
-  }
-}
-
-.benchContainer {
-  display: flex;
-  justify-content: space-between;
-  margin: 1.5rem auto 2rem;
-  max-width: 900px;
-  padding: 0 1rem;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-.benchSection {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 1rem;
-  color: #fff;
-}
-
-.benchSection h3 {
-  font-size: 1rem;
-  margin-bottom: 0.75rem;
-  border-bottom: 1px solid #555;
-  padding-bottom: 0.3rem;
-}
-
-.benchSection ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.benchSection li {
-  margin: 0.3rem 0;
-  font-size: 0.85rem;
-  padding: 0.25rem 0.5rem;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 4px;
 }
