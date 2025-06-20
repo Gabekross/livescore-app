@@ -49,17 +49,17 @@
 
 /* === Number in Dot === */
 .playerNumber {
-  font-size: 1.1rem;
+  font-size: 1.0rem;
   font-weight: bold;
 }
 
 /* === Player Name & Stats === */
 .playerNameTop {
   position: absolute;
-  bottom: 58px;
+  bottom: 48px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   font-weight: 500;
   color: white;
   white-space: nowrap;
@@ -67,10 +67,10 @@
 
 .playerNameBottom {
   position: absolute;
-  top: 58px;
+  top: 48px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   font-weight: 500;
   color: white;
   white-space: nowrap;
@@ -78,7 +78,7 @@
 
 .iconsTop {
   position: absolute;
-  bottom: 42px;
+  bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.7rem;
@@ -88,7 +88,7 @@
 
 .iconsBottom {
   position: absolute;
-  top: 72px;
+  top: 62px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 0.7rem;
@@ -98,10 +98,10 @@
 
 .playerNameBelow {
   position: absolute;
-  top: 38px;
+  top: 28px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.78rem;
+  font-size: 0.68rem;
   font-weight: 500;
   color: white;
   white-space: nowrap;
@@ -155,24 +155,24 @@
 /* === Mobile View === */
 @media (max-width: 600px) {
   .playerDot {
-    width: 42px;
-    height: 42px;
-    font-size: 0.75rem;
-    line-height: 42px;
+    width: 32px;
+    height: 32px;
+    font-size: 0.65rem;
+    line-height: 32px;
   }
 
   .playerNumber {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
   }
 
   .playerNameTop,
   .playerNameBottom {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
   }
 
   .iconsTop,
   .iconsBottom {
-    font-size: 0.6rem;
+    font-size: 0.5rem;
   }
 
   .teamLogo {
@@ -182,7 +182,7 @@
 
   .teamLabelTop,
   .teamLabelBottom {
-    font-size: 0.95rem;
+    font-size: 0.75rem;
   }
 }
 
