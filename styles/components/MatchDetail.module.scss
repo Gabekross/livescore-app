@@ -248,3 +248,46 @@
     font-size: 0.75rem;
   }
 }
+.playerDot {
+  width: 38px;
+  height: 38px;
+  font-size: 0.85rem;
+  margin-right: 0.4rem;
+
+  @media (max-width: 600px) {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7rem;
+    margin-right: 0.3rem;
+  }
+}
+
+.playerName {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem; // reduce spacing between name and dot
+
+  @media (max-width: 600px) {
+    font-size: 0.7rem;
+    gap: 0.3rem;
+  }
+}
+
+.playerNameBelow {
+  font-size: 0.6rem;
+  margin-top: 2px;
+
+  @media (max-width: 600px) {
+    font-size: 0.48rem;
+    margin-top: 1px;
+  }
+}
+
+.benchItem {
+  gap: 0.5rem;
+
+  @media (max-width: 600px) {
+    gap: 0.35rem;
+  }
+}
