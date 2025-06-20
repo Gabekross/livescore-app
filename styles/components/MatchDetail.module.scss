@@ -294,10 +294,10 @@
 
 /* FIELD & BENCH player dot size reduction */
 .playerDot {
-  width: 30px;
-  height: 30px;
-  font-size: 0.65rem;
-  line-height: 30px;
+  width: 20px;
+  height: 20px;
+  font-size: 0.45rem;
+  line-height: 20px;
   margin: 0;
   padding: 0;
   display: flex;
@@ -307,7 +307,7 @@
 
 /* Player name beside dot — reduced spacing */
 .playerName {
-  font-size: 0.75rem;
+  font-size: 0.55rem;
   display: flex;
   align-items: center;
   gap: 0.25rem; // minimal spacing
@@ -316,8 +316,8 @@
 
 /* Smaller icons below name (if any) */
 .iconsInline {
-  font-size: 0.6rem;
-  margin-top: 1px;
+  font-size: 0.4rem;
+  margin-top: 0.2px;
 }
 
 /* Smaller on mobile */
