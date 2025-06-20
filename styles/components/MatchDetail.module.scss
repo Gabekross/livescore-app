@@ -180,3 +180,71 @@
     flex: 1 1 50%;
   }
 }
+
+.playerDot {
+  width: 42px;
+  height: 42px;
+  font-size: 1rem;
+
+  @media (max-width: 600px) {
+    width: 30px;
+    height: 30px;
+    font-size: 0.75rem;
+  }
+}
+
+.playerNumber {
+  font-size: 0.85rem;
+
+  @media (max-width: 600px) {
+    font-size: 0.6rem;
+  }
+}
+
+.playerNameBelow {
+  font-size: 0.65rem;
+
+  @media (max-width: 600px) {
+    font-size: 0.5rem;
+  }
+}
+
+.iconsBelow {
+  font-size: 0.6rem;
+
+  @media (max-width: 600px) {
+    font-size: 0.45rem;
+  }
+}
+
+.subIcon {
+  font-size: 0.85rem;
+
+  @media (max-width: 600px) {
+    font-size: 0.65rem;
+  }
+}
+
+.benchCard {
+  padding: 1rem;
+
+  @media (max-width: 600px) {
+    padding: 0.5rem;
+  }
+}
+
+.benchCard h4 {
+  font-size: 1.1rem;
+
+  @media (max-width: 600px) {
+    font-size: 0.85rem;
+  }
+}
+
+.benchCard li {
+  font-size: 0.95rem;
+
+  @media (max-width: 600px) {
+    font-size: 0.75rem;
+  }
+}
