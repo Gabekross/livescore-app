@@ -26,17 +26,10 @@ interface Props {
   away: TeamFormation
 }
 
-// Density classifier
 const getDensityClass = (playerCount: number): string => {
   if (playerCount >= 11) return styles.dense
   if (playerCount >= 8) return styles.medium
   return styles.spacious
-}
-
-const getNamePositionClass = (topPercent: number): string => {
-  if (topPercent < 30) return styles.playerNameBottom
-  if (topPercent > 70) return styles.playerNameTop
-  return styles.playerNameBelow
 }
 
 export default function CombinedFormationField({ home, away }: Props) {
@@ -63,16 +56,27 @@ export default function CombinedFormationField({ home, away }: Props) {
         y = `${yValue.toFixed(2)}%`
       }
 
-      const nameClass = getNamePositionClass(yValue)
-
       return (
         <div
           key={player.id}
           className={`${styles.playerDot} ${isHome ? styles.homeDot : styles.awayDot} ${densityClass}`}
           style={{ left: x, top: y }}
         >
+          {/* Stat Icons */}
+          <div className={styles.statsTopLeft}>
+            {player.yellow_cards ? `🟨${player.yellow_cards}` : ''}
+            {player.red_cards ? `🟥${player.red_cards}` : ''}
+          </div>
+          <div className={styles.statsTopRight}>
+            {player.goals ? `⚽${player.goals}` : ''}
+            {player.assists ? `🎯${player.assists}` : ''}
+          </div>
+
+          {/* Player Number */}
           <div className={styles.playerNumber}>{player.jersey_number ?? ''}</div>
-          <div className={nameClass}>{player.name.split(' ')[0]}</div>
+
+          {/* Player Name */}
+          <div className={styles.playerNameBelow}>{player.name.split(' ')[0]}</div>
         </div>
       )
     })

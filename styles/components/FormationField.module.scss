@@ -1,24 +1,4 @@
-.fieldContainer {
-  width: 100%;
-  max-width: 900px;
-  margin: 2rem auto;
-  position: relative;
-  aspect-ratio: 2 / 3;
-  background-image: url('/field.png');
-  background-size: cover;
-  background-position: center;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 2px solid #fff;
-}
-
-.field {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-/* === Player Dot Base === */
+/* === PLAYER DOT BASE === */
 .playerDot {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -29,47 +9,49 @@
   justify-content: center;
   color: white;
   z-index: 2;
+  position: absolute;
+  text-align: center;
 }
 
+/* === NUMBER IN DOT === */
 .playerNumber {
   font-weight: bold;
+  z-index: 2;
 }
 
-/* === Name Labels === */
-.playerNameTop {
-  position: absolute;
-  bottom: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-weight: 500;
-  color: white;
-  white-space: nowrap;
-  line-height: 1;
-}
-
-.playerNameBottom {
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-weight: 500;
-  color: white;
-  white-space: nowrap;
-  line-height: 1;
-}
-
+/* === PLAYER NAME - TOUCHES BOTTOM === */
 .playerNameBelow {
   position: absolute;
-  top: 48px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 100%;
+  transform: translateY(0.1rem);
   font-weight: 500;
   color: white;
   white-space: nowrap;
   line-height: 1;
+  font-size: 0.58rem;
 }
 
-/* === Dot Backgrounds === */
+/* === STAT ICONS ON DOT CORNERS === */
+.statsTopLeft,
+.statsTopRight {
+  position: absolute;
+  font-size: 0.65rem;
+  white-space: nowrap;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.statsTopLeft {
+  top: -0.3rem;
+  left: -0.4rem;
+}
+
+.statsTopRight {
+  top: -0.3rem;
+  right: -0.4rem;
+}
+
+/* === TEAM DOT COLORS === */
 .homeDot {
   background-color: #1e90ff;
   background: rgba(0, 0, 0, 0.4);
@@ -79,7 +61,68 @@
   background-color: #dc143c;
 }
 
-/* === Team Labels === */
+/* === DENSITY SCALING === */
+.dense .playerDot {
+  width: 42px;
+  height: 42px;
+  font-size: 0.7rem;
+  line-height: 42px;
+}
+
+.dense .playerNumber {
+  font-size: 0.65rem;
+}
+
+.dense .playerNameBelow {
+  font-size: 0.48rem;
+}
+
+.dense .statsTopLeft,
+.dense .statsTopRight {
+  font-size: 0.5rem;
+}
+
+.medium .playerDot {
+  width: 48px;
+  height: 48px;
+  font-size: 0.8rem;
+  line-height: 48px;
+}
+
+.medium .playerNumber {
+  font-size: 0.7rem;
+}
+
+.medium .playerNameBelow {
+  font-size: 0.52rem;
+}
+
+.medium .statsTopLeft,
+.medium .statsTopRight {
+  font-size: 0.6rem;
+}
+
+.spacious .playerDot {
+  width: 56px;
+  height: 56px;
+  font-size: 1rem;
+  line-height: 56px;
+}
+
+.spacious .playerNumber {
+  font-size: 0.85rem;
+}
+
+.spacious .playerNameBelow {
+  font-size: 0.6rem;
+}
+
+.spacious .statsTopLeft,
+.spacious .statsTopRight {
+  font-size: 0.7rem;
+}
+
+/* === TEAM LABELS === */
 .teamLabelTop,
 .teamLabelBottom {
   position: absolute;
@@ -104,68 +147,28 @@
   justify-content: flex-start;
 }
 
-/* === Logos === */
-.teamLogo {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 0.5rem;
+/* === FIELD === */
+.fieldContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background-image: url('/field.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #fff;
 }
 
-/* === Density Scaling === */
-.dense .playerDot {
-  width: 42px;
-  height: 42px;
-  font-size: 0.7rem;
-  line-height: 42px;
+.field {
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-.dense .playerNumber {
-  font-size: 0.65rem;
-}
-
-.dense .playerNameTop,
-.dense .playerNameBottom,
-.dense .playerNameBelow {
-  font-size: 0.48rem;
-}
-
-.medium .playerDot {
-  width: 48px;
-  height: 48px;
-  font-size: 0.8rem;
-  line-height: 48px;
-}
-
-.medium .playerNumber {
-  font-size: 0.7rem;
-}
-
-.medium .playerNameTop,
-.medium .playerNameBottom,
-.medium .playerNameBelow {
-  font-size: 0.52rem;
-}
-
-.spacious .playerDot {
-  width: 56px;
-  height: 56px;
-  font-size: 1rem;
-  line-height: 56px;
-}
-
-.spacious .playerNumber {
-  font-size: 0.85rem;
-}
-
-.spacious .playerNameTop,
-.spacious .playerNameBottom,
-.spacious .playerNameBelow {
-  font-size: 0.6rem;
-}
-
-/* === Mobile View === */
+/* === MOBILE === */
 @media (max-width: 600px) {
   .dense .playerDot {
     width: 28px;
@@ -192,9 +195,18 @@
     font-size: 0.55rem;
   }
 
-  .playerNameTop,
-  .playerNameBottom,
   .playerNameBelow {
     font-size: 0.45rem;
+  }
+
+  .statsTopLeft,
+  .statsTopRight {
+    font-size: 0.45rem;
+    top: -0.2rem;
+  }
+
+  .teamLabelTop,
+  .teamLabelBottom {
+    font-size: 0.75rem;
   }
 }
