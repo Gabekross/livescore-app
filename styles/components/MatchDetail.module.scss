@@ -1,3 +1,4 @@
+/* Main Layout */
 .container {
   padding: 1rem;
   color: #f0f0f0;
@@ -6,6 +7,7 @@
   overflow-x: hidden;
 }
 
+/* Back Button */
 .backButton {
   display: inline-block;
   margin-bottom: 1rem;
@@ -23,6 +25,7 @@
   }
 }
 
+/* Match Header */
 .matchHeader {
   text-align: center;
   margin-bottom: 2rem;
@@ -48,69 +51,132 @@
   }
 }
 
+.teamLogo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 8px;
+  vertical-align: middle;
+}
+
+/* Spinner */
 .spinner {
   font-size: 1rem;
   animation: spin 1s infinite linear;
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.teamsContainer {
+/* Bench Section: Align with field */
+.benchContainer {
   display: flex;
-  flex-direction: row; /* Force horizontal layout */
-  flex-wrap: wrap;     /* Allow wrapping on smaller screens */
-  justify-content: center;
-  gap: 2rem;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: nowrap; /* Stay side by side on all screens */
+  margin: 2rem auto 0;
+  max-width: 900px;
   width: 100%;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
 
-.teamSection {
+/* Bench Card */
+.benchCard {
+  flex: 1 1 48%;
   background: #1e1e1e;
-  border-radius: 8px;
+  color: #fff;
   padding: 1rem;
-  flex: 1 1 300px; /* Grow/shrink with a base width */
-  max-width: 400px;
-  margin: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  min-width: 0;
 
-    @media (min-width: 768px) {
-    max-width: 400px;
+  h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #444;
+    padding-bottom: 0.5rem;
   }
 
-  h3 {
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    text-align: center;
-  }
-}
-
-
-.playerList {
-  list-style: none;
-  padding: 0;
-
-  li {
-    margin-bottom: 0.6rem;
-    font-size: 0.95rem;
-    line-height: 1.3;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
 }
 
-.playerStats {
-  font-size: 0.8rem;
-  color: #aaa;
-  margin-top: 0.2rem;
+.benchList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
-.logo {
-  width: 24px;
-  height: 24px;
+.benchItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Player Dot Styles */
+.playerDot {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  object-fit: cover;
+  font-weight: bold;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-color: #777;
+}
+
+.homeDot {
+  background-color: #1e90ff;
+}
+
+.awayDot {
+  background-color: #dc143c;
+}
+
+.playerInfo {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: white;
+}
+
+.playerName {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.iconsInline {
+  font-size: 0.75rem;
+  margin-top: 2px;
+  color: #fff;
+}
+
+.subIcon {
+  font-size: 0.85rem;
+  margin-left: 4px;
+}
+
+/* Preserve side-by-side layout on smaller screens */
+@media (max-width: 700px) {
+  .benchContainer {
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .benchCard {
+    flex: 1 1 50%;
+  }
 }

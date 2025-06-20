@@ -1,0 +1,231 @@
+.fieldContainer {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background-image: url('/field.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid #fff;
+}
+
+.field {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* === Player Dot Base === */
+.playerDot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 52px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* === Dot Backgrounds === */
+.homeDot {
+  background-color: #1e90ff; // DodgerBlue
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.awayDot {
+  background-color: #dc143c; // Crimson
+  
+}
+
+/* === Number in Dot === */
+.playerNumber {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+/* === Player Name & Stats === */
+.playerNameTop {
+  position: absolute;
+  bottom: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+}
+
+.playerNameBottom {
+  position: absolute;
+  top: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+}
+
+.iconsTop {
+  position: absolute;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: white;
+  white-space: nowrap;
+}
+
+.iconsBottom {
+  position: absolute;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: white;
+  white-space: nowrap;
+}
+
+.playerNameBelow {
+  position: absolute;
+  top: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: white;
+  white-space: nowrap;
+}
+
+.iconsBelow {
+  position: absolute;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: white;
+  white-space: nowrap;
+}
+
+
+/* === Team Labels === */
+.teamLabelTop,
+.teamLabelBottom {
+  position: absolute;
+  width: 100%;
+  font-weight: bold;
+  font-size: 1.1rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  padding: 6px 1rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+}
+
+.teamLabelTop {
+  top: 0;
+  justify-content: flex-start; // away team
+}
+
+.teamLabelBottom {
+  bottom: 0;
+  justify-content: flex-start; // home team
+}
+
+/* === Logos === */
+.teamLogo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 0.5rem;
+}
+
+/* === Mobile View === */
+@media (max-width: 600px) {
+  .playerDot {
+    width: 42px;
+    height: 42px;
+    font-size: 0.75rem;
+    line-height: 42px;
+  }
+
+  .playerNumber {
+    font-size: 0.9rem;
+  }
+
+  .playerNameTop,
+  .playerNameBottom {
+    font-size: 0.65rem;
+  }
+
+  .iconsTop,
+  .iconsBottom {
+    font-size: 0.6rem;
+  }
+
+  .teamLogo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .teamLabelTop,
+  .teamLabelBottom {
+    font-size: 0.95rem;
+  }
+}
+
+.benchContainer {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.5rem auto 2rem;
+  max-width: 900px;
+  padding: 0 1rem;
+  gap: 1rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.benchSection {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #fff;
+}
+
+.benchSection h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid #555;
+  padding-bottom: 0.3rem;
+}
+
+.benchSection ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.benchSection li {
+  margin: 0.3rem 0;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}

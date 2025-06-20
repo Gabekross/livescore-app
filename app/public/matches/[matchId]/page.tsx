@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import CombinedFormationField from '@/components/match/FormationField'
 import styles from '@/styles/components/MatchDetail.module.scss'
 
 interface Match {
@@ -10,10 +11,12 @@ interface Match {
   match_date: string
   venue?: string
   status: string
-  home_team: { id: string; name: string; logo_url?: string }
-  away_team: { id: string; name: string; logo_url?: string }
   home_score: number | null
   away_score: number | null
+  home_formation?: string
+  away_formation?: string
+  home_team: { id: string; name: string; logo_url?: string }
+  away_team: { id: string; name: string; logo_url?: string }
 }
 
 interface Player {
@@ -31,20 +34,18 @@ export default function MatchDetailPage() {
   const router = useRouter()
 
   const [match, setMatch] = useState<Match | null>(null)
-  const [homePlayers, setHomePlayers] = useState<Player[]>([])
-  const [awayPlayers, setAwayPlayers] = useState<Player[]>([])
+  const [homeLineup, setHomeLineup] = useState<Player[]>([])
+  const [awayLineup, setAwayLineup] = useState<Player[]>([])
+  const [homeBench, setHomeBench] = useState<Player[]>([])
+  const [awayBench, setAwayBench] = useState<Player[]>([])
   const [isRefreshing, setIsRefreshing] = useState(false)
 
   const fetchMatch = async () => {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('matches')
       .select(`
-        id,
-        match_date,
-        venue,
-        status,
-        home_score,
-        away_score,
+        id, match_date, venue, status, home_score, away_score,
+        home_formation, away_formation,
         home_team:home_team_id(id, name, logo_url),
         away_team:away_team_id(id, name, logo_url)
       `)
@@ -60,25 +61,50 @@ export default function MatchDetailPage() {
     }
   }
 
-  const fetchPlayers = async () => {
+  const fetchLineups = async () => {
     if (!match) return
-    const { data } = await supabase
-      .from('players')
-      .select('id, name, jersey_number, team_id, goals, yellow_cards, red_cards')
-      .in('team_id', [match.home_team.id, match.away_team.id])
 
-    if (data) {
-      const home = data.filter(p => p.team_id === match.home_team.id)
-      const away = data.filter(p => p.team_id === match.away_team.id)
-      setHomePlayers(home)
-      setAwayPlayers(away)
+    const { data, error } = await supabase
+      .from('match_lineups')
+      .select(`
+        player_id,
+        team_id,
+        is_starting,
+        goals,
+        yellow_cards,
+        red_cards,
+        players(id, name, jersey_number)
+      `)
+      .eq('match_id', match.id)
+
+    if (error) {
+      console.error('Lineup fetch error:', error)
+      return
     }
+
+    const normalize = (p: any): Player => {
+      const player = Array.isArray(p.players) ? p.players[0] : p.players
+      return {
+        id: player?.id,
+        name: player?.name,
+        jersey_number: player?.jersey_number,
+        team_id: p.team_id,
+        goals: p?.goals,
+        yellow_cards: p?.yellow_cards,
+        red_cards: p?.red_cards
+      }
+    }
+
+    setHomeLineup(data.filter(p => p.team_id === match.home_team.id && p.is_starting && p.players).map(normalize))
+    setAwayLineup(data.filter(p => p.team_id === match.away_team.id && p.is_starting && p.players).map(normalize))
+    setHomeBench(data.filter(p => p.team_id === match.home_team.id && !p.is_starting && p.players).map(normalize))
+    setAwayBench(data.filter(p => p.team_id === match.away_team.id && !p.is_starting && p.players).map(normalize))
   }
 
   const refreshData = async () => {
     setIsRefreshing(true)
     await fetchMatch()
-    await fetchPlayers()
+    await fetchLineups()
     setIsRefreshing(false)
   }
 
@@ -88,20 +114,13 @@ export default function MatchDetailPage() {
 
   useEffect(() => {
     if (match) {
-      fetchPlayers()
-
-      // Set interval to refresh live every 10 seconds
-      const interval = setInterval(() => {
-        refreshData()
-      }, 10000)
-
+      fetchLineups()
+      const interval = setInterval(refreshData, 10000)
       return () => clearInterval(interval)
     }
   }, [match])
 
-  if (!match) {
-    return <div className={styles.container}>Loading match details...</div>
-  }
+  if (!match) return <div className={styles.container}>Loading match details...</div>
 
   return (
     <div className={styles.container}>
@@ -111,57 +130,85 @@ export default function MatchDetailPage() {
 
       <div className={styles.matchHeader}>
         <h1>
+          {match.home_team.logo_url && <img src={match.home_team.logo_url} className={styles.teamLogo} alt="Home Logo" />}
           {match.home_team.name} vs {match.away_team.name}
+          {match.away_team.logo_url && <img src={match.away_team.logo_url} className={styles.teamLogo} alt="Away Logo" />}
         </h1>
         <p>{new Date(match.match_date).toLocaleDateString()} at {match.venue || 'TBD'}</p>
-
         <h2 className={styles.score}>
           {match.home_score ?? '-'} – {match.away_score ?? '-'}
         </h2>
-
         <p className={styles.status}>
-          Status: {match.status?.toUpperCase() ||'SCHEDULED'}
+          Status: {match.status?.toUpperCase() || 'SCHEDULED'}
           {isRefreshing && <span className={styles.spinner}>⏳</span>}
         </p>
       </div>
 
-      <div className={styles.teamsContainer}>
-        <div className={styles.teamSection}>
-          <h3> {match.home_team.logo_url && (
-                      <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
-                    )} {match.home_team.name}</h3>
-          <ul className={styles.playerList}>
-            {homePlayers.map((player) => (
-              <li key={player.id}>
-                #{player.jersey_number ?? ''} {player.name}
-                <div className={styles.playerStats}>
-                  {player.goals ? `⚽ ${player.goals}` : ''} 
-                  {player.yellow_cards ? ` 🟨 ${player.yellow_cards}` : ''} 
-                  {player.red_cards ? ` 🟥 ${player.red_cards}` : ''}
-                </div>
-              </li>
-            ))}
-          </ul>
+      <CombinedFormationField
+        home={{
+          name: match.home_team.name,
+          logo: match.home_team.logo_url,
+          players: homeLineup,
+          formation: match.home_formation || '4-3-3'
+        }}
+        away={{
+          name: match.away_team.name,
+          logo: match.away_team.logo_url,
+          players: awayLineup,
+          formation: match.away_formation || '4-3-3'
+        }}
+      />
+<div className={styles.benchContainer}>
+  <div className={styles.benchCard}>
+    <h4>Substitutes – {match.home_team.name}</h4>
+    <div className={styles.benchList}>
+      {homeBench.map(player => (
+        <div key={player.id} className={styles.benchItem}>
+          <div className={`${styles.playerDot} ${styles.homeDot}`}>
+            {player.jersey_number ?? ''}
+          </div>
+          <div className={styles.playerInfo}>
+            <div className={styles.playerName}>
+              {player.name} <span className={styles.subIcon}>🔁</span>
+            </div>
+            <div className={styles.iconsInline}>
+              {player.goals ? `⚽ ${player.goals} ` : ''}
+              {player.yellow_cards ? `🟨 ${player.yellow_cards} ` : ''}
+              {player.red_cards ? `🟥 ${player.red_cards}` : ''}
+            </div>
+          </div>
         </div>
+      ))}
+    </div>
+  </div>
 
-        <div className={styles.teamSection}>
-          <h3> {match.away_team.logo_url && (
-                      <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
-                    )} {match.away_team.name}</h3>
-          <ul className={styles.playerList}>
-            {awayPlayers.map((player) => (
-              <li key={player.id}>
-                #{player.jersey_number ?? ''} {player.name}
-                <div className={styles.playerStats}>
-                  {player.goals ? `⚽ ${player.goals}` : ''} 
-                  {player.yellow_cards ? ` 🟨 ${player.yellow_cards}` : ''} 
-                  {player.red_cards ? ` 🟥 ${player.red_cards}` : ''}
-                </div>
-              </li>
-            ))}
-          </ul>
+  <div className={styles.benchCard}>
+    <h4>Substitutes – {match.away_team.name}</h4>
+    <div className={styles.benchList}>
+      {awayBench.map(player => (
+        <div key={player.id} className={styles.benchItem}>
+          <div className={`${styles.playerDot} ${styles.awayDot}`}>
+            {player.jersey_number ?? ''}
+          </div>
+          <div className={styles.playerInfo}>
+            <div className={styles.playerName}>
+              {player.name} <span className={styles.subIcon}>🔁</span>
+            </div>
+            <div className={styles.iconsInline}>
+              {player.goals ? `⚽ ${player.goals} ` : ''}
+              {player.yellow_cards ? `🟨 ${player.yellow_cards} ` : ''}
+              {player.red_cards ? `🟥 ${player.red_cards}` : ''}
+            </div>
+          </div>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+
+
+
     </div>
   )
 }
