@@ -1,0 +1,96 @@
+.editorContainer {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+  color: #fff;
+  background: #1a1a1a;
+  border-radius: 12px;
+}
+
+.editorContainer h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.formationSelect {
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.gridField {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  background-image: url('/field.png');
+  background-size: cover;
+  background-position: center;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  margin: 1.5rem 0;
+}
+
+.slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+
+  select {
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: 1px solid #555;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    padding: 0.3rem 0.5rem;
+    max-width: 100px;
+  }
+}
+
+/* Density classes for different formation layouts */
+.dense select {
+  font-size: 0.7rem;
+  max-width: 90px;
+}
+
+.medium select {
+  font-size: 0.85rem;
+  max-width: 100px;
+}
+
+.spacious select {
+  font-size: 1rem;
+  max-width: 110px;
+}
+
+/* Save Button */
+.saveButton {
+  margin-top: 1rem;
+  background-color: #28a745;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.saveButton:hover {
+  background-color: #218838;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .gridField {
+    aspect-ratio: 9 / 16;
+  }
+
+  .slot select {
+    font-size: 0.65rem;
+    max-width: 80px;
+  }
+
+  .editorContainer h2 {
+    font-size: 1.25rem;
+  }
+}

@@ -86,6 +86,14 @@ export default function MatchListPage() {
                 >
                   ✏️ Edit Match
                 </Link>
+
+                <Link
+                  href={`/admin/matches/${match.id}/formation-editor`}
+                  className={styles.card}
+                >
+                  ⚽ Edit Formation
+                </Link>
+
                 <button
                   onClick={() => handleDelete(match.id)}
                   className={styles.deleteButton}
