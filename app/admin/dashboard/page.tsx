@@ -47,6 +47,15 @@ export default function AdminDashboardPage() {
         <Link href="#" className={styles.card}>
           📅 Matches Calendar (coming soon)
         </Link>
+         <Link href="/admin/players/new" className={styles.card}>
+          📈 Add players to teams
+          <span className={styles.hint}>Top scorers & assists</span>
+        </Link>
+        <Link href="/admin/players/stats" className={styles.card}>
+          📈 Player Stats
+          <span className={styles.hint}>Top scorers & assists</span>
+        </Link>
+
       </div>
       <div style={{ padding: '2rem' }}>
       <h1>Admin Dashboard</h1>
