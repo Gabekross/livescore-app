@@ -47,30 +47,5 @@ export async function getOrganizationId(domainHint?: string): Promise<string> {
 }
 
 // ─── Server-side version ──────────────────────────────────────────────────────
-// Used in API routes and server components where the browser client is unavailable.
-// Import separately to avoid bundling server code into client components.
-
-export async function getOrganizationIdServer(domainHint?: string): Promise<string> {
-  // Server-side has no persistent module cache between requests in serverless.
-  // For single-org deployments the slug→UUID lookup is fast (indexed), so we
-  // accept the per-request cost. Add an edge cache layer here when needed.
-  const { createServerSupabaseClient } = await import('./supabase-server')
-  const supabaseServer = createServerSupabaseClient()
-
-  const slug = process.env.NEXT_PUBLIC_ORGANIZATION_SLUG
-  if (!slug) {
-    throw new Error('NEXT_PUBLIC_ORGANIZATION_SLUG is not set.')
-  }
-
-  const { data, error } = await supabaseServer
-    .from('organizations')
-    .select('id')
-    .eq('slug', slug)
-    .single()
-
-  if (error || !data) {
-    throw new Error(`Organization with slug '${slug}' not found.`)
-  }
-
-  return data.id
-}
+// Moved to lib/org-server.ts to prevent Next.js from tracing next/headers into
+// the client bundle. Import getOrganizationIdServer from '@/lib/org-server'.
