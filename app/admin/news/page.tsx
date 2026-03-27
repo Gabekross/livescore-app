@@ -6,7 +6,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import Link                                  from 'next/link'
 import { supabase }                          from '@/lib/supabase'
-import { getOrganizationId }                 from '@/lib/org'
+import { useAdminOrg }                       from '@/contexts/AdminOrgContext'
 import toast                                 from 'react-hot-toast'
 import styles                                from '@/styles/components/AdminNews.module.scss'
 
@@ -26,11 +26,12 @@ function formatDate(iso: string | null) {
 }
 
 export default function AdminNewsPage() {
+  const { orgId, loading: orgLoading } = useAdminOrg()
   const [posts,   setPosts]   = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchPosts = useCallback(async () => {
-    const orgId = await getOrganizationId()
+    if (!orgId) return
     const { data } = await supabase
       .from('posts')
       .select('id, title, slug, excerpt, status, published_at, created_at')
@@ -39,7 +40,7 @@ export default function AdminNewsPage() {
 
     setPosts((data || []) as Post[])
     setLoading(false)
-  }, [])
+  }, [orgId])
 
   useEffect(() => { fetchPosts() }, [fetchPosts])
 
@@ -76,12 +77,15 @@ export default function AdminNewsPage() {
     }
   }
 
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#6b7280' }}>Failed to load organization.</div>
+
   return (
     <div className={styles.container}>
       <div className={styles.topBar}>
         <h1 className={styles.heading}>News &amp; Blog</h1>
         <Link href="/admin/news/new" className={styles.newBtn}>
-          ✏️ New Post
+          New Post
         </Link>
       </div>
 

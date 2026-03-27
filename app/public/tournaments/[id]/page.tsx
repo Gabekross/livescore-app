@@ -61,8 +61,8 @@ export default function PublicTournamentDetailPage() {
     <div className={styles.container}>
       <h1 className={styles.heading}>{tournament.name}</h1>
       <p className={styles.meta}>
-        📅 {tournament.start_date?.slice(0, 10)} → {tournament.end_date?.slice(0, 10)}<br />
-        {tournament.venue && <>📍 {tournament.venue}</>}
+        {tournament.start_date?.slice(0, 10)} → {tournament.end_date?.slice(0, 10)}<br />
+        {tournament.venue && <>{tournament.venue}</>}
       </p>
 
       <h2 className={styles.subheading}>Tournament Stages</h2>

@@ -24,7 +24,7 @@ export default function GroupListPage() {
         .eq('stage_id', stageId)
 
       if (error) {
-        console.error('Error fetching groups:', error)
+        // fetch failed — groups array stays empty
       } else {
         setGroups(data)
       }

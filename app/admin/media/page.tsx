@@ -10,7 +10,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase }                                  from '@/lib/supabase'
-import { getOrganizationId }                         from '@/lib/org'
+import { useAdminOrg }                               from '@/contexts/AdminOrgContext'
 import toast                                         from 'react-hot-toast'
 import styles                                        from '@/styles/components/AdminMedia.module.scss'
 
@@ -29,6 +29,7 @@ interface MediaItem {
 type FilterType = 'all' | 'image' | 'video'
 
 export default function AdminMediaPage() {
+  const { orgId, loading: orgLoading } = useAdminOrg()
   const [items,    setItems]    = useState<MediaItem[]>([])
   const [loading,  setLoading]  = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -36,11 +37,9 @@ export default function AdminMediaPage() {
   const [filter,   setFilter]   = useState<FilterType>('all')
   const [dragging, setDragging] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
-  const orgIdRef  = useRef<string>('')
 
   const fetchItems = useCallback(async () => {
-    const orgId = orgIdRef.current || await getOrganizationId()
-    orgIdRef.current = orgId
+    if (!orgId) return
     const { data } = await supabase
       .from('media')
       .select('id, public_url, storage_path, media_type, alt_text, created_at')
@@ -49,7 +48,7 @@ export default function AdminMediaPage() {
 
     setItems((data || []) as MediaItem[])
     setLoading(false)
-  }, [])
+  }, [orgId])
 
   useEffect(() => { fetchItems() }, [fetchItems])
 
@@ -59,8 +58,7 @@ export default function AdminMediaPage() {
       return
     }
 
-    const orgId  = orgIdRef.current || await getOrganizationId()
-    orgIdRef.current = orgId
+    if (!orgId) return
 
     const ext       = file.name.split('.').pop()?.toLowerCase() || 'bin'
     const timestamp = Date.now()
@@ -138,6 +136,9 @@ export default function AdminMediaPage() {
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })
 
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#6b7280' }}>Failed to load organization.</div>
+
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>Media Library</h1>
@@ -152,7 +153,7 @@ export default function AdminMediaPage() {
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => { e.preventDefault(); setDragging(false); handleFiles(e.dataTransfer.files) }}
       >
-        <span className={styles.uploadIcon}>📁</span>
+        <span className={styles.uploadIcon}></span>
         <div className={styles.uploadTitle}>Drag &amp; drop files here</div>
         <div className={styles.uploadHint}>
           PNG, JPG, GIF, WebP, MP4 — max {MAX_FILE_MB} MB per file
@@ -162,7 +163,7 @@ export default function AdminMediaPage() {
           onClick={() => fileInput.current?.click()}
           disabled={uploading}
         >
-          {uploading ? 'Uploading…' : '📤 Choose Files'}
+          {uploading ? 'Uploading…' : 'Choose Files'}
         </button>
         <input
           ref={fileInput}
@@ -183,7 +184,7 @@ export default function AdminMediaPage() {
             className={`${styles.filterBtn} ${filter === f ? styles.filterBtnActive : ''}`}
             onClick={() => setFilter(f)}
           >
-            {f === 'all' ? 'All' : f === 'image' ? '🖼️ Images' : '🎬 Videos'}
+            {f === 'all' ? 'All' : f === 'image' ? 'Images' : 'Videos'}
             {' '}({f === 'all' ? items.length : items.filter((i) => i.media_type === f).length})
           </button>
         ))}
@@ -208,7 +209,7 @@ export default function AdminMediaPage() {
                   loading="lazy"
                 />
               ) : (
-                <div className={styles.mediaVideoThumb}>🎬</div>
+                <div className={styles.mediaVideoThumb}>Video</div>
               )}
               <div className={styles.mediaInfo}>
                 <div className={styles.mediaName} title={item.alt_text || item.storage_path}>
@@ -219,7 +220,7 @@ export default function AdminMediaPage() {
                   className={styles.copyBtn}
                   onClick={() => handleCopy(item.public_url)}
                 >
-                  🔗 Copy URL
+                  Copy URL
                 </button>
               </div>
               <button

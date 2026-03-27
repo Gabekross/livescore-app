@@ -163,10 +163,10 @@ export default async function HomePage() {
           )}
           <div className={styles.heroActions}>
             <Link href="/matches" className={styles.btnPrimary}>
-              📅 Fixtures &amp; Results
+              Fixtures &amp; Results
             </Link>
             <Link href="/table" className={styles.btnSecondary}>
-              📊 Standings
+              Standings
             </Link>
           </div>
         </div>
@@ -190,7 +190,7 @@ export default async function HomePage() {
             <div className={styles.matchStack}>
               {fixtures.length === 0 ? (
                 <EmptyState
-                  icon="📅"
+                  icon=""
                   title="No upcoming fixtures"
                   compact
                 />
@@ -216,7 +216,7 @@ export default async function HomePage() {
             <div className={styles.matchStack}>
               {results.length === 0 ? (
                 <EmptyState
-                  icon="🏆"
+                  icon=""
                   title="No results yet"
                   compact
                 />
@@ -253,9 +253,7 @@ export default async function HomePage() {
                       className={styles.tournamentCover}
                     />
                   ) : (
-                    <div className={styles.tournamentCoverPlaceholder} aria-hidden="true">
-                      🏆
-                    </div>
+                    <div className={styles.tournamentCoverPlaceholder} aria-hidden="true" />
                   )}
                   <div>
                     <div className={styles.tournamentName}>{t.name}</div>
@@ -299,9 +297,7 @@ export default async function HomePage() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className={styles.tournamentCoverPlaceholder} aria-hidden="true">
-                        📰
-                      </div>
+                      <div className={styles.tournamentCoverPlaceholder} aria-hidden="true" />
                     )}
                     <div>
                       <div className={styles.tournamentName}>{post.title}</div>

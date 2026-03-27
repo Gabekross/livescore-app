@@ -64,12 +64,12 @@ export default function CombinedFormationField({ home, away }: Props) {
         >
           {/* Stat Icons */}
           <div className={styles.statsTopLeft}>
-            {player.yellow_cards ? `🟨${player.yellow_cards}` : ''}
-            {player.red_cards ? `🟥${player.red_cards}` : ''}
+            {player.yellow_cards ? `Y${player.yellow_cards}` : ''}
+            {player.red_cards ? `R${player.red_cards}` : ''}
           </div>
           <div className={styles.statsTopRight}>
             {player.goals ? `⚽${player.goals}` : ''}
-            {player.assists ? `🎯${player.assists}` : ''}
+            {player.assists ? `A${player.assists}` : ''}
           </div>
 
           {/* Player Number */}

@@ -171,13 +171,13 @@ export default function MatchDetailPage() {
               </div>
               <div className={styles.playerInfo}>
                 <div className={styles.playerName}>
-                  {player.name} <span className={styles.subIcon}>🔁</span>
+                  {player.name} <span className={styles.subIcon}>SUB</span>
                 </div>
                 <div className={styles.iconsInline}>
                   {player.goals       ? `⚽ ${player.goals} `       : ''}
-                  {player.assists     ? `🎯 ${player.assists} `     : ''}
-                  {player.yellow_cards ? `🟨 ${player.yellow_cards} ` : ''}
-                  {player.red_cards   ? `🟥 ${player.red_cards}`    : ''}
+                  {player.assists     ? `A ${player.assists} `      : ''}
+                  {player.yellow_cards ? `Y ${player.yellow_cards} ` : ''}
+                  {player.red_cards   ? `R ${player.red_cards}`     : ''}
                 </div>
               </div>
             </div>

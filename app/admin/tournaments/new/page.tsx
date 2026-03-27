@@ -3,14 +3,14 @@
 import { useState }          from 'react'
 import { useRouter }         from 'next/navigation'
 import { supabase }          from '@/lib/supabase'
-import { useOrg }            from '@/hooks/useOrg'
+import { useAdminOrg }       from '@/contexts/AdminOrgContext'
 import { toSlug }            from '@/lib/utils/slug'
 import toast                 from 'react-hot-toast'
 import styles                from '@/styles/components/TournamentForm.module.scss'
 
 export default function NewTournamentPage() {
   const router = useRouter()
-  const { orgId, loading: orgLoading } = useOrg()
+  const { orgId, loading: orgLoading } = useAdminOrg()
 
   const [name,      setName]      = useState('')
   const [slug,      setSlug]      = useState('')
@@ -35,10 +35,6 @@ export default function NewTournamentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!orgId) {
-      toast.error('Organization not loaded. Please refresh.')
-      return
-    }
     if (!name.trim() || !startDate || !endDate) {
       toast.error('Please fill in all required fields')
       return
@@ -79,11 +75,12 @@ export default function NewTournamentPage() {
     setLoading(false)
   }
 
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+
   return (
     <div className={styles.formContainer}>
       <h2 className={styles.heading}>Create New Tournament</h2>
-
-      {orgLoading && <p>Loading organization…</p>}
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <label className={styles.label}>

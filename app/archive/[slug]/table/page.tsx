@@ -50,7 +50,7 @@ export default async function ArchiveTablePage({ params, searchParams }: Props) 
           <Link href={`/archive/${params.slug}`} className={styles.back}>
             ← {tourn.name}
           </Link>
-          <EmptyState icon="📊" title="No standings available" />
+          <EmptyState icon="" title="No standings available" />
         </div>
       </div>
     )

@@ -166,9 +166,9 @@ export default function MatchDetailPage() {
       <span className={styles.benchPlayerName}>{player.name}</span>
       <span className={styles.benchStats}>
         {player.goals         ? `⚽${player.goals} `         : ''}
-        {player.assists       ? `🎯${player.assists} `       : ''}
-        {player.yellow_cards  ? `🟨${player.yellow_cards} `  : ''}
-        {player.red_cards     ? `🟥${player.red_cards}`      : ''}
+        {player.assists       ? `A${player.assists} `        : ''}
+        {player.yellow_cards  ? `Y${player.yellow_cards} `   : ''}
+        {player.red_cards     ? `R${player.red_cards}`       : ''}
       </span>
     </div>
   )
@@ -237,7 +237,7 @@ export default function MatchDetailPage() {
             {new Date(match.match_date).toLocaleTimeString('en-GB', {
               hour: '2-digit', minute: '2-digit',
             })}
-            {match.venue && <> · 📍 {match.venue}</>}
+            {match.venue && <> · {match.venue}</>}
           </div>
         </div>
 

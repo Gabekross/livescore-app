@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link                    from 'next/link'
 import { supabase }            from '@/lib/supabase'
-import { getOrganizationId }   from '@/lib/org'
+import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/TournamentList.module.scss'
 
@@ -16,21 +16,23 @@ interface Tournament {
 }
 
 export default function AdminTournamentList() {
+  const { orgId, loading: orgLoading } = useAdminOrg()
+
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   const [editId,      setEditId]      = useState<string | null>(null)
   const [formState,   setFormState]   = useState<Partial<Tournament>>({})
 
-  const fetchTournaments = async () => {
-    const orgId = await getOrganizationId()
+  const fetchTournaments = useCallback(async () => {
+    if (!orgId) return
     const { data, error } = await supabase
       .from('tournaments')
       .select('id, name, start_date, end_date, is_archived')
       .eq('organization_id', orgId)
       .order('start_date')
     if (!error && data) setTournaments(data)
-  }
+  }, [orgId])
 
-  useEffect(() => { fetchTournaments() }, [])
+  useEffect(() => { fetchTournaments() }, [fetchTournaments])
 
   const handleEdit = (tournament: Tournament) => {
     setEditId(tournament.id)
@@ -62,6 +64,9 @@ export default function AdminTournamentList() {
     }
   }
 
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+
   return (
     <div className={styles.container}>
       <Link href="/admin/dashboard" className={styles.backButton}>
@@ -70,7 +75,7 @@ export default function AdminTournamentList() {
       <h1 className={styles.heading}>Admin – Tournaments</h1>
 
       <Link href="/admin/tournaments/new" className={styles.newButton}>
-        ➕ Add New Tournament
+        + Add New Tournament
       </Link>
 
       <ul className={styles.list}>
@@ -97,8 +102,8 @@ export default function AdminTournamentList() {
                   onChange={handleChange}
                 />
                 <div className={styles.actionButtons}>
-                  <button onClick={handleSave}>💾 Save</button>
-                  <button onClick={() => setEditId(null)}>❌ Cancel</button>
+                  <button onClick={handleSave}>Save</button>
+                  <button onClick={() => setEditId(null)}>Cancel</button>
                 </div>
               </div>
             ) : (
@@ -110,7 +115,7 @@ export default function AdminTournamentList() {
                   </div>
                 </Link>
                 <button onClick={() => handleEdit(t)} className={styles.secondaryButtonSmall}>
-                  ✏️ Edit
+                  Edit
                 </button>
               </div>
             )}

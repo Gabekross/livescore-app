@@ -215,7 +215,7 @@ export default function PublicMatchesPage() {
                   {match.match_type === 'friendly' && (
                     <span className={styles.friendlyBadge}>Friendly</span>
                   )}
-                  <span className={styles.venue}>📍 {match.venue || 'TBD'}</span>
+                  <span className={styles.venue}>{match.venue || 'TBD'}</span>
                 </div>
 
                 {/* Desktop layout */}

@@ -3,7 +3,7 @@
 import { useEffect, useState }  from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase }             from '@/lib/supabase'
-import { useOrg }               from '@/hooks/useOrg'
+import { useAdminOrg }          from '@/contexts/AdminOrgContext'
 import toast                    from 'react-hot-toast'
 import styles                   from '@/styles/components/Form.module.scss'
 import Link                     from 'next/link'
@@ -17,7 +17,7 @@ interface Team {
 export default function AssignTeamsPage() {
   const { id, stageId, groupId } = useParams()
   const router  = useRouter()
-  const { orgId } = useOrg()
+  const { orgId, loading: orgLoading } = useAdminOrg()
 
   const [teams,           setTeams]           = useState<Team[]>([])
   const [assignedTeamIds, setAssignedTeamIds] = useState<string[]>([])
@@ -99,6 +99,9 @@ export default function AssignTeamsPage() {
     setLoading(false)
   }
 
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+
   return (
     <div className={styles.formContainer}>
       <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
@@ -111,7 +114,7 @@ export default function AssignTeamsPage() {
           title="Each team can only belong to one group per stage."
           style={{ marginLeft: '0.5rem', fontSize: '0.9rem', color: '#888', cursor: 'help' }}
         >
-          ⓘ
+          (i)
         </span>
       </h2>
 

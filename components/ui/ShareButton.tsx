@@ -34,7 +34,7 @@ export default function ShareButton({ title }: Props) {
       onClick={handleShare}
       aria-label="Share article"
     >
-      {copied ? '✓ Copied' : '🔗 Copy link'}
+      {copied ? '✓ Copied' : 'Copy link'}
     </button>
   )
 }

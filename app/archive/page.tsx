@@ -54,7 +54,7 @@ export default async function ArchivePage() {
 
         {tournaments.length === 0 ? (
           <EmptyState
-            icon="📁"
+            icon=""
             title="Archive is empty"
             description="Completed tournaments will appear here once archived."
           />
@@ -71,12 +71,12 @@ export default async function ArchivePage() {
                   {t.cover_image_url ? (
                     <img src={t.cover_image_url} alt={t.name} className={styles.cover} />
                   ) : (
-                    <div className={styles.coverPlaceholder}>📁</div>
+                    <div className={styles.coverPlaceholder} aria-hidden="true" />
                   )}
                   <div className={styles.cardBody}>
                     <span className={styles.archiveBadge}>Archived</span>
                     <div className={styles.cardTitle}>{t.name}</div>
-                    {dateRange && <div className={styles.cardMeta}>📅 {dateRange}</div>}
+                    {dateRange && <div className={styles.cardMeta}>{dateRange}</div>}
                     <div className={styles.cardLinks}>
                       <Link href={`/archive/${t.slug}`}          className={styles.cardLink}>Overview →</Link>
                       <Link href={`/archive/${t.slug}/fixtures`} className={styles.cardLink}>Fixtures</Link>

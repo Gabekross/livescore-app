@@ -6,7 +6,8 @@
 
 import { useEffect, useState } from 'react'
 import { supabase }            from '@/lib/supabase'
-import { getOrganizationId }   from '@/lib/org'
+import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import MediaPicker             from '@/components/admin/MediaPicker'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/AdminSettings.module.scss'
 
@@ -54,15 +55,18 @@ const DEFAULTS: SiteSettings = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function AdminSettingsPage() {
+  const { orgId, loading: orgLoading } = useAdminOrg()
   const [settings, setSettings] = useState<SiteSettings>(DEFAULTS)
   const [settingsId, setSettingsId] = useState<string | null>(null)
   const [loading,   setLoading]   = useState(true)
   const [saving,    setSaving]    = useState(false)
   const [saved,     setSaved]     = useState(false)
+  const [showLogoPicker, setShowLogoPicker] = useState(false)
+  const [showOgPicker,   setShowOgPicker]   = useState(false)
 
   useEffect(() => {
+    if (!orgId) return
     const load = async () => {
-      const orgId = await getOrganizationId()
       const { data } = await supabase
         .from('site_settings')
         .select('*')
@@ -85,7 +89,7 @@ export default function AdminSettingsPage() {
       setLoading(false)
     }
     load()
-  }, [])
+  }, [orgId])
 
   const set = (field: keyof SiteSettings, value: string) => {
     setSettings((prev) => ({ ...prev, [field]: value }))
@@ -93,8 +97,8 @@ export default function AdminSettingsPage() {
   }
 
   const handleSave = async () => {
+    if (!orgId) return
     setSaving(true)
-    const orgId = await getOrganizationId()
 
     const payload = {
       organization_id: orgId,
@@ -136,8 +140,11 @@ export default function AdminSettingsPage() {
     setSaving(false)
   }
 
-  if (loading) {
+  if (orgLoading || loading) {
     return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading settings…</div>
+  }
+  if (!orgId) {
+    return <div style={{ padding: '2rem', color: '#6b7280' }}>Failed to load organization.</div>
   }
 
   return (
@@ -203,17 +210,40 @@ export default function AdminSettingsPage() {
                 <div className={styles.logoPlaceholder}>⚽</div>
               )}
             </div>
-            <input
-              type="url"
-              className={styles.input}
-              value={settings.logo_url}
-              onChange={(e) => set('logo_url', e.target.value)}
-              placeholder="https://example.com/logo.png"
-            />
+            <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
+              <input
+                type="url"
+                className={styles.input}
+                value={settings.logo_url}
+                onChange={(e) => set('logo_url', e.target.value)}
+                placeholder="https://example.com/logo.png"
+                style={{ flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowLogoPicker(true)}
+                style={{
+                  padding: '0.5rem 0.9rem',
+                  background: '#f3f4f6',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  color: '#374151',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Browse
+              </button>
+            </div>
           </div>
-          <p style={{ fontSize: '0.72rem', color: '#9ca3af', marginTop: 4 }}>
-            Upload images via the <a href="/admin/media" style={{ color: '#2563eb', textDecoration: 'underline' }}>Media Library</a>, then paste the URL here.
-          </p>
+
+          <MediaPicker
+            open={showLogoPicker}
+            onClose={() => setShowLogoPicker(false)}
+            onSelect={(url) => { set('logo_url', url); setShowLogoPicker(false) }}
+          />
         </div>
 
         <div className={styles.fieldGroup}>
@@ -268,12 +298,38 @@ export default function AdminSettingsPage() {
             Default OG Image URL{' '}
             <span className={styles.labelHint}>(used when no page-specific image is set)</span>
           </label>
-          <input
-            type="url"
-            className={styles.input}
-            value={settings.og_image_url}
-            onChange={(e) => set('og_image_url', e.target.value)}
-            placeholder="https://example.com/og-default.jpg"
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <input
+              type="url"
+              className={styles.input}
+              value={settings.og_image_url}
+              onChange={(e) => set('og_image_url', e.target.value)}
+              placeholder="https://example.com/og-default.jpg"
+              style={{ flex: 1 }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowOgPicker(true)}
+              style={{
+                padding: '0.5rem 0.9rem',
+                background: '#f3f4f6',
+                border: '1px solid #d1d5db',
+                borderRadius: '8px',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                color: '#374151',
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              Browse
+            </button>
+          </div>
+
+          <MediaPicker
+            open={showOgPicker}
+            onClose={() => setShowOgPicker(false)}
+            onSelect={(url) => { set('og_image_url', url); setShowOgPicker(false) }}
           />
         </div>
       </div>

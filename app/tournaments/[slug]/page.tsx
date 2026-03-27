@@ -119,14 +119,14 @@ export default async function TournamentDetailPage({ params }: Props) {
             />
           )}
           <h1 className={styles.tournTitle}>{tournament.name}</h1>
-          {dateRange && <p className={styles.tournMeta}>📅 {dateRange}</p>}
+          {dateRange && <p className={styles.tournMeta}>{dateRange}</p>}
 
           <div className={styles.tournActions}>
             <Link href={`/tournaments/${params.slug}/fixtures`} className={styles.btnOutline}>
-              📅 Fixtures
+              Fixtures
             </Link>
             <Link href={`/tournaments/${params.slug}/table`} className={styles.btnOutline}>
-              📊 Table
+              Table
             </Link>
           </div>
         </div>
@@ -139,7 +139,7 @@ export default async function TournamentDetailPage({ params }: Props) {
             ctaHref={`/tournaments/${params.slug}/fixtures`}
           />
           {matches.length === 0 ? (
-            <EmptyState icon="📅" title="No matches yet" compact />
+            <EmptyState icon="" title="No matches yet" compact />
           ) : (
             <div className={styles.matchStack}>
               {matches.map((m) => (

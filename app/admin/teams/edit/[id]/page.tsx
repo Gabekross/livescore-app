@@ -46,8 +46,6 @@ export default function EditTeamPage() {
   const fetchPlayers = async (teamId: string) => {
     const { data, error } = await supabase.from('players').select('*').eq('team_id', teamId)
     if (!error && data) {
-      console.log("Fetched players from Supabase:", data);
-
       setPlayers(data)
     }
   }
@@ -112,7 +110,6 @@ const handlePlayerChange = (index: number, key: keyof PlayerInput, value: any) =
         .upload(filePath, logoFile)
 
       if (uploadError) {
-        console.error('Upload error:', uploadError)
         toast.error('Failed to upload logo')
         setLoading(false)
         return

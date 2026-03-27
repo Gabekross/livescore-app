@@ -55,7 +55,7 @@ export default async function TournamentsPage() {
 
         {tournaments.length === 0 ? (
           <EmptyState
-            icon="🏆"
+            icon=""
             title="No active tournaments"
             description="Check the archive for past tournaments."
           />
@@ -86,11 +86,11 @@ function TournamentCard({ t }: { t: Tournament }) {
       {t.cover_image_url ? (
         <img src={t.cover_image_url} alt={t.name} className={styles.cover} />
       ) : (
-        <div className={styles.coverPlaceholder}>🏆</div>
+        <div className={styles.coverPlaceholder} aria-hidden="true" />
       )}
       <div className={styles.cardBody}>
         <div className={styles.cardTitle}>{t.name}</div>
-        {dateRange && <div className={styles.cardMeta}>📅 {dateRange}</div>}
+        {dateRange && <div className={styles.cardMeta}>{dateRange}</div>}
         <div className={styles.cardLinks}>
           <Link href={`/tournaments/${t.slug}`}          className={styles.cardLink}>Overview →</Link>
           <Link href={`/tournaments/${t.slug}/fixtures`} className={styles.cardLink}>Fixtures</Link>

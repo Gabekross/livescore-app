@@ -3,7 +3,7 @@
 import { useState }  from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase }  from '@/lib/supabase'
-import { useOrg }    from '@/hooks/useOrg'
+import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import toast         from 'react-hot-toast'
 import styles        from '@/styles/components/TeamForm.module.scss'
 import { v4 as uuidv4 } from 'uuid'
@@ -17,7 +17,7 @@ interface PlayerInput {
 
 export default function CreateTeamPage() {
   const router = useRouter()
-  const { orgId, loading: orgLoading } = useOrg()
+  const { orgId, loading: orgLoading } = useAdminOrg()
 
   const [name,     setName]     = useState('')
   const [logoUrl,  setLogoUrl]  = useState('')
@@ -58,10 +58,6 @@ export default function CreateTeamPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!orgId) {
-      toast.error('Organization not loaded. Please refresh.')
-      return
-    }
     if (!name.trim()) {
       toast.error('Team name is required')
       return
@@ -119,11 +115,12 @@ export default function CreateTeamPage() {
     setLoading(false)
   }
 
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+
   return (
     <div className={styles.formContainer}>
       <h2 className={styles.heading}>Create New Team</h2>
-
-      {orgLoading && <p>Loading organization…</p>}
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <label className={styles.label}>

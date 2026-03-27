@@ -9,8 +9,9 @@ import Link                     from 'next/link'
 import { useRouter }            from 'next/navigation'
 import toast                    from 'react-hot-toast'
 import { supabase }             from '@/lib/supabase'
-import { getOrganizationId }    from '@/lib/org'
+import { useAdminOrg }          from '@/contexts/AdminOrgContext'
 import { toSlug, isValidSlug }  from '@/lib/utils/slug'
+import MediaPicker              from '@/components/admin/MediaPicker'
 import styles                   from '@/styles/components/AdminNews.module.scss'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -52,21 +53,25 @@ const EMPTY: PostFormValues = {
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function PostForm({ postId, initialValues, heading }: Props) {
   const router   = useRouter()
+  const { orgId, loading: orgLoading } = useAdminOrg()
   const [values, setValues]       = useState<PostFormValues>({ ...EMPTY, ...initialValues })
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   const [saving,  setSaving]      = useState(false)
   const [slugEdited, setSlugEdited] = useState(!!postId) // don't auto-derive slug when editing
+  const [showCoverPicker, setShowCoverPicker] = useState(false)
+  const [showOgPicker, setShowOgPicker]       = useState(false)
 
   useEffect(() => {
-    getOrganizationId().then(async (orgId) => {
+    if (!orgId) return
+    ;(async () => {
       const { data } = await supabase
         .from('tournaments')
         .select('id, name')
         .eq('organization_id', orgId)
         .order('name')
       setTournaments((data || []) as Tournament[])
-    })
-  }, [])
+    })()
+  }, [orgId])
 
   const set = (field: keyof PostFormValues, value: string) => {
     setValues((prev) => {
@@ -88,8 +93,8 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
     if (!values.title.trim()) { toast.error('Title is required'); return }
     if (!isValidSlug(values.slug)) { toast.error('Slug must contain only lowercase letters, numbers, and hyphens'); return }
 
+    if (!orgId) return
     setSaving(true)
-    const orgId      = await getOrganizationId()
     const published_at = publishNow || values.status === 'published'
       ? new Date().toISOString()
       : null
@@ -127,6 +132,9 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
     }
     setSaving(false)
   }
+
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#6b7280' }}>Failed to load organization.</div>
 
   const coverUrl = values.cover_image_url.trim()
 
@@ -214,8 +222,17 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
             </div>
             <div className={styles.fieldGroup}>
               <label className={styles.label}>OG Image URL <span className={styles.labelHint}>(social share image)</span></label>
-              <input type="url" className={styles.input} value={values.og_image_url} onChange={(e) => set('og_image_url', e.target.value)} placeholder="https://…" />
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <input type="url" className={styles.input} value={values.og_image_url} onChange={(e) => set('og_image_url', e.target.value)} placeholder="https://…" style={{ flex: 1 }} />
+                <button type="button" className={styles.editBtn} onClick={() => setShowOgPicker(true)} style={{ whiteSpace: 'nowrap' }}>Browse</button>
+              </div>
             </div>
+
+          <MediaPicker
+            open={showOgPicker}
+            onClose={() => setShowOgPicker(false)}
+            onSelect={(url) => { set('og_image_url', url); setShowOgPicker(false) }}
+          />
           </div>
 
           {/* Buttons */}
@@ -225,7 +242,7 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
             </button>
             {values.status !== 'published' && (
               <button className={styles.publishSaveBtn} onClick={() => handleSave(true)} disabled={saving}>
-                {saving ? 'Publishing…' : '🟢 Publish'}
+                {saving ? 'Publishing…' : 'Publish'}
               </button>
             )}
             <Link href="/admin/news" className={styles.cancelBtn}>
@@ -253,27 +270,37 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
           <div className={styles.sideCard}>
             <div className={styles.sideCardTitle}>Cover Image</div>
             <div className={styles.fieldGroup}>
-              <input
-                type="url"
-                className={styles.input}
-                value={values.cover_image_url}
-                onChange={(e) => set('cover_image_url', e.target.value)}
-                placeholder="https://example.com/image.jpg"
-              />
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <input
+                  type="url"
+                  className={styles.input}
+                  value={values.cover_image_url}
+                  onChange={(e) => set('cover_image_url', e.target.value)}
+                  placeholder="https://example.com/image.jpg"
+                  style={{ flex: 1 }}
+                />
+                <button
+                  type="button"
+                  className={styles.editBtn}
+                  onClick={() => setShowCoverPicker(true)}
+                  style={{ whiteSpace: 'nowrap' }}
+                >
+                  Browse
+                </button>
+              </div>
             </div>
             {coverUrl ? (
               <img src={coverUrl} alt="Cover preview" className={styles.coverPreview} />
             ) : (
-              <div className={styles.coverPlaceholder}>🖼️</div>
+              <div className={styles.coverPlaceholder} aria-hidden="true" />
             )}
-            <p style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
-              Paste a public image URL. Upload via{' '}
-              <Link href="/admin/media" style={{ color: '#2563eb', textDecoration: 'underline' }}>
-                Media Library
-              </Link>
-              .
-            </p>
           </div>
+
+          <MediaPicker
+            open={showCoverPicker}
+            onClose={() => setShowCoverPicker(false)}
+            onSelect={(url) => { set('cover_image_url', url); setShowCoverPicker(false) }}
+          />
 
           {/* Tournament */}
           {tournaments.length > 0 && (

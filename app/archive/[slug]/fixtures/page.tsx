@@ -71,7 +71,7 @@ export default async function ArchiveFixturesPage({ params }: Props) {
         <SectionHeader title="All Fixtures" subtitle={`${tournRes.data.name} · Archive`} />
 
         {matches.length === 0 ? (
-          <EmptyState icon="📅" title="No matches recorded" />
+          <EmptyState icon="" title="No matches recorded" />
         ) : (
           Array.from(grouped.entries()).map(([date, dayMatches]) => (
             <div key={date} style={{ marginBottom: 'var(--sp-5)' }}>

@@ -80,7 +80,7 @@ export default async function TournamentFixturesPage({ params }: Props) {
         />
 
         {matches.length === 0 ? (
-          <EmptyState icon="📅" title="No matches scheduled yet" />
+          <EmptyState icon="" title="No matches scheduled yet" />
         ) : (
           Array.from(grouped.entries()).map(([date, dayMatches]) => (
             <div key={date} style={{ marginBottom: 'var(--sp-5)' }}>

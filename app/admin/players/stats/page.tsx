@@ -6,7 +6,7 @@
 
 import { useEffect, useState }   from 'react'
 import { supabase }              from '@/lib/supabase'
-import { useOrg }                from '@/hooks/useOrg'
+import { useAdminOrg }           from '@/contexts/AdminOrgContext'
 import styles                    from '@/styles/components/PlayerStatsTable.module.scss'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
@@ -22,7 +22,7 @@ interface PlayerStat {
 }
 
 export default function PlayerStatsPage() {
-  const { orgId } = useOrg()
+  const { orgId, loading: orgLoading } = useAdminOrg()
 
   const [stats,      setStats]      = useState<PlayerStat[]>([])
   const [loading,    setLoading]    = useState(true)
@@ -44,7 +44,6 @@ export default function PlayerStatsPage() {
         .order('goals', { ascending: false })
 
       if (error) {
-        console.error('Failed to load stats:', error)
         setLoading(false)
         return
       }
@@ -57,6 +56,9 @@ export default function PlayerStatsPage() {
 
     fetchStats()
   }, [orgId])
+
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
 
   const filteredStats = stats.filter((p) =>
     p.player_name.toLowerCase().includes(search.toLowerCase()) &&
@@ -99,7 +101,7 @@ export default function PlayerStatsPage() {
             <option key={team} value={team}>{team}</option>
           ))}
         </select>
-        <button onClick={downloadCSV}>⬇ Export CSV</button>
+        <button onClick={downloadCSV}>Export CSV</button>
         <select
           value={chartType}
           onChange={(e) => setChartType(e.target.value as 'goals' | 'assists')}
@@ -139,9 +141,9 @@ export default function PlayerStatsPage() {
               <th>Team</th>
               <th>MP</th>
               <th>⚽ Goals</th>
-              <th>🎯 Assists</th>
-              <th>🟨</th>
-              <th>🟥</th>
+              <th>Assists</th>
+              <th>YC</th>
+              <th>RC</th>
             </tr>
           </thead>
           <tbody>

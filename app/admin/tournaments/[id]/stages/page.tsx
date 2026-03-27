@@ -190,10 +190,10 @@ export default function TournamentStagesPage() {
 
       <div className={styles.topActions}>
         <Link href={`/admin/tournaments/${id}/stages/new`} className={styles.primaryButton}>
-          ➕ Add New Stage
+          + Add New Stage
         </Link>
         <button onClick={handleDeleteTournament} className={styles.dangerButton}>
-          🗑️ Delete Tournament
+          Delete Tournament
         </button>
       </div>
 
@@ -208,8 +208,8 @@ export default function TournamentStagesPage() {
                     value={stageNameDraft}
                     onChange={(e) => setStageNameDraft(e.target.value)}
                   />
-                  <button onClick={() => handleSaveStageName(stage.id)}>💾 Save</button>
-                  <button onClick={() => setEditingStageId(null)}>❌ Cancel</button>
+                  <button onClick={() => handleSaveStageName(stage.id)}>Save</button>
+                  <button onClick={() => setEditingStageId(null)}>Cancel</button>
                 </>
               ) : (
                 <>
@@ -217,7 +217,7 @@ export default function TournamentStagesPage() {
                   <button onClick={() => {
                     setStageNameDraft(stage.stage_name)
                     setEditingStageId(stage.id)
-                  }}>✏️ Edit</button>
+                  }}>Edit</button>
                 </>
               )}
             </div>
@@ -227,13 +227,13 @@ export default function TournamentStagesPage() {
             </div>
             <div className={styles.stageActions}>
               <Link href={`/admin/tournaments/${id}/stages/edit/${stage.id}`} className={styles.secondaryButton}>
-                ✏️ Edit
+                Edit
               </Link>
               <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/new`} className={styles.primaryButtonSmall}>
-                ➕ Add Group
+                + Add Group
               </Link>
               <button onClick={() => handleDeleteStage(stage.id)} className={styles.dangerButtonSmall}>
-                🗑️ Delete
+                Delete
               </button>
             </div>
 
@@ -249,8 +249,8 @@ export default function TournamentStagesPage() {
                             value={groupNameDraft}
                             onChange={(e) => setGroupNameDraft(e.target.value)}
                           />
-                          <button onClick={() => handleSaveGroupName(group.id)}>💾 Save</button>
-                          <button onClick={() => setEditingGroupId(null)}>❌ Cancel</button>
+                          <button onClick={() => handleSaveGroupName(group.id)}>Save</button>
+                          <button onClick={() => setEditingGroupId(null)}>Cancel</button>
                         </>
                       ) : (
                         <>
@@ -258,7 +258,7 @@ export default function TournamentStagesPage() {
                           <button onClick={() => {
                             setGroupNameDraft(group.name)
                             setEditingGroupId(group.id)
-                          }}>✏️ Edit</button>
+                          }}>Edit</button>
                         </>
                       )}
                     </div>
@@ -282,13 +282,13 @@ export default function TournamentStagesPage() {
 
                     <div className={styles.linkRow}>
                       <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/assign-teams`}>
-                        🎯 Assign Teams
+                        Assign Teams
                       </Link>
                       <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches/new`}>
                         ⚽ Create Match
                       </Link>
                       <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches`}>
-                        📅 View Matches
+                        View Matches
                       </Link>
                     </div>
                   </li>

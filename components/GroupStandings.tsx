@@ -32,7 +32,7 @@ export default function GroupStandings({ groupId }: { groupId: string }) {
     if (!error) {
       setStandings(data)
     } else {
-      console.error('Error loading group standings:', error)
+      // standings load failed silently — empty state shown
     }
   }
 

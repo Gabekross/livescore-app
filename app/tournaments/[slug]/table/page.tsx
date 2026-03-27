@@ -53,7 +53,7 @@ export default async function TournamentTablePage({ params, searchParams }: Prop
             ← {tourn.name}
           </Link>
           <EmptyState
-            icon="📊"
+            icon=""
             title="No standings available"
             description="This tournament has no stages with standings enabled."
           />

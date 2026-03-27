@@ -53,7 +53,6 @@ export default function MatchListPage() {
     const { error } = await supabase.from('matches').delete().eq('id', matchId)
 
     if (error) {
-      console.error('Error deleting match:', error.message)
       alert('Failed to delete match.')
     } else {
       setMatches((prev) => prev.filter((m) => m.id !== matchId))
@@ -76,15 +75,15 @@ export default function MatchListPage() {
                 {match.home_team.name} vs {match.away_team.name}
               </div>
               <div className={styles.details}>
-                📅 {new Date(match.match_date).toLocaleString()}<br />
-                📍 {match.venue || 'TBD'}<br />
-                📌 Status: {match.status}
+                {new Date(match.match_date).toLocaleString()}<br />
+                {match.venue || 'TBD'}<br />
+                Status: {match.status}
               </div>
               <div className={styles.actions}>
                 <Link
                   href={`/admin/tournaments/${id}/stages/${stageId}/groups/${groupId}/matches/${match.id}/edit`}
                 >
-                  ✏️ Edit Match
+                  Edit Match
                 </Link>
 
                 <Link
@@ -98,7 +97,7 @@ export default function MatchListPage() {
                   onClick={() => handleDelete(match.id)}
                   className={styles.deleteButton}
                 >
-                  🗑️ Delete
+                  Delete
                 </button>
               </div>
             </li>

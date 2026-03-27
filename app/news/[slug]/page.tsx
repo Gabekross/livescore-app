@@ -155,7 +155,7 @@ export default async function ArticlePage({ params }: Props) {
           </div>
         ) : (
           <div className={styles.hero}>
-            <div className={styles.heroPlaceholder}>📰</div>
+            <div className={styles.heroPlaceholder} aria-hidden="true" />
           </div>
         )}
 
@@ -177,7 +177,7 @@ export default async function ArticlePage({ params }: Props) {
                   href={`/tournaments/${article.tournament.slug}`}
                   className={styles.tournamentBadge}
                 >
-                  🏆 {article.tournament.name}
+                  {article.tournament.name}
                 </Link>
               )}
             </div>
@@ -191,7 +191,7 @@ export default async function ArticlePage({ params }: Props) {
             <div className={styles.meta}>
               {article.published_at && (
                 <span className={styles.metaItem}>
-                  📅 {formatDate(article.published_at)}
+                  {formatDate(article.published_at)}
                 </span>
               )}
               {article.updated_at && article.updated_at !== article.published_at && (
@@ -245,7 +245,7 @@ export default async function ArticlePage({ params }: Props) {
                   {r.cover_image_url ? (
                     <img src={r.cover_image_url} alt={r.title} className={styles.relatedThumb} loading="lazy" />
                   ) : (
-                    <div className={styles.relatedThumbPlaceholder}>📰</div>
+                    <div className={styles.relatedThumbPlaceholder} aria-hidden="true" />
                   )}
                   <div className={styles.relatedInfo}>
                     <div className={styles.relatedTitle}>{r.title}</div>

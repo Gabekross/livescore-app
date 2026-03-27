@@ -86,17 +86,17 @@ export default async function ArchiveTournamentPage({ params }: Props) {
             <img src={tournament.cover_image_url} alt={tournament.name} className={styles.tournHeroImage} />
           )}
           <h1 className={styles.tournTitle}>{tournament.name}</h1>
-          {dateRange && <p className={styles.tournMeta}>📅 {dateRange}</p>}
+          {dateRange && <p className={styles.tournMeta}>{dateRange}</p>}
 
           <div className={styles.tournActions}>
-            <Link href={`/archive/${params.slug}/fixtures`} className={styles.btnOutline}>📅 All Fixtures</Link>
-            <Link href={`/archive/${params.slug}/table`}    className={styles.btnOutline}>📊 Table</Link>
+            <Link href={`/archive/${params.slug}/fixtures`} className={styles.btnOutline}>All Fixtures</Link>
+            <Link href={`/archive/${params.slug}/table`}    className={styles.btnOutline}>Table</Link>
           </div>
         </div>
 
         <SectionHeader title="Results" />
         {matches.length === 0 ? (
-          <EmptyState icon="📅" title="No matches recorded" compact />
+          <EmptyState icon="" title="No matches recorded" compact />
         ) : (
           <div className={styles.matchStack}>
             {matches.map((m) => (

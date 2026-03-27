@@ -134,10 +134,10 @@ export default function StandingsView({
 
         {/* Standings */}
         {loading ? (
-          <EmptyState icon="⏳" title="Loading standings…" />
+          <EmptyState icon="" title="Loading standings…" />
         ) : groups.length === 0 ? (
           <EmptyState
-            icon="📊"
+            icon=""
             title="No groups found"
             description="This stage has no groups, or standings aren't enabled."
           />

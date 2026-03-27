@@ -123,7 +123,7 @@ export default async function TeamDetailPage({ params }: Props) {
             subtitle={`${players.length} player${players.length !== 1 ? 's' : ''}`}
           />
           {players.length === 0 ? (
-            <EmptyState icon="👤" title="No players registered" compact />
+            <EmptyState icon="" title="No players registered" compact />
           ) : (
             <table className={styles.playerTable}>
               <thead>
@@ -152,7 +152,7 @@ export default async function TeamDetailPage({ params }: Props) {
         <div className={styles.section}>
           <SectionHeader title="Recent Matches" />
           {matches.length === 0 ? (
-            <EmptyState icon="📅" title="No matches played yet" compact />
+            <EmptyState icon="" title="No matches played yet" compact />
           ) : (
             <div className={styles.matchStack}>
               {matches.map((m) => (

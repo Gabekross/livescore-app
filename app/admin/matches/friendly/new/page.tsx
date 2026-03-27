@@ -14,7 +14,7 @@
 import { useEffect, useState }  from 'react'
 import { useRouter }            from 'next/navigation'
 import { supabase }             from '@/lib/supabase'
-import { useOrg }               from '@/hooks/useOrg'
+import { useAdminOrg }          from '@/contexts/AdminOrgContext'
 import { MATCH_STATUS_OPTIONS } from '@/lib/utils/match'
 import Link                     from 'next/link'
 import toast                    from 'react-hot-toast'
@@ -28,7 +28,7 @@ interface Team {
 
 export default function NewFriendlyMatchPage() {
   const router  = useRouter()
-  const { orgId, loading: orgLoading } = useOrg()
+  const { orgId, loading: orgLoading } = useAdminOrg()
 
   const [teams,     setTeams]     = useState<Team[]>([])
   const [homeTeam,  setHomeTeam]  = useState('')
@@ -53,10 +53,6 @@ export default function NewFriendlyMatchPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!orgId) {
-      toast.error('Organization not loaded. Please refresh.')
-      return
-    }
     if (!homeTeam || !awayTeam || homeTeam === awayTeam) {
       toast.error('Please select two different teams')
       return
@@ -101,6 +97,9 @@ export default function NewFriendlyMatchPage() {
 
   const inputStyle = { display: 'block', width: '100%', padding: '0.5rem', marginTop: '0.25rem' }
 
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+
   return (
     <div className={styles.formContainer}>
       <Link href="/admin/dashboard" className={styles.backButton}>← Back to Dashboard</Link>
@@ -110,8 +109,6 @@ export default function NewFriendlyMatchPage() {
         Friendly matches are shown on the fixtures page with a <strong>Friendly</strong> badge
         and are <strong>never counted in standings</strong>.
       </p>
-
-      {orgLoading && <p>Loading organization…</p>}
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <label className={styles.label}>

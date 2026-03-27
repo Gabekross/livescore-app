@@ -70,7 +70,7 @@ export default async function NewsPage() {
 
         {posts.length === 0 ? (
           <EmptyState
-            icon="📰"
+            icon=""
             title="No news yet"
             description="Check back soon for the latest updates."
           />
@@ -86,13 +86,13 @@ export default async function NewsPage() {
                     className={styles.featuredImage}
                   />
                 ) : (
-                  <div className={styles.featuredImagePlaceholder}>📰</div>
+                  <div className={styles.featuredImagePlaceholder} aria-hidden="true" />
                 )}
               </div>
               <div className={styles.featuredBody}>
                 {featured.tournament && (
                   <span className={styles.featuredBadge}>
-                    🏆 {featured.tournament.name}
+                    {featured.tournament.name}
                   </span>
                 )}
                 <h2 className={styles.featuredTitle}>{featured.title}</h2>
@@ -119,7 +119,7 @@ export default async function NewsPage() {
                         loading="lazy"
                       />
                     ) : (
-                      <div className={styles.cardCoverPlaceholder}>📰</div>
+                      <div className={styles.cardCoverPlaceholder} aria-hidden="true" />
                     )}
                     <div className={styles.cardBody}>
                       <h3 className={styles.cardTitle}>{post.title}</h3>

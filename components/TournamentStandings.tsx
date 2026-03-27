@@ -129,7 +129,7 @@ export default function TournamentStandings({
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>🏆 Tournament Standings</h2>
+      <h2 className={styles.heading}>Tournament Standings</h2>
       <table className={styles.table}>
         <thead>
           <tr>

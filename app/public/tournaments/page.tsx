@@ -58,8 +58,8 @@ export default function PublicTournamentList() {
                   </Link>
                   {isOngoing && <span className={styles.badge}>LIVE NOW</span>}
                   <div className={styles.meta}>
-                    📅 {tournament.start_date?.slice(0, 10)} → {tournament.end_date?.slice(0, 10)}
-                    {tournament.venue && <> | 📍 {tournament.venue}</>}
+                    {tournament.start_date?.slice(0, 10)} → {tournament.end_date?.slice(0, 10)}
+                    {tournament.venue && <> | {tournament.venue}</>}
                   </div>
                 </div>
               </li>

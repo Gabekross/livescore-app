@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Link                    from 'next/link'
 import { supabase }            from '@/lib/supabase'
-import { getOrganizationId }   from '@/lib/org'
+import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/TeamList.module.scss'
 
@@ -14,11 +14,13 @@ type Team = {
 }
 
 export default function AdminTeamListPage() {
+  const { orgId, loading: orgLoading } = useAdminOrg()
+
   const [teams,   setTeams]   = useState<Team[]>([])
   const [loading, setLoading] = useState(false)
 
-  const fetchTeams = async () => {
-    const orgId = await getOrganizationId()
+  const fetchTeams = useCallback(async () => {
+    if (!orgId) return
     const { data, error } = await supabase
       .from('teams')
       .select('id, name, logo_url')
@@ -30,9 +32,9 @@ export default function AdminTeamListPage() {
     } else {
       setTeams(data)
     }
-  }
+  }, [orgId])
 
-  useEffect(() => { fetchTeams() }, [])
+  useEffect(() => { fetchTeams() }, [fetchTeams])
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this team?')) return
@@ -48,6 +50,9 @@ export default function AdminTeamListPage() {
     }
     setLoading(false)
   }
+
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
 
   return (
     <div className={styles.container}>

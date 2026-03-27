@@ -54,42 +54,42 @@ export default function AdminDashboardPage() {
 
       <div className={styles.grid}>
         <Link href="/admin/tournaments" className={styles.card}>
-          🏆 Manage Tournaments
+          Manage Tournaments
         </Link>
         <Link href="/admin/teams" className={styles.card}>
-          👥 Manage Teams
+          Manage Teams
         </Link>
         <Link href="#" className={styles.card}>
-          📊 Manage Stages
+          Manage Stages
           <span className={styles.hint}>(via tournament)</span>
         </Link>
         <Link href="#" className={styles.card}>
-          🧩 Manage Groups
+          Manage Groups
           <span className={styles.hint}>(via stage)</span>
         </Link>
         <Link href="/admin/matches/friendly/new" className={styles.card}>
-          🤝 Create Friendly Match
+          Create Friendly Match
           <span className={styles.hint}>No standings impact</span>
         </Link>
         <Link href="/admin/players/new" className={styles.card}>
-          ➕ Add Player to Team
+          + Add Player to Team
         </Link>
         <Link href="/admin/players/stats" className={styles.card}>
-          📈 Player Stats
+          Player Stats
           <span className={styles.hint}>Top scorers &amp; assists</span>
         </Link>
 
         {/* ── Content & Site Management ──────────────────────────── */}
         <Link href="/admin/news" className={styles.card}>
-          📰 News &amp; Articles
+          News &amp; Articles
           <span className={styles.hint}>Publish posts &amp; drafts</span>
         </Link>
         <Link href="/admin/media" className={styles.card}>
-          🖼️ Media Library
+          Media Library
           <span className={styles.hint}>Upload images &amp; videos</span>
         </Link>
         <Link href="/admin/settings" className={styles.card}>
-          ⚙️ Site Settings
+          Site Settings
           <span className={styles.hint}>Branding &amp; theme</span>
         </Link>
       </div>

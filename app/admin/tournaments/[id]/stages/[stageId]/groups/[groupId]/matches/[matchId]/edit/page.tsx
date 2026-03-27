@@ -200,8 +200,8 @@ export default function EditMatchPage() {
           <div className={styles.statInputs}>
             <input type="number" placeholder="G" value={stats.goals || 0} onChange={(e) => handleStatChange(player.id, 'goals', Number(e.target.value))} />
             <input type="number" placeholder="A" value={stats.assists || 0} onChange={(e) => handleStatChange(player.id, 'assists', Number(e.target.value))} />
-            <input type="number" placeholder="🟨" value={stats.yellow_cards || 0} onChange={(e) => handleStatChange(player.id, 'yellow_cards', Number(e.target.value))} />
-            <input type="number" placeholder="🟥" value={stats.red_cards || 0} onChange={(e) => handleStatChange(player.id, 'red_cards', Number(e.target.value))} />
+            <input type="number" placeholder="YC" value={stats.yellow_cards || 0} onChange={(e) => handleStatChange(player.id, 'yellow_cards', Number(e.target.value))} />
+            <input type="number" placeholder="RC" value={stats.red_cards || 0} onChange={(e) => handleStatChange(player.id, 'red_cards', Number(e.target.value))} />
           </div>
         )}
       </div>

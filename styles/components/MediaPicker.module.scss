@@ -1,0 +1,200 @@
+/* ── Media picker modal ──────────────────────────────────── */
+.overlay {
+  position:   fixed;
+  inset:      0;
+  z-index:    1000;
+  background: rgba(0, 0, 0, 0.5);
+  display:    flex;
+  align-items:     center;
+  justify-content: center;
+  padding:    1rem;
+}
+
+.modal {
+  background:    #fff;
+  border-radius: 12px;
+  width:         100%;
+  max-width:     720px;
+  max-height:    80vh;
+  display:       flex;
+  flex-direction: column;
+  overflow:      hidden;
+  box-shadow:    0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         1rem 1.25rem;
+  border-bottom:   1px solid #e5e7eb;
+}
+
+.title {
+  font-size:   1rem;
+  font-weight: 700;
+  color:       #111827;
+}
+
+.closeBtn {
+  width:            28px;
+  height:           28px;
+  border-radius:    6px;
+  border:           1px solid #e5e7eb;
+  background:       #f9fafb;
+  color:            #6b7280;
+  font-size:        1rem;
+  cursor:           pointer;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  transition:       background-color 0.15s ease;
+
+  &:hover { background-color: #e5e7eb; }
+}
+
+/* ── Upload zone inside modal ───────────────────────────── */
+.uploadZone {
+  padding:          0.75rem 1.25rem;
+  border-bottom:    1px solid #e5e7eb;
+  background:       #f9fafb;
+  display:          flex;
+  align-items:      center;
+  gap:              0.75rem;
+
+  &.dragging {
+    background-color: rgba(37, 99, 235, 0.04);
+  }
+}
+
+.uploadLabel {
+  font-size:   0.82rem;
+  color:       #6b7280;
+  flex:        1;
+}
+
+.uploadBtnSmall {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              0.3em;
+  padding:          0.4rem 0.9rem;
+  background-color: #2563eb;
+  color:            #fff;
+  border:           none;
+  border-radius:    6px;
+  font-weight:      600;
+  font-size:        0.8rem;
+  cursor:           pointer;
+  white-space:      nowrap;
+  transition:       opacity 0.15s ease;
+
+  &:hover    { opacity: 0.9; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.hiddenInput {
+  display: none;
+}
+
+/* ── Grid ───────────────────────────────────────────────── */
+.body {
+  flex:       1;
+  overflow-y: auto;
+  padding:    1rem 1.25rem;
+}
+
+.grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap:                   0.75rem;
+}
+
+.item {
+  position:      relative;
+  border:        2px solid transparent;
+  border-radius: 8px;
+  overflow:      hidden;
+  cursor:        pointer;
+  transition:    border-color 0.15s ease, transform 0.15s ease;
+
+  &:hover { border-color: #93c5fd; transform: translateY(-1px); }
+}
+
+.itemSelected {
+  border-color: #2563eb;
+  box-shadow:   0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+.thumb {
+  width:        100%;
+  aspect-ratio: 1;
+  object-fit:   cover;
+  display:      block;
+}
+
+.videoThumb {
+  width:            100%;
+  aspect-ratio:     1;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        0.85rem;
+  font-weight:      600;
+  color:            #6b7280;
+  background:       #f3f4f6;
+}
+
+.itemLabel {
+  padding:        4px 6px;
+  font-size:      0.65rem;
+  color:          #6b7280;
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+}
+
+.emptyMsg {
+  text-align: center;
+  padding:    2rem;
+  color:      #9ca3af;
+  font-size:  0.85rem;
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+.footer {
+  display:         flex;
+  align-items:     center;
+  justify-content: flex-end;
+  gap:             0.75rem;
+  padding:         0.75rem 1.25rem;
+  border-top:      1px solid #e5e7eb;
+}
+
+.selectBtn {
+  padding:          0.5rem 1.2rem;
+  background-color: #2563eb;
+  color:            #fff;
+  border:           none;
+  border-radius:    8px;
+  font-weight:      600;
+  font-size:        0.85rem;
+  cursor:           pointer;
+  transition:       opacity 0.15s ease;
+
+  &:hover    { opacity: 0.9; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.cancelBtn {
+  padding:       0.5rem 1rem;
+  background:    #f3f4f6;
+  border:        1px solid #d1d5db;
+  border-radius: 8px;
+  font-size:     0.85rem;
+  font-weight:   600;
+  color:         #374151;
+  cursor:        pointer;
+  transition:    background-color 0.15s ease;
+
+  &:hover { background-color: #e5e7eb; }
+}

@@ -221,10 +221,10 @@ export default function MatchesPage() {
 
         {/* Match list */}
         {loading ? (
-          <EmptyState icon="⏳" title="Loading matches…" />
+          <EmptyState icon="" title="Loading matches…" />
         ) : filtered.length === 0 ? (
           <EmptyState
-            icon={tab === 'live' ? '📡' : '📅'}
+            icon=""
             title={tab === 'live' ? 'No live matches right now' : 'No matches found'}
             description="Check back later or try a different filter."
           />

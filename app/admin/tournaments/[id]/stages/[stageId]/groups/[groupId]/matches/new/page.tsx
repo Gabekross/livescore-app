@@ -3,7 +3,7 @@
 import { useEffect, useState }  from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase }             from '@/lib/supabase'
-import { useOrg }               from '@/hooks/useOrg'
+import { useAdminOrg }          from '@/contexts/AdminOrgContext'
 import toast                    from 'react-hot-toast'
 import styles                   from '@/styles/components/Form.module.scss'
 
@@ -15,7 +15,7 @@ interface Team {
 export default function NewMatchPage() {
   const { id, stageId, groupId } = useParams()
   const router  = useRouter()
-  const { orgId, loading: orgLoading } = useOrg()
+  const { orgId, loading: orgLoading } = useAdminOrg()
 
   const [teams,     setTeams]     = useState<Team[]>([])
   const [teamA,     setTeamA]     = useState('')
@@ -45,10 +45,6 @@ export default function NewMatchPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!orgId) {
-      toast.error('Organization not loaded. Please refresh.')
-      return
-    }
     if (!teamA || !teamB || teamA === teamB || !matchDate) {
       toast.error('Please fill all fields and choose different teams')
       return
@@ -70,7 +66,6 @@ export default function NewMatchPage() {
     })
 
     if (error) {
-      console.error('Match insert error:', error)
       toast.error(error.message || 'Failed to create match')
     } else {
       toast.success('Match created')
@@ -80,11 +75,12 @@ export default function NewMatchPage() {
     setLoading(false)
   }
 
+  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
+  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+
   return (
     <div className={styles.formContainer}>
       <h2 className={styles.heading}>Create New Match</h2>
-
-      {orgLoading && <p>Loading organization…</p>}
 
       <form onSubmit={handleSubmit} className={styles.form}>
         <label className={styles.label}>

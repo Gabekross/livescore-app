@@ -44,7 +44,7 @@ export default async function TeamsPage() {
         <SectionHeader title="Teams" subtitle={`${teams.length} team${teams.length !== 1 ? 's' : ''}`} />
 
         {teams.length === 0 ? (
-          <EmptyState icon="👥" title="No teams yet" description="Teams will appear here once added." />
+          <EmptyState icon="" title="No teams yet" description="Teams will appear here once added." />
         ) : (
           <div className={styles.grid}>
             {teams.map((team) => (

@@ -192,7 +192,7 @@ export default function PublicStageDetailPage() {
       {upcomingMatches.length > 0 && (
         <div className={styles.block}>
           <h2 className={styles.groupName} onClick={() => setShowUpcoming((prev) => !prev)}>
-            📅 Upcoming Matches {showUpcoming ? '▾' : '▸'}
+            Upcoming Matches {showUpcoming ? '▾' : '▸'}
           </h2>
           {showUpcoming && (
             <div className={styles.matchList}>
@@ -205,7 +205,7 @@ export default function PublicStageDetailPage() {
       {todaysMatches.length > 0 && (
         <div className={styles.block}>
           <h2 className={styles.groupName} onClick={() => setShowToday((prev) => !prev)}>
-            🗓️ Today&apos;s Matches {showToday ? '▾' : '▸'}
+            Today&apos;s Matches {showToday ? '▾' : '▸'}
           </h2>
           {showToday && (
             <div className={styles.matchList}>

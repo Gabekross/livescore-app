@@ -59,7 +59,7 @@ export default async function TablePage({
       <div style={{ paddingTop: 'var(--nav-height)', minHeight: '100vh' }}>
         <div style={{ maxWidth: 'var(--max-width)', margin: '0 auto', padding: '2rem 1.25rem' }}>
           <EmptyState
-            icon="📊"
+            icon=""
             title="No standings available"
             description="Standings will appear here once tournament matches have been played."
           />
