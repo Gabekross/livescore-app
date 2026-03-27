@@ -1,0 +1,53 @@
+.badge {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           0.3em;
+  padding:       2px 8px;
+  border-radius: var(--radius-full, 9999px);
+  font-size:     0.7rem;
+  font-weight:   700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space:   nowrap;
+  line-height:   1.6;
+}
+
+.live {
+  background-color: var(--color-live-bg, rgba(239, 68, 68, 0.12));
+  color:            var(--color-live, #ef4444);
+  border:           1px solid rgba(239, 68, 68, 0.3);
+  animation:        pulse-glow 2s ease infinite;
+}
+
+.dot {
+  display:       inline-block;
+  width:         6px;
+  height:        6px;
+  border-radius: 50%;
+  background:    var(--color-live, #ef4444);
+  animation:     pulse-dot 1.5s ease infinite;
+}
+
+.halftime {
+  background-color: var(--color-halftime-bg, rgba(168, 85, 247, 0.12));
+  color:            var(--color-halftime, #a855f7);
+  border:           1px solid rgba(168, 85, 247, 0.3);
+}
+
+.completed {
+  background-color: var(--color-completed-bg, rgba(107, 114, 128, 0.12));
+  color:            var(--color-completed, #6b7280);
+  border:           1px solid rgba(107, 114, 128, 0.25);
+}
+
+.scheduled {
+  background-color: var(--color-scheduled-bg, rgba(96, 165, 250, 0.12));
+  color:            var(--color-scheduled, #60a5fa);
+  border:           1px solid rgba(96, 165, 250, 0.25);
+}
+
+.friendly {
+  background-color: var(--color-friendly-bg, rgba(245, 158, 11, 0.12));
+  color:            var(--color-friendly, #f59e0b);
+  border:           1px solid rgba(245, 158, 11, 0.3);
+}

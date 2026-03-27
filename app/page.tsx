@@ -1,22 +1,264 @@
-'use client'
+// app/page.tsx
+// Public homepage — Server Component.
+// Fetches org settings, upcoming fixtures, recent results and active tournaments.
+// Live matches are rendered by a client island (LiveMatchesIsland) that
+// subscribes to realtime updates independently.
 
-import Link from 'next/link'
-import styles from '@/styles/components/LandingPage.module.scss'
+import type { Metadata }        from 'next'
+import Link                     from 'next/link'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { getOrganizationIdServer }    from '@/lib/org-server'
+import LiveMatchesIsland              from '@/components/home/LiveMatchesIsland'
+import MatchCard                      from '@/components/ui/MatchCard'
+import SectionHeader                  from '@/components/ui/SectionHeader'
+import EmptyState                     from '@/components/ui/EmptyState'
+import styles                         from '@/styles/components/Homepage.module.scss'
+import type { MatchStatus }           from '@/lib/utils/match'
 
-export default function LandingPage() {
+// ── Types ─────────────────────────────────────────────────────────────────────
+interface MatchRow {
+  id:         string
+  status:     MatchStatus
+  match_date: string
+  match_type: string
+  home_score: number | null
+  away_score: number | null
+  home_team:  { id: string; name: string; logo_url: string | null } | { id: string; name: string; logo_url: string | null }[]
+  away_team:  { id: string; name: string; logo_url: string | null } | { id: string; name: string; logo_url: string | null }[]
+}
+
+interface Tournament {
+  id:             string
+  name:           string
+  slug:           string
+  cover_image_url?: string | null
+  start_date?:    string | null
+  end_date?:      string | null
+}
+
+// ── Metadata ──────────────────────────────────────────────────────────────────
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const orgId   = await getOrganizationIdServer()
+    const supabase = createServerSupabaseClient()
+    const { data } = await supabase
+      .from('site_settings')
+      .select('site_name, site_tagline, og_image_url')
+      .eq('organization_id', orgId)
+      .single()
+
+    return {
+      title:       data?.site_name ?? 'Football Live',
+      description: data?.site_tagline ?? 'Live football scores, fixtures and standings.',
+      openGraph: {
+        images: data?.og_image_url ? [data.og_image_url] : [],
+      },
+    }
+  } catch {
+    return { title: 'Football Live' }
+  }
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+export default async function HomePage() {
+  // ── Data fetching ────────────────────────────────────────────────────────
+  let orgId       = ''
+  let siteName    = 'Football Live'
+  let siteTagline: string | null = null
+  let fixtures:    MatchRow[] = []
+  let results:     MatchRow[] = []
+  let tournaments: Tournament[] = []
+
+  try {
+    orgId = await getOrganizationIdServer()
+    const supabase = createServerSupabaseClient()
+
+    const MATCH_SELECT = `
+      id, status, match_date, match_type, home_score, away_score,
+      home_team:home_team_id(id, name, logo_url),
+      away_team:away_team_id(id, name, logo_url)
+    `
+
+    const [settingsRes, fixturesRes, resultsRes, tournamentsRes] = await Promise.all([
+      supabase
+        .from('site_settings')
+        .select('site_name, site_tagline')
+        .eq('organization_id', orgId)
+        .single(),
+
+      supabase
+        .from('matches')
+        .select(MATCH_SELECT)
+        .eq('organization_id', orgId)
+        .eq('status', 'scheduled')
+        .order('match_date')
+        .limit(6),
+
+      supabase
+        .from('matches')
+        .select(MATCH_SELECT)
+        .eq('organization_id', orgId)
+        .eq('status', 'completed')
+        .order('match_date', { ascending: false })
+        .limit(6),
+
+      supabase
+        .from('tournaments')
+        .select('id, name, slug, cover_image_url, start_date, end_date')
+        .eq('organization_id', orgId)
+        .eq('is_archived', false)
+        .order('start_date', { ascending: false })
+        .limit(4),
+    ])
+
+    if (settingsRes.data) {
+      siteName    = settingsRes.data.site_name    || siteName
+      siteTagline = settingsRes.data.site_tagline || null
+    }
+
+    const normalise = (m: MatchRow): MatchRow => ({
+      ...m,
+      home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
+      away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
+    })
+
+    fixtures    = (fixturesRes.data    || []).map(normalise) as MatchRow[]
+    results     = (resultsRes.data     || []).map(normalise) as MatchRow[]
+    tournaments = (tournamentsRes.data || []) as Tournament[]
+  } catch {
+    // DB not yet connected — render skeleton with empty state
+  }
+
+  // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className={styles.container}>
-      <h1 className={styles.heading}>⚽ Livescore Admin Portal</h1>
-      <p className={styles.subheading}>Choose where you want to go:</p>
+    <>
+      {/* Hero */}
+      <section className={styles.hero} aria-label="Welcome">
+        <div className={styles.heroInner}>
+          <h1 className={styles.heroTitle}>
+            Welcome to{' '}
+            <span className={styles.heroTitleAccent}>{siteName}</span>
+          </h1>
+          {siteTagline && (
+            <p className={styles.heroTagline}>{siteTagline}</p>
+          )}
+          <div className={styles.heroActions}>
+            <Link href="/matches" className={styles.btnPrimary}>
+              📅 Fixtures &amp; Results
+            </Link>
+            <Link href="/table" className={styles.btnSecondary}>
+              📊 Standings
+            </Link>
+          </div>
+        </div>
+      </section>
 
-      <div className={styles.links}>
-        <Link href="/admin" className={styles.linkCard}>
-          🛠️ Admin Functions
-        </Link>
-        <Link href="/public/matches" className={styles.linkCard}>
-          🌍 View Public Matches
-        </Link>
-      </div>
-    </div>
+      {/* Live matches client island — renders nothing when no live match */}
+      {orgId && <LiveMatchesIsland orgId={orgId} />}
+
+      {/* Main content */}
+      <main className={styles.main}>
+
+        {/* Upcoming Fixtures + Latest Results */}
+        <div className={styles.twoCol}>
+          {/* Fixtures */}
+          <div>
+            <SectionHeader
+              title="Upcoming Fixtures"
+              ctaLabel="All fixtures"
+              ctaHref="/matches?tab=fixtures"
+            />
+            <div className={styles.matchStack}>
+              {fixtures.length === 0 ? (
+                <EmptyState
+                  icon="📅"
+                  title="No upcoming fixtures"
+                  compact
+                />
+              ) : (
+                fixtures.map((m) => (
+                  <MatchCard
+                    key={m.id}
+                    {...m as any}
+                    href={`/matches/${m.id}`}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Results */}
+          <div>
+            <SectionHeader
+              title="Latest Results"
+              ctaLabel="All results"
+              ctaHref="/matches?tab=results"
+            />
+            <div className={styles.matchStack}>
+              {results.length === 0 ? (
+                <EmptyState
+                  icon="🏆"
+                  title="No results yet"
+                  compact
+                />
+              ) : (
+                results.map((m) => (
+                  <MatchCard
+                    key={m.id}
+                    {...m as any}
+                    href={`/matches/${m.id}`}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        <hr className={styles.divider} />
+
+        {/* Active Tournaments */}
+        {tournaments.length > 0 && (
+          <section className={styles.tournamentsSection} aria-label="Active tournaments">
+            <SectionHeader
+              title="Tournaments"
+              ctaLabel="View all"
+              ctaHref="/tournaments"
+            />
+            <div className={styles.tournamentGrid}>
+              {tournaments.map((t) => (
+                <Link key={t.id} href={`/tournaments/${t.slug}`} className={styles.tournamentCard}>
+                  {t.cover_image_url ? (
+                    <img
+                      src={t.cover_image_url}
+                      alt={t.name}
+                      className={styles.tournamentCover}
+                    />
+                  ) : (
+                    <div className={styles.tournamentCoverPlaceholder} aria-hidden="true">
+                      🏆
+                    </div>
+                  )}
+                  <div>
+                    <div className={styles.tournamentName}>{t.name}</div>
+                    {(t.start_date || t.end_date) && (
+                      <div className={styles.tournamentMeta}>
+                        {t.start_date
+                          ? new Date(t.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                          : ''}
+                        {t.start_date && t.end_date ? ' – ' : ''}
+                        {t.end_date
+                          ? new Date(t.end_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                          : ''}
+                      </div>
+                    )}
+                  </div>
+                  <span className={styles.tournamentLink}>View tournament →</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+    </>
   )
 }

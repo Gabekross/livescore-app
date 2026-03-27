@@ -1,0 +1,136 @@
+.card {
+  display:          flex;
+  align-items:      center;
+  gap:              var(--sp-3, 0.75rem);
+  padding:          var(--sp-4, 1rem) var(--sp-5, 1.25rem);
+  background-color: var(--color-card, #13132a);
+  border:           1px solid var(--color-border-subtle, #1c1c35);
+  border-radius:    var(--radius-lg, 12px);
+  color:            var(--color-text, #e8e8f4);
+  transition:       background-color var(--transition-fast, 150ms ease),
+                    border-color var(--transition-fast, 150ms ease),
+                    transform var(--transition-fast, 150ms ease);
+  text-decoration:  none;
+
+  &:hover {
+    background-color: var(--color-card-hover, #1a1a36);
+    border-color:     var(--color-border, #2a2a48);
+    transform:        translateY(-1px);
+  }
+}
+
+.cardLive {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* Left: status/time column */
+.statusCol {
+  flex:        0 0 72px;
+  text-align:  center;
+  font-size:   0.78rem;
+  color:       var(--color-text-muted, #7272a0);
+  font-weight: 500;
+}
+
+/* Centre: teams + score */
+.matchup {
+  flex:        1;
+  display:     grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap:         var(--sp-3, 0.75rem);
+  min-width:   0; /* prevent flex overflow */
+}
+
+.team {
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-2, 0.5rem);
+  font-size:   0.9rem;
+  font-weight: 600;
+  min-width:   0;
+
+  span {
+    overflow:      hidden;
+    text-overflow: ellipsis;
+    white-space:   nowrap;
+  }
+}
+
+.teamHome { justify-content: flex-end; text-align: right; }
+.teamAway { justify-content: flex-start; }
+
+.scoreBox {
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  gap:              var(--sp-2, 0.5rem);
+  background-color: var(--color-surface, #0f0f1e);
+  border:           1px solid var(--color-border-subtle, #1c1c35);
+  border-radius:    var(--radius-md, 8px);
+  padding:          var(--sp-1, 0.25rem) var(--sp-3, 0.75rem);
+  min-width:        56px;
+  font-size:        1.1rem;
+  font-weight:      800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing:   1px;
+  flex-shrink:      0;
+}
+
+.scoreDash {
+  color:       var(--color-text-dim, #48487a);
+  font-weight: 400;
+  font-size:   1rem;
+}
+
+.vsLabel {
+  font-size:   0.75rem;
+  font-weight: 600;
+  color:       var(--color-text-dim, #48487a);
+  letter-spacing: 0.05em;
+}
+
+/* Right: badges column */
+.badgeCol {
+  display:        flex;
+  flex-direction: column;
+  align-items:    flex-end;
+  gap:            var(--sp-1, 0.25rem);
+  flex-shrink:    0;
+}
+
+/* Team logo */
+.logo {
+  width:         20px;
+  height:        20px;
+  border-radius: var(--radius-sm, 4px);
+  object-fit:    cover;
+  flex-shrink:   0;
+}
+
+.logoPlaceholder {
+  width:            20px;
+  height:           20px;
+  border-radius:    var(--radius-sm, 4px);
+  background-color: var(--color-surface, #0f0f1e);
+  border:           1px solid var(--color-border-subtle, #1c1c35);
+  flex-shrink:      0;
+}
+
+/* Tournament context label */
+.context {
+  font-size:  0.7rem;
+  color:      var(--color-text-dim, #48487a);
+  margin-top: var(--sp-1, 0.25rem);
+  text-align: center;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 520px) {
+  .card    { padding: var(--sp-3, 0.75rem); flex-wrap: wrap; }
+  .statusCol { flex: 0 0 56px; font-size: 0.72rem; }
+  .matchup   { gap: var(--sp-2, 0.5rem); }
+  .team      { font-size: 0.82rem; }
+  .scoreBox  { font-size: 0.95rem; min-width: 48px; padding: 2px 8px; }
+  .badgeCol  { display: none; }
+}

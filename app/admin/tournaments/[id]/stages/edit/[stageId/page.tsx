@@ -1,7 +1,12 @@
 'use client'
 
+// app/admin/tournaments/[id]/stages/edit/[stageId/page.tsx
+// Note: directory name has a pre-existing Windows filesystem issue (missing ]).
+// Edit stage — includes show_standings toggle added in Phase 3 cleanup.
+
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/Form.module.scss'
@@ -10,9 +15,10 @@ export default function EditStagePage() {
   const { id, stageId } = useParams()
   const router = useRouter()
 
-  const [stageName, setStageName] = useState('')
-  const [orderNumber, setOrderNumber] = useState(1)
-  const [loading, setLoading] = useState(false)
+  const [stageName,      setStageName]      = useState('')
+  const [orderNumber,    setOrderNumber]    = useState(1)
+  const [showStandings,  setShowStandings]  = useState(false)
+  const [loading,        setLoading]        = useState(false)
 
   useEffect(() => {
     const fetchStage = async () => {
@@ -20,7 +26,7 @@ export default function EditStagePage() {
 
       const { data, error } = await supabase
         .from('tournament_stages')
-        .select('*')
+        .select('stage_name, order_number, show_standings')
         .eq('id', stageId)
         .single()
 
@@ -31,6 +37,7 @@ export default function EditStagePage() {
 
       setStageName(data.stage_name)
       setOrderNumber(data.order_number)
+      setShowStandings(!!data.show_standings)
     }
 
     fetchStage()
@@ -49,8 +56,9 @@ export default function EditStagePage() {
     const { error } = await supabase
       .from('tournament_stages')
       .update({
-        stage_name: stageName,
-        order_number: orderNumber,
+        stage_name:     stageName.trim(),
+        order_number:   orderNumber,
+        show_standings: showStandings,
       })
       .eq('id', stageId)
 
@@ -66,7 +74,12 @@ export default function EditStagePage() {
 
   return (
     <div className={styles.formContainer}>
+      <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
+        ← Back to Stages
+      </Link>
+
       <h2 className={styles.heading}>Edit Stage</h2>
+
       <form onSubmit={handleUpdate} className={styles.form}>
         <label className={styles.label}>
           Stage Name:
@@ -91,8 +104,18 @@ export default function EditStagePage() {
           />
         </label>
 
+        <label className={styles.label} style={{ flexDirection: 'row', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
+          <input
+            type="checkbox"
+            checked={showStandings}
+            onChange={(e) => setShowStandings(e.target.checked)}
+            style={{ width: 'auto', marginTop: 0 }}
+          />
+          Show group standings table for this stage
+        </label>
+
         <button type="submit" disabled={loading} className={styles.button}>
-          {loading ? 'Updating...' : 'Update Stage'}
+          {loading ? 'Updating…' : 'Update Stage'}
         </button>
       </form>
     </div>

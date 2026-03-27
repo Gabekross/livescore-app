@@ -1,0 +1,142 @@
+/* ── Page ────────────────────────────────────────────────── */
+.page {
+  padding-top: var(--nav-height, 60px);
+  min-height:  100vh;
+}
+
+.inner {
+  max-width: var(--max-width, 1200px);
+  margin:    0 auto;
+  padding:   var(--sp-8, 2rem) var(--content-padding, 1.25rem);
+}
+
+/* ── Tournament / stage pickers ──────────────────────────── */
+.pickers {
+  display:       flex;
+  gap:           var(--sp-3, 0.75rem);
+  flex-wrap:     wrap;
+  margin-bottom: var(--sp-6, 1.5rem);
+  align-items:   center;
+}
+
+.pickerSelect {
+  padding:       8px 12px;
+  background:    var(--color-card, #13132a);
+  border:        1px solid var(--color-border, #2a2a48);
+  border-radius: var(--radius-md, 8px);
+  color:         var(--color-text, #e8e8f4);
+  font-size:     0.87rem;
+  font-weight:   500;
+  min-width:     180px;
+  cursor:        pointer;
+  appearance:    none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237272a0'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 2rem;
+
+  &:focus { outline: none; border-color: var(--color-accent, #2563eb); }
+}
+
+/* ── Group section ───────────────────────────────────────── */
+.groupSection {
+  background:    var(--color-card, #13132a);
+  border:        1px solid var(--color-border-subtle, #1c1c35);
+  border-radius: var(--radius-xl, 16px);
+  overflow:      hidden;
+  margin-bottom: var(--sp-5, 1.25rem);
+}
+
+.groupHeading {
+  font-size:   0.72rem;
+  font-weight: 700;
+  color:       var(--color-text-dim, #48487a);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding:     var(--sp-4, 1rem) var(--sp-5, 1.25rem);
+  border-bottom: 1px solid var(--color-border-subtle, #1c1c35);
+  background:  var(--color-surface, #0f0f1e);
+}
+
+/* ── Standings table ─────────────────────────────────────── */
+.table {
+  width:           100%;
+  border-collapse: collapse;
+  font-size:       0.87rem;
+  overflow:        hidden;
+}
+
+.thead {
+  background: var(--color-surface, #0f0f1e);
+}
+
+.thPos,
+.thTeam,
+.thStat {
+  padding:     var(--sp-3, 0.75rem) var(--sp-3, 0.75rem);
+  font-size:   0.7rem;
+  font-weight: 700;
+  color:       var(--color-text-dim, #48487a);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border-subtle, #1c1c35);
+}
+
+.thPos  { width: 40px; text-align: center; }
+.thTeam { text-align: left; }
+.thStat { width: 44px; text-align: center; }
+
+.tr {
+  border-bottom: 1px solid var(--color-border-subtle, #1c1c35);
+  transition:    background-color var(--transition-fast);
+
+  &:last-child  { border-bottom: none; }
+  &:hover       { background-color: var(--color-surface, #0f0f1e); }
+}
+
+.trTop {
+  border-left: 3px solid var(--color-accent, #2563eb);
+}
+
+.tdPos {
+  text-align: center;
+  padding:    var(--sp-3, 0.75rem);
+  font-size:  0.8rem;
+  font-weight: 600;
+  color:      var(--color-text-muted, #7272a0);
+  width:      40px;
+}
+
+.tdTeam {
+  padding:     var(--sp-3, 0.75rem);
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-2, 0.5rem);
+}
+
+.teamName {
+  font-weight: 600;
+  color:       var(--color-text, #e8e8f4);
+  font-size:   0.9rem;
+}
+
+.tdStat {
+  text-align:  center;
+  padding:     var(--sp-3, 0.75rem);
+  font-size:   0.87rem;
+  color:       var(--color-text-muted, #7272a0);
+  font-variant-numeric: tabular-nums;
+  width:       44px;
+}
+
+.tdPts {
+  @extend .tdStat;
+  font-weight: 800;
+  font-size:   0.95rem;
+  color:       var(--color-text, #e8e8f4);
+}
+
+/* ── Responsive: hide some columns on mobile ─────────────── */
+@media (max-width: 480px) {
+  .hideOnMobile { display: none; }
+}
