@@ -78,6 +78,20 @@ export default function AdminDashboardPage() {
           📈 Player Stats
           <span className={styles.hint}>Top scorers &amp; assists</span>
         </Link>
+
+        {/* ── Content & Site Management ──────────────────────────── */}
+        <Link href="/admin/news" className={styles.card}>
+          📰 News &amp; Articles
+          <span className={styles.hint}>Publish posts &amp; drafts</span>
+        </Link>
+        <Link href="/admin/media" className={styles.card}>
+          🖼️ Media Library
+          <span className={styles.hint}>Upload images &amp; videos</span>
+        </Link>
+        <Link href="/admin/settings" className={styles.card}>
+          ⚙️ Site Settings
+          <span className={styles.hint}>Branding &amp; theme</span>
+        </Link>
       </div>
 
       <div style={{ marginTop: '2rem' }}>

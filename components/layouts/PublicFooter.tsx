@@ -17,6 +17,7 @@ const FOOTER_LINKS = [
   { href: '/table',       label: 'Table' },
   { href: '/teams',       label: 'Teams' },
   { href: '/tournaments', label: 'Tournaments' },
+  { href: '/news',        label: 'News' },
   { href: '/archive',     label: 'Archive' },
 ]
 

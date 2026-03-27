@@ -1,0 +1,206 @@
+/* ── Page wrapper ────────────────────────────────────────── */
+.page {
+  padding-top: var(--nav-height, 60px);
+  min-height:  100vh;
+}
+
+.inner {
+  max-width: var(--max-width, 1200px);
+  margin:    0 auto;
+  padding:   var(--sp-8, 2rem) var(--content-padding, 1.25rem);
+}
+
+/* ── Featured post (first result, full-width hero) ──────── */
+.featuredCard {
+  display:          grid;
+  grid-template-columns: 1fr 1fr;
+  gap:              var(--sp-8, 2rem);
+  background-color: var(--color-card, #13132a);
+  border:           1px solid var(--color-border-subtle, #1c1c35);
+  border-radius:    var(--radius-xl, 16px);
+  overflow:         hidden;
+  margin-bottom:    var(--sp-8, 2rem);
+  transition:       border-color var(--transition-fast),
+                    transform var(--transition-fast);
+
+  &:hover {
+    border-color: var(--color-border, #2a2a48);
+    transform:    translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.featuredImage {
+  width:      100%;
+  height:     100%;
+  min-height: 240px;
+  object-fit: cover;
+  display:    block;
+}
+
+.featuredImagePlaceholder {
+  width:            100%;
+  min-height:       240px;
+  background:       var(--color-surface, #0f0f1e);
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        4rem;
+}
+
+.featuredBody {
+  padding:        var(--sp-8, 2rem);
+  display:        flex;
+  flex-direction: column;
+  justify-content: center;
+  gap:            var(--sp-3, 0.75rem);
+
+  @media (max-width: 768px) {
+    padding: var(--sp-5, 1.25rem);
+  }
+}
+
+.featuredBadge {
+  font-size:      0.7rem;
+  font-weight:    700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color:          var(--color-accent-light, #3b82f6);
+}
+
+.featuredTitle {
+  font-size:   clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 800;
+  color:       var(--color-text, #e8e8f4);
+  line-height: 1.25;
+}
+
+.featuredExcerpt {
+  font-size:   0.95rem;
+  color:       var(--color-text-muted, #7272a0);
+  line-height: 1.6;
+  display:     -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow:    hidden;
+}
+
+.featuredMeta {
+  font-size:   0.78rem;
+  color:       var(--color-text-dim, #48487a);
+  margin-top:  auto;
+}
+
+.readMore {
+  display:     inline-flex;
+  align-items: center;
+  gap:         0.3em;
+  font-size:   0.85rem;
+  font-weight: 700;
+  color:       var(--color-accent-light, #3b82f6);
+  margin-top:  var(--sp-2, 0.5rem);
+  transition:  opacity var(--transition-fast);
+
+  &:hover { opacity: 0.8; }
+}
+
+/* ── Article grid ────────────────────────────────────────── */
+.grid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap:                   var(--sp-5, 1.25rem);
+}
+
+.card {
+  display:          flex;
+  flex-direction:   column;
+  background-color: var(--color-card, #13132a);
+  border:           1px solid var(--color-border-subtle, #1c1c35);
+  border-radius:    var(--radius-xl, 16px);
+  overflow:         hidden;
+  transition:       background-color var(--transition-fast),
+                    border-color var(--transition-fast),
+                    transform var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-card-hover, #1a1a36);
+    border-color:     var(--color-border, #2a2a48);
+    transform:        translateY(-2px);
+  }
+}
+
+.cardCover {
+  width:      100%;
+  height:     160px;
+  object-fit: cover;
+  display:    block;
+}
+
+.cardCoverPlaceholder {
+  width:            100%;
+  height:           160px;
+  background:       var(--color-surface, #0f0f1e);
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        2.5rem;
+  border-bottom:    1px solid var(--color-border-subtle, #1c1c35);
+}
+
+.cardBody {
+  padding:        var(--sp-5, 1.25rem);
+  display:        flex;
+  flex-direction: column;
+  gap:            var(--sp-2, 0.5rem);
+  flex:           1;
+}
+
+.cardTitle {
+  font-size:   1rem;
+  font-weight: 700;
+  color:       var(--color-text, #e8e8f4);
+  line-height: 1.35;
+  display:     -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow:    hidden;
+}
+
+.cardExcerpt {
+  font-size:   0.82rem;
+  color:       var(--color-text-muted, #7272a0);
+  line-height: 1.55;
+  display:     -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow:    hidden;
+  flex:        1;
+}
+
+.cardMeta {
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-2, 0.5rem);
+  margin-top:  auto;
+  padding-top: var(--sp-3, 0.75rem);
+  border-top:  1px solid var(--color-border-subtle, #1c1c35);
+  font-size:   0.72rem;
+  color:       var(--color-text-dim, #48487a);
+  flex-wrap:   wrap;
+}
+
+.tournamentTag {
+  display:       inline-flex;
+  padding:       2px 8px;
+  border-radius: var(--radius-full, 9999px);
+  font-size:     0.65rem;
+  font-weight:   700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background:    var(--color-accent-dim, rgba(37, 99, 235, 0.15));
+  color:         var(--color-accent-light, #3b82f6);
+  border:        1px solid rgba(37, 99, 235, 0.2);
+}

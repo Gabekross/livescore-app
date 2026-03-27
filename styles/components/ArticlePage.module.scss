@@ -1,0 +1,238 @@
+/* ── Article page ────────────────────────────────────────── */
+.page {
+  padding-top: var(--nav-height, 60px);
+  min-height:  100vh;
+}
+
+/* ── Hero ────────────────────────────────────────────────── */
+.hero {
+  position:   relative;
+  width:      100%;
+  max-height: 480px;
+  overflow:   hidden;
+  background: var(--color-surface, #0f0f1e);
+}
+
+.heroImage {
+  width:      100%;
+  max-height: 480px;
+  object-fit: cover;
+  display:    block;
+}
+
+.heroPlaceholder {
+  width:            100%;
+  height:           320px;
+  background:       linear-gradient(135deg, var(--color-surface), var(--color-card));
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        5rem;
+}
+
+/* Dark gradient overlay at bottom of hero */
+.heroOverlay {
+  position:   absolute;
+  bottom:     0;
+  left:       0;
+  right:      0;
+  height:     60%;
+  background: linear-gradient(to top, rgba(7, 7, 16, 0.85) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* ── Article container ───────────────────────────────────── */
+.container {
+  max-width: 760px;
+  margin:    0 auto;
+  padding:   var(--sp-8, 2rem) var(--content-padding, 1.25rem) var(--sp-16, 4rem);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.header {
+  margin-bottom: var(--sp-8, 2rem);
+}
+
+.breadcrumb {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--sp-2, 0.5rem);
+  font-size:     0.8rem;
+  color:         var(--color-text-dim, #48487a);
+  margin-bottom: var(--sp-4, 1rem);
+  flex-wrap:     wrap;
+
+  a { color: var(--color-text-muted, #7272a0); transition: color var(--transition-fast); }
+  a:hover { color: var(--color-text, #e8e8f4); }
+  span { color: var(--color-text-dim, #48487a); }
+}
+
+.badges {
+  display:       flex;
+  gap:           var(--sp-2, 0.5rem);
+  margin-bottom: var(--sp-4, 1rem);
+  flex-wrap:     wrap;
+}
+
+.title {
+  font-size:      clamp(1.7rem, 5vw, 2.5rem);
+  font-weight:    800;
+  line-height:    1.2;
+  letter-spacing: -0.02em;
+  color:          var(--color-text, #e8e8f4);
+  margin-bottom:  var(--sp-4, 1rem);
+}
+
+.excerpt {
+  font-size:   1.1rem;
+  color:       var(--color-text-muted, #7272a0);
+  line-height: 1.6;
+  font-style:  italic;
+  border-left: 3px solid var(--color-accent, #2563eb);
+  padding-left: var(--sp-4, 1rem);
+  margin-bottom: var(--sp-6, 1.5rem);
+}
+
+.meta {
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-4, 1rem);
+  font-size:   0.82rem;
+  color:       var(--color-text-dim, #48487a);
+  flex-wrap:   wrap;
+  padding-top: var(--sp-4, 1rem);
+  border-top:  1px solid var(--color-border-subtle, #1c1c35);
+}
+
+.metaItem {
+  display:     flex;
+  align-items: center;
+  gap:         0.3em;
+}
+
+/* ── Article divider ─────────────────────────────────────── */
+.divider {
+  border:     none;
+  border-top: 1px solid var(--color-border-subtle, #1c1c35);
+  margin:     var(--sp-8, 2rem) 0;
+}
+
+/* ── Tournament badge / tag ──────────────────────────────── */
+.tournamentBadge {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           0.3em;
+  padding:       4px 10px;
+  border-radius: var(--radius-full, 9999px);
+  font-size:     0.72rem;
+  font-weight:   700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background:    var(--color-accent-dim, rgba(37, 99, 235, 0.15));
+  color:         var(--color-accent-light, #3b82f6);
+  border:        1px solid rgba(37, 99, 235, 0.2);
+}
+
+/* ── Share / social strip ────────────────────────────────── */
+.shareStrip {
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-3, 0.75rem);
+  margin-top:  var(--sp-8, 2rem);
+  padding-top: var(--sp-6, 1.5rem);
+  border-top:  1px solid var(--color-border-subtle, #1c1c35);
+  font-size:   0.82rem;
+  color:       var(--color-text-dim, #48487a);
+  flex-wrap:   wrap;
+}
+
+.shareLabel { font-weight: 600; }
+
+.shareBtn {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           0.35em;
+  padding:       6px 12px;
+  border:        1px solid var(--color-border, #2a2a48);
+  border-radius: var(--radius-full, 9999px);
+  background:    transparent;
+  color:         var(--color-text-muted, #7272a0);
+  font-size:     0.78rem;
+  font-weight:   600;
+  cursor:        pointer;
+  transition:    border-color var(--transition-fast), color var(--transition-fast);
+
+  &:hover { border-color: var(--color-accent, #2563eb); color: var(--color-text, #e8e8f4); }
+}
+
+/* ── Related articles ────────────────────────────────────── */
+.related {
+  max-width: var(--max-width, 1200px);
+  margin:    0 auto;
+  padding:   0 var(--content-padding, 1.25rem) var(--sp-16, 4rem);
+}
+
+.relatedGrid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap:                   var(--sp-4, 1rem);
+  margin-top:            var(--sp-5, 1.25rem);
+}
+
+.relatedCard {
+  display:          flex;
+  gap:              var(--sp-3, 0.75rem);
+  padding:          var(--sp-4, 1rem);
+  background:       var(--color-card, #13132a);
+  border:           1px solid var(--color-border-subtle, #1c1c35);
+  border-radius:    var(--radius-lg, 12px);
+  transition:       background-color var(--transition-fast), border-color var(--transition-fast);
+  align-items:      flex-start;
+
+  &:hover {
+    background-color: var(--color-card-hover, #1a1a36);
+    border-color:     var(--color-border, #2a2a48);
+  }
+}
+
+.relatedThumb {
+  width:         60px;
+  height:        60px;
+  border-radius: var(--radius-md, 8px);
+  object-fit:    cover;
+  flex-shrink:   0;
+}
+
+.relatedThumbPlaceholder {
+  width:            60px;
+  height:           60px;
+  border-radius:    var(--radius-md, 8px);
+  background:       var(--color-surface, #0f0f1e);
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        1.5rem;
+  flex-shrink:      0;
+}
+
+.relatedInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.relatedTitle {
+  font-size:   0.87rem;
+  font-weight: 700;
+  color:       var(--color-text, #e8e8f4);
+  line-height: 1.3;
+  display:     -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow:    hidden;
+  margin-bottom: 4px;
+}
+
+.relatedDate {
+  font-size: 0.72rem;
+  color:     var(--color-text-dim, #48487a);
+}

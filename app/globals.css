@@ -86,13 +86,54 @@
   --transition-base: 250ms ease;
 }
 
-/* ── Theme: Green / Gold variant ─────────────────────────── */
+/* ── Theme: Forest Green / Gold ──────────────────────────── */
 [data-theme="theme-green-gold"] {
-  --color-accent:       #16a34a;
-  --color-accent-light: #22c55e;
-  --color-accent-dim:   rgba(22, 163, 74, 0.15);
-  --color-accent-glow:  rgba(22, 163, 74, 0.3);
-  --color-shadow-accent:0 0 24px rgba(22, 163, 74, 0.3);
+  /* Slightly warmer, greener backgrounds */
+  --color-bg:             #060c08;
+  --color-surface:        #0d1510;
+  --color-card:           #111a14;
+  --color-card-hover:     #182110;
+  --color-nav:            #080f0a;
+  --color-border:         #1e3024;
+  --color-border-subtle:  #162019;
+
+  /* Warm text */
+  --color-text:           #e8f4ec;
+  --color-text-muted:     #6a9a78;
+  --color-text-dim:       #3d6047;
+
+  /* Green accent */
+  --color-accent:         #16a34a;
+  --color-accent-light:   #22c55e;
+  --color-accent-dim:     rgba(22, 163, 74, 0.15);
+  --color-accent-glow:    rgba(22, 163, 74, 0.3);
+  --shadow-accent:        0 0 24px rgba(22, 163, 74, 0.3);
+
+  /* Gold status overlay for scheduled */
+  --color-scheduled:      #fbbf24;
+  --color-scheduled-bg:   rgba(251, 191, 36, 0.1);
+}
+
+/* ── Theme: Midnight Slate (light-on-dark neutral) ──────── */
+[data-theme="theme-slate"] {
+  --color-bg:             #0c0c0f;
+  --color-surface:        #141418;
+  --color-card:           #1a1a1f;
+  --color-card-hover:     #222228;
+  --color-nav:            #0a0a0d;
+  --color-border:         #2e2e38;
+  --color-border-subtle:  #1f1f28;
+
+  --color-text:           #f0f0f5;
+  --color-text-muted:     #8080a0;
+  --color-text-dim:       #505068;
+
+  /* Vibrant violet accent */
+  --color-accent:         #7c3aed;
+  --color-accent-light:   #8b5cf6;
+  --color-accent-dim:     rgba(124, 58, 237, 0.15);
+  --color-accent-glow:    rgba(124, 58, 237, 0.3);
+  --shadow-accent:        0 0 24px rgba(124, 58, 237, 0.3);
 }
 
 /* ── Base Reset ──────────────────────────────────────────── */
@@ -198,6 +239,69 @@ textarea {
 :focus-visible {
   outline: 2px solid var(--color-accent-light);
   outline-offset: 2px;
+}
+
+/* ── Article / editorial body prose ─────────────────────── */
+/* Applied to .article-body wrapper on news article pages   */
+.article-body {
+  font-size:   1.05rem;
+  line-height: 1.8;
+  color:       var(--color-text);
+
+  p    { margin-bottom: 1.4em; }
+  h2   { font-size: 1.35rem; font-weight: 700; margin: 2em 0 0.6em; color: var(--color-text); }
+  h3   { font-size: 1.15rem; font-weight: 700; margin: 1.6em 0 0.5em; color: var(--color-text); }
+  ul, ol { padding-left: 1.4em; margin-bottom: 1.4em; }
+  li   { margin-bottom: 0.4em; }
+  a    { color: var(--color-accent-light); text-decoration: underline; }
+  a:hover { opacity: 0.85; }
+  strong { font-weight: 700; color: var(--color-text); }
+  em     { font-style: italic; }
+  blockquote {
+    border-left: 3px solid var(--color-accent);
+    margin: 1.4em 0;
+    padding: 0.6em 1.2em;
+    background: var(--color-accent-dim);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+  img {
+    border-radius: var(--radius-lg);
+    margin: 1.4em 0;
+    max-width: 100%;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid var(--color-border-subtle);
+    margin: 2em 0;
+  }
+  code {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 0.1em 0.4em;
+    font-size: 0.88em;
+  }
+}
+
+/* ── Video embed wrapper ─────────────────────────────────── */
+.video-embed {
+  position:       relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  height:         0;
+  overflow:       hidden;
+  border-radius:  var(--radius-lg);
+  background:     var(--color-surface);
+
+  iframe, video {
+    position: absolute;
+    top:      0;
+    left:     0;
+    width:    100%;
+    height:   100%;
+    border:   none;
+  }
 }
 
 /* ── Admin pages: reset body so they don't inherit dark bg ─ */

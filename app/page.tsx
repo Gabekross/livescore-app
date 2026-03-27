@@ -36,6 +36,15 @@ interface Tournament {
   end_date?:      string | null
 }
 
+interface NewsPost {
+  id:              string
+  title:           string
+  slug:            string
+  excerpt:         string | null
+  cover_image_url: string | null
+  published_at:    string | null
+}
+
 // ── Metadata ──────────────────────────────────────────────────────────────────
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -68,6 +77,7 @@ export default async function HomePage() {
   let fixtures:    MatchRow[] = []
   let results:     MatchRow[] = []
   let tournaments: Tournament[] = []
+  let newsPosts:   NewsPost[] = []
 
   try {
     orgId = await getOrganizationIdServer()
@@ -79,7 +89,7 @@ export default async function HomePage() {
       away_team:away_team_id(id, name, logo_url)
     `
 
-    const [settingsRes, fixturesRes, resultsRes, tournamentsRes] = await Promise.all([
+    const [settingsRes, fixturesRes, resultsRes, tournamentsRes, newsRes] = await Promise.all([
       supabase
         .from('site_settings')
         .select('site_name, site_tagline')
@@ -109,6 +119,14 @@ export default async function HomePage() {
         .eq('is_archived', false)
         .order('start_date', { ascending: false })
         .limit(4),
+
+      supabase
+        .from('posts')
+        .select('id, title, slug, excerpt, cover_image_url, published_at')
+        .eq('organization_id', orgId)
+        .eq('status', 'published')
+        .order('published_at', { ascending: false })
+        .limit(4),
     ])
 
     if (settingsRes.data) {
@@ -125,6 +143,7 @@ export default async function HomePage() {
     fixtures    = (fixturesRes.data    || []).map(normalise) as MatchRow[]
     results     = (resultsRes.data     || []).map(normalise) as MatchRow[]
     tournaments = (tournamentsRes.data || []) as Tournament[]
+    newsPosts   = (newsRes.data        || []) as NewsPost[]
   } catch {
     // DB not yet connected — render skeleton with empty state
   }
@@ -257,6 +276,61 @@ export default async function HomePage() {
               ))}
             </div>
           </section>
+        )}
+
+        {/* News preview */}
+        {newsPosts.length > 0 && (
+          <>
+            <hr className={styles.divider} />
+            <section aria-label="Latest news">
+              <SectionHeader
+                title="Latest News"
+                ctaLabel="All news"
+                ctaHref="/news"
+              />
+              <div className={styles.tournamentGrid}>
+                {newsPosts.map((post) => (
+                  <Link key={post.id} href={`/news/${post.slug}`} className={styles.tournamentCard}>
+                    {post.cover_image_url ? (
+                      <img
+                        src={post.cover_image_url}
+                        alt={post.title}
+                        className={styles.tournamentCover}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className={styles.tournamentCoverPlaceholder} aria-hidden="true">
+                        📰
+                      </div>
+                    )}
+                    <div>
+                      <div className={styles.tournamentName}>{post.title}</div>
+                      {post.excerpt && (
+                        <div className={styles.tournamentMeta}
+                          style={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                          } as React.CSSProperties}
+                        >
+                          {post.excerpt}
+                        </div>
+                      )}
+                      {post.published_at && (
+                        <div className={styles.tournamentMeta} style={{ marginTop: 4 }}>
+                          {new Date(post.published_at).toLocaleDateString('en-GB', {
+                            day: 'numeric', month: 'short', year: 'numeric',
+                          })}
+                        </div>
+                      )}
+                    </div>
+                    <span className={styles.tournamentLink}>Read article →</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          </>
         )}
       </main>
     </>
