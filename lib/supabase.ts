@@ -1,9 +1,11 @@
 // lib/supabase.ts
-import { createClient } from '@supabase/supabase-js'
+// Browser-side Supabase client using @supabase/ssr.
+// createBrowserClient is singleton-safe — it reuses the same instance per browser tab.
+// All 'use client' pages import { supabase } from '@/lib/supabase' unchanged.
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+import { createBrowserClient } from '@supabase/ssr'
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
-
-
+export const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)

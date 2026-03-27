@@ -1,5 +1,9 @@
 'use client'
 
+// GroupStandings.tsx
+// Calls the get_group_standings(group_input) RPC function (migration 016).
+// The RPC filters for status='completed' and affects_standings=true internally.
+
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import styles from '@/styles/components/StandingsTable.module.scss'

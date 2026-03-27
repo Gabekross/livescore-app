@@ -225,9 +225,9 @@ export default function EditMatchPage() {
         <label>Status</label>
         <select value={status} onChange={e => setStatus(e.target.value)} className={styles.select}>
           <option value="scheduled">Scheduled</option>
-          <option value="ongoing">Ongoing</option>
+          <option value="live">Live</option>
           <option value="halftime">Halftime</option>
-          <option value="finished">Finished</option>
+          <option value="completed">Completed</option>
         </select>
 
         <label>Home Formation</label>

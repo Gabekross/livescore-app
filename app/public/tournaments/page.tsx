@@ -1,16 +1,19 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
-import styles from '@/styles/components/PublicTournamentList.module.scss'
+import Link                    from 'next/link'
+import { supabase }            from '@/lib/supabase'
+import { getOrganizationId }   from '@/lib/org'
+import styles                  from '@/styles/components/PublicTournamentList.module.scss'
 
 interface Tournament {
-  id: string
-  name: string
-  start_date: string
-  end_date: string
-  venue?: string
+  id:          string
+  name:        string
+  slug:        string
+  start_date:  string
+  end_date:    string
+  venue?:      string
+  is_archived: boolean
 }
 
 const today = new Date().toISOString().slice(0, 10)
@@ -20,14 +23,16 @@ export default function PublicTournamentList() {
 
   useEffect(() => {
     const fetchTournaments = async () => {
+      const orgId = await getOrganizationId()
+
       const { data, error } = await supabase
         .from('tournaments')
-        .select('*')
+        .select('id, name, slug, start_date, end_date, venue, is_archived')
+        .eq('organization_id', orgId)
+        .eq('is_archived', false)
         .order('start_date', { ascending: false })
 
-      if (!error && data) {
-        setTournaments(data)
-      }
+      if (!error && data) setTournaments(data)
     }
 
     fetchTournaments()
@@ -42,25 +47,24 @@ export default function PublicTournamentList() {
       ) : (
         <ul className={styles.tournamentList}>
           {tournaments.map((tournament) => {
-              const isOngoing =
-                tournament.start_date <= today && tournament.end_date >= today
+            const isOngoing =
+              tournament.start_date <= today && tournament.end_date >= today
 
-              return (
-                <li key={tournament.id} className={styles.tournamentItem}>
-                  <div className={styles.info}>
-                    <Link href={`/public/tournaments/${tournament.id}`}>
-                      <strong>{tournament.name}</strong>
-                    </Link>
-                    {isOngoing && <span className={styles.badge}>LIVE NOW</span>}
-                    <div className={styles.meta}>
-                      📅 {tournament.start_date?.slice(0, 10)} → {tournament.end_date?.slice(0, 10)}
-                      {tournament.venue && <> | 📍 {tournament.venue}</>}
-                    </div>
+            return (
+              <li key={tournament.id} className={styles.tournamentItem}>
+                <div className={styles.info}>
+                  <Link href={`/public/tournaments/${tournament.id}`}>
+                    <strong>{tournament.name}</strong>
+                  </Link>
+                  {isOngoing && <span className={styles.badge}>LIVE NOW</span>}
+                  <div className={styles.meta}>
+                    📅 {tournament.start_date?.slice(0, 10)} → {tournament.end_date?.slice(0, 10)}
+                    {tournament.venue && <> | 📍 {tournament.venue}</>}
                   </div>
-                </li>
-              )
-            })}
-
+                </div>
+              </li>
+            )
+          })}
         </ul>
       )}
     </div>

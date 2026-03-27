@@ -1,22 +1,30 @@
 'use client'
+
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
-import styles from '@/styles/components/TeamList.module.scss'
-import toast from 'react-hot-toast'
+import Link                    from 'next/link'
+import { supabase }            from '@/lib/supabase'
+import { getOrganizationId }   from '@/lib/org'
+import toast                   from 'react-hot-toast'
+import styles                  from '@/styles/components/TeamList.module.scss'
 
 type Team = {
-  id: string
-  name: string
+  id:       string
+  name:     string
   logo_url: string | null
 }
 
 export default function AdminTeamListPage() {
-  const [teams, setTeams] = useState<Team[]>([])
+  const [teams,   setTeams]   = useState<Team[]>([])
   const [loading, setLoading] = useState(false)
 
   const fetchTeams = async () => {
-    const { data, error } = await supabase.from('teams').select('*').order('name')
+    const orgId = await getOrganizationId()
+    const { data, error } = await supabase
+      .from('teams')
+      .select('id, name, logo_url')
+      .eq('organization_id', orgId)
+      .order('name')
+
     if (error) {
       toast.error('Error loading teams')
     } else {
@@ -24,24 +32,20 @@ export default function AdminTeamListPage() {
     }
   }
 
-  useEffect(() => {
-    fetchTeams()
-  }, [])
+  useEffect(() => { fetchTeams() }, [])
 
   const handleDelete = async (id: string) => {
-    const confirm = window.confirm('Are you sure you want to delete this team?')
-    if (!confirm) return
-
+    if (!window.confirm('Are you sure you want to delete this team?')) return
     setLoading(true)
+
     const { error } = await supabase.from('teams').delete().eq('id', id)
 
     if (error) {
       toast.error('Failed to delete team')
     } else {
-      toast.success('Team deleted!')
-      fetchTeams() // refresh list
+      toast.success('Team deleted')
+      fetchTeams()
     }
-
     setLoading(false)
   }
 
@@ -58,8 +62,8 @@ export default function AdminTeamListPage() {
             )}
             <span className={styles.teamName}>{team.name}</span>
             <div className={styles.actions}>
-              <Link href={`/admin/teams/view/${team.id}`} className={styles.viewButton}>View</Link>
-              <Link href={`/admin/teams/edit/${team.id}`} className={styles.editButton}>Edit</Link>
+              <Link href={`/admin/teams/view/${team.id}`}  className={styles.viewButton}>View</Link>
+              <Link href={`/admin/teams/edit/${team.id}`}  className={styles.editButton}>Edit</Link>
               <button
                 onClick={() => handleDelete(team.id)}
                 disabled={loading}
@@ -70,7 +74,7 @@ export default function AdminTeamListPage() {
             </div>
           </li>
         ))}
-      </ul>   
+      </ul>
     </div>
   )
 }

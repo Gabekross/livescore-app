@@ -1,31 +1,36 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import Link from 'next/link'
-import toast from 'react-hot-toast'
-import styles from '@/styles/components/TournamentList.module.scss'
+import Link                    from 'next/link'
+import { supabase }            from '@/lib/supabase'
+import { getOrganizationId }   from '@/lib/org'
+import toast                   from 'react-hot-toast'
+import styles                  from '@/styles/components/TournamentList.module.scss'
 
 interface Tournament {
-  id: string
-  name: string
+  id:          string
+  name:        string
   start_date?: string
-  end_date?: string
+  end_date?:   string
+  is_archived: boolean
 }
 
 export default function AdminTournamentList() {
   const [tournaments, setTournaments] = useState<Tournament[]>([])
-  const [editId, setEditId] = useState<string | null>(null)
-  const [formState, setFormState] = useState<Partial<Tournament>>({})
+  const [editId,      setEditId]      = useState<string | null>(null)
+  const [formState,   setFormState]   = useState<Partial<Tournament>>({})
 
-  useEffect(() => {
-    const fetchTournaments = async () => {
-      const { data, error } = await supabase.from('tournaments').select('*').order('start_date')
-      if (!error && data) setTournaments(data)
-    }
+  const fetchTournaments = async () => {
+    const orgId = await getOrganizationId()
+    const { data, error } = await supabase
+      .from('tournaments')
+      .select('id, name, start_date, end_date, is_archived')
+      .eq('organization_id', orgId)
+      .order('start_date')
+    if (!error && data) setTournaments(data)
+  }
 
-    fetchTournaments()
-  }, [])
+  useEffect(() => { fetchTournaments() }, [])
 
   const handleEdit = (tournament: Tournament) => {
     setEditId(tournament.id)
@@ -34,18 +39,17 @@ export default function AdminTournamentList() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormState(prev => ({ ...prev, [name]: value }))
+    setFormState((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSave = async () => {
     if (!editId) return
-
     const { error } = await supabase
       .from('tournaments')
       .update({
-        name: formState.name,
+        name:       formState.name,
         start_date: formState.start_date,
-        end_date: formState.end_date,
+        end_date:   formState.end_date,
       })
       .eq('id', editId)
 
@@ -54,14 +58,13 @@ export default function AdminTournamentList() {
     } else {
       toast.success('Tournament updated')
       setEditId(null)
-      const { data } = await supabase.from('tournaments').select('*').order('start_date')
-      setTournaments(data || [])
+      fetchTournaments()
     }
   }
 
   return (
     <div className={styles.container}>
-      <Link href={`/admin/dashboard`} className={styles.backButton}>
+      <Link href="/admin/dashboard" className={styles.backButton}>
         ← Back to Dashboard
       </Link>
       <h1 className={styles.heading}>Admin – Tournaments</h1>
@@ -71,7 +74,7 @@ export default function AdminTournamentList() {
       </Link>
 
       <ul className={styles.list}>
-        {tournaments.map(t => (
+        {tournaments.map((t) => (
           <li key={t.id} className={styles.item}>
             {editId === t.id ? (
               <div className={styles.editForm}>
@@ -102,11 +105,13 @@ export default function AdminTournamentList() {
               <div className={styles.linkRow}>
                 <Link href={`/admin/tournaments/${t.id}/stages`} className={styles.link}>
                   <div>
-                    <h3>{t.name}</h3>
+                    <h3>{t.name} {t.is_archived && <span style={{ color: '#999', fontSize: '0.8em' }}>(archived)</span>}</h3>
                     <p>{t.start_date?.slice(0, 10)} → {t.end_date?.slice(0, 10)}</p>
                   </div>
                 </Link>
-                <button onClick={() => handleEdit(t)} className={styles.secondaryButtonSmall}>✏️ Edit</button>
+                <button onClick={() => handleEdit(t)} className={styles.secondaryButtonSmall}>
+                  ✏️ Edit
+                </button>
               </div>
             )}
           </li>

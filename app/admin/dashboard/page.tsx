@@ -1,34 +1,57 @@
 'use client'
 
-import { logoutAdmin } from '@/lib/auth-actions'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import Link from 'next/link'
-import styles from '@/styles/components/AdminDashboard.module.scss'
+// app/admin/dashboard/page.tsx
+// The middleware already redirects unauthenticated users to /admin.
+// The client-side supabase.auth.getUser() check here is defense-in-depth.
+
+import { useEffect, useState } from 'react'
+import { useRouter }           from 'next/navigation'
+import Link                    from 'next/link'
+import { supabase }            from '@/lib/supabase'
+import { logoutAdmin }         from '@/lib/auth-actions'
+import styles                  from '@/styles/components/AdminDashboard.module.scss'
 
 export default function AdminDashboardPage() {
-
-  const router = useRouter();
+  const router = useRouter()
+  const [role, setRole] = useState<string | null>(null)
 
   useEffect(() => {
-    async function checkAuth() {
-      const res = await fetch('/api/check-auth') // 👈 we'll add this
-      const { loggedIn } = await res.json()
-      if (!loggedIn) {
-        router.push('/admin')
+    async function verifySession() {
+      const { data: { user }, error } = await supabase.auth.getUser()
+
+      if (error || !user) {
+        router.replace('/admin')
+        return
       }
+
+      // Fetch role for display (non-blocking — dashboard still loads without it)
+      const { data: profile } = await supabase
+        .from('admin_profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+      if (profile) setRole(profile.role)
     }
-    checkAuth()
-  }, [])
+
+    verifySession()
+  }, [router])
 
   const handleLogout = async () => {
     await logoutAdmin()
-    router.push('/admin')
   }
+
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Admin Control Panel</h2>
-      <p>Welcome to the admin panel.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h2 className={styles.heading}>Admin Control Panel</h2>
+        {role && (
+          <span style={{ fontSize: '0.8rem', color: '#666', textTransform: 'uppercase' }}>
+            {role.replace('_', ' ')}
+          </span>
+        )}
+      </div>
+
       <div className={styles.grid}>
         <Link href="/admin/tournaments" className={styles.card}>
           🏆 Manage Tournaments
@@ -45,38 +68,34 @@ export default function AdminDashboardPage() {
           <span className={styles.hint}>(via stage)</span>
         </Link>
         <Link href="#" className={styles.card}>
-          📅 Matches Calendar (coming soon)
+          📅 Matches Calendar
+          <span className={styles.hint}>(coming soon)</span>
         </Link>
-         <Link href="/admin/players/new" className={styles.card}>
-          📈 Add players to teams
-          <span className={styles.hint}>Top scorers & assists</span>
+        <Link href="/admin/players/new" className={styles.card}>
+          ➕ Add Player to Team
         </Link>
         <Link href="/admin/players/stats" className={styles.card}>
           📈 Player Stats
-          <span className={styles.hint}>Top scorers & assists</span>
+          <span className={styles.hint}>Top scorers &amp; assists</span>
         </Link>
-
       </div>
-      <div style={{ padding: '2rem' }}>
-      <h1>Admin Dashboard</h1>
-      <p>Welcome to the admin panel.</p>
 
-      <button
-        onClick={handleLogout}
-        style={{
-          marginTop: '2rem',
-          padding: '0.7rem 1.2rem',
-          backgroundColor: '#ff3c3c',
-          color: 'white',
-          border: 'none',
-          borderRadius: '6px',
-          fontWeight: 'bold',
-          cursor: 'pointer'
-        }}
-      >
-        Logout
-      </button>
-    </div>
+      <div style={{ marginTop: '2rem' }}>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: '0.7rem 1.2rem',
+            backgroundColor: '#c0392b',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+          }}
+        >
+          Sign Out
+        </button>
+      </div>
     </div>
   )
 }
