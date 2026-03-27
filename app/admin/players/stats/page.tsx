@@ -1,124 +1,77 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
-import styles from '@/styles/components/PlayerStatsTable.module.scss'
+// app/admin/players/stats/page.tsx
+// Queries the player_stats_summary view (migration 017) instead of the old
+// player_match_stats table which no longer exists in the new schema.
+
+import { useEffect, useState }   from 'react'
+import { supabase }              from '@/lib/supabase'
+import { useOrg }                from '@/hooks/useOrg'
+import styles                    from '@/styles/components/PlayerStatsTable.module.scss'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
 interface PlayerStat {
-  player_id: string
-  name: string
-  team_name: string
-  goals: number
-  assists: number
-  yellow_cards: number
-  red_cards: number
-}
-
-interface PlayerStatRecord {
-  player_id: string
-  goals: number
-  assists: number
-  yellow_cards: number
-  red_cards: number
-  players: {
-    name: string
-    team_id: string
-    teams: {
-      name: string
-    }
-  }
+  player_id:     string
+  player_name:   string
+  team_name:     string
+  matches_played: number
+  goals:         number
+  assists:       number
+  yellow_cards:  number
+  red_cards:     number
 }
 
 export default function PlayerStatsPage() {
-  const [stats, setStats] = useState<PlayerStat[]>([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [teamFilter, setTeamFilter] = useState('')
-  const [chartType, setChartType] = useState<'goals' | 'assists'>('goals')
+  const { orgId } = useOrg()
 
-  const [teams, setTeams] = useState<string[]>([])
+  const [stats,      setStats]      = useState<PlayerStat[]>([])
+  const [loading,    setLoading]    = useState(true)
+  const [search,     setSearch]     = useState('')
+  const [teamFilter, setTeamFilter] = useState('')
+  const [chartType,  setChartType]  = useState<'goals' | 'assists'>('goals')
+  const [teams,      setTeams]      = useState<string[]>([])
 
   useEffect(() => {
+    if (!orgId) return
+
     const fetchStats = async () => {
       setLoading(true)
 
-      const response = await supabase
-        .from('player_match_stats')
-        .select(`
-          player_id,
-          goals,
-          assists,
-          yellow_cards,
-          red_cards,
-          players:player_id (
-            name,
-            team_id,
-            teams:team_id (
-              name
-            )
-          )
-        `) as unknown as { data: PlayerStatRecord[]; error: any }
-
-      const { data, error } = response
+      const { data, error } = await supabase
+        .from('player_stats_summary')
+        .select('player_id, player_name, team_name, matches_played, goals, assists, yellow_cards, red_cards')
+        .eq('organization_id', orgId)
+        .order('goals', { ascending: false })
 
       if (error) {
         console.error('Failed to load stats:', error)
+        setLoading(false)
         return
       }
 
-      const grouped = new Map<string, PlayerStat>()
-      const foundTeams = new Set<string>()
-
-      for (const stat of data) {
-        const id = stat.player_id
-        const name = stat.players?.name || 'Unknown'
-        const team_name = stat.players?.teams?.name || 'Unknown'
-
-        foundTeams.add(team_name)
-
-        if (!grouped.has(id)) {
-          grouped.set(id, {
-            player_id: id,
-            name,
-            team_name,
-            goals: 0,
-            assists: 0,
-            yellow_cards: 0,
-            red_cards: 0,
-          })
-        }
-
-        const record = grouped.get(id)!
-        record.goals += stat.goals || 0
-        record.assists += stat.assists || 0
-        record.yellow_cards += stat.yellow_cards || 0
-        record.red_cards += stat.red_cards || 0
-      }
-
-      const sorted = Array.from(grouped.values()).sort((a, b) => b.goals - a.goals)
-      setStats(sorted)
-      setTeams(Array.from(foundTeams).sort())
+      const rows = (data || []) as PlayerStat[]
+      setStats(rows)
+      setTeams(Array.from(new Set(rows.map((r) => r.team_name))).sort())
       setLoading(false)
     }
 
     fetchStats()
-  }, [])
+  }, [orgId])
 
-  const filteredStats = stats.filter((p) => {
-    return (
-      p.name.toLowerCase().includes(search.toLowerCase()) &&
-      (teamFilter === '' || p.team_name === teamFilter)
-    )
-  })
+  const filteredStats = stats.filter((p) =>
+    p.player_name.toLowerCase().includes(search.toLowerCase()) &&
+    (teamFilter === '' || p.team_name === teamFilter)
+  )
 
   const downloadCSV = () => {
-    const headers = ['Player', 'Team', 'Goals', 'Assists', 'Yellow Cards', 'Red Cards']
-    const rows = filteredStats.map((p) => [p.name, p.team_name, p.goals, p.assists, p.yellow_cards, p.red_cards])
-    const csvContent = [headers, ...rows].map((r) => r.join(',')).join('\n')
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const headers = ['Player', 'Team', 'MP', 'Goals', 'Assists', 'Yellow Cards', 'Red Cards']
+    const rows = filteredStats.map((p) => [
+      p.player_name, p.team_name, p.matches_played, p.goals, p.assists, p.yellow_cards, p.red_cards,
+    ])
+    const csv  = [headers, ...rows].map((r) => r.join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
-    link.href = URL.createObjectURL(blob)
+    link.href  = URL.createObjectURL(blob)
     link.setAttribute('download', 'player_stats.csv')
     document.body.appendChild(link)
     link.click()
@@ -147,7 +100,10 @@ export default function PlayerStatsPage() {
           ))}
         </select>
         <button onClick={downloadCSV}>⬇ Export CSV</button>
-        <select value={chartType} onChange={(e) => setChartType(e.target.value as 'goals' | 'assists')}>
+        <select
+          value={chartType}
+          onChange={(e) => setChartType(e.target.value as 'goals' | 'assists')}
+        >
           <option value="goals">Top Goal Scorers</option>
           <option value="assists">Top Assist Providers</option>
         </select>
@@ -159,10 +115,10 @@ export default function PlayerStatsPage() {
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={topPlayers} layout="vertical" margin={{ left: 40, right: 20 }}>
               <XAxis type="number" allowDecimals={false} />
-              <YAxis dataKey="name" type="category" width={120} />
+              <YAxis dataKey="player_name" type="category" width={120} />
               <Tooltip />
               <Bar dataKey={chartType} fill={chartType === 'goals' ? '#1e90ff' : '#28a745'}>
-                {topPlayers.map((entry, index) => (
+                {topPlayers.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={chartType === 'goals' ? '#1e90ff' : '#28a745'} />
                 ))}
               </Bar>
@@ -172,13 +128,16 @@ export default function PlayerStatsPage() {
       )}
 
       {loading ? (
-        <p>Loading stats...</p>
+        <p>Loading stats…</p>
+      ) : filteredStats.length === 0 ? (
+        <p>No stats available yet.</p>
       ) : (
         <table className={styles.statsTable}>
           <thead>
             <tr>
               <th>Player</th>
               <th>Team</th>
+              <th>MP</th>
               <th>⚽ Goals</th>
               <th>🎯 Assists</th>
               <th>🟨</th>
@@ -188,8 +147,9 @@ export default function PlayerStatsPage() {
           <tbody>
             {filteredStats.map((p) => (
               <tr key={p.player_id}>
-                <td>{p.name}</td>
+                <td>{p.player_name}</td>
                 <td>{p.team_name}</td>
+                <td>{p.matches_played}</td>
                 <td>{p.goals}</td>
                 <td>{p.assists}</td>
                 <td>{p.yellow_cards}</td>

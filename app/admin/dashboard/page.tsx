@@ -67,9 +67,9 @@ export default function AdminDashboardPage() {
           🧩 Manage Groups
           <span className={styles.hint}>(via stage)</span>
         </Link>
-        <Link href="#" className={styles.card}>
-          📅 Matches Calendar
-          <span className={styles.hint}>(coming soon)</span>
+        <Link href="/admin/matches/friendly/new" className={styles.card}>
+          🤝 Create Friendly Match
+          <span className={styles.hint}>No standings impact</span>
         </Link>
         <Link href="/admin/players/new" className={styles.card}>
           ➕ Add Player to Team
