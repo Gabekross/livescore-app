@@ -39,6 +39,8 @@ export default function LoginPage() {
 
     if (profile?.role === 'power_admin') {
       router.replace('/platform')
+    } else if (profile?.role === 'match_operator') {
+      router.replace('/admin/operator')
     } else if (profile?.role === 'org_admin') {
       router.replace('/admin/dashboard')
     } else {
@@ -81,6 +83,8 @@ export default function LoginPage() {
       // Existing profile — route by role
       if (profile.role === 'power_admin') {
         router.push('/platform')
+      } else if (profile.role === 'match_operator') {
+        router.push('/admin/operator')
       } else {
         router.push('/admin/dashboard')
       }

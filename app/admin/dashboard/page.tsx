@@ -101,6 +101,19 @@ export default function AdminDashboardPage() {
         </Link>
       </div>
 
+      {/* ── People & Access ────────────────────────────────────── */}
+      <div className={styles.sectionLabel}>People &amp; Access</div>
+      <div className={styles.grid}>
+        <Link href="/admin/operators" className={styles.card}>
+          Match Operators
+          <span className={styles.hint}>Game-day score updaters</span>
+        </Link>
+        <Link href="/admin/operator" className={styles.card}>
+          Operator View
+          <span className={styles.hint}>Live match control panel</span>
+        </Link>
+      </div>
+
       {/* Power admins who land here get a link back to platform admin */}
       {role === 'power_admin' && (
         <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' }}>
