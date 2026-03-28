@@ -1,0 +1,211 @@
+/* ── Operator Page — Game Day ───────────────────────────── */
+/* Compact, focused interface for match-day score management */
+
+.container {
+  max-width: 700px;
+  margin:    0 auto;
+  padding:   1.5rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.heading {
+  font-size:     1.5rem;
+  font-weight:   700;
+  color:         #1a1a2e;
+  margin-bottom: 0.25rem;
+}
+
+.subheading {
+  font-size: 0.85rem;
+  color:     #6b7280;
+}
+
+/* ── Match list ────────────────────────────────────────── */
+.matchList {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.6rem;
+}
+
+/* ── Match card ────────────────────────────────────────── */
+.matchCard {
+  background:    #fff;
+  border:        1px solid #e5e7eb;
+  border-radius: 10px;
+  padding:       0.9rem 1.1rem;
+  border-left:   3px solid var(--status-color, #6b7280);
+}
+
+.matchHeader {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  margin-bottom:   0.7rem;
+}
+
+.matchMeta {
+  font-size: 0.72rem;
+  color:     #9ca3af;
+}
+
+.statusBadge {
+  font-size:      0.68rem;
+  font-weight:    700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding:        2px 7px;
+  border-radius:  4px;
+}
+
+/* ── Score row ─────────────────────────────────────────── */
+.scoreRow {
+  display:       flex;
+  align-items:   center;
+  gap:           0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.teamName {
+  flex:        1;
+  font-weight: 700;
+  font-size:   0.92rem;
+  color:       #1f2937;
+}
+
+.teamNameHome {
+  composes:   teamName;
+  text-align: right;
+}
+
+.scoreInput {
+  width:         40px;
+  text-align:    center;
+  padding:       0.3rem;
+  border:        1px solid #d1d5db;
+  border-radius: 6px;
+  font-weight:   700;
+  font-size:     1rem;
+  color:         #111827;
+  background:    #fff;
+
+  &:focus {
+    outline:      none;
+    border-color: #2563eb;
+  }
+}
+
+.scoreDivider {
+  color:       #9ca3af;
+  font-weight: 700;
+}
+
+.vsLabel {
+  padding:   0.3rem 0.75rem;
+  color:     #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* ── Controls row ──────────────────────────────────────── */
+.controlsRow {
+  display:     flex;
+  align-items: center;
+  gap:         0.6rem;
+  flex-wrap:   wrap;
+}
+
+.statusSelect {
+  padding:       0.35rem 0.6rem;
+  border:        1px solid #d1d5db;
+  border-radius: 6px;
+  font-size:     0.82rem;
+  color:         #111827;
+  background:    #fff;
+
+  &:focus {
+    outline:      none;
+    border-color: #2563eb;
+  }
+}
+
+.saveButton {
+  padding:          0.35rem 0.85rem;
+  background-color: #2563eb;
+  color:            #fff;
+  border:           none;
+  border-radius:    6px;
+  font-weight:      600;
+  font-size:        0.82rem;
+  cursor:           pointer;
+  transition:       opacity 0.15s ease;
+
+  &:hover    { opacity: 0.9; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.detailLink {
+  font-size:       0.78rem;
+  color:           #9ca3af;
+  margin-left:     auto;
+  text-decoration: none;
+  transition:      color 0.15s ease;
+
+  &:hover { color: #2563eb; }
+}
+
+/* ── Empty & loading ───────────────────────────────────── */
+.emptyState {
+  text-align:    center;
+  padding:       3rem 2rem;
+  color:         #9ca3af;
+  font-size:     0.9rem;
+  background:    #f9fafb;
+  border-radius: 10px;
+  border:        1px dashed #e5e7eb;
+}
+
+.loadingState {
+  color:     #9ca3af;
+  font-size: 0.9rem;
+  padding:   2rem 0;
+}
+
+/* ── Back link ─────────────────────────────────────────── */
+.backLink {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             0.4rem;
+  font-size:       0.82rem;
+  color:           #6b7280;
+  text-decoration: none;
+  font-weight:     500;
+  margin-top:      2rem;
+  padding-top:     1rem;
+  border-top:      1px solid #e5e7eb;
+  transition:      color 0.15s ease;
+
+  &:hover { color: #2563eb; }
+}
+
+/* ── Mobile ────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .scoreRow {
+    gap: 0.5rem;
+  }
+
+  .teamName {
+    font-size: 0.82rem;
+  }
+
+  .controlsRow {
+    flex-direction: column;
+    align-items:    stretch;
+  }
+
+  .detailLink {
+    margin-left: 0;
+    text-align:  center;
+  }
+}

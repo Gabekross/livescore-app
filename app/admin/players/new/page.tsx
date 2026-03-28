@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter }           from 'next/navigation'
+import Link                    from 'next/link'
 import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import toast                   from 'react-hot-toast'
+import styles                  from '@/styles/components/Form.module.scss'
 
 interface Team {
   id:   string
@@ -60,41 +62,72 @@ export default function NewPlayerPage() {
   if (orgGate) return orgGate
 
   return (
-    <form onSubmit={handleSubmit} style={{ padding: '2rem', maxWidth: 480 }}>
-      <h1>Add New Player</h1>
+    <div className={styles.formContainer}>
+      <Link href="/admin/teams" className={styles.backButton}>
+        &#8592; Back to Teams
+      </Link>
 
-      <input
-        type="text"
-        placeholder="Player Name"
-        value={form.name}
-        onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
-        required
-        style={{ display: 'block', marginBottom: '1rem', width: '100%', padding: '0.5rem' }}
-      />
+      <h1 className={styles.heading}>Add New Player</h1>
+      <p className={styles.subheading}>
+        Add a player to one of your organisation's teams.
+      </p>
 
-      <input
-        type="number"
-        placeholder="Jersey Number (optional)"
-        value={form.jersey_number}
-        onChange={(e) => setForm((p) => ({ ...p, jersey_number: e.target.value }))}
-        style={{ display: 'block', marginBottom: '1rem', width: '100%', padding: '0.5rem' }}
-      />
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Player Details</div>
 
-      <select
-        value={form.team_id}
-        onChange={(e) => setForm((p) => ({ ...p, team_id: e.target.value }))}
-        required
-        style={{ display: 'block', marginBottom: '1rem', width: '100%', padding: '0.5rem' }}
-      >
-        <option value="">Select Team</option>
-        {teams.map((team) => (
-          <option key={team.id} value={team.id}>{team.name}</option>
-        ))}
-      </select>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Player Name *
+              <input
+                type="text"
+                placeholder="e.g. John Smith"
+                value={form.name}
+                onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                className={styles.input}
+                required
+              />
+            </label>
+          </div>
 
-      <button type="submit" disabled={loading} style={{ padding: '0.6rem 1.2rem' }}>
-        {loading ? 'Adding…' : 'Add Player'}
-      </button>
-    </form>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Jersey Number <span className={styles.labelHint}>(optional)</span>
+              <input
+                type="number"
+                placeholder="#"
+                value={form.jersey_number}
+                onChange={(e) => setForm((p) => ({ ...p, jersey_number: e.target.value }))}
+                className={styles.input}
+              />
+            </label>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Team *
+              <select
+                value={form.team_id}
+                onChange={(e) => setForm((p) => ({ ...p, team_id: e.target.value }))}
+                className={styles.input}
+                required
+              >
+                <option value="">Select Team</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>{team.name}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div className={styles.buttonRow}>
+          <button type="submit" disabled={loading || orgLoading} className={styles.button}>
+            {loading ? 'Adding…' : 'Add Player'}
+          </button>
+          <Link href="/admin/teams" className={styles.cancelButton}>Cancel</Link>
+        </div>
+      </form>
+    </div>
   )
 }

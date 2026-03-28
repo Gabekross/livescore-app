@@ -97,104 +97,130 @@ export default function NewFriendlyMatchPage() {
     setLoading(false)
   }
 
-  const inputStyle = { display: 'block', width: '100%', padding: '0.5rem', marginTop: '0.25rem' }
-
   if (orgGate) return orgGate
 
   return (
     <div className={styles.formContainer}>
-      <Link href="/admin/dashboard" className={styles.backButton}>← Back to Dashboard</Link>
+      <Link href="/admin/dashboard" className={styles.backButton}>
+        &#8592; Back to Dashboard
+      </Link>
 
-      <h2 className={styles.heading}>Create Friendly Match</h2>
-      <p style={{ color: '#666', marginBottom: '1.5rem' }}>
-        Friendly matches are shown on the fixtures page with a <strong>Friendly</strong> badge
-        and are <strong>never counted in standings</strong>.
+      <h1 className={styles.heading}>Create Friendly Match</h1>
+      <p className={styles.subheading}>
+        Friendly matches appear on the fixtures page with a Friendly badge and are never counted in standings.
       </p>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.label}>
-          Home Team:
-          <select value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)} className={styles.input} required>
-            <option value="">Select Home Team</option>
-            {teams.map((t) => (
-              <option key={t.id} value={t.id}>{t.name}</option>
-            ))}
-          </select>
-        </label>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Teams</div>
 
-        <label className={styles.label}>
-          Away Team:
-          <select value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)} className={styles.input} required>
-            <option value="">Select Away Team</option>
-            {teams.map((t) => (
-              <option key={t.id} value={t.id} disabled={t.id === homeTeam}>{t.name}</option>
-            ))}
-          </select>
-        </label>
+          <div className={styles.fieldRow}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>
+                Home Team *
+                <select value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)} className={styles.input} required>
+                  <option value="">Select Home Team</option>
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id}>{t.name}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>
+                Away Team *
+                <select value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)} className={styles.input} required>
+                  <option value="">Select Away Team</option>
+                  {teams.map((t) => (
+                    <option key={t.id} value={t.id} disabled={t.id === homeTeam}>{t.name}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
 
-        <label className={styles.label}>
-          Match Date &amp; Time:
-          <input
-            type="datetime-local"
-            value={matchDate}
-            onChange={(e) => setMatchDate(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </label>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Match Details</div>
 
-        <label className={styles.label}>
-          Venue (optional):
-          <input
-            type="text"
-            value={venue}
-            onChange={(e) => setVenue(e.target.value)}
-            className={styles.input}
-            placeholder="e.g. Training Ground"
-          />
-        </label>
+          <div className={styles.fieldRow}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>
+                Match Date &amp; Time *
+                <input
+                  type="datetime-local"
+                  value={matchDate}
+                  onChange={(e) => setMatchDate(e.target.value)}
+                  className={styles.input}
+                  required
+                />
+              </label>
+            </div>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>
+                Venue <span className={styles.labelHint}>(optional)</span>
+                <input
+                  type="text"
+                  value={venue}
+                  onChange={(e) => setVenue(e.target.value)}
+                  className={styles.input}
+                  placeholder="e.g. Training Ground"
+                />
+              </label>
+            </div>
+          </div>
 
-        <label className={styles.label}>
-          Status:
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value as typeof status)}
-            className={styles.input}
-          >
-            {MATCH_STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
-        </label>
-
-        {status !== 'scheduled' && (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className={styles.fieldGroup}>
             <label className={styles.label}>
-              Home Score:
-              <input
-                type="number"
-                min={0}
-                value={homeScore}
-                onChange={(e) => setHomeScore(e.target.value)}
+              Status
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as typeof status)}
                 className={styles.input}
-              />
-            </label>
-            <label className={styles.label}>
-              Away Score:
-              <input
-                type="number"
-                min={0}
-                value={awayScore}
-                onChange={(e) => setAwayScore(e.target.value)}
-                className={styles.input}
-              />
+              >
+                {MATCH_STATUS_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
             </label>
           </div>
-        )}
 
-        <button type="submit" disabled={loading || orgLoading} className={styles.button}>
-          {loading ? 'Creating…' : 'Create Friendly Match'}
-        </button>
+          {status !== 'scheduled' && (
+            <div className={styles.fieldRow}>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>
+                  Home Score
+                  <input
+                    type="number"
+                    min={0}
+                    value={homeScore}
+                    onChange={(e) => setHomeScore(e.target.value)}
+                    className={styles.input}
+                  />
+                </label>
+              </div>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>
+                  Away Score
+                  <input
+                    type="number"
+                    min={0}
+                    value={awayScore}
+                    onChange={(e) => setAwayScore(e.target.value)}
+                    className={styles.input}
+                  />
+                </label>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.buttonRow}>
+          <button type="submit" disabled={loading || orgLoading} className={styles.button}>
+            {loading ? 'Creating…' : 'Create Friendly Match'}
+          </button>
+          <Link href="/admin/dashboard" className={styles.cancelButton}>Cancel</Link>
+        </div>
       </form>
     </div>
   )

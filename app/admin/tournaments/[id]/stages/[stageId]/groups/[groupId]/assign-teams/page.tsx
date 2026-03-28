@@ -30,7 +30,6 @@ export default function AssignTeamsPage() {
   useEffect(() => {
     if (!orgId) return
 
-    // Only show teams from this org in the selector
     const fetchTeams = async () => {
       const { data, error } = await supabase
         .from('teams')
@@ -43,7 +42,6 @@ export default function AssignTeamsPage() {
     }
 
     const fetchAssigned = async () => {
-      // Teams already assigned to any group within this stage (prevent double-assignment)
       const { data: groupsInStage } = await supabase
         .from('groups')
         .select('id')
@@ -62,7 +60,6 @@ export default function AssignTeamsPage() {
 
       setAssignedTeamIds(teamLinks.map((row) => row.team_id))
 
-      // Teams specifically assigned to THIS group (for display)
       const assignedToThisGroup = teamLinks.filter((link) => link.group_id === groupId)
       setAssignedTeams(
         assignedToThisGroup.map((link) =>
@@ -106,18 +103,13 @@ export default function AssignTeamsPage() {
   return (
     <div className={styles.formContainer}>
       <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
-        ← Back to Stages
+        &#8592; Back to Stages
       </Link>
 
-      <h2 className={styles.heading}>
-        Assign Teams to Group{' '}
-        <span
-          title="Each team can only belong to one group per stage."
-          style={{ marginLeft: '0.5rem', fontSize: '0.9rem', color: '#888', cursor: 'help' }}
-        >
-          (i)
-        </span>
-      </h2>
+      <h1 className={styles.heading}>Assign Teams to Group</h1>
+      <p className={styles.subheading}>
+        Select teams to add to this group. Each team can only belong to one group per stage.
+      </p>
 
       {assignedTeams.length > 0 && (
         <div className={styles.assignedBlock}>
@@ -126,7 +118,7 @@ export default function AssignTeamsPage() {
             {assignedTeams.map((team) => (
               <li key={team.id} className={styles.assignedItem}>
                 {team.logo_url && (
-                  <img src={team.logo_url} alt={team.name} style={{ width: 24, height: 24, borderRadius: '50%', marginRight: 6 }} />
+                  <img src={team.logo_url} alt={team.name} style={{ width: 24, height: 24, borderRadius: '50%', marginRight: 8 }} />
                 )}
                 {team.name}
               </li>
@@ -135,34 +127,41 @@ export default function AssignTeamsPage() {
         </div>
       )}
 
-      <div className={styles.form}>
-        {teams.map((team) => {
-          const alreadyAssigned = assignedTeamIds.includes(team.id)
-          return (
-            <div key={team.id} className={styles.teamCard} style={{ opacity: alreadyAssigned ? 0.5 : 1 }}>
-              <label className={styles.label} style={{ display: 'flex', alignItems: 'center' }}>
-                <input
-                  type="checkbox"
-                  disabled={alreadyAssigned}
-                  checked={selectedTeamIds.includes(team.id)}
-                  onChange={() => handleToggle(team.id)}
-                  className={styles.checkbox}
-                />
-                {team.logo_url && (
-                  <img src={team.logo_url} alt={team.name} style={{ width: 30, height: 30, borderRadius: '50%', marginRight: 8 }} />
-                )}
-                {team.name}
-                {alreadyAssigned && <span style={{ marginLeft: '0.5rem', color: '#888' }}>(already in a group)</span>}
-              </label>
-            </div>
-          )
-        })}
-
-        <div className={styles.buttonRow}>
-          <button onClick={handleAssign} disabled={loading} className={styles.button}>
-            {loading ? 'Assigning…' : 'Assign Selected Teams'}
-          </button>
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Available Teams</div>
+        <div className={styles.form}>
+          {teams.length === 0 ? (
+            <p style={{ color: '#9ca3af', fontSize: '0.85rem' }}>No teams found. Create teams first.</p>
+          ) : (
+            teams.map((team) => {
+              const alreadyAssigned = assignedTeamIds.includes(team.id)
+              return (
+                <div key={team.id} className={styles.teamCard} style={{ opacity: alreadyAssigned ? 0.5 : 1 }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: alreadyAssigned ? 'not-allowed' : 'pointer', fontSize: '0.9rem', color: '#374151' }}>
+                    <input
+                      type="checkbox"
+                      disabled={alreadyAssigned}
+                      checked={selectedTeamIds.includes(team.id)}
+                      onChange={() => handleToggle(team.id)}
+                      className={styles.checkbox}
+                    />
+                    {team.logo_url && (
+                      <img src={team.logo_url} alt={team.name} style={{ width: 28, height: 28, borderRadius: '50%' }} />
+                    )}
+                    <span style={{ fontWeight: 500 }}>{team.name}</span>
+                    {alreadyAssigned && <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>(already in a group)</span>}
+                  </label>
+                </div>
+              )
+            })
+          )}
         </div>
+      </div>
+
+      <div className={styles.buttonRow}>
+        <button onClick={handleAssign} disabled={loading} className={styles.button}>
+          {loading ? 'Assigning...' : 'Assign Selected Teams'}
+        </button>
       </div>
     </div>
   )

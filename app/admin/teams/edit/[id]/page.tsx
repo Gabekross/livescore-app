@@ -1,8 +1,8 @@
-// Enhanced Edit Team Page with Remove Player Feature
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { useAdminOrg }     from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
@@ -66,20 +66,17 @@ export default function EditTeamPage() {
   }
 
   const handleRemovePlayer = (index: number) => {
-    const updated = [...players]
-    updated.splice(index, 1)
-    setPlayers(updated)
+    setPlayers((prev) => prev.filter((_, i) => i !== index))
   }
 
-const handlePlayerChange = (index: number, key: keyof PlayerInput, value: any) => {
-  setPlayers((prev) => {
-    const updated = [...prev];
-    if (!updated[index]) return prev; // Skip if invalid index
-    updated[index] = { ...updated[index], [key]: value }; // Safe object update
-    return updated;
-  });
-};
-
+  const handlePlayerChange = (index: number, key: keyof PlayerInput, value: any) => {
+    setPlayers((prev) => {
+      const updated = [...prev];
+      if (!updated[index]) return prev;
+      updated[index] = { ...updated[index], [key]: value };
+      return updated;
+    });
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -114,11 +111,10 @@ const handlePlayerChange = (index: number, key: keyof PlayerInput, value: any) =
     if (logoFile) {
       const fileExt = logoFile.name.split('.').pop()
       const fileName = `${uuidv4()}.${fileExt}`
-      const filePath = `${fileName}`
 
       const { error: uploadError } = await supabase.storage
         .from('team-logos')
-        .upload(filePath, logoFile)
+        .upload(fileName, logoFile)
 
       if (uploadError) {
         toast.error('Failed to upload logo')
@@ -128,7 +124,7 @@ const handlePlayerChange = (index: number, key: keyof PlayerInput, value: any) =
 
       const { data } = supabase.storage
         .from('team-logos')
-        .getPublicUrl(filePath)
+        .getPublicUrl(fileName)
 
       uploadedLogoUrl = data.publicUrl
     }
@@ -165,68 +161,89 @@ const handlePlayerChange = (index: number, key: keyof PlayerInput, value: any) =
 
   return (
     <div className={styles.formContainer}>
-      <h2 className={styles.heading}>Edit Team</h2>
+      <Link href="/admin/teams" className={styles.backButton}>
+        &#8592; Back to Teams
+      </Link>
+
+      <h1 className={styles.heading}>Edit Team</h1>
+
       <form onSubmit={handleUpdate} className={styles.form}>
-        <label className={styles.label}>
-          Team Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </label>
+        <div className={styles.section}>
+          <h3 className={styles.subheading}>Team Info</h3>
 
-        <label className={styles.label}>
-          Upload Logo (optional):
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                setLogoFile(e.target.files[0])
-              }
-            }}
-            className={styles.input}
-          />
-        </label>
-
-        <h3 className={styles.subheading}>Players</h3>
-        <input
-          type="file"
-          accept=".xlsx,.xls,.csv"
-          onChange={handleFileUpload}
-          className={styles.input}
-        />
-        <button type="button" onClick={handleAddPlayer} className={styles.secondaryButton}>+ Add Player</button>
-
-        {players.map((player, idx) => (
-          <div key={idx} className={styles.playerRow}>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>Team Name *</label>
             <input
               type="text"
-              placeholder="Player Name"
-              value={player.name}
-              onChange={(e) => handlePlayerChange(idx, 'name', e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className={styles.input}
+              required
             />
-            <input
-              type="number"
-              placeholder="Jersey Number"
-              value={player.jersey_number || ''}
-              onChange={(e) => handlePlayerChange(idx, 'jersey_number', Number(e.target.value))}
-              className={styles.input}
-            />
-            <input
-              type="text"
-              placeholder="Position"
-              value={player.position || ''}
-              onChange={(e) => handlePlayerChange(idx, 'position', e.target.value)}
-              className={styles.input}
-            />
-            <button type="button" onClick={() => handleRemovePlayer(idx)} className={styles.secondaryButton}>Remove</button>
           </div>
-        ))}
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Upload Logo <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 400 }}>(optional — replaces current)</span>
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                if (e.target.files && e.target.files[0]) {
+                  setLogoFile(e.target.files[0])
+                }
+              }}
+              className={styles.input}
+            />
+          </div>
+        </div>
+
+        <div className={styles.section}>
+          <h3 className={styles.subheading}>Players</h3>
+          <p style={{ fontSize: '0.82rem', color: '#6b7280', marginBottom: '1rem' }}>
+            Edit players or import a new roster from a spreadsheet.
+          </p>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>Import from Spreadsheet</label>
+            <input
+              type="file"
+              accept=".xlsx,.xls,.csv"
+              onChange={handleFileUpload}
+              className={styles.input}
+            />
+          </div>
+
+          <button type="button" onClick={handleAddPlayer} className={styles.secondaryButton}>+ Add Player</button>
+
+          {players.map((player, idx) => (
+            <div key={idx} className={styles.playerRow}>
+              <input
+                type="text"
+                placeholder="Player Name"
+                value={player.name}
+                onChange={(e) => handlePlayerChange(idx, 'name', e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="#"
+                value={player.jersey_number || ''}
+                onChange={(e) => handlePlayerChange(idx, 'jersey_number', Number(e.target.value))}
+                style={{ maxWidth: '64px' }}
+              />
+              <input
+                type="text"
+                placeholder="Position"
+                value={player.position || ''}
+                onChange={(e) => handlePlayerChange(idx, 'position', e.target.value)}
+              />
+              <button type="button" onClick={() => handleRemovePlayer(idx)} className={styles.secondaryButton} style={{ padding: '4px 8px', marginTop: 0, fontSize: '0.78rem' }}>
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
 
         <button type="submit" disabled={loading} className={styles.button}>
           {loading ? 'Updating...' : 'Update Team'}

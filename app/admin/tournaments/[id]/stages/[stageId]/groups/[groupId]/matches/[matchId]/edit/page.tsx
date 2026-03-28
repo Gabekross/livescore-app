@@ -203,10 +203,10 @@ export default function EditMatchPage() {
         </label>
         {isChecked && (
           <div className={styles.statInputs}>
-            <input type="number" placeholder="G" value={stats.goals || 0} onChange={(e) => handleStatChange(player.id, 'goals', Number(e.target.value))} />
-            <input type="number" placeholder="A" value={stats.assists || 0} onChange={(e) => handleStatChange(player.id, 'assists', Number(e.target.value))} />
-            <input type="number" placeholder="YC" value={stats.yellow_cards || 0} onChange={(e) => handleStatChange(player.id, 'yellow_cards', Number(e.target.value))} />
-            <input type="number" placeholder="RC" value={stats.red_cards || 0} onChange={(e) => handleStatChange(player.id, 'red_cards', Number(e.target.value))} />
+            <input type="number" placeholder="G" title="Goals" value={stats.goals || 0} onChange={(e) => handleStatChange(player.id, 'goals', Number(e.target.value))} />
+            <input type="number" placeholder="A" title="Assists" value={stats.assists || 0} onChange={(e) => handleStatChange(player.id, 'assists', Number(e.target.value))} />
+            <input type="number" placeholder="YC" title="Yellow Cards" value={stats.yellow_cards || 0} onChange={(e) => handleStatChange(player.id, 'yellow_cards', Number(e.target.value))} />
+            <input type="number" placeholder="RC" title="Red Cards" value={stats.red_cards || 0} onChange={(e) => handleStatChange(player.id, 'red_cards', Number(e.target.value))} />
           </div>
         )}
       </div>
@@ -218,46 +218,72 @@ export default function EditMatchPage() {
   return (
     <div className={styles.container}>
       <Link href={`/admin/tournaments/${id}/stages/`} className={styles.backButton}>
-        ← Back to Stages
+        &#8592; Back to Stages
       </Link>
 
-      <h2 className={styles.heading}>Edit Match</h2>
+      <h1 className={styles.heading}>Edit Match</h1>
+      <p className={styles.subheading}>
+        {homeTeam?.name ?? 'Home'} vs {awayTeam?.name ?? 'Away'} — Update score, status, lineups, and player stats.
+      </p>
+
       <form onSubmit={handleSubmit} className={styles.form}>
-        <label>Home Score</label>
-        <input type="number" value={homeScore ?? ''} onChange={e => setHomeScore(Number(e.target.value))} className={styles.input} />
+        {/* Score & Status */}
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Score &amp; Status</div>
+          <div className={styles.fieldRow}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Home Score</label>
+              <input type="number" value={homeScore ?? ''} onChange={e => setHomeScore(Number(e.target.value))} className={styles.input} />
+            </div>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Away Score</label>
+              <input type="number" value={awayScore ?? ''} onChange={e => setAwayScore(Number(e.target.value))} className={styles.input} />
+            </div>
+          </div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>Match Status</label>
+            <select value={status} onChange={e => setStatus(e.target.value)} className={styles.select}>
+              <option value="scheduled">Scheduled</option>
+              <option value="live">Live</option>
+              <option value="halftime">Halftime</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </div>
 
-        <label>Away Score</label>
-        <input type="number" value={awayScore ?? ''} onChange={e => setAwayScore(Number(e.target.value))} className={styles.input} />
+        {/* Formations */}
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Formations</div>
+          <div className={styles.fieldRow}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Home Formation</label>
+              <select value={homeFormation} onChange={e => setHomeFormation(e.target.value)} className={styles.select}>
+                <option value="">Select</option>
+                {FORMATIONS.map(f => <option key={f}>{f}</option>)}
+              </select>
+            </div>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Away Formation</label>
+              <select value={awayFormation} onChange={e => setAwayFormation(e.target.value)} className={styles.select}>
+                <option value="">Select</option>
+                {FORMATIONS.map(f => <option key={f}>{f}</option>)}
+              </select>
+            </div>
+          </div>
+        </div>
 
-        <label>Status</label>
-        <select value={status} onChange={e => setStatus(e.target.value)} className={styles.select}>
-          <option value="scheduled">Scheduled</option>
-          <option value="live">Live</option>
-          <option value="halftime">Halftime</option>
-          <option value="completed">Completed</option>
-        </select>
-
-        <label>Home Formation</label>
-        <select value={homeFormation} onChange={e => setHomeFormation(e.target.value)} className={styles.select}>
-          {FORMATIONS.map(f => <option key={f}>{f}</option>)}
-        </select>
-
-        <label>Away Formation</label>
-        <select value={awayFormation} onChange={e => setAwayFormation(e.target.value)} className={styles.select}>
-          {FORMATIONS.map(f => <option key={f}>{f}</option>)}
-        </select>
-
+        {/* Lineups */}
         <div className={styles.lineupSection}>
-          <h3>{homeTeam?.name} Starters</h3>
+          <h3>{homeTeam?.name} — Starters</h3>
           {homePlayers.map(p => renderPlayerRow(p, selectedHomeLineup, false, 'home'))}
-          <h3>{homeTeam?.name} Bench</h3>
+          <h3 style={{ marginTop: '1.5rem' }}>{homeTeam?.name} — Bench</h3>
           {homePlayers.map(p => renderPlayerRow(p, benchHome, true, 'home'))}
         </div>
 
         <div className={styles.lineupSection}>
-          <h3>{awayTeam?.name} Starters</h3>
+          <h3>{awayTeam?.name} — Starters</h3>
           {awayPlayers.map(p => renderPlayerRow(p, selectedAwayLineup, false, 'away'))}
-          <h3>{awayTeam?.name} Bench</h3>
+          <h3 style={{ marginTop: '1.5rem' }}>{awayTeam?.name} — Bench</h3>
           {awayPlayers.map(p => renderPlayerRow(p, benchAway, true, 'away'))}
         </div>
 

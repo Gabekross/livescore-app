@@ -5,6 +5,7 @@
 // player_match_stats table which no longer exists in the new schema.
 
 import { useEffect, useState }   from 'react'
+import Link                      from 'next/link'
 import { supabase }              from '@/lib/supabase'
 import { useAdminOrg }           from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }       from '@/components/admin/AdminOrgGate'
@@ -88,12 +89,19 @@ export default function PlayerStatsPage() {
 
   return (
     <div className={styles.statsContainer}>
-      <h2>Player Statistics</h2>
+      <Link href="/admin/dashboard" className={styles.backButton}>
+        &#8592; Back to Dashboard
+      </Link>
+
+      <h1 className={styles.heading}>Player Statistics</h1>
+      <p className={styles.subheading}>
+        View and export player performance data across all matches.
+      </p>
 
       <div className={styles.controls}>
         <input
           type="text"
-          placeholder="Search player name"
+          placeholder="Search player name…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -121,9 +129,9 @@ export default function PlayerStatsPage() {
               <XAxis type="number" allowDecimals={false} />
               <YAxis dataKey="player_name" type="category" width={120} />
               <Tooltip />
-              <Bar dataKey={chartType} fill={chartType === 'goals' ? '#1e90ff' : '#28a745'}>
+              <Bar dataKey={chartType} fill={chartType === 'goals' ? '#2563eb' : '#16a34a'}>
                 {topPlayers.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={chartType === 'goals' ? '#1e90ff' : '#28a745'} />
+                  <Cell key={`cell-${index}`} fill={chartType === 'goals' ? '#2563eb' : '#16a34a'} />
                 ))}
               </Bar>
             </BarChart>
@@ -132,9 +140,11 @@ export default function PlayerStatsPage() {
       )}
 
       {loading ? (
-        <p>Loading stats…</p>
+        <div className={styles.emptyState}>Loading stats…</div>
       ) : filteredStats.length === 0 ? (
-        <p>No stats available yet.</p>
+        <div className={styles.emptyState}>
+          No stats available yet. Player statistics will appear here once matches have been played.
+        </div>
       ) : (
         <table className={styles.statsTable}>
           <thead>
@@ -142,7 +152,7 @@ export default function PlayerStatsPage() {
               <th>Player</th>
               <th>Team</th>
               <th>MP</th>
-              <th>⚽ Goals</th>
+              <th>Goals</th>
               <th>Assists</th>
               <th><YellowCard size={16} /></th>
               <th><RedCard size={16} /></th>

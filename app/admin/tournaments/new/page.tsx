@@ -2,6 +2,7 @@
 
 import { useState }          from 'react'
 import { useRouter }         from 'next/navigation'
+import Link                  from 'next/link'
 import { supabase }          from '@/lib/supabase'
 import { useAdminOrg }       from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }   from '@/components/admin/AdminOrgGate'
@@ -20,8 +21,6 @@ export default function NewTournamentPage() {
   const [endDate,   setEndDate]   = useState('')
   const [venue,     setVenue]     = useState('')
   const [loading,   setLoading]   = useState(false)
-  // Tracks whether the user has manually edited the slug field.
-  // If not, slug auto-derives from name.
   const [slugDirty, setSlugDirty] = useState(false)
 
   const handleNameChange = (value: string) => {
@@ -81,70 +80,92 @@ export default function NewTournamentPage() {
 
   return (
     <div className={styles.formContainer}>
-      <h2 className={styles.heading}>Create New Tournament</h2>
+      <Link href="/admin/tournaments" className={styles.backButton}>
+        &#8592; Back to Tournaments
+      </Link>
+
+      <h1 className={styles.heading}>Create New Tournament</h1>
+      <p className={styles.subheading}>
+        Set up a new tournament with stages, groups, and fixtures.
+      </p>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.label}>
-          Tournament Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => handleNameChange(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </label>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Tournament Details</div>
 
-        <label className={styles.label}>
-          Slug (URL identifier):
-          <input
-            type="text"
-            value={slug}
-            onChange={(e) => handleSlugChange(e.target.value)}
-            className={styles.input}
-            placeholder="auto-generated from name"
-          />
-          <small style={{ color: '#888' }}>
-            Used in public URLs, e.g. /tournaments/{slug || 'my-tournament'}
-          </small>
-        </label>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>Tournament Name *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => handleNameChange(e.target.value)}
+              className={styles.input}
+              placeholder="e.g. Premier League 2026"
+              required
+            />
+          </div>
 
-        <label className={styles.label}>
-          Start Date:
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </label>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              URL Slug <span className={styles.labelHint}>(auto-generated from name)</span>
+            </label>
+            <input
+              type="text"
+              value={slug}
+              onChange={(e) => handleSlugChange(e.target.value)}
+              className={styles.input}
+              placeholder="auto-generated from name"
+            />
+            <span className={styles.slugPreview}>
+              /tournaments/{slug || 'my-tournament'}
+            </span>
+          </div>
 
-        <label className={styles.label}>
-          End Date:
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </label>
+          <div className={styles.fieldRow}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Start Date *</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className={styles.input}
+                required
+              />
+            </div>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>End Date *</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className={styles.input}
+                required
+              />
+            </div>
+          </div>
 
-        <label className={styles.label}>
-          Venue (optional):
-          <input
-            type="text"
-            value={venue}
-            onChange={(e) => setVenue(e.target.value)}
-            className={styles.input}
-            placeholder="e.g. National Stadium"
-          />
-        </label>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Venue <span className={styles.labelHint}>(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={venue}
+              onChange={(e) => setVenue(e.target.value)}
+              className={styles.input}
+              placeholder="e.g. National Stadium"
+            />
+          </div>
+        </div>
 
-        <button type="submit" disabled={loading || orgLoading} className={styles.button}>
-          {loading ? 'Creating…' : 'Create Tournament'}
-        </button>
+        <div className={styles.buttonRow}>
+          <button type="submit" disabled={loading || orgLoading} className={styles.button}>
+            {loading ? 'Creating...' : 'Create Tournament'}
+          </button>
+          <Link href="/admin/tournaments" className={styles.cancelButton}>
+            Cancel
+          </Link>
+        </div>
       </form>
     </div>
   )

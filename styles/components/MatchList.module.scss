@@ -1,101 +1,134 @@
-.container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background-color: #fff;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-  }
-  
-  .heading {
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
-  .matchList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .matchItem {
-    background: #f9f9f9;
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-  }
-  
-  .teams {
-    font-weight: 600;
-    font-size: 1.05rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .details {
-    font-size: 0.95rem;
-    color: #444;
-    line-height: 1.4;
-  }
-  @media (max-width: 768px) {
-    .container {
-      padding: 0 1rem;
-    }
-  
-    .tabList {
-      display: flex;
-      overflow-x: auto;
-      white-space: nowrap;
-      gap: 0.75rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid #333;
-    }
-  
-    .matchCard {
-      font-size: 0.85rem;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.25rem;
-    }
-  
-    .matchCard .score {
-      font-size: 1rem;
-      padding: 0.3rem 0;
-      font-weight: bold;
-    }
-  
-    .matchCard .team {
-      text-align: center;
-      font-size: 0.9rem;
-    }
-  
-    .backToTop {
-      bottom: 4rem;
-      right: 1rem;
-      font-size: 0.8rem;
-      padding: 0.4rem 0.6rem;
-    }
-  
-    .heading {
-      font-size: 1.2rem;
-      margin-top: 1rem;
-      text-align: center;
-    }
-  }
-  
-  .deleteButton {
-  background: #ff4d4f;
-  color: white;
-  border: none;
-  padding: 0.4rem 0.8rem;
-  margin-left: 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
+/* ── Match List — Admin ─────────────────────────────────── */
 
-  &:hover {
-    background: #d9363e;
+.container {
+  max-width: 960px;
+  margin:    0 auto;
+  padding:   1.5rem;
+}
+
+.heading {
+  font-size:     1.5rem;
+  font-weight:   700;
+  color:         #1a1a2e;
+  margin-bottom: 0.4rem;
+}
+
+.subheading {
+  font-size:     0.85rem;
+  color:         #6b7280;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Back link ──────────────────────────────────────────── */
+.backButton {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             0.4rem;
+  font-size:       0.82rem;
+  color:           #6b7280;
+  text-decoration: none;
+  font-weight:     500;
+  margin-bottom:   1rem;
+  transition:      color 0.15s ease;
+
+  &:hover { color: #2563eb; }
+}
+
+/* ── Match list ─────────────────────────────────────────── */
+.matchList {
+  list-style:     none;
+  padding:        0;
+  margin:         0;
+  display:        flex;
+  flex-direction: column;
+  gap:            0.5rem;
+}
+
+.matchItem {
+  background:    #fff;
+  border:        1px solid #e5e7eb;
+  border-radius: 10px;
+  padding:       1rem 1.25rem;
+  transition:    border-color 0.15s ease;
+
+  &:hover { border-color: #d1d5db; }
+}
+
+.teams {
+  font-weight: 700;
+  font-size:   0.95rem;
+  color:       #1f2937;
+  margin-bottom: 0.4rem;
+}
+
+.details {
+  font-size:   0.82rem;
+  color:       #6b7280;
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Status badge ───────────────────────────────────────── */
+.statusBadge {
+  display:        inline-flex;
+  padding:        2px 10px;
+  border-radius:  9999px;
+  font-size:      0.72rem;
+  font-weight:    700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ── Actions ────────────────────────────────────────────── */
+.actions {
+  display:    flex;
+  gap:        0.5rem;
+  flex-wrap:  wrap;
+  margin-top: 0.5rem;
+
+  a {
+    display:          inline-flex;
+    align-items:      center;
+    gap:              0.3em;
+    font-size:        0.78rem;
+    color:            #2563eb;
+    text-decoration:  none;
+    font-weight:      600;
+    padding:          4px 10px;
+    background:       rgba(37, 99, 235, 0.06);
+    border:           1px solid rgba(37, 99, 235, 0.15);
+    border-radius:    6px;
+    transition:       background 0.15s ease;
+
+    &:hover { background: rgba(37, 99, 235, 0.12); }
   }
+}
+
+.deleteButton {
+  padding:          4px 10px;
+  background:       rgba(239, 68, 68, 0.08);
+  border:           1px solid rgba(239, 68, 68, 0.25);
+  border-radius:    6px;
+  font-size:        0.78rem;
+  font-weight:      600;
+  color:            #ef4444;
+  cursor:           pointer;
+  transition:       background-color 0.15s ease;
+
+  &:hover { background-color: rgba(239, 68, 68, 0.15); }
+}
+
+/* ── Empty state ────────────────────────────────────────── */
+.emptyState {
+  padding:       3rem 2rem;
+  text-align:    center;
+  color:         #9ca3af;
+  background:    #f9fafb;
+  border-radius: 10px;
+  border:        1px dashed #e5e7eb;
+}
+
+@media (max-width: 768px) {
+  .container { padding: 1rem; }
+  .matchItem { padding: 0.85rem 1rem; }
 }

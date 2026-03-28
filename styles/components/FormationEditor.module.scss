@@ -1,93 +1,158 @@
+/* ── Formation Editor — Admin ───────────────────────────── */
+/* Redesigned: removed dark theme, matches admin light design */
+
 .editorContainer {
   max-width: 900px;
-  margin: 2rem auto;
-  padding: 1rem;
-  color: #fff;
-  background: #1a1a1a;
-  border-radius: 12px;
+  margin:    0 auto;
+  padding:   1.5rem;
+}
+
+.heading {
+  font-size:     1.5rem;
+  font-weight:   700;
+  color:         #1a1a2e;
+  margin-bottom: 0.4rem;
+}
+
+.subheading {
+  font-size:     0.85rem;
+  color:         #6b7280;
+  margin-bottom: 1.5rem;
 }
 
 .editorContainer h2 {
-  font-size: 1.5rem;
+  font-size:     1.5rem;
+  font-weight:   700;
+  color:         #1a1a2e;
   margin-bottom: 1rem;
 }
 
-.formationSelect {
-  margin-bottom: 1rem;
-  width: 100%;
-  max-width: 300px;
+/* ── Field groups ──────────────────────────────────────── */
+.fieldGroup {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.4rem;
+  margin-bottom:  1rem;
+  max-width:      300px;
 }
 
+.label {
+  font-size:   0.82rem;
+  font-weight: 600;
+  color:       #374151;
+}
+
+.editorContainer > select {
+  padding:             0.6rem 0.8rem;
+  border:              1px solid #d1d5db;
+  border-radius:       8px;
+  font-size:           0.9rem;
+  color:               #111827;
+  background:          #fff;
+  appearance:          none;
+  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat:   no-repeat;
+  background-position: right 10px center;
+  padding-right:       2rem;
+  cursor:              pointer;
+  margin-bottom:       1rem;
+
+  &:focus { outline: none; border-color: #2563eb; }
+}
+
+/* ── Field grid ─────────────────────────────────────────── */
 .gridField {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  background-image: url('/field.png');
-  background-size: cover;
+  position:          relative;
+  width:             100%;
+  aspect-ratio:      2 / 3;
+  background-image:  url('/field.png');
+  background-size:   cover;
   background-position: center;
-  border: 2px solid #fff;
-  border-radius: 10px;
-  margin: 1.5rem 0;
+  border:            2px solid #d1d5db;
+  border-radius:     12px;
+  margin:            1.5rem 0;
+  box-shadow:        0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .slot {
-  position: absolute;
+  position:  absolute;
   transform: translate(-50%, -50%);
-  z-index: 3;
+  z-index:   3;
 
   select {
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    border: 1px solid #555;
+    background:    rgba(255, 255, 255, 0.92);
+    color:         #1f2937;
+    border:        1px solid #d1d5db;
     border-radius: 6px;
-    font-size: 0.8rem;
-    padding: 0.3rem 0.5rem;
-    max-width: 100px;
+    font-size:     0.8rem;
+    padding:       0.3rem 0.5rem;
+    max-width:     110px;
+    box-shadow:    0 1px 4px rgba(0, 0, 0, 0.1);
+
+    &:focus { outline: none; border-color: #2563eb; }
   }
 }
 
 /* Density classes for different formation layouts */
 .dense select {
-  font-size: 0.7rem;
-  max-width: 90px;
+  font-size:  0.7rem;
+  max-width:  90px;
 }
 
 .medium select {
-  font-size: 0.85rem;
-  max-width: 100px;
+  font-size:  0.85rem;
+  max-width:  100px;
 }
 
 .spacious select {
-  font-size: 1rem;
-  max-width: 110px;
+  font-size:  1rem;
+  max-width:  110px;
 }
 
-/* Save Button */
+/* ── Save Button ────────────────────────────────────────── */
 .saveButton {
-  margin-top: 1rem;
-  background-color: #28a745;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
+  display:          inline-flex;
+  align-items:      center;
+  gap:              0.4em;
+  padding:          0.65rem 1.4rem;
+  background-color: #2563eb;
+  color:            #fff;
+  border:           none;
+  border-radius:    8px;
+  font-weight:      600;
+  font-size:        0.9rem;
+  cursor:           pointer;
+  transition:       opacity 0.15s ease;
+  margin-top:       0.5rem;
+
+  &:hover    { opacity: 0.9; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-.saveButton:hover {
-  background-color: #218838;
+/* ── Back link ──────────────────────────────────────────── */
+.backButton {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             0.4rem;
+  font-size:       0.82rem;
+  color:           #6b7280;
+  text-decoration: none;
+  font-weight:     500;
+  margin-bottom:   1rem;
+  transition:      color 0.15s ease;
+
+  &:hover { color: #2563eb; }
 }
 
-/* Mobile adjustments */
+/* ── Mobile adjustments ─────────────────────────────────── */
 @media (max-width: 600px) {
   .gridField {
     aspect-ratio: 9 / 16;
   }
 
   .slot select {
-    font-size: 0.65rem;
-    max-width: 80px;
+    font-size:  0.65rem;
+    max-width:  80px;
   }
 
   .editorContainer h2 {

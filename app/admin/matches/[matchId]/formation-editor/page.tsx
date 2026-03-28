@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import styles from '@/styles/components/FormationEditor.module.scss'
 import { formationLayouts } from '@/components/match/FormationLayout'
@@ -21,6 +22,7 @@ export default function FormationEditorPage() {
   const [formation, setFormation] = useState('4-3-3')
   const [players, setPlayers] = useState<Player[]>([])
   const [assignments, setAssignments] = useState<{ [slot: number]: string }>({})
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (!matchId || typeof matchId !== 'string') return
@@ -58,6 +60,7 @@ export default function FormationEditorPage() {
   }
 
   const handleSave = async () => {
+    setSaving(true)
     const updates = Object.entries(assignments).map(([slot, playerId]) => ({
       match_id: matchId,
       player_id: playerId,
@@ -72,7 +75,8 @@ export default function FormationEditorPage() {
         .eq('player_id', update.player_id)
     }
 
-    router.back() // Navigate to the previous page
+    setSaving(false)
+    router.back()
   }
 
   const layout = formationLayouts[formation] || []
@@ -83,13 +87,23 @@ export default function FormationEditorPage() {
 
   return (
     <div className={styles.editorContainer}>
-      <h2>Formation Editor</h2>
+      <button type="button" onClick={() => router.back()} className={styles.backButton}>
+        &#8592; Back to Match
+      </button>
 
-      <select value={formation} onChange={e => setFormation(e.target.value)}>
-        {Object.keys(formationLayouts).map(f => (
-          <option key={f} value={f}>{f}</option>
-        ))}
-      </select>
+      <h1 className={styles.heading}>Formation Editor</h1>
+      <p className={styles.subheading}>
+        Drag players into formation slots to set up the starting lineup positions.
+      </p>
+
+      <div className={styles.fieldGroup}>
+        <label className={styles.label}>Formation</label>
+        <select value={formation} onChange={e => setFormation(e.target.value)}>
+          {Object.keys(formationLayouts).map(f => (
+            <option key={f} value={f}>{f}</option>
+          ))}
+        </select>
+      </div>
 
       <div className={`${styles.gridField} ${styles[densityClass]}`}>
         {layout.map((pos, index) => (
@@ -98,7 +112,7 @@ export default function FormationEditorPage() {
               value={assignments[index] || ''}
               onChange={(e) => handleAssign(index, e.target.value)}
             >
-              <option value=''>-- Select Player --</option>
+              <option value=''>-- Select --</option>
               {players.map(p => (
                 <option key={p.id} value={p.id}>
                   {p.position?.toUpperCase() || 'POS'} - {p.name}
@@ -109,8 +123,8 @@ export default function FormationEditorPage() {
         ))}
       </div>
 
-      <button onClick={handleSave} className={styles.saveButton}>
-        Save Formation
+      <button onClick={handleSave} disabled={saving} className={styles.saveButton}>
+        {saving ? 'Saving…' : 'Save Formation'}
       </button>
     </div>
   )

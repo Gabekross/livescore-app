@@ -13,6 +13,7 @@ import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import toast                   from 'react-hot-toast'
+import styles                  from '@/styles/components/Operator.module.scss'
 
 interface Match {
   id:         string
@@ -89,24 +90,22 @@ export default function OperatorPage() {
   if (orgGate) return orgGate
 
   return (
-    <div style={{ maxWidth: '700px', margin: '0 auto' }}>
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#1f2937', marginBottom: '0.25rem' }}>
-          Game Day — {orgName}
-        </h1>
-        <p style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.heading}>Game Day — {orgName}</h1>
+        <p className={styles.subheading}>
           Manage live match scores and status. Showing today and next 7 days.
         </p>
       </div>
 
       {loading ? (
-        <p style={{ color: '#9ca3af', fontSize: '0.9rem' }}>Loading matches...</p>
+        <div className={styles.loadingState}>Loading matches...</div>
       ) : matches.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af', fontSize: '0.9rem' }}>
+        <div className={styles.emptyState}>
           No upcoming matches in the next 7 days.
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+        <div className={styles.matchList}>
           {matches.map((m) => (
             <MatchOperatorRow
               key={m.id}
@@ -119,14 +118,9 @@ export default function OperatorPage() {
 
       {/* Full match management link for org_admin+ */}
       {role !== 'match_operator' && (
-        <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
-          <Link
-            href="/admin/dashboard"
-            style={{ fontSize: '0.82rem', color: '#6b7280' }}
-          >
-            ← Back to Admin Dashboard
-          </Link>
-        </div>
+        <Link href="/admin/dashboard" className={styles.backLink}>
+          &#8592; Back to Admin Dashboard
+        </Link>
       )}
     </div>
   )
@@ -148,7 +142,6 @@ function MatchOperatorRow({
 
   const homeName = match.home_team?.name ?? 'Home'
   const awayName = match.away_team?.name ?? 'Away'
-  const isLiveish = ['live', 'halftime'].includes(status)
 
   const handleSave = async () => {
     setSaving(true)
@@ -171,34 +164,32 @@ function MatchOperatorRow({
   }
 
   return (
-    <div style={{
-      background: '#fff', border: '1px solid #e5e7eb', borderRadius: '10px',
-      padding: '0.9rem 1.1rem',
-      borderLeft: `3px solid ${STATUS_COLORS[status]}`,
-    }}>
+    <div
+      className={styles.matchCard}
+      style={{ '--status-color': STATUS_COLORS[status] } as React.CSSProperties}
+    >
       {/* Header row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.7rem' }}>
-        <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
+      <div className={styles.matchHeader}>
+        <div className={styles.matchMeta}>
           {match.tournament?.name && <span>{match.tournament.name} · </span>}
           {new Date(match.match_date).toLocaleString('en-GB', {
             day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
           })}
         </div>
-        <span style={{
-          fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em',
-          color: STATUS_COLORS[status],
-          background: `${STATUS_COLORS[status]}18`,
-          padding: '2px 7px', borderRadius: '4px',
-        }}>
+        <span
+          className={styles.statusBadge}
+          style={{
+            color: STATUS_COLORS[status],
+            background: `${STATUS_COLORS[status]}18`,
+          }}
+        >
           {STATUS_LABELS[status]}
         </span>
       </div>
 
       {/* Score row */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
-        <span style={{ flex: 1, fontWeight: 700, fontSize: '0.92rem', color: '#1f2937', textAlign: 'right' }}>
-          {homeName}
-        </span>
+      <div className={styles.scoreRow}>
+        <span className={styles.teamNameHome}>{homeName}</span>
 
         {status !== 'scheduled' ? (
           <>
@@ -208,33 +199,31 @@ function MatchOperatorRow({
               max={99}
               value={homeScore}
               onChange={(e) => setHomeScore(Number(e.target.value))}
-              style={{ width: '40px', textAlign: 'center', padding: '0.3rem', border: '1px solid #d1d5db', borderRadius: '6px', fontWeight: 700, fontSize: '1rem' }}
+              className={styles.scoreInput}
             />
-            <span style={{ color: '#9ca3af', fontWeight: 700 }}>-</span>
+            <span className={styles.scoreDivider}>-</span>
             <input
               type="number"
               min={0}
               max={99}
               value={awayScore}
               onChange={(e) => setAwayScore(Number(e.target.value))}
-              style={{ width: '40px', textAlign: 'center', padding: '0.3rem', border: '1px solid #d1d5db', borderRadius: '6px', fontWeight: 700, fontSize: '1rem' }}
+              className={styles.scoreInput}
             />
           </>
         ) : (
-          <span style={{ padding: '0.3rem 0.75rem', color: '#9ca3af', fontSize: '0.9rem' }}>vs</span>
+          <span className={styles.vsLabel}>vs</span>
         )}
 
-        <span style={{ flex: 1, fontWeight: 700, fontSize: '0.92rem', color: '#1f2937' }}>
-          {awayName}
-        </span>
+        <span className={styles.teamName}>{awayName}</span>
       </div>
 
       {/* Status + save */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+      <div className={styles.controlsRow}>
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as Match['status'])}
-          style={{ padding: '0.35rem 0.6rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.82rem' }}
+          className={styles.statusSelect}
         >
           <option value="scheduled">Scheduled</option>
           <option value="live">Live</option>
@@ -245,20 +234,12 @@ function MatchOperatorRow({
         <button
           onClick={handleSave}
           disabled={saving}
-          style={{
-            padding: '0.35rem 0.85rem', background: '#2563eb', color: '#fff',
-            border: 'none', borderRadius: '6px', fontWeight: 600, fontSize: '0.82rem',
-            cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
-          }}
+          className={styles.saveButton}
         >
           {saving ? 'Saving...' : 'Save'}
         </button>
 
-        {/* Detailed edit link — only for org_admin+ */}
-        <Link
-          href={`/admin/tournaments`}
-          style={{ fontSize: '0.78rem', color: '#9ca3af', marginLeft: 'auto' }}
-        >
+        <Link href="/admin/tournaments" className={styles.detailLink}>
           Full details ›
         </Link>
       </div>

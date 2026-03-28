@@ -28,11 +28,7 @@ export default function GroupListPage() {
         .select('*')
         .eq('stage_id', stageId)
 
-      if (error) {
-        // fetch failed — groups array stays empty
-      } else {
-        setGroups(data)
-      }
+      if (!error && data) setGroups(data)
     }
 
     fetchGroups()
@@ -42,17 +38,48 @@ export default function GroupListPage() {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Groups in This Stage</h2>
-      <Link href={`/admin/tournaments/${id}/stages/${stageId}/groups/new`} className={styles.newLink}>
-        + Add New Group
+      <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
+        &#8592; Back to Stages
       </Link>
-      <ul className={styles.stageList}>
-        {groups.map((group) => (
-          <li key={group.id} className={styles.stageItem}>
-            {group.name}
-          </li>
-        ))}
-      </ul>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+        <h1 className={styles.heading}>Groups in This Stage</h1>
+        <Link href={`/admin/tournaments/${id}/stages/${stageId}/groups/new`} className={styles.primaryButton}>
+          + Add Group
+        </Link>
+      </div>
+
+      {groups.length === 0 ? (
+        <div style={{
+          padding: '3rem 2rem', textAlign: 'center', color: '#9ca3af',
+          background: '#f9fafb', borderRadius: '10px', border: '1px dashed #e5e7eb',
+        }}>
+          <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#6b7280', marginBottom: '0.25rem' }}>
+            No groups yet
+          </p>
+          <p style={{ fontSize: '0.82rem' }}>
+            Add groups to organise teams and schedule matches.
+          </p>
+        </div>
+      ) : (
+        <ul className={styles.groupList} style={{ paddingLeft: 0 }}>
+          {groups.map((group) => (
+            <li key={group.id} className={styles.groupItem}>
+              <div className={styles.groupHeader}>
+                <span>{group.name}</span>
+              </div>
+              <div className={styles.linkRow}>
+                <Link href={`/admin/tournaments/${id}/stages/${stageId}/groups/${group.id}/assign-teams`}>
+                  Assign Teams
+                </Link>
+                <Link href={`/admin/tournaments/${id}/stages/${stageId}/groups/${group.id}/matches`}>
+                  View Matches
+                </Link>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

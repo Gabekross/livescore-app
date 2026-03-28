@@ -1,48 +1,171 @@
+/* ── Tournament Form — Admin ─────────────────────────────── */
+/* Matches AdminSettings section-card design language       */
+
 .formContainer {
-  max-width: 500px;
-  margin: 2rem auto;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fdfdfd;
+  max-width: 760px;
+  margin:    0 auto;
+  padding:   1.5rem;
 }
 
 .heading {
-  text-align: center;
-  margin-bottom: 1rem;
+  font-size:     1.5rem;
+  font-weight:   700;
+  color:         #1a1a2e;
+  margin-bottom: 0.4rem;
+}
+
+.subheading {
+  font-size:     0.85rem;
+  color:         #6b7280;
+  margin-bottom: 2rem;
 }
 
 .form {
-  display: flex;
+  display:        flex;
   flex-direction: column;
 }
 
+/* ── Section card ───────────────────────────────────────── */
+.section {
+  background:    #fff;
+  border:        1px solid #e5e7eb;
+  border-radius: 12px;
+  padding:       1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size:      0.78rem;
+  font-weight:    700;
+  color:          #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom:  1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom:  1px solid #f3f4f6;
+}
+
+/* ── Fields ─────────────────────────────────────────────── */
+.fieldGroup {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.4rem;
+  margin-bottom:  1.1rem;
+}
+
+.fieldRow {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   1rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
 .label {
-  margin-bottom: 1rem;
-  font-weight: bold;
+  font-size:   0.82rem;
+  font-weight: 600;
+  color:       #374151;
+}
+
+.labelHint {
+  font-size:   0.75rem;
+  color:       #9ca3af;
+  font-weight: 400;
 }
 
 .input {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-top: 0.25rem;
-  width: 100%;
+  padding:       0.6rem 0.8rem;
+  border:        1px solid #d1d5db;
+  border-radius: 8px;
+  font-size:     0.9rem;
+  color:         #111827;
+  background:    #fff;
+  width:         100%;
+  transition:    border-color 0.15s ease;
+
+  &:focus { outline: none; border-color: #2563eb; }
 }
 
+.select {
+  @extend .input;
+  appearance:          none;
+  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat:   no-repeat;
+  background-position: right 10px center;
+  padding-right:       2rem;
+  cursor:              pointer;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
 .button {
-  padding: 0.6rem 1.2rem;
-  background-color: #000;
-  color: #fff;
-  font-weight: 600;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 1rem;
+  display:          inline-flex;
+  align-items:      center;
+  gap:              0.4em;
+  padding:          0.65rem 1.4rem;
+  background-color: #2563eb;
+  color:            #fff;
+  border:           none;
+  border-radius:    8px;
+  font-weight:      600;
+  font-size:        0.9rem;
+  cursor:           pointer;
+  transition:       opacity 0.15s ease;
+  margin-top:       0.5rem;
+
+  &:hover    { opacity: 0.9; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
 }
 
-.button:disabled {
-  background-color: #444;
-  cursor: not-allowed;
+.secondaryButton {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              0.4em;
+  padding:          0.5rem 1rem;
+  background-color: #f3f4f6;
+  color:            #374151;
+  border:           1px solid #d1d5db;
+  border-radius:    8px;
+  font-weight:      600;
+  font-size:        0.82rem;
+  cursor:           pointer;
+  text-decoration:  none;
+  transition:       background-color 0.15s ease;
+
+  &:hover { background-color: #e5e7eb; }
+}
+
+.cancelButton {
+  @extend .secondaryButton;
+}
+
+.buttonRow {
+  display:    flex;
+  gap:        0.75rem;
+  flex-wrap:  wrap;
+  margin-top: 0.5rem;
+}
+
+/* ── Back link ──────────────────────────────────────────── */
+.backButton {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             0.4rem;
+  font-size:       0.82rem;
+  color:           #6b7280;
+  text-decoration: none;
+  font-weight:     500;
+  margin-bottom:   1rem;
+  transition:      color 0.15s ease;
+
+  &:hover { color: #2563eb; }
+}
+
+/* ── Slug preview ───────────────────────────────────────── */
+.slugPreview {
+  font-size:   0.78rem;
+  color:       #6b7280;
+  margin-top:  2px;
+  font-family: 'ui-monospace', monospace;
 }

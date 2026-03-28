@@ -16,6 +16,11 @@ interface Tournament {
   is_archived: boolean
 }
 
+function formatDate(iso?: string) {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+}
+
 export default function AdminTournamentList() {
   const { orgId, loading: orgLoading } = useAdminOrg()
   const orgGate = useAdminOrgGate()
@@ -71,58 +76,79 @@ export default function AdminTournamentList() {
   return (
     <div className={styles.container}>
       <Link href="/admin/dashboard" className={styles.backButton}>
-        ← Back to Dashboard
-      </Link>
-      <h1 className={styles.heading}>Admin – Tournaments</h1>
-
-      <Link href="/admin/tournaments/new" className={styles.newButton}>
-        + Add New Tournament
+        &#8592; Back to Dashboard
       </Link>
 
-      <ul className={styles.list}>
-        {tournaments.map((t) => (
-          <li key={t.id} className={styles.item}>
-            {editId === t.id ? (
-              <div className={styles.editForm}>
-                <input
-                  name="name"
-                  value={formState.name || ''}
-                  onChange={handleChange}
-                  placeholder="Tournament Name"
-                />
-                <input
-                  type="date"
-                  name="start_date"
-                  value={formState.start_date || ''}
-                  onChange={handleChange}
-                />
-                <input
-                  type="date"
-                  name="end_date"
-                  value={formState.end_date || ''}
-                  onChange={handleChange}
-                />
-                <div className={styles.actionButtons}>
-                  <button onClick={handleSave}>Save</button>
-                  <button onClick={() => setEditId(null)}>Cancel</button>
-                </div>
-              </div>
-            ) : (
-              <div className={styles.linkRow}>
-                <Link href={`/admin/tournaments/${t.id}/stages`} className={styles.link}>
-                  <div>
-                    <h3>{t.name} {t.is_archived && <span style={{ color: '#999', fontSize: '0.8em' }}>(archived)</span>}</h3>
-                    <p>{t.start_date?.slice(0, 10)} → {t.end_date?.slice(0, 10)}</p>
+      <div className={styles.topBar}>
+        <div>
+          <h1 className={styles.heading}>Tournaments</h1>
+          <p className={styles.subheading}>Manage tournaments, stages, groups, and matches.</p>
+        </div>
+        <Link href="/admin/tournaments/new" className={styles.newButton}>
+          + New Tournament
+        </Link>
+      </div>
+
+      {tournaments.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#6b7280', marginBottom: '0.25rem' }}>
+            No tournaments yet
+          </p>
+          <p style={{ fontSize: '0.82rem', color: '#9ca3af' }}>
+            Create your first tournament to get started with fixtures and standings.
+          </p>
+        </div>
+      ) : (
+        <ul className={styles.list}>
+          {tournaments.map((t) => (
+            <li key={t.id} className={styles.item}>
+              {editId === t.id ? (
+                <div className={styles.editForm}>
+                  <input
+                    name="name"
+                    value={formState.name || ''}
+                    onChange={handleChange}
+                    placeholder="Tournament Name"
+                  />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                    <input
+                      type="date"
+                      name="start_date"
+                      value={formState.start_date || ''}
+                      onChange={handleChange}
+                    />
+                    <input
+                      type="date"
+                      name="end_date"
+                      value={formState.end_date || ''}
+                      onChange={handleChange}
+                    />
                   </div>
-                </Link>
-                <button onClick={() => handleEdit(t)} className={styles.secondaryButtonSmall}>
-                  Edit
-                </button>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
+                  <div className={styles.actionButtons}>
+                    <button onClick={handleSave}>Save Changes</button>
+                    <button onClick={() => setEditId(null)}>Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.linkRow}>
+                  <Link href={`/admin/tournaments/${t.id}/stages`} className={styles.link}>
+                    <div>
+                      <h3>
+                        {t.name}
+                        {t.is_archived && <span className={styles.archivedBadge}>Archived</span>}
+                      </h3>
+                      <p>{formatDate(t.start_date)} — {formatDate(t.end_date)}</p>
+                    </div>
+                  </Link>
+                  <button onClick={() => handleEdit(t)} className={styles.secondaryButtonSmall}>
+                    Edit
+                  </button>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

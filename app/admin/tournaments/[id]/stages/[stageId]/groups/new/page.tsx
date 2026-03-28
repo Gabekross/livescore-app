@@ -31,7 +31,6 @@ export default function CreateGroupPage() {
 
     setLoading(true)
 
-    // Only stage_id and name — groups table has no tournament_id column
     const { error } = await supabase.from('groups').insert({
       name:     name.trim(),
       stage_id: stageId,
@@ -51,23 +50,34 @@ export default function CreateGroupPage() {
 
   return (
     <div className={styles.formContainer}>
-      <h2 className={styles.heading}>Create Group</h2>
+      <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
+        &#8592; Back to Stages
+      </Link>
+
+      <h1 className={styles.heading}>Create Group</h1>
+      <p className={styles.subheading}>
+        Add a group to this stage (e.g. Group A, Group B).
+      </p>
+
       <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.label}>
-          Group Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={styles.input}
-            required
-            placeholder="e.g. Group A"
-          />
-        </label>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Group Details</div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>Group Name *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={styles.input}
+              required
+              placeholder="e.g. Group A"
+            />
+          </div>
+        </div>
 
         <div className={styles.buttonRow}>
           <button type="submit" disabled={loading} className={styles.button}>
-            {loading ? 'Creating…' : 'Create Group'}
+            {loading ? 'Creating...' : 'Create Group'}
           </button>
           <Link href={`/admin/tournaments/${id}/stages`} className={styles.cancelButton}>
             Cancel

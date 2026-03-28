@@ -57,30 +57,54 @@ export default function AdminTeamListPage() {
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>All Teams</h2>
-      <Link href="/admin/teams/new" className={styles.newLink}>+ Add New Team</Link>
+      <div className={styles.topBar}>
+        <div>
+          <h1 className={styles.heading}>Teams</h1>
+          <p className={styles.subheading}>Manage your organisation's teams, rosters, and logos.</p>
+        </div>
+        <Link href="/admin/teams/new" className={styles.newLink}>+ New Team</Link>
+      </div>
 
-      <ul className={styles.teamList}>
-        {teams.map((team) => (
-          <li key={team.id} className={styles.teamItem}>
-            {team.logo_url && (
-              <img src={team.logo_url} alt={team.name} className={styles.logo} />
-            )}
-            <span className={styles.teamName}>{team.name}</span>
-            <div className={styles.actions}>
-              <Link href={`/admin/teams/view/${team.id}`}  className={styles.viewButton}>View</Link>
-              <Link href={`/admin/teams/edit/${team.id}`}  className={styles.editButton}>Edit</Link>
-              <button
-                onClick={() => handleDelete(team.id)}
-                disabled={loading}
-                className={styles.deleteButton}
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {teams.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#6b7280', marginBottom: '0.25rem' }}>
+            No teams yet
+          </p>
+          <p style={{ fontSize: '0.82rem', color: '#9ca3af' }}>
+            Create your first team to start building rosters and scheduling matches.
+          </p>
+        </div>
+      ) : (
+        <ul className={styles.teamList}>
+          {teams.map((team) => (
+            <li key={team.id} className={styles.teamItem}>
+              {team.logo_url ? (
+                <img src={team.logo_url} alt={team.name} className={styles.logo} />
+              ) : (
+                <div style={{
+                  width: 36, height: 36, borderRadius: 8, background: '#f3f4f6',
+                  border: '1px dashed #d1d5db', display: 'flex', alignItems: 'center',
+                  justifyContent: 'center', fontSize: '1rem', flexShrink: 0,
+                }}>
+                  &#9917;
+                </div>
+              )}
+              <span className={styles.teamName}>{team.name}</span>
+              <div className={styles.actions}>
+                <Link href={`/admin/teams/view/${team.id}`}  className={styles.viewButton}>View</Link>
+                <Link href={`/admin/teams/edit/${team.id}`}  className={styles.editButton}>Edit</Link>
+                <button
+                  onClick={() => handleDelete(team.id)}
+                  disabled={loading}
+                  className={styles.deleteButton}
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

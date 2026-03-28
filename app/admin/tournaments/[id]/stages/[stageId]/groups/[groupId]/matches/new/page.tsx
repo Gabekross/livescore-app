@@ -7,6 +7,7 @@ import { useAdminOrg }          from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }      from '@/components/admin/AdminOrgGate'
 import toast                    from 'react-hot-toast'
 import styles                   from '@/styles/components/Form.module.scss'
+import Link                     from 'next/link'
 
 interface Team {
   id:   string
@@ -81,54 +82,72 @@ export default function NewMatchPage() {
 
   return (
     <div className={styles.formContainer}>
-      <h2 className={styles.heading}>Create New Match</h2>
+      <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
+        &#8592; Back to Stages
+      </Link>
+
+      <h1 className={styles.heading}>Create New Match</h1>
+      <p className={styles.subheading}>Schedule a tournament match between two teams in this group.</p>
 
       <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.label}>
-          Home Team:
-          <select value={teamA} onChange={(e) => setTeamA(e.target.value)} className={styles.input}>
-            <option value="">Select Home Team</option>
-            {teams.map((team) => (
-              <option key={team.id} value={team.id}>{team.name}</option>
-            ))}
-          </select>
-        </label>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Match Details</div>
 
-        <label className={styles.label}>
-          Away Team:
-          <select value={teamB} onChange={(e) => setTeamB(e.target.value)} className={styles.input}>
-            <option value="">Select Away Team</option>
-            {teams.map((team) => (
-              <option key={team.id} value={team.id}>{team.name}</option>
-            ))}
-          </select>
-        </label>
+          <div className={styles.fieldRow}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Home Team *</label>
+              <select value={teamA} onChange={(e) => setTeamA(e.target.value)} className={styles.input}>
+                <option value="">Select Home Team</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>{team.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Away Team *</label>
+              <select value={teamB} onChange={(e) => setTeamB(e.target.value)} className={styles.input}>
+                <option value="">Select Away Team</option>
+                {teams.map((team) => (
+                  <option key={team.id} value={team.id}>{team.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-        <label className={styles.label}>
-          Match Date &amp; Time:
-          <input
-            type="datetime-local"
-            value={matchDate}
-            onChange={(e) => setMatchDate(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </label>
+          <div className={styles.fieldRow}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Match Date &amp; Time *</label>
+              <input
+                type="datetime-local"
+                value={matchDate}
+                onChange={(e) => setMatchDate(e.target.value)}
+                className={styles.input}
+                required
+              />
+            </div>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>
+                Venue <span className={styles.labelHint}>(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={venue}
+                onChange={(e) => setVenue(e.target.value)}
+                className={styles.input}
+                placeholder="e.g. Main Stadium"
+              />
+            </div>
+          </div>
+        </div>
 
-        <label className={styles.label}>
-          Venue (optional):
-          <input
-            type="text"
-            value={venue}
-            onChange={(e) => setVenue(e.target.value)}
-            className={styles.input}
-            placeholder="e.g. Main Stadium"
-          />
-        </label>
-
-        <button type="submit" className={styles.button} disabled={loading || orgLoading}>
-          {loading ? 'Saving…' : 'Create Match'}
-        </button>
+        <div className={styles.buttonRow}>
+          <button type="submit" className={styles.button} disabled={loading || orgLoading}>
+            {loading ? 'Creating...' : 'Create Match'}
+          </button>
+          <Link href={`/admin/tournaments/${id}/stages`} className={styles.cancelButton}>
+            Cancel
+          </Link>
+        </div>
       </form>
     </div>
   )

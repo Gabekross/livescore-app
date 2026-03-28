@@ -7,7 +7,6 @@ import { useAdminOrg }     from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
-import GroupStandings from '@/components/GroupStandings'
 import styles from '@/styles/components/StageList.module.scss'
 
 interface Stage {
@@ -190,123 +189,142 @@ export default function TournamentStagesPage() {
 
   return (
     <div className={styles.container}>
+      <Link href="/admin/tournaments" className={styles.backButton}>
+        &#8592; Back to Tournaments
+      </Link>
+
       <div className={styles.headerRow}>
-        <Link href="/admin/tournaments" className={styles.backButton}>
-          ← Back
-        </Link>
-        <h2 className={styles.heading}>{tournament?.name ?? 'Tournament'}</h2>
+        <h1 className={styles.heading}>{tournament?.name ?? 'Tournament'}</h1>
       </div>
 
       <div className={styles.topActions}>
         <Link href={`/admin/tournaments/${id}/stages/new`} className={styles.primaryButton}>
-          + Add New Stage
+          + Add Stage
         </Link>
         <button onClick={handleDeleteTournament} className={styles.dangerButton}>
           Delete Tournament
         </button>
       </div>
 
-      <ul className={styles.stageList}>
-        {stages.map((stage) => (
-          <li key={stage.id} className={styles.stageItem}>
-            <div className={styles.stageInfo}>
-              {editingStageId === stage.id ? (
-                <>
-                  <input
-                    className={styles.stageNameInput}
-                    value={stageNameDraft}
-                    onChange={(e) => setStageNameDraft(e.target.value)}
-                  />
-                  <button onClick={() => handleSaveStageName(stage.id)}>Save</button>
-                  <button onClick={() => setEditingStageId(null)}>Cancel</button>
-                </>
-              ) : (
-                <>
-                  <strong>{stage.stage_name}</strong>
-                  <button onClick={() => {
-                    setStageNameDraft(stage.stage_name)
-                    setEditingStageId(stage.id)
-                  }}>Edit</button>
-                </>
-              )}
-            </div>
-            <div className={styles.meta}>
-              <span>Order: {stage.order_number}</span>
-              <span>Groups: {stage.group_count ?? 0}</span>
-            </div>
-            <div className={styles.stageActions}>
-              <Link href={`/admin/tournaments/${id}/stages/edit/${stage.id}`} className={styles.secondaryButton}>
-                Edit
-              </Link>
-              <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/new`} className={styles.primaryButtonSmall}>
-                + Add Group
-              </Link>
-              <button onClick={() => handleDeleteStage(stage.id)} className={styles.dangerButtonSmall}>
-                Delete
-              </button>
-            </div>
+      {stages.length === 0 ? (
+        <div style={{
+          padding: '3rem 2rem', textAlign: 'center', color: '#9ca3af',
+          background: '#f9fafb', borderRadius: '10px', border: '1px dashed #e5e7eb',
+        }}>
+          <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#6b7280', marginBottom: '0.25rem' }}>
+            No stages yet
+          </p>
+          <p style={{ fontSize: '0.82rem' }}>
+            Add a stage (e.g. Group Stage, Semi-Finals) to start organising this tournament.
+          </p>
+        </div>
+      ) : (
+        <ul className={styles.stageList}>
+          {stages.map((stage) => (
+            <li key={stage.id} className={styles.stageItem}>
+              <div className={styles.stageInfo}>
+                {editingStageId === stage.id ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                    <input
+                      className={styles.stageNameInput}
+                      value={stageNameDraft}
+                      onChange={(e) => setStageNameDraft(e.target.value)}
+                      style={{ maxWidth: '280px' }}
+                    />
+                    <button onClick={() => handleSaveStageName(stage.id)} className={styles.primaryButtonSmall}>Save</button>
+                    <button onClick={() => setEditingStageId(null)} className={styles.secondaryButton}>Cancel</button>
+                  </div>
+                ) : (
+                  <>
+                    <strong>{stage.stage_name}</strong>
+                    <button onClick={() => {
+                      setStageNameDraft(stage.stage_name)
+                      setEditingStageId(stage.id)
+                    }}>Rename</button>
+                  </>
+                )}
+              </div>
 
-            {groups[stage.id]?.length > 0 && (
-              <ul className={styles.groupList}>
-                {groups[stage.id].map((group) => (
-                  <li key={group.id} className={styles.groupItem}>
-                    <div className={styles.groupHeader}>
-                      {editingGroupId === group.id ? (
-                        <>
-                          <input
-                            className={styles.groupNameInput}
-                            value={groupNameDraft}
-                            onChange={(e) => setGroupNameDraft(e.target.value)}
-                          />
-                          <button onClick={() => handleSaveGroupName(group.id)}>Save</button>
-                          <button onClick={() => setEditingGroupId(null)}>Cancel</button>
-                        </>
-                      ) : (
-                        <>
-                          <span>• {group.name}</span>
-                          <button onClick={() => {
-                            setGroupNameDraft(group.name)
-                            setEditingGroupId(group.id)
-                          }}>Edit</button>
-                        </>
+              <div className={styles.meta}>
+                <span>Order: {stage.order_number}</span>
+                <span>Groups: {stage.group_count ?? 0}</span>
+              </div>
+
+              <div className={styles.stageActions}>
+                <Link href={`/admin/tournaments/${id}/stages/edit/${stage.id}`} className={styles.secondaryButton}>
+                  Edit Stage
+                </Link>
+                <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/new`} className={styles.primaryButtonSmall}>
+                  + Add Group
+                </Link>
+                <button onClick={() => handleDeleteStage(stage.id)} className={styles.dangerButtonSmall}>
+                  Delete
+                </button>
+              </div>
+
+              {groups[stage.id]?.length > 0 && (
+                <ul className={styles.groupList}>
+                  {groups[stage.id].map((group) => (
+                    <li key={group.id} className={styles.groupItem}>
+                      <div className={styles.groupHeader}>
+                        {editingGroupId === group.id ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1 }}>
+                            <input
+                              className={styles.groupNameInput}
+                              value={groupNameDraft}
+                              onChange={(e) => setGroupNameDraft(e.target.value)}
+                              style={{ maxWidth: '200px' }}
+                            />
+                            <button onClick={() => handleSaveGroupName(group.id)}>Save</button>
+                            <button onClick={() => setEditingGroupId(null)}>Cancel</button>
+                          </div>
+                        ) : (
+                          <>
+                            <span>{group.name}</span>
+                            <button onClick={() => {
+                              setGroupNameDraft(group.name)
+                              setEditingGroupId(group.id)
+                            }}>Rename</button>
+                          </>
+                        )}
+                      </div>
+
+                      {expandedGroups[group.id] && groupTeamMap[group.id] && (
+                        <ul className={styles.teamList}>
+                          {groupTeamMap[group.id].map((team) => (
+                            <li key={team.id} className={styles.teamItem}>
+                              {team.logo_url && (
+                                <img
+                                  src={team.logo_url}
+                                  alt={team.name}
+                                  className={styles.teamLogo}
+                                />
+                              )}
+                              {team.name}
+                            </li>
+                          ))}
+                        </ul>
                       )}
-                    </div>
 
-                    {expandedGroups[group.id] && groupTeamMap[group.id] && (
-                      <ul className={styles.teamList}>
-                        {groupTeamMap[group.id].map((team) => (
-                          <li key={team.id} className={styles.teamItem}>
-                            {team.logo_url && (
-                              <img
-                                src={team.logo_url}
-                                alt={team.name}
-                                className={styles.teamLogo}
-                              />
-                            )}
-                            {team.name}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    <div className={styles.linkRow}>
-                      <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/assign-teams`}>
-                        Assign Teams
-                      </Link>
-                      <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches/new`}>
-                        ⚽ Create Match
-                      </Link>
-                      <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches`}>
-                        View Matches
-                      </Link>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
+                      <div className={styles.linkRow}>
+                        <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/assign-teams`}>
+                          Assign Teams
+                        </Link>
+                        <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches/new`}>
+                          Create Match
+                        </Link>
+                        <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches`}>
+                          View Matches
+                        </Link>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }

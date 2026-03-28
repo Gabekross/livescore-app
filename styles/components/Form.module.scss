@@ -1,125 +1,213 @@
+/* ── Shared Form — Admin ────────────────────────────────── */
+/* Used by: stages/new, groups/new, assign-teams, match/new, friendly/new */
+
 .formContainer {
-    max-width: 500px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #f9f9f9;
+  max-width: 760px;
+  margin:    0 auto;
+  padding:   1.5rem;
+}
+
+.heading {
+  font-size:     1.5rem;
+  font-weight:   700;
+  color:         #1a1a2e;
+  margin-bottom: 0.4rem;
+}
+
+.subheading {
+  font-size:     0.85rem;
+  color:         #6b7280;
+  margin-bottom: 2rem;
+}
+
+.form {
+  display:        flex;
+  flex-direction: column;
+}
+
+/* ── Section card ───────────────────────────────────────── */
+.section {
+  background:    #fff;
+  border:        1px solid #e5e7eb;
+  border-radius: 12px;
+  padding:       1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size:      0.78rem;
+  font-weight:    700;
+  color:          #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom:  1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom:  1px solid #f3f4f6;
+}
+
+/* ── Fields ─────────────────────────────────────────────── */
+.fieldGroup {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.4rem;
+  margin-bottom:  1.1rem;
+}
+
+.fieldRow {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   1rem;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
   }
-  
-  .heading {
-    text-align: center;
-    margin-bottom: 1.25rem;
-    font-size: 1.4rem;
-    font-weight: 600;
-  }
-  
-  .form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .label {
-    margin-bottom: 1rem;
-    font-weight: 500;
-  }
-  
-  .input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-top: 0.25rem;
-    font-size: 1rem;
-    width: 100%;
-  }
-  
-  .button {
-    padding: 0.6rem 1.5rem;
-    background-color: #000;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    margin-top: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .button:disabled {
-    background-color: #444;
-    cursor: not-allowed;
-  }
-  
-  .buttonRow {
-    display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  
-  .cancelButton {
-    padding: 0.6rem 1.2rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    text-decoration: none;
-    background-color: #f5f5f5;
-    color: #333;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-  }
-  
-  .cancelButton:hover {
-    background-color: #e0e0e0;
-  }
-  .teamCard {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
+}
+
+.label {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.4rem;
+  font-size:      0.82rem;
+  font-weight:    600;
+  color:          #374151;
+  margin-bottom:  1.1rem;
+}
+
+.labelHint {
+  font-size:   0.75rem;
+  color:       #9ca3af;
+  font-weight: 400;
+}
+
+.input {
+  padding:       0.6rem 0.8rem;
+  border:        1px solid #d1d5db;
+  border-radius: 8px;
+  font-size:     0.9rem;
+  color:         #111827;
+  background:    #fff;
+  width:         100%;
+  transition:    border-color 0.15s ease;
+
+  &:focus { outline: none; border-color: #2563eb; }
+}
+
+.select {
+  @extend .input;
+  appearance:          none;
+  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat:   no-repeat;
+  background-position: right 10px center;
+  padding-right:       2rem;
+  cursor:              pointer;
+}
+
+.checkbox {
+  width:        16px;
+  height:       16px;
+  accent-color: #2563eb;
+}
+
+/* ── Buttons ────────────────────────────────────────────── */
+.button {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              0.4em;
+  padding:          0.65rem 1.4rem;
+  background-color: #2563eb;
+  color:            #fff;
+  border:           none;
+  border-radius:    8px;
+  font-weight:      600;
+  font-size:        0.9rem;
+  cursor:           pointer;
+  transition:       opacity 0.15s ease;
+  margin-top:       0.5rem;
+
+  &:hover    { opacity: 0.9; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.cancelButton {
+  display:          inline-flex;
+  align-items:      center;
+  gap:              0.4em;
+  padding:          0.65rem 1.2rem;
+  background-color: #f3f4f6;
+  color:            #374151;
+  border:           1px solid #d1d5db;
+  border-radius:    8px;
+  font-weight:      600;
+  font-size:        0.9rem;
+  cursor:           pointer;
+  text-decoration:  none;
+  transition:       background-color 0.15s ease;
+
+  &:hover { background-color: #e5e7eb; }
+}
+
+.buttonRow {
+  display:    flex;
+  gap:        0.75rem;
+  flex-wrap:  wrap;
+  margin-top: 0.5rem;
+}
+
+/* ── Back link ──────────────────────────────────────────── */
+.backButton {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             0.4rem;
+  font-size:       0.82rem;
+  color:           #6b7280;
+  text-decoration: none;
+  font-weight:     500;
+  margin-bottom:   1rem;
+  transition:      color 0.15s ease;
+
+  &:hover { color: #2563eb; }
+}
+
+/* ── Team cards (assign-teams page) ─────────────────────── */
+.teamCard {
+  background:    #fff;
+  border:        1px solid #e5e7eb;
+  border-radius: 10px;
+  padding:       0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  transition:    border-color 0.15s ease;
+
+  &:hover { border-color: #93c5fd; }
+}
+
+.assignedBlock {
+  background:    #f0fdf4;
+  padding:       1.25rem;
+  border:        1px solid #bbf7d0;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+
+  h3 {
     margin-bottom: 0.75rem;
-    transition: background-color 0.2s ease;
+    font-size:     0.82rem;
+    font-weight:   700;
+    color:         #065f46;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
-  
-  .teamCard:hover {
-    background-color: #f1f1f1;
-  }
-  
-  .backButton {
-    display: inline-block;
-    margin-bottom: 1rem;
-    color: #0070f3;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .backButton:hover {
-    text-decoration: underline;
-  }
-  
-  .assignedBlock {
-    background-color: #f5f7fa;
-    padding: 1rem 1.5rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 2rem;
-  }
-  
-  .assignedBlock h3 {
-    margin-bottom: 0.75rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .assignedList {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .assignedItem {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-    color: #222;
-  }
-  
+}
+
+.assignedList {
+  list-style: none;
+  padding:    0;
+  margin:     0;
+}
+
+.assignedItem {
+  display:        flex;
+  align-items:    center;
+  margin-bottom:  0.4rem;
+  font-size:      0.88rem;
+  color:          #1f2937;
+  font-weight:    500;
+}

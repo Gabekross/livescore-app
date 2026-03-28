@@ -3,6 +3,7 @@
 import { useState }          from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase }          from '@/lib/supabase'
+import Link                  from 'next/link'
 import toast                 from 'react-hot-toast'
 import styles                from '@/styles/components/Form.module.scss'
 import { useAdminOrg }       from '@/contexts/AdminOrgContext'
@@ -49,47 +50,71 @@ export default function NewStagePage() {
 
   return (
     <div className={styles.formContainer}>
-      <h2 className={styles.heading}>Add New Stage</h2>
+      <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
+        &#8592; Back to Stages
+      </Link>
+
+      <h1 className={styles.heading}>Add New Stage</h1>
+      <p className={styles.subheading}>
+        Create a stage for this tournament (e.g. Group Stage, Semi-Finals, Final).
+      </p>
+
       <form onSubmit={handleSubmit} className={styles.form}>
-        <label className={styles.label}>
-          Stage Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={styles.input}
-            required
-            placeholder="e.g. Group Stage, Semi-Finals, Final"
-          />
-        </label>
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Stage Details</div>
 
-        <label className={styles.label}>
-          Order Number:
-          <input
-            type="number"
-            value={order}
-            onChange={(e) => setOrder(parseInt(e.target.value, 10))}
-            className={styles.input}
-            min={1}
-            required
-          />
-        </label>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>Stage Name *</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={styles.input}
+              required
+              placeholder="e.g. Group Stage, Semi-Finals, Final"
+            />
+          </div>
 
-        <label className={styles.label} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <input
-            type="checkbox"
-            checked={showStandings}
-            onChange={(e) => setShowStandings(e.target.checked)}
-          />
-          Show standings table for this stage
-          <small style={{ color: '#888', marginLeft: '0.25rem' }}>
-            (uncheck for knockout rounds)
-          </small>
-        </label>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Order Number <span className={styles.labelHint}>(determines display sequence)</span>
+            </label>
+            <input
+              type="number"
+              value={order}
+              onChange={(e) => setOrder(parseInt(e.target.value, 10))}
+              className={styles.input}
+              min={1}
+              required
+              style={{ maxWidth: '120px' }}
+            />
+          </div>
 
-        <button type="submit" disabled={loading} className={styles.button}>
-          {loading ? 'Creating…' : 'Create Stage'}
-        </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.5rem' }}>
+            <input
+              type="checkbox"
+              checked={showStandings}
+              onChange={(e) => setShowStandings(e.target.checked)}
+              className={styles.checkbox}
+              id="showStandings"
+            />
+            <label htmlFor="showStandings" style={{ fontSize: '0.88rem', color: '#374151', cursor: 'pointer' }}>
+              Show standings table for this stage
+              <span style={{ fontSize: '0.78rem', color: '#9ca3af', marginLeft: '0.4rem' }}>
+                (uncheck for knockout rounds)
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div className={styles.buttonRow}>
+          <button type="submit" disabled={loading} className={styles.button}>
+            {loading ? 'Creating...' : 'Create Stage'}
+          </button>
+          <Link href={`/admin/tournaments/${id}/stages`} className={styles.cancelButton}>
+            Cancel
+          </Link>
+        </div>
       </form>
     </div>
   )
