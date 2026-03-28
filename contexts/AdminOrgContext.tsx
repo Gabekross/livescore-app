@@ -3,11 +3,12 @@
 // contexts/AdminOrgContext.tsx
 // Provides the current organization ID and admin role to all admin pages.
 //
-// Resolution strategy:
-//   1. Primary: resolve via NEXT_PUBLIC_ORGANIZATION_SLUG env var (fast, works for all)
-//   2. Fallback: if primary fails and user is authenticated, resolve org from
-//      their admin_profiles.organization_id (handles auth-timing edge cases)
-//   3. Also fetches admin role (power_admin | org_admin) for role-aware UX
+// Resolution strategy (3 strategies, tried in order):
+//   1. Primary: resolve via NEXT_PUBLIC_ORGANIZATION_SLUG env var
+//   2. Fallback B: resolve from admin_profiles.organization_id (org_admin)
+//   3. Fallback C: power_admin picks first organization alphabetically
+//
+// Also fetches admin role (power_admin | org_admin) for role-aware UX.
 //
 // Usage:
 //   const { orgId, role, loading, error, retry } = useAdminOrg()
@@ -38,100 +39,135 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
   const resolve = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }))
 
-    // ── Step 1: Fetch admin profile (role + assigned org) ───────────────
+    const diagnostics: string[] = []
+
+    // ── Step 1: Get authenticated user ────────────────────────────────────
+    let userId: string | null = null
+    try {
+      const { data: { user }, error: authErr } = await supabase.auth.getUser()
+      if (authErr) {
+        diagnostics.push(`Auth error: ${authErr.message}`)
+      } else if (user) {
+        userId = user.id
+      } else {
+        diagnostics.push('No authenticated user found')
+      }
+    } catch (err) {
+      diagnostics.push(`Auth exception: ${err instanceof Error ? err.message : String(err)}`)
+    }
+
+    // ── Step 2: Fetch admin profile (role + assigned org) ─────────────────
     let role: AdminRole = null
     let profileOrgId: string | null = null
 
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
+    if (userId) {
+      try {
+        const { data: profile, error: profileErr } = await supabase
           .from('admin_profiles')
           .select('role, organization_id')
-          .eq('id', user.id)
+          .eq('id', userId)
           .single()
 
-        if (profile) {
+        if (profileErr) {
+          diagnostics.push(`Profile query error: ${profileErr.message}`)
+        } else if (profile) {
           role = (profile.role as AdminRole) || null
           profileOrgId = profile.organization_id || null
+          diagnostics.push(`Profile found: role=${role}, hasOrgId=${!!profileOrgId}`)
+        } else {
+          diagnostics.push('No admin profile row returned')
         }
+      } catch (err) {
+        diagnostics.push(`Profile exception: ${err instanceof Error ? err.message : String(err)}`)
       }
-    } catch {
-      // Auth not ready yet — will fall through to slug-based resolution
     }
 
-    // ── Step 2: Resolve organization ID ─────────────────────────────────
+    // ── Step 3: Resolve organization ID (3 strategies) ────────────────────
     let orgId: string | null = null
     let orgName: string | null = null
-    let lastError: Error | null = null
 
-    // Strategy A: env-var slug resolution (works for single-org deployments)
+    // Strategy A: env-var slug resolution
     const slug = process.env.NEXT_PUBLIC_ORGANIZATION_SLUG
     if (slug) {
       try {
-        const { data, error } = await supabase
+        const { data, error: slugErr } = await supabase
           .from('organizations')
           .select('id, name')
           .eq('slug', slug)
           .single()
 
-        if (!error && data) {
+        if (slugErr) {
+          diagnostics.push(`Strategy A (slug="${slug}"): ${slugErr.message}`)
+        } else if (data) {
           orgId = data.id
           orgName = data.name
+          diagnostics.push(`Strategy A resolved: ${data.name}`)
         }
       } catch (err) {
-        lastError = err instanceof Error ? err : new Error(String(err))
+        diagnostics.push(`Strategy A exception: ${err instanceof Error ? err.message : String(err)}`)
       }
+    } else {
+      diagnostics.push('Strategy A skipped: NEXT_PUBLIC_ORGANIZATION_SLUG not set')
     }
 
     // Strategy B: profile-based fallback (org_admin with assigned org)
     if (!orgId && profileOrgId) {
       try {
-        const { data } = await supabase
+        const { data, error: profOrgErr } = await supabase
           .from('organizations')
           .select('id, name')
           .eq('id', profileOrgId)
           .single()
 
-        if (data) {
+        if (profOrgErr) {
+          diagnostics.push(`Strategy B: ${profOrgErr.message}`)
+        } else if (data) {
           orgId = data.id
           orgName = data.name
-          lastError = null // clear error since we recovered
+          diagnostics.push(`Strategy B resolved: ${data.name}`)
         }
-      } catch {
-        // Both strategies failed
+      } catch (err) {
+        diagnostics.push(`Strategy B exception: ${err instanceof Error ? err.message : String(err)}`)
       }
     }
 
-    // Strategy C: power_admin with no specific org — pick the first one
-    if (!orgId && role === 'power_admin') {
+    // Strategy C: power_admin picks first org (or any authenticated admin)
+    if (!orgId && userId) {
       try {
-        const { data } = await supabase
+        const { data, error: firstOrgErr } = await supabase
           .from('organizations')
           .select('id, name')
           .order('name')
           .limit(1)
           .single()
 
-        if (data) {
+        if (firstOrgErr) {
+          diagnostics.push(`Strategy C: ${firstOrgErr.message}`)
+        } else if (data) {
           orgId = data.id
           orgName = data.name
-          lastError = null
+          diagnostics.push(`Strategy C resolved: ${data.name}`)
         }
-      } catch {
-        // No organizations exist yet
+      } catch (err) {
+        diagnostics.push(`Strategy C exception: ${err instanceof Error ? err.message : String(err)}`)
       }
     }
 
-    if (!orgId && !lastError) {
-      lastError = new Error(
-        'Could not determine organization. ' +
-        (slug ? `No organization with slug "${slug}" found.` : 'NEXT_PUBLIC_ORGANIZATION_SLUG is not set.') +
-        (role === 'org_admin' && !profileOrgId ? ' Your admin profile has no assigned organization.' : '')
-      )
+    // ── Step 4: Build final state ─────────────────────────────────────────
+    let finalError: Error | null = null
+
+    if (!orgId) {
+      // Build a user-friendly message with diagnostics for debugging
+      const userMsg = !userId
+        ? 'Not authenticated. Please sign in.'
+        : 'Could not determine organization.'
+      const debugInfo = diagnostics.length > 0
+        ? ' [Debug: ' + diagnostics.join(' | ') + ']'
+        : ''
+      finalError = new Error(userMsg + debugInfo)
     }
 
-    setState({ orgId, role, orgName, loading: false, error: lastError })
+    setState({ orgId, role, orgName, loading: false, error: finalError })
   }, [])
 
   useEffect(() => { resolve() }, [resolve])

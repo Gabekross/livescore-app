@@ -2,14 +2,26 @@
 
 // components/admin/AdminShell.tsx
 // Admin layout shell — renders nav bar with role badge and org indicator.
+// Hides the nav/shell on the login page (/admin) so login gets a clean view.
 // Consumes AdminOrgContext to display current context.
 
 import Link         from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { logoutAdmin } from '@/lib/auth-actions'
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
   const { orgName, role } = useAdminOrg()
+
+  // On the login page, render children without the admin shell chrome
+  if (pathname === '/admin') {
+    return (
+      <div style={{ minHeight: '100vh', background: '#f4f4f7' }}>
+        {children}
+      </div>
+    )
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#f4f4f7' }}>
