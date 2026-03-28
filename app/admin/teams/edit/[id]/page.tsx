@@ -4,6 +4,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useAdminOrg }     from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/TeamForm.module.scss'
 import { v4 as uuidv4 } from 'uuid'
@@ -18,6 +20,8 @@ interface PlayerInput {
 export default function EditTeamPage() {
   const { id } = useParams()
   const router = useRouter()
+  const { orgId } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
   const [name, setName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
@@ -27,9 +31,14 @@ export default function EditTeamPage() {
 
   useEffect(() => {
     const fetchTeam = async () => {
-      if (!id || typeof id !== 'string') return
+      if (!id || typeof id !== 'string' || !orgId) return
 
-      const { data, error } = await supabase.from('teams').select('*').eq('id', id).single()
+      const { data, error } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('id', id)
+        .eq('organization_id', orgId)
+        .single()
       if (error) {
         toast.error('Team not found')
         return
@@ -41,7 +50,9 @@ export default function EditTeamPage() {
     }
 
     fetchTeam()
-  }, [id])
+  }, [id, orgId])
+
+  if (orgGate) return orgGate
 
   const fetchPlayers = async (teamId: string) => {
     const { data, error } = await supabase.from('players').select('*').eq('team_id', teamId)

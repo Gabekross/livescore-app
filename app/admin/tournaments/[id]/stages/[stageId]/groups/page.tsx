@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import styles from '@/styles/components/StageList.module.scss'
+import { useAdminOrg } from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 
 interface Group {
   id: string
@@ -14,9 +16,12 @@ interface Group {
 
 export default function GroupListPage() {
   const { id, stageId } = useParams()
+  const { orgId } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
   const [groups, setGroups] = useState<Group[]>([])
 
   useEffect(() => {
+    if (!orgId) return
     const fetchGroups = async () => {
       const { data, error } = await supabase
         .from('groups')
@@ -31,7 +36,9 @@ export default function GroupListPage() {
     }
 
     fetchGroups()
-  }, [stageId])
+  }, [stageId, orgId])
+
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.container}>

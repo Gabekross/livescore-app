@@ -7,6 +7,8 @@
 import { useEffect, useState }   from 'react'
 import { supabase }              from '@/lib/supabase'
 import { useAdminOrg }           from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }       from '@/components/admin/AdminOrgGate'
+import { YellowCard, RedCard }  from '@/components/ui/CardIcon'
 import styles                    from '@/styles/components/PlayerStatsTable.module.scss'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 
@@ -23,6 +25,7 @@ interface PlayerStat {
 
 export default function PlayerStatsPage() {
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
   const [stats,      setStats]      = useState<PlayerStat[]>([])
   const [loading,    setLoading]    = useState(true)
@@ -57,8 +60,7 @@ export default function PlayerStatsPage() {
     fetchStats()
   }, [orgId])
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+  if (orgGate) return orgGate
 
   const filteredStats = stats.filter((p) =>
     p.player_name.toLowerCase().includes(search.toLowerCase()) &&
@@ -142,8 +144,8 @@ export default function PlayerStatsPage() {
               <th>MP</th>
               <th>⚽ Goals</th>
               <th>Assists</th>
-              <th>YC</th>
-              <th>RC</th>
+              <th><YellowCard size={16} /></th>
+              <th><RedCard size={16} /></th>
             </tr>
           </thead>
           <tbody>

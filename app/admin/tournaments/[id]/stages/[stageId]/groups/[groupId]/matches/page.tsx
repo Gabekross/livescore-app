@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import styles from '@/styles/components/MatchList.module.scss'
 import Link from 'next/link'
+import { useAdminOrg } from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 
 interface Match {
   id: string
@@ -17,9 +19,12 @@ interface Match {
 
 export default function MatchListPage() {
   const { id, stageId, groupId } = useParams()
+  const { orgId } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
   const [matches, setMatches] = useState<Match[]>([])
 
   useEffect(() => {
+    if (!orgId) return
     const fetchMatches = async () => {
       const { data, error } = await supabase
         .from('matches')
@@ -45,7 +50,7 @@ export default function MatchListPage() {
     }
 
     fetchMatches()
-  }, [groupId])
+  }, [groupId, orgId])
 
   const handleDelete = async (matchId: string) => {
     if (!confirm('Are you sure you want to delete this match?')) return
@@ -58,6 +63,8 @@ export default function MatchListPage() {
       setMatches((prev) => prev.filter((m) => m.id !== matchId))
     }
   }
+
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.container}>

@@ -2,6 +2,7 @@
 
 import styles from '@/styles/components/FormationField.module.scss'
 import { formationLayouts } from './FormationLayout'
+import { YellowCard, RedCard } from '@/components/ui/CardIcon'
 
 interface Player {
   id: string
@@ -64,8 +65,8 @@ export default function CombinedFormationField({ home, away }: Props) {
         >
           {/* Stat Icons */}
           <div className={styles.statsTopLeft}>
-            {player.yellow_cards ? `Y${player.yellow_cards}` : ''}
-            {player.red_cards ? `R${player.red_cards}` : ''}
+            {player.yellow_cards ? <YellowCard size={12} /> : ''}
+            {player.red_cards ? <RedCard size={12} /> : ''}
           </div>
           <div className={styles.statsTopRight}>
             {player.goals ? `⚽${player.goals}` : ''}

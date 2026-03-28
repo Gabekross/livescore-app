@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import Link                    from 'next/link'
 import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/TeamList.module.scss'
 
@@ -15,6 +16,7 @@ type Team = {
 
 export default function AdminTeamListPage() {
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
   const [teams,   setTeams]   = useState<Team[]>([])
   const [loading, setLoading] = useState(false)
@@ -51,8 +53,7 @@ export default function AdminTeamListPage() {
     setLoading(false)
   }
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.container}>

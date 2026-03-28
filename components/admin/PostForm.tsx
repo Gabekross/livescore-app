@@ -4,15 +4,19 @@
 // Shared form for creating and editing posts (news/blog).
 // Used by /admin/news/new and /admin/news/[id]/edit.
 
-import { useState, useEffect }  from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import Link                     from 'next/link'
 import { useRouter }            from 'next/navigation'
 import toast                    from 'react-hot-toast'
 import { supabase }             from '@/lib/supabase'
 import { useAdminOrg }          from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }      from '@/components/admin/AdminOrgGate'
 import { toSlug, isValidSlug }  from '@/lib/utils/slug'
 import MediaPicker              from '@/components/admin/MediaPicker'
 import styles                   from '@/styles/components/AdminNews.module.scss'
+
+// Lazy-load TipTap editor so it doesn't bloat the initial admin bundle
+const RichTextEditor = lazy(() => import('@/components/admin/RichTextEditor'))
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface Tournament { id: string; name: string }
@@ -54,6 +58,7 @@ const EMPTY: PostFormValues = {
 export default function PostForm({ postId, initialValues, heading }: Props) {
   const router   = useRouter()
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
   const [values, setValues]       = useState<PostFormValues>({ ...EMPTY, ...initialValues })
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   const [saving,  setSaving]      = useState(false)
@@ -133,8 +138,7 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
     setSaving(false)
   }
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#6b7280' }}>Failed to load organization.</div>
+  if (orgGate) return orgGate
 
   const coverUrl = values.cover_image_url.trim()
 
@@ -191,18 +195,18 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
             />
           </div>
 
-          {/* Body */}
+          {/* Body — Rich Text Editor */}
           <div className={styles.fieldGroup}>
             <label className={styles.label}>
               Content{' '}
-              <span className={styles.labelHint}>(plain text or HTML)</span>
+              <span className={styles.labelHint}>(rich text editor)</span>
             </label>
-            <textarea
-              className={styles.textarea}
-              value={values.body}
-              onChange={(e) => set('body', e.target.value)}
-              placeholder="Write the full article here. Separate paragraphs with a blank line.&#10;&#10;You can also use HTML tags like &lt;h2&gt;, &lt;strong&gt;, &lt;blockquote&gt;, etc."
-            />
+            <Suspense fallback={<div style={{ padding: '1rem', color: '#9ca3af', fontSize: '0.85rem' }}>Loading editor...</div>}>
+              <RichTextEditor
+                value={values.body}
+                onChange={(html) => set('body', html)}
+              />
+            </Suspense>
           </div>
 
           {/* SEO section */}

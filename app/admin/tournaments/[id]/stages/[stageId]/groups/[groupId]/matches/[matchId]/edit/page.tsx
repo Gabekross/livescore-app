@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/MatchEdit.module.scss'
 import Link from 'next/link'
+import { useAdminOrg } from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 
 const FORMATIONS = ['4-4-2', '4-3-3', '3-5-2', '4-2-3-1', '5-3-2']
 
@@ -16,6 +18,8 @@ export default function EditMatchPage() {
   const stageId = Array.isArray(rawParams.stageId) ? rawParams.stageId[0] : rawParams.stageId
   const groupId = Array.isArray(rawParams.groupId) ? rawParams.groupId[0] : rawParams.groupId
   const router = useRouter()
+  const { orgId } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
   const [homeTeam, setHomeTeam] = useState<any>(null)
   const [awayTeam, setAwayTeam] = useState<any>(null)
@@ -33,6 +37,7 @@ export default function EditMatchPage() {
   const [playerStats, setPlayerStats] = useState<Record<string, { goals?: number; assists?: number; yellow_cards?: number; red_cards?: number }>>({})
 
   useEffect(() => {
+    if (!orgId) return
     const fetchMatch = async () => {
       const { data, error } = await supabase
         .from('matches')
@@ -100,7 +105,7 @@ export default function EditMatchPage() {
     }
 
     fetchMatch()
-  }, [matchId])
+  }, [matchId, orgId])
 
   const togglePlayerSelection = (id: string, team: 'home' | 'away', isBench = false) => {
     const lineupSetter = team === 'home' ? setSelectedHomeLineup : setSelectedAwayLineup
@@ -207,6 +212,8 @@ export default function EditMatchPage() {
       </div>
     )
   }
+
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.container}>

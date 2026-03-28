@@ -7,6 +7,7 @@ import { useEffect, useState, useCallback } from 'react'
 import Link                                  from 'next/link'
 import { supabase }                          from '@/lib/supabase'
 import { useAdminOrg }                       from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }                   from '@/components/admin/AdminOrgGate'
 import toast                                 from 'react-hot-toast'
 import styles                                from '@/styles/components/AdminNews.module.scss'
 
@@ -27,6 +28,7 @@ function formatDate(iso: string | null) {
 
 export default function AdminNewsPage() {
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
   const [posts,   setPosts]   = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -77,8 +79,7 @@ export default function AdminNewsPage() {
     }
   }
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#6b7280' }}>Failed to load organization.</div>
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.container}>

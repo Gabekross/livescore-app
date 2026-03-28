@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter }           from 'next/navigation'
 import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import toast                   from 'react-hot-toast'
 
 interface Team {
@@ -14,6 +15,7 @@ interface Team {
 export default function NewPlayerPage() {
   const router = useRouter()
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
   const [teams,   setTeams]   = useState<Team[]>([])
   const [form,    setForm]    = useState({ name: '', jersey_number: '', team_id: '' })
@@ -55,8 +57,7 @@ export default function NewPlayerPage() {
     setLoading(false)
   }
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+  if (orgGate) return orgGate
 
   return (
     <form onSubmit={handleSubmit} style={{ padding: '2rem', maxWidth: 480 }}>

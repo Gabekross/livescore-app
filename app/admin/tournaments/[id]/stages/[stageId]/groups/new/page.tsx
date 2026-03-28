@@ -6,10 +6,14 @@ import { supabase }            from '@/lib/supabase'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/Form.module.scss'
 import Link                    from 'next/link'
+import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 
 export default function CreateGroupPage() {
   const { id, stageId } = useParams()
   const router          = useRouter()
+  const { orgId } = useAdminOrg()
+  const orgGate   = useAdminOrgGate()
   const [name,    setName]    = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -42,6 +46,8 @@ export default function CreateGroupPage() {
 
     setLoading(false)
   }
+
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.formContainer}>

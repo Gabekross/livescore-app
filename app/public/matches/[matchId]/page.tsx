@@ -8,6 +8,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter }             from 'next/navigation'
 import { supabase }                         from '@/lib/supabase'
+import { YellowCard, RedCard }              from '@/components/ui/CardIcon'
 import CombinedFormationField               from '@/components/match/FormationField'
 import { matchStatusLabel, isActiveMatch, scorelineFull } from '@/lib/utils/match'
 import type { MatchStatus }                 from '@/lib/utils/match'
@@ -176,8 +177,8 @@ export default function MatchDetailPage() {
                 <div className={styles.iconsInline}>
                   {player.goals       ? `⚽ ${player.goals} `       : ''}
                   {player.assists     ? `A ${player.assists} `      : ''}
-                  {player.yellow_cards ? `Y ${player.yellow_cards} ` : ''}
-                  {player.red_cards   ? `R ${player.red_cards}`     : ''}
+                  {player.yellow_cards ? <><YellowCard size={14} />{player.yellow_cards > 1 ? player.yellow_cards : ''} </> : ''}
+                  {player.red_cards   ? <><RedCard size={14} />{player.red_cards > 1 ? player.red_cards : ''}</> : ''}
                 </div>
               </div>
             </div>

@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useAdminOrg }     from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import styles from '@/styles/components/TeamView.module.scss'
 import toast from 'react-hot-toast'
 
@@ -15,14 +17,21 @@ interface Player {
 
 export default function TeamDetailsPage() {
   const { id } = useParams()
+  const { orgId } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
   const [team, setTeam] = useState<any>(null)
   const [players, setPlayers] = useState<Player[]>([])
 
   useEffect(() => {
     const fetchTeam = async () => {
-      if (!id || typeof id !== 'string') return
+      if (!id || typeof id !== 'string' || !orgId) return
 
-      const { data, error } = await supabase.from('teams').select('*').eq('id', id).single()
+      const { data, error } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('id', id)
+        .eq('organization_id', orgId)
+        .single()
       if (error) {
         toast.error('Team not found')
       } else {
@@ -41,8 +50,9 @@ export default function TeamDetailsPage() {
     }
 
     fetchTeam()
-  }, [id])
+  }, [id, orgId])
 
+  if (orgGate) return orgGate
   if (!team) return <p>Loading...</p>
 
   return (

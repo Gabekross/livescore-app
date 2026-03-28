@@ -1,115 +1,93 @@
 'use client'
 
 // app/admin/dashboard/page.tsx
-// The middleware already redirects unauthenticated users to /admin.
-// The client-side supabase.auth.getUser() check here is defense-in-depth.
+// Role-aware admin dashboard.
+// Uses AdminOrgContext for org + role; no separate profile fetch needed.
 
-import { useEffect, useState } from 'react'
-import { useRouter }           from 'next/navigation'
 import Link                    from 'next/link'
-import { supabase }            from '@/lib/supabase'
-import { logoutAdmin }         from '@/lib/auth-actions'
+import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import styles                  from '@/styles/components/AdminDashboard.module.scss'
 
 export default function AdminDashboardPage() {
-  const router = useRouter()
-  const [role, setRole] = useState<string | null>(null)
+  const { orgId, role, orgName } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
-  useEffect(() => {
-    async function verifySession() {
-      const { data: { user }, error } = await supabase.auth.getUser()
+  if (orgGate) return orgGate
 
-      if (error || !user) {
-        router.replace('/admin')
-        return
-      }
-
-      // Fetch role for display (non-blocking — dashboard still loads without it)
-      const { data: profile } = await supabase
-        .from('admin_profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-      if (profile) setRole(profile.role)
-    }
-
-    verifySession()
-  }, [router])
-
-  const handleLogout = async () => {
-    await logoutAdmin()
-  }
+  const isPowerAdmin = role === 'power_admin'
 
   return (
     <div className={styles.container}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 className={styles.heading}>Admin Control Panel</h2>
-        {role && (
-          <span style={{ fontSize: '0.8rem', color: '#666', textTransform: 'uppercase' }}>
-            {role.replace('_', ' ')}
-          </span>
-        )}
+      <div className={styles.header}>
+        <h2 className={styles.heading}>
+          {orgName ? `${orgName} Dashboard` : 'Admin Dashboard'}
+        </h2>
+        <p className={styles.subheading}>
+          {isPowerAdmin
+            ? 'Platform-wide administration. You have access to all organizations.'
+            : `Managing ${orgName || 'your organization'}. Use the sections below to manage content and matches.`}
+        </p>
       </div>
 
+      {/* ── Football Operations ──────────────────────────────── */}
+      <div className={styles.sectionLabel}>Football Operations</div>
       <div className={styles.grid}>
         <Link href="/admin/tournaments" className={styles.card}>
-          Manage Tournaments
+          Tournaments
+          <span className={styles.hint}>Stages, groups, matches</span>
         </Link>
         <Link href="/admin/teams" className={styles.card}>
-          Manage Teams
-        </Link>
-        <Link href="#" className={styles.card}>
-          Manage Stages
-          <span className={styles.hint}>(via tournament)</span>
-        </Link>
-        <Link href="#" className={styles.card}>
-          Manage Groups
-          <span className={styles.hint}>(via stage)</span>
+          Teams
+          <span className={styles.hint}>Rosters and logos</span>
         </Link>
         <Link href="/admin/matches/friendly/new" className={styles.card}>
-          Create Friendly Match
+          Friendly Match
           <span className={styles.hint}>No standings impact</span>
         </Link>
         <Link href="/admin/players/new" className={styles.card}>
-          + Add Player to Team
+          Add Player
+          <span className={styles.hint}>Assign to a team</span>
         </Link>
         <Link href="/admin/players/stats" className={styles.card}>
           Player Stats
-          <span className={styles.hint}>Top scorers &amp; assists</span>
+          <span className={styles.hint}>Goals, cards, assists</span>
         </Link>
+      </div>
 
-        {/* ── Content & Site Management ──────────────────────────── */}
+      {/* ── Content & Site ───────────────────────────────────── */}
+      <div className={styles.sectionLabel}>Content &amp; Site</div>
+      <div className={styles.grid}>
         <Link href="/admin/news" className={styles.card}>
           News &amp; Articles
-          <span className={styles.hint}>Publish posts &amp; drafts</span>
+          <span className={styles.hint}>Publish and manage posts</span>
         </Link>
         <Link href="/admin/media" className={styles.card}>
           Media Library
-          <span className={styles.hint}>Upload images &amp; videos</span>
+          <span className={styles.hint}>Images and videos</span>
         </Link>
         <Link href="/admin/settings" className={styles.card}>
           Site Settings
-          <span className={styles.hint}>Branding &amp; theme</span>
+          <span className={styles.hint}>Branding, theme, SEO</span>
         </Link>
       </div>
 
-      <div style={{ marginTop: '2rem' }}>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: '0.7rem 1.2rem',
-            backgroundColor: '#c0392b',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-          }}
-        >
-          Sign Out
-        </button>
-      </div>
+      {/* ── Platform Admin (power_admin only) ────────────────── */}
+      {isPowerAdmin && (
+        <div className={styles.platformSection}>
+          <div className={styles.platformLabel}>Platform Administration</div>
+          <div className={styles.grid}>
+            <Link href="/admin/organizations" className={styles.platformCard}>
+              Organizations
+              <span className={styles.hint}>Create and manage orgs</span>
+            </Link>
+            <Link href="/admin/admins" className={styles.platformCard}>
+              Admin Users
+              <span className={styles.hint}>Manage admin accounts</span>
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

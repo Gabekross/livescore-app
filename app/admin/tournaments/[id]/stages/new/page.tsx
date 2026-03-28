@@ -5,10 +5,14 @@ import { useParams, useRouter } from 'next/navigation'
 import { supabase }          from '@/lib/supabase'
 import toast                 from 'react-hot-toast'
 import styles                from '@/styles/components/Form.module.scss'
+import { useAdminOrg }       from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }   from '@/components/admin/AdminOrgGate'
 
 export default function NewStagePage() {
   const { id }   = useParams()
   const router   = useRouter()
+  const { orgId } = useAdminOrg()
+  const orgGate   = useAdminOrgGate()
 
   const [name,          setName]          = useState('')
   const [order,         setOrder]         = useState(1)
@@ -40,6 +44,8 @@ export default function NewStagePage() {
 
     setLoading(false)
   }
+
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.formContainer}>

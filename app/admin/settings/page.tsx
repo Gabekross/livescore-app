@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import MediaPicker             from '@/components/admin/MediaPicker'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/AdminSettings.module.scss'
@@ -56,6 +57,7 @@ const DEFAULTS: SiteSettings = {
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function AdminSettingsPage() {
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
   const [settings, setSettings] = useState<SiteSettings>(DEFAULTS)
   const [settingsId, setSettingsId] = useState<string | null>(null)
   const [loading,   setLoading]   = useState(true)
@@ -140,12 +142,8 @@ export default function AdminSettingsPage() {
     setSaving(false)
   }
 
-  if (orgLoading || loading) {
-    return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading settings…</div>
-  }
-  if (!orgId) {
-    return <div style={{ padding: '2rem', color: '#6b7280' }}>Failed to load organization.</div>
-  }
+  if (orgGate) return orgGate
+  if (loading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading settings…</div>
 
   return (
     <div className={styles.container}>

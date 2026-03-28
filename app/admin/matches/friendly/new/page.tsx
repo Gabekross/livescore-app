@@ -15,6 +15,7 @@ import { useEffect, useState }  from 'react'
 import { useRouter }            from 'next/navigation'
 import { supabase }             from '@/lib/supabase'
 import { useAdminOrg }          from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }      from '@/components/admin/AdminOrgGate'
 import { MATCH_STATUS_OPTIONS } from '@/lib/utils/match'
 import Link                     from 'next/link'
 import toast                    from 'react-hot-toast'
@@ -29,6 +30,7 @@ interface Team {
 export default function NewFriendlyMatchPage() {
   const router  = useRouter()
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
   const [teams,     setTeams]     = useState<Team[]>([])
   const [homeTeam,  setHomeTeam]  = useState('')
@@ -97,8 +99,7 @@ export default function NewFriendlyMatchPage() {
 
   const inputStyle = { display: 'block', width: '100%', padding: '0.5rem', marginTop: '0.25rem' }
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.formContainer}>

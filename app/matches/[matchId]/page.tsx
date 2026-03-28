@@ -8,6 +8,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter }              from 'next/navigation'
 import Link                                  from 'next/link'
 import { supabase }                          from '@/lib/supabase'
+import { YellowCard, RedCard }               from '@/components/ui/CardIcon'
 import CombinedFormationField                from '@/components/match/FormationField'
 import StatusBadge                           from '@/components/ui/StatusBadge'
 import TeamLogo                              from '@/components/ui/TeamLogo'
@@ -167,8 +168,8 @@ export default function MatchDetailPage() {
       <span className={styles.benchStats}>
         {player.goals         ? `⚽${player.goals} `         : ''}
         {player.assists       ? `A${player.assists} `        : ''}
-        {player.yellow_cards  ? `Y${player.yellow_cards} `   : ''}
-        {player.red_cards     ? `R${player.red_cards}`       : ''}
+        {player.yellow_cards  ? <><YellowCard size={14} />{player.yellow_cards > 1 ? player.yellow_cards : ''} </> : ''}
+        {player.red_cards     ? <><RedCard size={14} />{player.red_cards > 1 ? player.red_cards : ''}</> : ''}
       </span>
     </div>
   )

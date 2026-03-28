@@ -10,9 +10,13 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/Form.module.scss'
+import { useAdminOrg }      from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }  from '@/components/admin/AdminOrgGate'
 
 export default function EditStagePage() {
   const { id, stageId } = useParams()
+  const { orgId } = useAdminOrg()
+  const orgGate   = useAdminOrgGate()
   const router = useRouter()
 
   const [stageName,      setStageName]      = useState('')
@@ -21,6 +25,7 @@ export default function EditStagePage() {
   const [loading,        setLoading]        = useState(false)
 
   useEffect(() => {
+    if (!orgId) return
     const fetchStage = async () => {
       if (!stageId || typeof stageId !== 'string') return
 
@@ -41,7 +46,7 @@ export default function EditStagePage() {
     }
 
     fetchStage()
-  }, [stageId])
+  }, [stageId, orgId])
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,6 +76,8 @@ export default function EditStagePage() {
 
     setLoading(false)
   }
+
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.formContainer}>

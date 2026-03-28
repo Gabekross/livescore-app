@@ -4,6 +4,7 @@ import { useEffect, useState }  from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase }             from '@/lib/supabase'
 import { useAdminOrg }          from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }      from '@/components/admin/AdminOrgGate'
 import toast                    from 'react-hot-toast'
 import styles                   from '@/styles/components/Form.module.scss'
 
@@ -16,6 +17,7 @@ export default function NewMatchPage() {
   const { id, stageId, groupId } = useParams()
   const router  = useRouter()
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
   const [teams,     setTeams]     = useState<Team[]>([])
   const [teamA,     setTeamA]     = useState('')
@@ -75,8 +77,7 @@ export default function NewMatchPage() {
     setLoading(false)
   }
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.formContainer}>

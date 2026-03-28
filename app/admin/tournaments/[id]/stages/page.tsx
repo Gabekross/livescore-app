@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { useAdminOrg }     from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import GroupStandings from '@/components/GroupStandings'
@@ -37,6 +39,8 @@ interface Team {
 export default function TournamentStagesPage() {
   const { id } = useParams()
   const router = useRouter()
+  const { orgId } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
   const [stages, setStages] = useState<Stage[]>([])
   const [groups, setGroups] = useState<Record<string, Group[]>>({})
   const [groupTeamMap, setGroupTeamMap] = useState<Record<string, Team[]>>({})
@@ -52,10 +56,12 @@ export default function TournamentStagesPage() {
   }
 
   const fetchTournament = async () => {
+    if (!orgId) return
     const { data, error } = await supabase
       .from('tournaments')
       .select('id, name, start_date, end_date')
       .eq('id', id)
+      .eq('organization_id', orgId)
       .single()
 
     if (!error && data) setTournament(data)
@@ -116,11 +122,14 @@ export default function TournamentStagesPage() {
   }
 
   useEffect(() => {
+    if (!orgId) return
     fetchTournament()
     fetchStages()
     fetchGroups()
     fetchGroupTeams()
-  }, [id])
+  }, [id, orgId])
+
+  if (orgGate) return orgGate
 
   const handleDeleteStage = async (stageId: string) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this stage?')

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import Link                    from 'next/link'
 import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/TournamentList.module.scss'
 
@@ -17,6 +18,7 @@ interface Tournament {
 
 export default function AdminTournamentList() {
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
 
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   const [editId,      setEditId]      = useState<string | null>(null)
@@ -64,8 +66,7 @@ export default function AdminTournamentList() {
     }
   }
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#c0392b' }}>Failed to load organization context.</div>
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.container}>

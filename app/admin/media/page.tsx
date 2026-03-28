@@ -11,6 +11,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase }                                  from '@/lib/supabase'
 import { useAdminOrg }                               from '@/contexts/AdminOrgContext'
+import { useAdminOrgGate }                           from '@/components/admin/AdminOrgGate'
 import toast                                         from 'react-hot-toast'
 import styles                                        from '@/styles/components/AdminMedia.module.scss'
 
@@ -30,6 +31,7 @@ type FilterType = 'all' | 'image' | 'video'
 
 export default function AdminMediaPage() {
   const { orgId, loading: orgLoading } = useAdminOrg()
+  const orgGate = useAdminOrgGate()
   const [items,    setItems]    = useState<MediaItem[]>([])
   const [loading,  setLoading]  = useState(true)
   const [uploading, setUploading] = useState(false)
@@ -136,8 +138,7 @@ export default function AdminMediaPage() {
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })
 
-  if (orgLoading) return <div style={{ padding: '2rem', color: '#6b7280' }}>Loading...</div>
-  if (!orgId) return <div style={{ padding: '2rem', color: '#6b7280' }}>Failed to load organization.</div>
+  if (orgGate) return orgGate
 
   return (
     <div className={styles.container}>
