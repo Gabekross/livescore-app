@@ -11,5 +11,5 @@ import { redirect } from 'next/navigation'
 export async function logoutAdmin() {
   const supabase = createServerSupabaseClient()
   await supabase.auth.signOut()
-  redirect('/admin')
+  redirect('/login')
 }

@@ -2,7 +2,7 @@
 
 // components/layouts/PublicNav.tsx
 // Fixed top navigation for public pages.
-// Hides itself completely on /admin/* routes.
+// Hides itself on /admin/*, /platform/*, /login, /signup, /forgot-password, /reset-password routes.
 // Receives site name/logo as props from the root layout (server fetched).
 
 import { useState } from 'react'
@@ -25,12 +25,15 @@ const NAV_LINKS = [
   { href: '/archive',     label: 'Archive' },
 ]
 
+// Routes where the public nav should not appear
+const HIDE_ON = ['/admin', '/platform', '/login', '/signup', '/forgot-password', '/reset-password']
+
 export default function PublicNav({ siteName, siteLogo }: Props) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
-  // Don't render the public nav on admin pages at all
-  if (pathname.startsWith('/admin')) return null
+  // Don't render on admin, platform, or auth pages
+  if (HIDE_ON.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'))) return null
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href)
@@ -43,7 +46,7 @@ export default function PublicNav({ siteName, siteLogo }: Props) {
           <Link href="/" className={styles.brand} onClick={() => setOpen(false)}>
             {siteLogo
               ? <img src={siteLogo} alt={siteName} className={styles.brandLogo} />
-              : <span className={styles.brandEmoji}>⚽</span>
+              : <span className={styles.brandEmoji}>&#9917;</span>
             }
             {siteName}
           </Link>
@@ -62,6 +65,12 @@ export default function PublicNav({ siteName, siteLogo }: Props) {
             ))}
           </ul>
 
+          {/* Auth CTA */}
+          <div className={styles.authLinks}>
+            <Link href="/login" className={styles.loginLink}>Sign In</Link>
+            <Link href="/signup" className={styles.signupBtn}>Get Started</Link>
+          </div>
+
           {/* Hamburger */}
           <button
             className={styles.hamburger}
@@ -69,7 +78,7 @@ export default function PublicNav({ siteName, siteLogo }: Props) {
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
           >
-            {open ? '✕' : '☰'}
+            {open ? '\u2715' : '\u2630'}
           </button>
         </div>
       </nav>
@@ -88,6 +97,15 @@ export default function PublicNav({ siteName, siteLogo }: Props) {
               {label}
             </Link>
           ))}
+          <div style={{ borderTop: '1px solid var(--color-border)', margin: '0.5rem 0', padding: '0.5rem 0' }}>
+            <Link href="/login" className={styles.mobileLink} onClick={() => setOpen(false)} role="menuitem">
+              Sign In
+            </Link>
+            <Link href="/signup" className={styles.mobileLink} onClick={() => setOpen(false)} role="menuitem"
+              style={{ color: 'var(--color-accent-light)', fontWeight: 700 }}>
+              Get Started
+            </Link>
+          </div>
         </div>
       )}
     </>

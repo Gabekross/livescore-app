@@ -1,16 +1,19 @@
 // middleware.ts
-// Protects all /admin/* routes (except /admin itself which is the login page).
-// Uses Supabase Auth session via @supabase/ssr — replaces the old custom cookie check.
+// Protects admin routes and enforces role-based access.
 //
-// The middleware also refreshes the session cookie on every request so it does not
-// expire mid-session (required by @supabase/ssr).
+// Route protection:
+//   /admin/*     → requires authenticated user with admin_profiles row
+//   /platform/*  → requires authenticated user with role='power_admin'
+//   /login, /signup, /forgot-password, /reset-password → public
+//
+// Uses Supabase Auth session via @supabase/ssr.
+// Refreshes session cookies on every request.
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse }        from 'next/server'
 import type { NextRequest }    from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  // Start with a pass-through response that we'll augment with refreshed cookies.
   let response = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -22,12 +25,9 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          // Write the cookies onto the request first (for downstream middleware)...
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
-          // ...then recreate the response with the updated request so the cookies
-          // are also forwarded to the browser.
           response = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
@@ -37,33 +37,71 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // IMPORTANT: always call getUser() (not getSession()) in middleware.
-  // getUser() re-validates the JWT with the Supabase Auth server on every request,
-  // preventing stale/forged session tokens from passing the check.
+  // Re-validate JWT with Supabase Auth server (not just local session check)
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
 
-  // Protect all admin sub-routes except the login page itself.
-  // /admin  → login page (public)
-  // /admin/ → also redirect to login page (avoids stale trailing-slash access)
-  // /admin/anything → protected
-  const isProtectedAdmin =
-    pathname.startsWith('/admin/') ||
-    (pathname === '/admin' && request.method !== 'GET') // allow GET to show login form
+  // ── Protect /admin/* routes ─────────────────────────────────────────────
+  // /admin (bare) is the legacy login page — redirect to new /login
+  if (pathname === '/admin') {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
 
+  // /admin/* requires authentication
   if (pathname.startsWith('/admin/') && !user) {
-    const loginUrl = new URL('/admin', request.url)
-    return NextResponse.redirect(loginUrl)
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  // ── Protect /platform/* routes ──────────────────────────────────────────
+  if (pathname.startsWith('/platform')) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    // Check power_admin role — must query admin_profiles
+    // Use a lightweight query; RLS allows user to read own profile
+    const { data: profile } = await supabase
+      .from('admin_profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.role !== 'power_admin') {
+      // Not a power admin — redirect to their org admin dashboard
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    }
+  }
+
+  // ── Redirect authenticated users away from auth pages ───────────────────
+  if (user && (pathname === '/login' || pathname === '/signup')) {
+    // Already logged in — send to appropriate dashboard
+    const { data: profile } = await supabase
+      .from('admin_profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.role === 'power_admin') {
+      return NextResponse.redirect(new URL('/platform', request.url))
+    } else if (profile?.role) {
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    }
+    // No profile yet — let them through (signup might need provisioning)
   }
 
   return response
 }
 
 export const config = {
-  // Run on all /admin routes. Use a broad matcher and check inside the function
-  // for precision, so future admin sub-routes are automatically protected.
-  matcher: ['/admin/:path+'],
+  matcher: [
+    '/admin/:path*',
+    '/admin',
+    '/platform/:path*',
+    '/platform',
+    '/login',
+    '/signup',
+  ],
 }

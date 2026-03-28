@@ -80,6 +80,37 @@
   background-color: var(--color-accent-dim, rgba(37, 99, 235, 0.15));
 }
 
+/* ── Auth links (desktop) ────────────────────────────────── */
+.authLinks {
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-3, 0.75rem);
+  flex-shrink: 0;
+
+  @media (max-width: 768px) { display: none; }
+}
+
+.loginLink {
+  font-size:   0.85rem;
+  font-weight: 600;
+  color:       var(--color-text-muted, #7272a0);
+  transition:  color var(--transition-fast, 150ms ease);
+
+  &:hover { color: var(--color-text, #e8e8f4); }
+}
+
+.signupBtn {
+  padding:       0.4rem 1rem;
+  font-size:     0.82rem;
+  font-weight:   700;
+  color:         #fff;
+  background:    var(--color-accent, #2563eb);
+  border-radius: var(--radius-md, 8px);
+  transition:    background var(--transition-fast, 150ms ease);
+
+  &:hover { background: var(--color-accent-light, #3b82f6); }
+}
+
 /* ── Hamburger ───────────────────────────────────────────── */
 .hamburger {
   display:          none;

@@ -1,94 +1,87 @@
 'use client'
 
 // components/admin/AdminShell.tsx
-// Admin layout shell — renders nav bar with role badge and org indicator.
-// Hides the nav/shell on the login page (/admin) so login gets a clean view.
-// Consumes AdminOrgContext to display current context.
+// Org admin layout shell — nav bar with org name, role badge, sign out.
+// Only renders on /admin/* pages (not /platform, not /login).
 
-import Link         from 'next/link'
+import Link            from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useRouter }   from 'next/navigation'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
-import { logoutAdmin } from '@/lib/auth-actions'
+import { supabase }    from '@/lib/supabase'
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const router   = useRouter()
   const { orgName, role } = useAdminOrg()
 
-  // On the login page, render children without the admin shell chrome
+  // On the legacy login page (/admin), render nothing — middleware redirects to /login
   if (pathname === '/admin') {
-    return (
-      <div style={{ minHeight: '100vh', background: '#f4f4f7' }}>
-        {children}
-      </div>
-    )
+    return <>{children}</>
+  }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f4f4f7' }}>
+    <div style={{ minHeight: '100vh', background: '#f5f5f8' }}>
       <nav style={{
         padding:        '0 1.5rem',
-        height:         '48px',
-        background:     '#1a1a2e',
+        height:         '52px',
+        background:     '#fff',
         display:        'flex',
         alignItems:     'center',
         justifyContent: 'space-between',
-        borderBottom:   '1px solid #2a2a45',
+        borderBottom:   '1px solid #e5e7eb',
         gap:            '1rem',
       }}>
-        {/* Left: brand + dashboard link */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {/* Left: brand + org name */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           <Link
             href="/admin/dashboard"
-            style={{ color: '#e8e8f4', fontSize: '0.95rem', fontWeight: 700, textDecoration: 'none' }}
+            style={{
+              color: '#1f2937', fontSize: '0.92rem', fontWeight: 800,
+              textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem',
+            }}
           >
-            Admin Panel
+            <span style={{ fontSize: '1rem' }}>&#9917;</span>
+            {orgName || 'Admin'}
           </Link>
-
-          {orgName && (
-            <span style={{
-              fontSize: '0.72rem',
-              color: '#93a3b8',
-              background: 'rgba(255,255,255,0.06)',
-              padding: '2px 8px',
-              borderRadius: '4px',
-              maxWidth: '180px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
-            }}>
-              {orgName}
-            </span>
-          )}
         </div>
 
         {/* Right: role badge + sign out */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {role && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          {role === 'power_admin' && (
+            <Link
+              href="/platform"
+              style={{
+                fontSize: '0.72rem', fontWeight: 600, color: '#d97706',
+                background: 'rgba(245,158,11,0.08)', padding: '3px 8px',
+                borderRadius: '4px', textDecoration: 'none',
+              }}
+            >
+              Platform Admin
+            </Link>
+          )}
+
+          {role === 'org_admin' && (
             <span style={{
-              fontSize: '0.68rem',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              color: role === 'power_admin' ? '#f59e0b' : '#60a5fa',
-              background: role === 'power_admin' ? 'rgba(245,158,11,0.1)' : 'rgba(96,165,250,0.1)',
-              padding: '2px 8px',
-              borderRadius: '4px',
+              fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase',
+              letterSpacing: '0.04em', color: '#6366f1',
+              background: 'rgba(99,102,241,0.08)', padding: '3px 8px', borderRadius: '4px',
             }}>
-              {role === 'power_admin' ? 'Platform Admin' : 'Org Admin'}
+              Admin
             </span>
           )}
 
           <button
-            onClick={() => logoutAdmin()}
+            onClick={handleSignOut}
             style={{
-              padding: '4px 10px',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              background: 'rgba(239,68,68,0.15)',
-              color: '#fca5a5',
-              border: '1px solid rgba(239,68,68,0.2)',
-              borderRadius: '6px',
-              cursor: 'pointer',
+              padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600,
+              background: '#f3f4f6', color: '#6b7280', border: '1px solid #e5e7eb',
+              borderRadius: '6px', cursor: 'pointer',
             }}
           >
             Sign Out
@@ -96,7 +89,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </div>
       </nav>
 
-      <main style={{ padding: '1.5rem' }}>
+      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '1.5rem' }}>
         {children}
       </main>
     </div>

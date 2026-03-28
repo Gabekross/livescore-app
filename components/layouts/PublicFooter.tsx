@@ -23,7 +23,9 @@ const FOOTER_LINKS = [
 
 export default function PublicFooter({ siteName, footerText }: Props) {
   const pathname = usePathname()
-  if (pathname.startsWith('/admin')) return null
+  // Hide on admin, platform, and auth pages
+  const hideOn = ['/admin', '/platform', '/login', '/signup', '/forgot-password', '/reset-password']
+  if (hideOn.some((p) => pathname === p || pathname.startsWith(p + '/'))) return null
 
   const year = new Date().getFullYear()
 

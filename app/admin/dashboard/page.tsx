@@ -1,8 +1,8 @@
 'use client'
 
 // app/admin/dashboard/page.tsx
-// Role-aware admin dashboard.
-// Uses AdminOrgContext for org + role; no separate profile fetch needed.
+// Organization admin dashboard — org-scoped workspace.
+// Power admin platform controls have moved to /platform.
 
 import Link                    from 'next/link'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
@@ -10,23 +10,19 @@ import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import styles                  from '@/styles/components/AdminDashboard.module.scss'
 
 export default function AdminDashboardPage() {
-  const { orgId, role, orgName } = useAdminOrg()
+  const { role, orgName } = useAdminOrg()
   const orgGate = useAdminOrgGate()
 
   if (orgGate) return orgGate
-
-  const isPowerAdmin = role === 'power_admin'
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.heading}>
-          {orgName ? `${orgName} Dashboard` : 'Admin Dashboard'}
+          {orgName || 'Admin Dashboard'}
         </h2>
         <p className={styles.subheading}>
-          {isPowerAdmin
-            ? 'Platform-wide administration. You have access to all organizations.'
-            : `Managing ${orgName || 'your organization'}. Use the sections below to manage content and matches.`}
+          Manage your football site — teams, tournaments, matches, and content.
         </p>
       </div>
 
@@ -72,20 +68,21 @@ export default function AdminDashboardPage() {
         </Link>
       </div>
 
-      {/* ── Platform Admin (power_admin only) ────────────────── */}
-      {isPowerAdmin && (
-        <div className={styles.platformSection}>
-          <div className={styles.platformLabel}>Platform Administration</div>
-          <div className={styles.grid}>
-            <Link href="/admin/organizations" className={styles.platformCard}>
-              Organizations
-              <span className={styles.hint}>Create and manage orgs</span>
-            </Link>
-            <Link href="/admin/admins" className={styles.platformCard}>
-              Admin Users
-              <span className={styles.hint}>Manage admin accounts</span>
-            </Link>
-          </div>
+      {/* Power admins who land here get a link back to platform admin */}
+      {role === 'power_admin' && (
+        <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' }}>
+          <Link
+            href="/platform"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+              padding: '0.5rem 1rem', background: 'rgba(245,158,11,0.08)',
+              border: '1px solid rgba(245,158,11,0.2)', borderRadius: '8px',
+              color: '#d97706', fontSize: '0.82rem', fontWeight: 600,
+              textDecoration: 'none',
+            }}
+          >
+            &#8592; Back to Platform Admin
+          </Link>
         </div>
       )}
     </div>
