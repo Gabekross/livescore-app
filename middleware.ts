@@ -4,8 +4,10 @@
 //   2. Route protection (admin/platform auth checks)
 //
 // Route protection:
-//   /admin/*     → requires authenticated user with admin_profiles row
-//   /platform/*  → requires authenticated user with role='power_admin'
+//   /admin/*          → requires authenticated user with admin_profiles row
+//   /admin/operator   → accessible to match_operator, org_admin, power_admin
+//   /admin/* (other)  → match_operator is redirected to /admin/operator
+//   /platform/*       → requires authenticated user with role='power_admin'
 //   /login, /signup, /forgot-password, /reset-password → public
 //
 // Uses Supabase Auth session via @supabase/ssr.
@@ -64,41 +66,54 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
+  // ── Role-based /admin/* access for authenticated users ──────────────────
+  // match_operator may only access /admin/operator — block all other /admin/* paths
+  const needsRoleCheck =
+    (pathname.startsWith('/admin/') && !!user) ||
+    pathname.startsWith('/platform') ||
+    (!!user && (pathname === '/login' || pathname === '/signup'))
+
+  let profileRole: string | null = null
+  if (needsRoleCheck && user) {
+    const { data: profile } = await supabase
+      .from('admin_profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    profileRole = profile?.role ?? null
+  }
+
+  // match_operator: restrict to /admin/operator only
+  if (
+    pathname.startsWith('/admin/') &&
+    profileRole === 'match_operator' &&
+    !pathname.startsWith('/admin/operator')
+  ) {
+    return NextResponse.redirect(new URL('/admin/operator', request.url))
+  }
+
   // ── Protect /platform/* routes ──────────────────────────────────────────
   if (pathname.startsWith('/platform')) {
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
-
-    // Check power_admin role — must query admin_profiles
-    // Use a lightweight query; RLS allows user to read own profile
-    const { data: profile } = await supabase
-      .from('admin_profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.role !== 'power_admin') {
-      // Not a power admin — redirect to their org admin dashboard
-      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    if (profileRole !== 'power_admin') {
+      // Not a power admin — redirect to their org admin area
+      const fallback = profileRole === 'match_operator' ? '/admin/operator' : '/admin/dashboard'
+      return NextResponse.redirect(new URL(fallback, request.url))
     }
   }
 
   // ── Redirect authenticated users away from auth pages ───────────────────
   if (user && (pathname === '/login' || pathname === '/signup')) {
-    // Already logged in — send to appropriate dashboard
-    const { data: profile } = await supabase
-      .from('admin_profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profile?.role === 'power_admin') {
+    if (profileRole === 'power_admin') {
       return NextResponse.redirect(new URL('/platform', request.url))
-    } else if (profile?.role) {
+    } else if (profileRole === 'match_operator') {
+      return NextResponse.redirect(new URL('/admin/operator', request.url))
+    } else if (profileRole) {
       return NextResponse.redirect(new URL('/admin/dashboard', request.url))
     }
-    // No profile yet — let them through (signup might need provisioning)
+    // No profile yet — let them through (signup may still be provisioning)
   }
 
   return response

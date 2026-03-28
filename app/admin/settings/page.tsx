@@ -39,8 +39,9 @@ interface SiteSettings {
   favicon_url: string
   active_theme: string
   primary_color: string
-  og_image_url: string
-  footer_text:  string
+  og_image_url:  string
+  footer_text:   string
+  contact_email: string
 }
 
 const DEFAULTS: SiteSettings = {
@@ -50,8 +51,9 @@ const DEFAULTS: SiteSettings = {
   favicon_url:  '',
   active_theme: 'theme-uefa-dark',
   primary_color: '',
-  og_image_url: '',
-  footer_text:  '',
+  og_image_url:  '',
+  footer_text:   '',
+  contact_email: '',
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -106,6 +108,7 @@ export default function AdminSettingsPage() {
           primary_color: data.primary_color || '',
           og_image_url:  data.og_image_url  || '',
           footer_text:   data.footer_text   || '',
+          contact_email: data.contact_email || '',
         })
       }
       setLoading(false)
@@ -130,8 +133,9 @@ export default function AdminSettingsPage() {
       favicon_url:     settings.favicon_url.trim()  || null,
       active_theme:    settings.active_theme,
       primary_color:   settings.primary_color.trim() || null,
-      og_image_url:    settings.og_image_url.trim()  || null,
+      og_image_url:    settings.og_image_url.trim()   || null,
       footer_text:     settings.footer_text.trim()   || null,
+      contact_email:   settings.contact_email.trim() || null,
       updated_at:      new Date().toISOString(),
     }
 
@@ -252,6 +256,20 @@ export default function AdminSettingsPage() {
             value={settings.footer_text}
             onChange={(e) => set('footer_text', e.target.value)}
             placeholder="© 2026 JCL. All rights reserved."
+          />
+        </div>
+
+        <div className={styles.fieldGroup}>
+          <label className={styles.label}>
+            Contact Email{' '}
+            <span className={styles.labelHint}>(shown as &ldquo;Contact Us&rdquo; link in footer)</span>
+          </label>
+          <input
+            type="email"
+            className={styles.input}
+            value={settings.contact_email}
+            onChange={(e) => set('contact_email', e.target.value)}
+            placeholder="info@yourleague.com"
           />
         </div>
       </div>

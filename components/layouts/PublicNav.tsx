@@ -2,8 +2,10 @@
 
 // components/layouts/PublicNav.tsx
 // Fixed top navigation for public pages.
-// Hides itself on /admin/*, /platform/*, /login, /signup, /forgot-password, /reset-password routes.
-// Receives site name/logo as props from the root layout (server fetched).
+// Hides on admin, platform, and auth routes.
+//
+// isOrgSite=true  → org-branded nav, no SaaS acquisition CTAs
+// isOrgSite=false → platform marketing nav with Sign In / Get Started
 
 import { useState } from 'react'
 import Link          from 'next/link'
@@ -11,8 +13,9 @@ import { usePathname } from 'next/navigation'
 import styles from '@/styles/components/PublicNav.module.scss'
 
 interface Props {
-  siteName: string
+  siteName:  string
   siteLogo?: string | null
+  isOrgSite: boolean
 }
 
 const NAV_LINKS = [
@@ -25,10 +28,10 @@ const NAV_LINKS = [
   { href: '/archive',     label: 'Archive' },
 ]
 
-// Routes where the public nav should not appear
+// Routes where the public nav should not appear at all
 const HIDE_ON = ['/admin', '/platform', '/login', '/signup', '/forgot-password', '/reset-password']
 
-export default function PublicNav({ siteName, siteLogo }: Props) {
+export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
 
@@ -65,11 +68,13 @@ export default function PublicNav({ siteName, siteLogo }: Props) {
             ))}
           </ul>
 
-          {/* Auth CTA */}
-          <div className={styles.authLinks}>
-            <Link href="/login" className={styles.loginLink}>Sign In</Link>
-            <Link href="/signup" className={styles.signupBtn}>Get Started</Link>
-          </div>
+          {/* CTAs — only on platform marketing pages, not on org sites */}
+          {!isOrgSite && (
+            <div className={styles.authLinks}>
+              <Link href="/login" className={styles.loginLink}>Sign In</Link>
+              <Link href="/signup" className={styles.signupBtn}>Get Started</Link>
+            </div>
+          )}
 
           {/* Hamburger */}
           <button
@@ -97,15 +102,19 @@ export default function PublicNav({ siteName, siteLogo }: Props) {
               {label}
             </Link>
           ))}
-          <div style={{ borderTop: '1px solid var(--color-border)', margin: '0.5rem 0', padding: '0.5rem 0' }}>
-            <Link href="/login" className={styles.mobileLink} onClick={() => setOpen(false)} role="menuitem">
-              Sign In
-            </Link>
-            <Link href="/signup" className={styles.mobileLink} onClick={() => setOpen(false)} role="menuitem"
-              style={{ color: 'var(--color-accent-light)', fontWeight: 700 }}>
-              Get Started
-            </Link>
-          </div>
+
+          {/* Auth CTAs in mobile menu — platform only */}
+          {!isOrgSite && (
+            <div style={{ borderTop: '1px solid var(--color-border)', margin: '0.5rem 0', paddingTop: '0.5rem' }}>
+              <Link href="/login" className={styles.mobileLink} onClick={() => setOpen(false)} role="menuitem">
+                Sign In
+              </Link>
+              <Link href="/signup" className={styles.mobileLink} onClick={() => setOpen(false)} role="menuitem"
+                style={{ color: 'var(--color-accent-light)', fontWeight: 700 }}>
+                Get Started
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </>

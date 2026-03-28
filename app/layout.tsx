@@ -11,20 +11,25 @@ import '@/app/globals.css'
 
 // ── Org / site-settings fetch (best-effort) ───────────────────────────────────
 interface SiteSettings {
-  site_name:   string
+  site_name:    string
   site_tagline: string | null
-  logo_url:    string | null
-  footer_text: string | null
+  logo_url:     string | null
+  footer_text:  string | null
+  contact_email: string | null
   active_theme: string
+  /** True when we successfully resolved an organization for this request. */
+  isOrgSite:    boolean
 }
 
 async function fetchSiteSettings(): Promise<SiteSettings> {
   const defaults: SiteSettings = {
-    site_name:    'Football Live',
-    site_tagline: null,
-    logo_url:     null,
-    footer_text:  null,
-    active_theme: 'theme-uefa-dark',
+    site_name:     'Football Live',
+    site_tagline:  null,
+    logo_url:      null,
+    footer_text:   null,
+    contact_email: null,
+    active_theme:  'theme-uefa-dark',
+    isOrgSite:     false,   // no org resolved → show platform marketing nav
   }
 
   try {
@@ -37,13 +42,15 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
 
     const { data } = await supabase
       .from('site_settings')
-      .select('site_name, site_tagline, logo_url, footer_text, active_theme')
+      .select('site_name, site_tagline, logo_url, footer_text, contact_email, active_theme')
       .eq('organization_id', orgId)
       .single()
 
-    return data ? { ...defaults, ...data } : defaults
+    return data
+      ? { ...defaults, ...data, isOrgSite: true }
+      : { ...defaults, isOrgSite: true }  // org resolved but no settings row yet
   } catch {
-    // Dev mode / DB not yet seeded — render with fallback values
+    // Dev mode / DB not yet seeded / no org in context — show platform defaults
     return defaults
   }
 }
@@ -71,6 +78,7 @@ export default async function RootLayout({
         <PublicNav
           siteName={settings.site_name}
           siteLogo={settings.logo_url}
+          isOrgSite={settings.isOrgSite}
         />
 
         {children}
@@ -78,6 +86,8 @@ export default async function RootLayout({
         <PublicFooter
           siteName={settings.site_name}
           footerText={settings.footer_text}
+          contactEmail={settings.contact_email}
+          isOrgSite={settings.isOrgSite}
         />
 
         <Toaster

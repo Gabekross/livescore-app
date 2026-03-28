@@ -43,6 +43,20 @@
   }
 }
 
+.contact {
+  display: flex;
+  align-items: center;
+}
+
+.contactLink {
+  font-size:   0.85rem;
+  font-weight: 600;
+  color:       var(--color-accent-light, #3b82f6);
+  transition:  color var(--transition-fast, 150ms ease);
+
+  &:hover { color: var(--color-text, #e8e8f4); }
+}
+
 .copy {
   font-size: 0.8rem;
   color:     var(--color-text-dim, #48487a);

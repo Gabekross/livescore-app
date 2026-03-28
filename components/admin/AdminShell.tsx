@@ -40,7 +40,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         {/* Left: brand + org name */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           <Link
-            href="/admin/dashboard"
+            href={role === 'match_operator' ? '/admin/operator' : '/admin/dashboard'}
             style={{
               color: '#1f2937', fontSize: '0.92rem', fontWeight: 800,
               textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem',
@@ -73,6 +73,16 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               background: 'rgba(99,102,241,0.08)', padding: '3px 8px', borderRadius: '4px',
             }}>
               Admin
+            </span>
+          )}
+
+          {role === 'match_operator' && (
+            <span style={{
+              fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase',
+              letterSpacing: '0.04em', color: '#059669',
+              background: 'rgba(5,150,105,0.08)', padding: '3px 8px', borderRadius: '4px',
+            }}>
+              Operator
             </span>
           )}
 

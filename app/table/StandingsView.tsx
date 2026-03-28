@@ -8,22 +8,20 @@ import { useRouter, useSearchParams }        from 'next/navigation'
 import { supabase }                          from '@/lib/supabase'
 import SectionHeader                         from '@/components/ui/SectionHeader'
 import EmptyState                            from '@/components/ui/EmptyState'
-import TeamLogo                              from '@/components/ui/TeamLogo'
 import styles                               from '@/styles/components/TablePage.module.scss'
 
 interface Tournament { id: string; name: string; slug: string }
 interface Stage      { id: string; stage_name: string; tournament_id: string; show_standings: boolean }
 
-interface Group      { id: string; group_name: string }
+interface Group      { id: string; name: string }
 
 interface StandingRow {
   team_id:         string
   team_name:       string
-  logo_url?:       string | null
   played:          number
-  won:             number
-  drawn:           number
-  lost:            number
+  wins:            number
+  draws:           number
+  losses:          number
   goals_for:       number
   goals_against:   number
   goal_difference: number
@@ -63,9 +61,9 @@ export default function StandingsView({
 
     const { data: groupData } = await supabase
       .from('groups')
-      .select('id, group_name')
+      .select('id, name')
       .eq('stage_id', sid)
-      .order('group_name')
+      .order('name')
 
     const g = (groupData || []) as Group[]
     setGroups(g)
@@ -73,7 +71,7 @@ export default function StandingsView({
     // Fetch standings per group via RPC
     const results = await Promise.all(
       g.map((group) =>
-        supabase.rpc('get_group_standings', { p_group_id: group.id })
+        supabase.rpc('get_group_standings', { group_input: group.id })
       )
     )
 
@@ -145,7 +143,7 @@ export default function StandingsView({
           groups.map((group) => (
             <GroupTable
               key={group.id}
-              groupName={group.group_name}
+              groupName={group.name}
               rows={standings[group.id] || []}
             />
           ))
@@ -190,14 +188,13 @@ function GroupTable({ groupName, rows }: { groupName: string; rows: StandingRow[
                 <td className={styles.tdPos}>{i + 1}</td>
                 <td>
                   <div className={styles.tdTeam}>
-                    <TeamLogo src={row.logo_url} alt={row.team_name} size={20} />
                     <span className={styles.teamName}>{row.team_name}</span>
                   </div>
                 </td>
                 <td className={styles.tdStat}>{row.played}</td>
-                <td className={styles.tdStat}>{row.won}</td>
-                <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.drawn}</td>
-                <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.lost}</td>
+                <td className={styles.tdStat}>{row.wins}</td>
+                <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.draws}</td>
+                <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.losses}</td>
                 <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.goals_for}</td>
                 <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.goals_against}</td>
                 <td className={styles.tdStat}>{row.goal_difference > 0 ? `+${row.goal_difference}` : row.goal_difference}</td>

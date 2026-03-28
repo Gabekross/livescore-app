@@ -1,15 +1,20 @@
 'use client'
 
 // components/layouts/PublicFooter.tsx
-// Hides on /admin/* routes. Receives site name as prop.
+// Public site footer. Hides on admin, platform, and auth routes.
+//
+// isOrgSite=true  → shows Contact Us link (org contact email)
+// isOrgSite=false → shows platform marketing links (Sign Up, etc.)
 
-import Link             from 'next/link'
-import { usePathname }  from 'next/navigation'
-import styles           from '@/styles/components/PublicFooter.module.scss'
+import Link            from 'next/link'
+import { usePathname } from 'next/navigation'
+import styles          from '@/styles/components/PublicFooter.module.scss'
 
 interface Props {
-  siteName:  string
-  footerText?: string | null
+  siteName:      string
+  footerText?:   string | null
+  contactEmail?: string | null
+  isOrgSite:     boolean
 }
 
 const FOOTER_LINKS = [
@@ -21,8 +26,9 @@ const FOOTER_LINKS = [
   { href: '/archive',     label: 'Archive' },
 ]
 
-export default function PublicFooter({ siteName, footerText }: Props) {
+export default function PublicFooter({ siteName, footerText, contactEmail, isOrgSite }: Props) {
   const pathname = usePathname()
+
   // Hide on admin, platform, and auth pages
   const hideOn = ['/admin', '/platform', '/login', '/signup', '/forgot-password', '/reset-password']
   if (hideOn.some((p) => pathname === p || pathname.startsWith(p + '/'))) return null
@@ -33,7 +39,7 @@ export default function PublicFooter({ siteName, footerText }: Props) {
     <footer className={styles.footer}>
       <div className={styles.inner}>
         <div className={styles.brand}>
-          <span className={styles.brandEmoji}>⚽</span>
+          <span className={styles.brandEmoji}>&#9917;</span>
           {siteName}
         </div>
 
@@ -45,8 +51,26 @@ export default function PublicFooter({ siteName, footerText }: Props) {
           ))}
         </ul>
 
+        {/* Contact Us — shown on org sites */}
+        {isOrgSite && contactEmail && (
+          <div className={styles.contact}>
+            <a href={`mailto:${contactEmail}`} className={styles.contactLink}>
+              Contact Us
+            </a>
+          </div>
+        )}
+
+        {/* Platform CTA — shown only on generic platform pages */}
+        {!isOrgSite && (
+          <div className={styles.contact}>
+            <Link href="/signup" className={styles.contactLink}>
+              Create Your Site
+            </Link>
+          </div>
+        )}
+
         <p className={styles.copy}>
-          {footerText || `© ${year} ${siteName}. All rights reserved.`}
+          {footerText || `\u00A9 ${year} ${siteName}. All rights reserved.`}
         </p>
       </div>
     </footer>

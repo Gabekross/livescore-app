@@ -17,7 +17,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import { supabase } from '@/lib/supabase'
 import { getOrgSlugFromHostname } from '@/lib/subdomain'
 
-type AdminRole = 'power_admin' | 'org_admin' | null
+type AdminRole = 'power_admin' | 'org_admin' | 'match_operator' | null
 
 interface AdminOrgContextValue {
   orgId:   string | null
