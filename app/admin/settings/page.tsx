@@ -55,8 +55,28 @@ const DEFAULTS: SiteSettings = {
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
+function getPublicSiteUrl(slug: string | null): string | null {
+  if (!slug) return null
+  if (typeof window === 'undefined') return null
+  const { protocol, hostname, port } = window.location
+  // In dev (localhost), use slug.localhost:port
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    const portSuffix = port ? `:${port}` : ''
+    return `${protocol}//${slug}.localhost${portSuffix}`
+  }
+  // In prod, replace current subdomain or prepend to root domain
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN
+  if (rootDomain) {
+    return `${protocol}//${slug}.${rootDomain}`
+  }
+  // Fallback: assume current host minus any existing subdomain
+  const parts = hostname.split('.')
+  const root = parts.length > 2 ? parts.slice(1).join('.') : hostname
+  return `${protocol}//${slug}.${root}${port ? `:${port}` : ''}`
+}
+
 export default function AdminSettingsPage() {
-  const { orgId, loading: orgLoading } = useAdminOrg()
+  const { orgId, orgSlug, loading: orgLoading } = useAdminOrg()
   const orgGate = useAdminOrgGate()
   const [settings, setSettings] = useState<SiteSettings>(DEFAULTS)
   const [settingsId, setSettingsId] = useState<string | null>(null)
@@ -151,6 +171,50 @@ export default function AdminSettingsPage() {
       <p className={styles.subheading}>
         Configure your organisation&apos;s public branding, theme, and SEO defaults.
       </p>
+
+      {/* ── Public Site URL ── */}
+      {orgSlug && (
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Your Public Site</div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Site URL Slug
+            </label>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '0.75rem',
+              padding: '0.65rem 0.85rem', background: '#f9fafb',
+              border: '1px solid #e5e7eb', borderRadius: '8px',
+              fontFamily: 'monospace', fontSize: '0.88rem', color: '#374151',
+            }}>
+              {orgSlug}
+            </div>
+          </div>
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Public Website URL <span className={styles.labelHint}>(share this with your audience)</span>
+            </label>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '0.75rem',
+            }}>
+              <a
+                href={getPublicSiteUrl(orgSlug) || '#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                  padding: '0.65rem 0.85rem', background: '#eff6ff',
+                  border: '1px solid #bfdbfe', borderRadius: '8px',
+                  fontFamily: 'monospace', fontSize: '0.88rem', color: '#2563eb',
+                  textDecoration: 'none', fontWeight: 500,
+                }}
+              >
+                {getPublicSiteUrl(orgSlug)}
+                <span style={{ fontSize: '0.75rem' }}>&#8599;</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Identity ── */}
       <div className={styles.section}>

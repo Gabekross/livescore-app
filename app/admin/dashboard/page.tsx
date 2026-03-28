@@ -9,8 +9,23 @@ import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import styles                  from '@/styles/components/AdminDashboard.module.scss'
 
+function getPublicSiteUrl(slug: string | null): string | null {
+  if (!slug) return null
+  if (typeof window === 'undefined') return null
+  const { protocol, hostname, port } = window.location
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    const portSuffix = port ? `:${port}` : ''
+    return `${protocol}//${slug}.localhost${portSuffix}`
+  }
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN
+  if (rootDomain) return `${protocol}//${slug}.${rootDomain}`
+  const parts = hostname.split('.')
+  const root = parts.length > 2 ? parts.slice(1).join('.') : hostname
+  return `${protocol}//${slug}.${root}${port ? `:${port}` : ''}`
+}
+
 export default function AdminDashboardPage() {
-  const { role, orgName } = useAdminOrg()
+  const { role, orgName, orgSlug } = useAdminOrg()
   const orgGate = useAdminOrgGate()
 
   if (orgGate) return orgGate
@@ -24,6 +39,24 @@ export default function AdminDashboardPage() {
         <p className={styles.subheading}>
           Manage your football site — teams, tournaments, matches, and content.
         </p>
+        {orgSlug && (
+          <div style={{ marginTop: '0.75rem' }}>
+            <a
+              href={getPublicSiteUrl(orgSlug) || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
+                padding: '0.45rem 0.85rem', background: '#eff6ff',
+                border: '1px solid #bfdbfe', borderRadius: '6px',
+                fontFamily: 'monospace', fontSize: '0.82rem', color: '#2563eb',
+                textDecoration: 'none', fontWeight: 500,
+              }}
+            >
+              {getPublicSiteUrl(orgSlug)} <span style={{ fontSize: '0.7rem' }}>&#8599;</span>
+            </a>
+          </div>
+        )}
       </div>
 
       {/* ── Football Operations ──────────────────────────────── */}

@@ -15,11 +15,13 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
+import { getOrgSlugFromHostname } from '@/lib/subdomain'
 
 type AdminRole = 'power_admin' | 'org_admin' | null
 
 interface AdminOrgContextValue {
   orgId:   string | null
+  orgSlug: string | null
   role:    AdminRole
   orgName: string | null
   loading: boolean
@@ -28,12 +30,12 @@ interface AdminOrgContextValue {
 }
 
 const AdminOrgContext = createContext<AdminOrgContextValue>({
-  orgId: null, role: null, orgName: null, loading: true, error: null, retry: () => {},
+  orgId: null, orgSlug: null, role: null, orgName: null, loading: true, error: null, retry: () => {},
 })
 
 export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<Omit<AdminOrgContextValue, 'retry'>>({
-    orgId: null, role: null, orgName: null, loading: true, error: null,
+    orgId: null, orgSlug: null, role: null, orgName: null, loading: true, error: null,
   })
 
   const resolve = useCallback(async () => {
@@ -84,15 +86,17 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
 
     // ── Step 3: Resolve organization ID (3 strategies) ────────────────────
     let orgId: string | null = null
+    let orgSlug: string | null = null
     let orgName: string | null = null
 
-    // Strategy A: env-var slug resolution
-    const slug = process.env.NEXT_PUBLIC_ORGANIZATION_SLUG
+    // Strategy A: subdomain or env-var slug resolution
+    const slug = (typeof window !== 'undefined' ? getOrgSlugFromHostname(window.location.hostname) : null)
+      || process.env.NEXT_PUBLIC_ORGANIZATION_SLUG
     if (slug) {
       try {
         const { data, error: slugErr } = await supabase
           .from('organizations')
-          .select('id, name')
+          .select('id, name, slug')
           .eq('slug', slug)
           .single()
 
@@ -100,6 +104,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
           diagnostics.push(`Strategy A (slug="${slug}"): ${slugErr.message}`)
         } else if (data) {
           orgId = data.id
+          orgSlug = data.slug
           orgName = data.name
           diagnostics.push(`Strategy A resolved: ${data.name}`)
         }
@@ -107,7 +112,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
         diagnostics.push(`Strategy A exception: ${err instanceof Error ? err.message : String(err)}`)
       }
     } else {
-      diagnostics.push('Strategy A skipped: NEXT_PUBLIC_ORGANIZATION_SLUG not set')
+      diagnostics.push('Strategy A skipped: no subdomain and NEXT_PUBLIC_ORGANIZATION_SLUG not set')
     }
 
     // Strategy B: profile-based fallback (org_admin with assigned org)
@@ -115,7 +120,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data, error: profOrgErr } = await supabase
           .from('organizations')
-          .select('id, name')
+          .select('id, name, slug')
           .eq('id', profileOrgId)
           .single()
 
@@ -123,6 +128,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
           diagnostics.push(`Strategy B: ${profOrgErr.message}`)
         } else if (data) {
           orgId = data.id
+          orgSlug = data.slug
           orgName = data.name
           diagnostics.push(`Strategy B resolved: ${data.name}`)
         }
@@ -136,7 +142,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data, error: firstOrgErr } = await supabase
           .from('organizations')
-          .select('id, name')
+          .select('id, name, slug')
           .order('name')
           .limit(1)
           .single()
@@ -145,6 +151,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
           diagnostics.push(`Strategy C: ${firstOrgErr.message}`)
         } else if (data) {
           orgId = data.id
+          orgSlug = data.slug
           orgName = data.name
           diagnostics.push(`Strategy C resolved: ${data.name}`)
         }
@@ -167,7 +174,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       finalError = new Error(userMsg + debugInfo)
     }
 
-    setState({ orgId, role, orgName, loading: false, error: finalError })
+    setState({ orgId, orgSlug, role, orgName, loading: false, error: finalError })
   }, [])
 
   useEffect(() => { resolve() }, [resolve])

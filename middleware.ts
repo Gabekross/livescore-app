@@ -1,5 +1,7 @@
 // middleware.ts
-// Protects admin routes and enforces role-based access.
+// Two responsibilities:
+//   1. Subdomain → org-slug header injection for all requests
+//   2. Route protection (admin/platform auth checks)
 //
 // Route protection:
 //   /admin/*     → requires authenticated user with admin_profiles row
@@ -12,8 +14,15 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse }        from 'next/server'
 import type { NextRequest }    from 'next/server'
+import { getOrgSlugFromHostname } from '@/lib/subdomain'
 
 export async function middleware(request: NextRequest) {
+  // ── Inject org slug from subdomain into request headers ───────────────
+  const orgSlug = getOrgSlugFromHostname(request.headers.get('host') || '')
+  if (orgSlug) {
+    request.headers.set('x-org-slug', orgSlug)
+  }
+
   let response = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -97,11 +106,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/admin',
-    '/platform/:path*',
-    '/platform',
-    '/login',
-    '/signup',
+    // Match all routes except Next.js internals and static files
+    '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 }
