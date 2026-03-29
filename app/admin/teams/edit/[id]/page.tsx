@@ -10,6 +10,7 @@ import toast from 'react-hot-toast'
 import styles from '@/styles/components/TeamForm.module.scss'
 import { v4 as uuidv4 } from 'uuid'
 import * as XLSX from 'xlsx'
+import { POSITIONS } from '@/lib/constants/positions'
 
 interface PlayerInput {
   name: string
@@ -24,6 +25,7 @@ export default function EditTeamPage() {
   const orgGate = useAdminOrgGate()
 
   const [name, setName] = useState('')
+  const [coachName, setCoachName] = useState('')
   const [logoUrl, setLogoUrl] = useState('')
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [players, setPlayers] = useState<PlayerInput[]>([])
@@ -45,6 +47,7 @@ export default function EditTeamPage() {
       }
 
       setName(data.name)
+      setCoachName(data.coach_name || '')
       setLogoUrl(data.logo_url || '')
       fetchPlayers(data.id)
     }
@@ -130,7 +133,7 @@ export default function EditTeamPage() {
     }
 
     const { error: updateError } = await supabase.from('teams')
-      .update({ name, logo_url: uploadedLogoUrl || null })
+      .update({ name, logo_url: uploadedLogoUrl || null, coach_name: coachName.trim() || null })
       .eq('id', id)
 
     if (updateError) {
@@ -197,6 +200,19 @@ export default function EditTeamPage() {
               className={styles.input}
             />
           </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Head Coach <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 400 }}>(optional)</span>
+            </label>
+            <input
+              type="text"
+              value={coachName}
+              onChange={(e) => setCoachName(e.target.value)}
+              className={styles.input}
+              placeholder="e.g. José Mourinho"
+            />
+          </div>
         </div>
 
         <div className={styles.section}>
@@ -232,12 +248,16 @@ export default function EditTeamPage() {
                 onChange={(e) => handlePlayerChange(idx, 'jersey_number', Number(e.target.value))}
                 style={{ maxWidth: '64px' }}
               />
-              <input
-                type="text"
-                placeholder="Position"
+              <select
                 value={player.position || ''}
                 onChange={(e) => handlePlayerChange(idx, 'position', e.target.value)}
-              />
+                style={{ minWidth: '100px' }}
+              >
+                <option value="">Position</option>
+                {POSITIONS.map((pos) => (
+                  <option key={pos.value} value={pos.value}>{pos.short} – {pos.label}</option>
+                ))}
+              </select>
               <button type="button" onClick={() => handleRemovePlayer(idx)} className={styles.secondaryButton} style={{ padding: '4px 8px', marginTop: 0, fontSize: '0.78rem' }}>
                 Remove
               </button>

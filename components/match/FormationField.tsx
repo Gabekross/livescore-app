@@ -1,25 +1,32 @@
 'use client'
 
-import styles from '@/styles/components/FormationField.module.scss'
-import { formationLayouts } from './FormationLayout'
+// components/match/FormationField.tsx
+// Professional two-team pitch display.
+// Home team renders on the bottom half, away team on the top half.
+// Each player dot shows jersey number, first name, and stat event icons.
+
+import { getFormationSlots } from '@/lib/constants/formations'
+import { positionShort }     from '@/lib/constants/positions'
 import { YellowCard, RedCard } from '@/components/ui/CardIcon'
+import styles from '@/styles/components/FormationField.module.scss'
 
 interface Player {
-  id: string
-  name: string
+  id:             string
+  name:           string
   jersey_number?: number
-  team_id: string
-  goals?: number
-  assists?: number
-  yellow_cards?: number
-  red_cards?: number
+  position?:      string
+  team_id:        string
+  goals?:         number
+  assists?:       number
+  yellow_cards?:  number
+  red_cards?:     number
 }
 
 interface TeamFormation {
-  name: string
-  logo?: string
+  name:      string
+  logo?:     string
   formation: string
-  players: Player[]
+  players:   Player[]
 }
 
 interface Props {
@@ -27,71 +34,151 @@ interface Props {
   away: TeamFormation
 }
 
-const getDensityClass = (playerCount: number): string => {
-  if (playerCount >= 11) return styles.dense
-  if (playerCount >= 8) return styles.medium
-  return styles.spacious
+/**
+ * Map a formation slot's raw coordinates (0-100) into the team's half of the pitch.
+ * Home team: bottom half (y: 52% → 96%)
+ * Away team: top half, flipped (y: 4% → 48%)
+ */
+function mapToHalf(
+  slotX: number,
+  slotY: number,
+  isHome: boolean
+): { x: string; y: string } {
+  // slotY goes from 0 (own goal) to ~70 (forward line)
+  // Normalise to 0..1 range based on max expected y
+  const normY = Math.min(slotY / 72, 1)
+
+  let y: number
+  if (isHome) {
+    // Bottom half: GK near 96%, forwards near 54%
+    y = 96 - normY * 42
+  } else {
+    // Top half: GK near 4%, forwards near 46%
+    y = 4 + normY * 42
+  }
+
+  return {
+    x: `${slotX}%`,
+    y: `${y.toFixed(1)}%`,
+  }
+}
+
+function PlayerDot({
+  player,
+  slotX,
+  slotY,
+  isHome,
+}: {
+  player: Player
+  slotX: number
+  slotY: number
+  isHome: boolean
+}) {
+  const { x, y } = mapToHalf(slotX, slotY, isHome)
+  const firstName = player.name.split(' ')[0]
+  const hasGoals   = (player.goals ?? 0) > 0
+  const hasAssists = (player.assists ?? 0) > 0
+  const hasYellow  = (player.yellow_cards ?? 0) > 0
+  const hasRed     = (player.red_cards ?? 0) > 0
+  const hasEvents  = hasGoals || hasAssists || hasYellow || hasRed
+
+  return (
+    <div
+      className={`${styles.dot} ${isHome ? styles.dotHome : styles.dotAway}`}
+      style={{ left: x, top: y }}
+    >
+      {/* Event icons row */}
+      {hasEvents && (
+        <div className={styles.eventRow}>
+          {hasGoals && (
+            <span className={styles.eventChip}>
+              <span className={styles.goalIcon}>⚽</span>
+              {(player.goals ?? 0) > 1 && <span>{player.goals}</span>}
+            </span>
+          )}
+          {hasAssists && (
+            <span className={styles.eventChip}>
+              <span className={styles.assistIcon}>A</span>
+              {(player.assists ?? 0) > 1 && <span>{player.assists}</span>}
+            </span>
+          )}
+          {hasYellow && (
+            <span className={styles.eventChip}>
+              <YellowCard size={10} />
+            </span>
+          )}
+          {hasRed && (
+            <span className={styles.eventChip}>
+              <RedCard size={10} />
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Jersey number circle */}
+      <div className={styles.jersey}>
+        {player.jersey_number ?? '–'}
+      </div>
+
+      {/* Player name */}
+      <div className={styles.playerName}>{firstName}</div>
+    </div>
+  )
 }
 
 export default function CombinedFormationField({ home, away }: Props) {
-  const renderPlayers = (team: TeamFormation, isHome: boolean) => {
-    const layout = formationLayouts[team.formation || '4-3-3'] || []
-    const densityClass = getDensityClass(team.players.length)
-
-    return team.players.map((player, index) => {
-      const pos = layout[index] || { x: '50%', y: '50%' }
-      const baseY = parseFloat(pos.y)
-      const x = pos.x
-
-      let y: string
-      let yValue: number
-
-      if (isHome) {
-        const pushedY = 5 + (baseY / 100) * 43
-        yValue = index === 0 ? 5 + (baseY / 100) * 43 : pushedY + 6
-        y = `${yValue.toFixed(2)}%`
-      } else {
-        const flippedY = 100 - baseY
-        const pushedY = 52 + (flippedY / 100) * 43
-        yValue = index === 0 ? 52 + (flippedY / 100) * 43 : pushedY - 6
-        y = `${yValue.toFixed(2)}%`
-      }
-
-      return (
-        <div
-          key={player.id}
-          className={`${styles.playerDot} ${isHome ? styles.homeDot : styles.awayDot} ${densityClass}`}
-          style={{ left: x, top: y }}
-        >
-          {/* Stat Icons */}
-          <div className={styles.statsTopLeft}>
-            {player.yellow_cards ? <YellowCard size={12} /> : ''}
-            {player.red_cards ? <RedCard size={12} /> : ''}
-          </div>
-          <div className={styles.statsTopRight}>
-            {player.goals ? `⚽${player.goals}` : ''}
-            {player.assists ? `A${player.assists}` : ''}
-          </div>
-
-          {/* Player Number */}
-          <div className={styles.playerNumber}>{player.jersey_number ?? ''}</div>
-
-          {/* Player Name */}
-          <div className={styles.playerNameBelow}>{player.name.split(' ')[0]}</div>
-        </div>
-      )
-    })
-  }
+  const homeSlots = getFormationSlots(home.formation || '4-3-3')
+  const awaySlots = getFormationSlots(away.formation || '4-3-3')
 
   return (
-    <div className={styles.fieldContainer}>
-      <div className={styles.teamLabelTop}>{away.name}</div>
-      <div className={styles.teamLabelBottom}>{home.name}</div>
-      <div
-        className={`${styles.field} ${getDensityClass(home.players.length)} ${getDensityClass(away.players.length)}`}
-      >
-        {renderPlayers(away, false)}
-        {renderPlayers(home, true)}
+    <div className={styles.pitchWrapper}>
+      {/* Team labels */}
+      <div className={styles.teamLabelTop}>
+        <span className={styles.teamLabelDot + ' ' + styles.teamLabelDotAway} />
+        {away.name}
+        {away.formation && <span className={styles.formationTag}>{away.formation}</span>}
+      </div>
+
+      {/* Pitch */}
+      <div className={styles.pitch}>
+        {/* Centre line indicator */}
+        <div className={styles.centreLine} />
+
+        {/* Away team — top half */}
+        {away.players.map((player, i) => {
+          const slot = awaySlots[i]
+          if (!slot) return null
+          return (
+            <PlayerDot
+              key={player.id}
+              player={player}
+              slotX={slot.x}
+              slotY={slot.y}
+              isHome={false}
+            />
+          )
+        })}
+
+        {/* Home team — bottom half */}
+        {home.players.map((player, i) => {
+          const slot = homeSlots[i]
+          if (!slot) return null
+          return (
+            <PlayerDot
+              key={player.id}
+              player={player}
+              slotX={slot.x}
+              slotY={slot.y}
+              isHome={true}
+            />
+          )
+        })}
+      </div>
+
+      <div className={styles.teamLabelBottom}>
+        <span className={styles.teamLabelDot + ' ' + styles.teamLabelDotHome} />
+        {home.name}
+        {home.formation && <span className={styles.formationTag}>{home.formation}</span>}
       </div>
     </div>
   )

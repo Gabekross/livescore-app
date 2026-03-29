@@ -8,8 +8,9 @@ import styles from '@/styles/components/MatchEdit.module.scss'
 import Link from 'next/link'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
+import { FORMATION_NAMES } from '@/lib/constants/formations'
 
-const FORMATIONS = ['4-4-2', '4-3-3', '3-5-2', '4-2-3-1', '5-3-2']
+const FORMATIONS = FORMATION_NAMES
 
 export default function EditMatchPage() {
   const rawParams = useParams()

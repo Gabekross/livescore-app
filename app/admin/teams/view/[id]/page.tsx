@@ -8,6 +8,7 @@ import { useAdminOrg }     from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import styles from '@/styles/components/TeamView.module.scss'
 import toast from 'react-hot-toast'
+import { positionLabel } from '@/lib/constants/positions'
 
 interface Player {
   id: string
@@ -72,6 +73,11 @@ export default function TeamDetailsPage() {
         )}
         <div>
           <div className={styles.name}>{team.name}</div>
+          {team.coach_name && (
+            <div style={{ fontSize: '0.82rem', color: '#6b7280', marginTop: '0.25rem' }}>
+              Coach: {team.coach_name}
+            </div>
+          )}
         </div>
       </div>
 
@@ -91,7 +97,7 @@ export default function TeamDetailsPage() {
                 )}
                 <strong>{player.name}</strong>
                 {player.position && (
-                  <span className={styles.playerPosition}>{player.position}</span>
+                  <span className={styles.playerPosition}>{positionLabel(player.position)}</span>
                 )}
               </li>
             ))}

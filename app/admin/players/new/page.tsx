@@ -8,6 +8,7 @@ import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/Form.module.scss'
+import { POSITIONS }           from '@/lib/constants/positions'
 
 interface Team {
   id:   string
@@ -20,7 +21,7 @@ export default function NewPlayerPage() {
   const orgGate = useAdminOrgGate()
 
   const [teams,   setTeams]   = useState<Team[]>([])
-  const [form,    setForm]    = useState({ name: '', jersey_number: '', team_id: '' })
+  const [form,    setForm]    = useState({ name: '', jersey_number: '', team_id: '', position: '' })
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function NewPlayerPage() {
       name:          form.name.trim(),
       jersey_number: form.jersey_number ? Number(form.jersey_number) : null,
       team_id:       form.team_id,
+      position:      form.position || null,
     })
 
     if (error) {
@@ -100,6 +102,22 @@ export default function NewPlayerPage() {
                 onChange={(e) => setForm((p) => ({ ...p, jersey_number: e.target.value }))}
                 className={styles.input}
               />
+            </label>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Position <span className={styles.labelHint}>(optional)</span>
+              <select
+                value={form.position}
+                onChange={(e) => setForm((p) => ({ ...p, position: e.target.value }))}
+                className={styles.input}
+              >
+                <option value="">Select Position</option>
+                {POSITIONS.map((pos) => (
+                  <option key={pos.value} value={pos.value}>{pos.short} – {pos.label}</option>
+                ))}
+              </select>
             </label>
           </div>
 

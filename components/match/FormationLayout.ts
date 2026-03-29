@@ -1,33 +1,14 @@
-export const formationLayouts: Record<string, { x: string; y: string }[]> = {
-  "4-4-2": [
-    { x: "50%", y: "5%" },   // GK
-    { x: "10%", y: "20%" }, { x: "30%", y: "20%" }, { x: "70%", y: "20%" }, { x: "90%", y: "20%" }, // DEF
-    { x: "15%", y: "40%" }, { x: "35%", y: "40%" }, { x: "65%", y: "40%" }, { x: "85%", y: "40%" }, // MID
-    { x: "40%", y: "60%" }, { x: "60%", y: "60%" }  // FWD
-  ],
-  "4-3-3": [
-    { x: "50%", y: "5%" },  // GK
-    { x: "12%", y: "22%" }, { x: "33%", y: "22%" }, { x: "67%", y: "22%" }, { x: "88%", y: "22%" }, // DEF
-    { x: "25%", y: "40%" }, { x: "50%", y: "40%" }, { x: "75%", y: "40%" }, // MID
-    { x: "18%", y: "60%" }, { x: "50%", y: "65%" }, { x: "82%", y: "60%" }  // FWD
-  ],
-  "4-2-3-1": [
-    { x: "50%", y: "5%" },  // GK
-    { x: "12%", y: "20%" }, { x: "33%", y: "20%" }, { x: "67%", y: "20%" }, { x: "88%", y: "20%" }, // DEF
-    { x: "40%", y: "35%" }, { x: "60%", y: "35%" }, // DM
-    { x: "20%", y: "50%" }, { x: "50%", y: "48%" }, { x: "80%", y: "50%" }, // AM
-    { x: "50%", y: "65%" }  // ST
-  ],
-  "3-5-2": [
-    { x: "50%", y: "5%" },  // GK
-    { x: "25%", y: "20%" }, { x: "50%", y: "20%" }, { x: "75%", y: "20%" }, // DEF
-    { x: "15%", y: "35%" }, { x: "35%", y: "35%" }, { x: "50%", y: "35%" }, { x: "65%", y: "35%" }, { x: "85%", y: "35%" }, // MID
-    { x: "40%", y: "60%" }, { x: "60%", y: "60%" }  // FWD
-  ],
-  "5-3-2": [
-    { x: "50%", y: "5%" },  // GK
-    { x: "10%", y: "22%" }, { x: "30%", y: "22%" }, { x: "50%", y: "22%" }, { x: "70%", y: "22%" }, { x: "90%", y: "22%" }, // DEF
-    { x: "30%", y: "40%" }, { x: "50%", y: "40%" }, { x: "70%", y: "40%" }, // MID
-    { x: "42%", y: "60%" }, { x: "58%", y: "60%" }  // FWD
-  ]
-};
+// components/match/FormationLayout.ts
+// Legacy compatibility layer — re-exports formation coordinates
+// from the new centralised formation definitions.
+// Components that import formationLayouts from here will continue to work.
+
+import { FORMATION_DEFS } from '@/lib/constants/formations'
+
+export const formationLayouts: Record<string, { x: string; y: string }[]> =
+  Object.fromEntries(
+    Object.entries(FORMATION_DEFS).map(([name, def]) => [
+      name,
+      def.slots.map(s => ({ x: `${s.x}%`, y: `${s.y}%` })),
+    ])
+  )

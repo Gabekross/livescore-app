@@ -1,232 +1,204 @@
-/* === PLAYER DOT BASE === */
-.playerDot {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  z-index: 2;
-  position: absolute;
-  text-align: center;
+/* ── Formation Pitch — Professional Two-Team Display ────── */
+/* Home team bottom half (blue), Away team top half (red)   */
+
+/* ── Wrapper ───────────────────────────────────────────── */
+.pitchWrapper {
+  width:      100%;
+  max-width:  640px;
+  margin:     0 auto;
 }
 
-/* === NUMBER IN DOT === */
-.playerNumber {
-  font-weight: bold;
-  z-index: 2;
-}
-
-/* === PLAYER NAME - TOUCHES BOTTOM === */
-// .playerNameBelow {
-//   position: absolute;
-//   top: 100%;
-//   transform: translateY(0.1rem);
-//   font-weight: 500;
-//   color: white;
-//   white-space: nowrap;
-//   line-height: 1;
-//   font-size: 0.58rem;
-// }
-.playerNameBelow {
-  position: absolute;
-  top: 100%;
-  transform: translateY(0.1rem);
-  font-weight: 520;
-  color: white;
-  line-height: 1;
-  font-size: 0.58rem;
-  text-align: center;
-
-  white-space: normal;         // ✅ allow line wrapping
-  word-break: break-word;      // ✅ break long words
-  max-width: 48px;             // ✅ prevent overflow
-}
-
-
-/* === STAT ICONS ON DOT CORNERS === */
-.statsTopLeft,
-.statsTopRight {
-  position: absolute;
-  font-size: 0.65rem;
-  white-space: nowrap;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.statsTopLeft {
-  top: -0.3rem;
-  left: -0.4rem;
-}
-
-.statsTopRight {
-  top: -0.3rem;
-  right: -0.4rem;
-}
-
-/* === TEAM DOT COLORS === */
-.homeDot {
-  background-color: #1e90ff;
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.awayDot {
-  background-color: #dc143c;
-}
-
-/* === DENSITY SCALING === */
-.dense .playerDot {
-  width: 42px;
-  height: 42px;
-  font-size: 0.7rem;
-  line-height: 42px;
-}
-
-.dense .playerNumber {
-  font-size: 0.65rem;
-}
-
-.dense .playerNameBelow {
-  font-size: 0.48rem;
-}
-
-.dense .statsTopLeft,
-.dense .statsTopRight {
-  font-size: 0.5rem;
-}
-
-.medium .playerDot {
-  width: 48px;
-  height: 48px;
-  font-size: 0.8rem;
-  line-height: 48px;
-}
-
-.medium .playerNumber {
-  font-size: 0.7rem;
-}
-
-.medium .playerNameBelow {
-  font-size: 0.52rem;
-}
-
-.medium .statsTopLeft,
-.medium .statsTopRight {
-  font-size: 0.6rem;
-}
-
-.spacious .playerDot {
-  width: 56px;
-  height: 56px;
-  font-size: 1rem;
-  line-height: 56px;
-}
-
-.spacious .playerNumber {
-  font-size: 0.85rem;
-}
-
-.spacious .playerNameBelow {
-  font-size: 0.6rem;
-}
-
-.spacious .statsTopLeft,
-.spacious .statsTopRight {
-  font-size: 0.7rem;
-}
-
-/* === TEAM LABELS === */
+/* ── Team labels ───────────────────────────────────────── */
 .teamLabelTop,
 .teamLabelBottom {
-  position: absolute;
-  width: 100%;
-  font-weight: bold;
-  font-size: 0.8rem;
-  background: rgba(0, 0, 0, 0.4);
-  color: #fff;
-  padding: 4px 1rem;
-  z-index: 2;
-  display: flex;
-  align-items: center;
+  display:       flex;
+  align-items:   center;
+  gap:           0.5rem;
+  padding:       0.5rem 0.75rem;
+  font-size:     0.78rem;
+  font-weight:   700;
+  color:         var(--color-text, #e8e8f4);
+  letter-spacing: 0.02em;
 }
 
 .teamLabelTop {
-  top: 0;
-  justify-content: flex-start;
+  border-radius: 10px 10px 0 0;
+  background:    rgba(0, 0, 0, 0.2);
 }
 
 .teamLabelBottom {
-  bottom: 0;
-  justify-content: flex-start;
+  border-radius: 0 0 10px 10px;
+  background:    rgba(0, 0, 0, 0.2);
 }
 
-/* === FIELD === */
-.fieldContainer {
-  width: 100%;
-  max-width: 900px;
-  margin: 2rem auto;
-  position: relative;
-  aspect-ratio: 2 / 3;
-  background-image: url('/field.png');
-  background-size: cover;
-  background-position: center;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 2px solid #fff;
+.teamLabelDot {
+  width:         10px;
+  height:        10px;
+  border-radius: 50%;
+  flex-shrink:   0;
 }
 
-.field {
-  width: 100%;
-  height: 100%;
-  position: relative;
+.teamLabelDotHome { background: #3b82f6; }
+.teamLabelDotAway { background: #ef4444; }
+
+.formationTag {
+  margin-left:   auto;
+  font-size:     0.68rem;
+  font-weight:   600;
+  color:         var(--color-text-muted, #7272a0);
+  letter-spacing: 0.04em;
 }
 
-/* === MOBILE === */
-@media (max-width: 600px) {
-  .dense .playerDot {
-    width: 28px;
-    height: 28px;
-    font-size: 0.55rem;
-    line-height: 28px;
+/* ── Pitch ─────────────────────────────────────────────── */
+.pitch {
+  position:             relative;
+  width:                100%;
+  aspect-ratio:         3 / 4;
+  background-image:     url('/field.png');
+  background-size:      cover;
+  background-position:  center;
+  overflow:             hidden;
+}
+
+.centreLine {
+  position:   absolute;
+  top:        50%;
+  left:       5%;
+  right:      5%;
+  height:     1px;
+  background: rgba(255, 255, 255, 0.25);
+  z-index:    1;
+}
+
+/* ── Player dot ────────────────────────────────────────── */
+.dot {
+  position:       absolute;
+  transform:      translate(-50%, -50%);
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  z-index:        3;
+  pointer-events: auto;
+}
+
+/* ── Jersey number circle ──────────────────────────────── */
+.jersey {
+  width:            36px;
+  height:           36px;
+  border-radius:    50%;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        0.82rem;
+  font-weight:      800;
+  color:            #fff;
+  text-shadow:      0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow:       0 2px 8px rgba(0, 0, 0, 0.3);
+  position:         relative;
+  z-index:          2;
+}
+
+.dotHome .jersey {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border:     2px solid rgba(255, 255, 255, 0.35);
+}
+
+.dotAway .jersey {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  border:     2px solid rgba(255, 255, 255, 0.35);
+}
+
+/* ── Player name ───────────────────────────────────────── */
+.playerName {
+  margin-top:     2px;
+  font-size:      0.62rem;
+  font-weight:    700;
+  color:          #fff;
+  text-shadow:    0 1px 3px rgba(0, 0, 0, 0.7);
+  text-align:     center;
+  white-space:    nowrap;
+  max-width:      64px;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+  line-height:    1.2;
+}
+
+/* ── Event row (above jersey) ──────────────────────────── */
+.eventRow {
+  display:        flex;
+  gap:            2px;
+  margin-bottom:  2px;
+  position:       relative;
+  z-index:        4;
+}
+
+.eventChip {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            1px;
+  background:     rgba(0, 0, 0, 0.7);
+  border-radius:  3px;
+  padding:        1px 3px;
+  font-size:      0.55rem;
+  font-weight:    700;
+  color:          #fff;
+  line-height:    1;
+  white-space:    nowrap;
+}
+
+.goalIcon {
+  font-size:  0.6rem;
+  line-height: 1;
+}
+
+.assistIcon {
+  font-size:     0.55rem;
+  font-weight:   800;
+  color:         #a3e635;
+}
+
+/* ── Mobile responsive ─────────────────────────────────── */
+@media (max-width: 480px) {
+  .pitch {
+    aspect-ratio: 2 / 3;
   }
 
-  .medium .playerDot {
-    width: 34px;
-    height: 34px;
-    font-size: 0.6rem;
-    line-height: 34px;
+  .jersey {
+    width:     30px;
+    height:    30px;
+    font-size: 0.72rem;
   }
 
-  .spacious .playerDot {
-    width: 40px;
-    height: 40px;
-    font-size: 0.65rem;
-    line-height: 40px;
+  .playerName {
+    font-size:  0.52rem;
+    max-width:  52px;
   }
 
-  .playerNumber {
-    font-size: 0.55rem;
+  .eventRow {
+    gap: 1px;
   }
 
-  // .playerNameBelow {
-  //   font-size: 0.45rem;
-  // }
-
-  .playerNameBelow {
-    font-size: 0.45rem;
-    max-width: 36px;
-  }
-
-  .statsTopLeft,
-  .statsTopRight {
-    font-size: 0.45rem;
-    top: -0.2rem;
+  .eventChip {
+    font-size: 0.48rem;
+    padding:   1px 2px;
   }
 
   .teamLabelTop,
   .teamLabelBottom {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+    padding:   0.4rem 0.6rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .jersey {
+    width:     26px;
+    height:    26px;
+    font-size: 0.65rem;
+  }
+
+  .playerName {
+    font-size: 0.46rem;
+    max-width: 44px;
   }
 }
