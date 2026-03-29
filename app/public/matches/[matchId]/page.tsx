@@ -28,6 +28,8 @@ interface Match {
   away_score:      number | null
   home_formation?: string
   away_formation?: string
+  home_coach?:     string | null
+  away_coach?:     string | null
   home_team:       Team
   away_team:       Team
 }
@@ -63,6 +65,7 @@ export default function MatchDetailPage() {
       .select(`
         id, match_date, venue, status, match_type,
         home_score, away_score, home_formation, away_formation,
+        home_coach, away_coach,
         home_team:home_team_id(id, name, logo_url, coach_name),
         away_team:away_team_id(id, name, logo_url, coach_name)
       `)
@@ -268,8 +271,8 @@ export default function MatchDetailPage() {
             {activeTab === 'teams' && (
               <div className={styles.section}>
                 <div className={styles.squadGrid}>
-                  <SquadCol team={match.away_team} starters={awayLineup} bench={awayBench} isHome={false} formation={match.away_formation} />
-                  <SquadCol team={match.home_team} starters={homeLineup} bench={homeBench} isHome formation={match.home_formation} />
+                  <SquadCol team={match.away_team} starters={awayLineup} bench={awayBench} isHome={false} formation={match.away_formation} coachName={match.away_coach || match.away_team.coach_name} />
+                  <SquadCol team={match.home_team} starters={homeLineup} bench={homeBench} isHome formation={match.home_formation} coachName={match.home_coach || match.home_team.coach_name} />
                 </div>
               </div>
             )}
@@ -302,9 +305,10 @@ function BenchCol({ teamName, players, isHome }: { teamName: string; players: Pl
   )
 }
 
-function SquadCol({ team, starters, bench, isHome, formation }: {
+function SquadCol({ team, starters, bench, isHome, formation, coachName }: {
   team: { id: string; name: string; logo_url?: string | null; coach_name?: string | null }
   starters: Player[]; bench: Player[]; isHome: boolean; formation?: string
+  coachName?: string | null
 }) {
   return (
     <div className={styles.squadColumn}>
@@ -327,12 +331,12 @@ function SquadCol({ team, starters, bench, isHome, formation }: {
           {bench.map((p) => <SquadRow key={p.id} player={p} isHome={isHome} />)}
         </div>
       )}
-      {team.coach_name && (
+      {coachName && (
         <div className={styles.squadSection}>
           <div className={styles.squadSectionLabel}>Coach</div>
           <div className={styles.squadCoach}>
             <span className={styles.coachIcon}>👔</span>
-            <span className={styles.squadPlayerName}>{team.coach_name}</span>
+            <span className={styles.squadPlayerName}>{coachName}</span>
           </div>
         </div>
       )}

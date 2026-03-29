@@ -29,6 +29,8 @@ export default function EditMatchPage() {
   const [status, setStatus] = useState('scheduled')
   const [homeFormation, setHomeFormation] = useState('')
   const [awayFormation, setAwayFormation] = useState('')
+  const [homeCoach, setHomeCoach] = useState('')
+  const [awayCoach, setAwayCoach] = useState('')
   const [homePlayers, setHomePlayers] = useState<any[]>([])
   const [awayPlayers, setAwayPlayers] = useState<any[]>([])
   const [selectedHomeLineup, setSelectedHomeLineup] = useState<string[]>([])
@@ -44,9 +46,9 @@ export default function EditMatchPage() {
       const { data, error } = await supabase
         .from('matches')
         .select(`
-          id, home_score, away_score, status, home_formation, away_formation,
-          home_team:home_team_id(id, name),
-          away_team:away_team_id(id, name)
+          id, home_score, away_score, status, home_formation, away_formation, home_coach, away_coach,
+          home_team:home_team_id(id, name, coach_name),
+          away_team:away_team_id(id, name, coach_name)
         `)
         .eq('id', matchId)
         .single()
@@ -62,6 +64,8 @@ export default function EditMatchPage() {
         setStatus(data.status ?? 'scheduled')
         setHomeFormation(data.home_formation || '')
         setAwayFormation(data.away_formation || '')
+        setHomeCoach(data.home_coach || home.coach_name || '')
+        setAwayCoach(data.away_coach || away.coach_name || '')
 
         const teamIds = [home.id, away.id]
         const { data: players } = await supabase
@@ -153,7 +157,9 @@ export default function EditMatchPage() {
         away_score: awayScore,
         status,
         home_formation: homeFormation,
-        away_formation: awayFormation
+        away_formation: awayFormation,
+        home_coach: homeCoach.trim() || null,
+        away_coach: awayCoach.trim() || null,
       })
       .eq('id', matchId)
 
@@ -300,6 +306,33 @@ export default function EditMatchPage() {
                 <option value="">Select</option>
                 {FORMATIONS.map(f => <option key={f}>{f}</option>)}
               </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Coaches */}
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>Coaches</div>
+          <div className={styles.fieldRow}>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Home Coach</label>
+              <input
+                type="text"
+                value={homeCoach}
+                onChange={e => setHomeCoach(e.target.value)}
+                className={styles.input}
+                placeholder={homeTeam?.coach_name || 'e.g. José Mourinho'}
+              />
+            </div>
+            <div className={styles.fieldGroup}>
+              <label className={styles.label}>Away Coach</label>
+              <input
+                type="text"
+                value={awayCoach}
+                onChange={e => setAwayCoach(e.target.value)}
+                className={styles.input}
+                placeholder={awayTeam?.coach_name || 'e.g. Pep Guardiola'}
+              />
             </div>
           </div>
         </div>

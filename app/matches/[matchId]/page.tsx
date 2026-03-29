@@ -31,6 +31,8 @@ interface Match {
   away_score:      number | null
   home_formation?: string
   away_formation?: string
+  home_coach?:     string | null
+  away_coach?:     string | null
   home_team:       Team
   away_team:       Team
 }
@@ -68,6 +70,7 @@ export default function MatchDetailPage() {
       .select(`
         id, match_date, venue, status, match_type,
         home_score, away_score, home_formation, away_formation,
+        home_coach, away_coach,
         home_team:home_team_id(id, name, logo_url, coach_name),
         away_team:away_team_id(id, name, logo_url, coach_name)
       `)
@@ -297,6 +300,7 @@ export default function MatchDetailPage() {
                     bench={awayBench}
                     isHome={false}
                     formation={match.away_formation}
+                    coachName={match.away_coach || match.away_team.coach_name}
                   />
 
                   {/* Home team — right column */}
@@ -306,6 +310,7 @@ export default function MatchDetailPage() {
                     bench={homeBench}
                     isHome={true}
                     formation={match.home_formation}
+                    coachName={match.home_coach || match.home_team.coach_name}
                   />
                 </div>
               </div>
@@ -356,12 +361,14 @@ function SquadColumn({
   bench,
   isHome,
   formation,
+  coachName,
 }: {
   team:       Team
   starters:   Player[]
   bench:      Player[]
   isHome:     boolean
   formation?: string
+  coachName?: string | null
 }) {
   return (
     <div className={`${styles.squadColumn} ${isHome ? styles.squadHome : styles.squadAway}`}>
@@ -395,12 +402,12 @@ function SquadColumn({
       )}
 
       {/* Coach */}
-      {team.coach_name && (
+      {coachName && (
         <div className={styles.squadSection}>
           <div className={styles.squadSectionLabel}>Coach</div>
           <div className={styles.squadCoach}>
             <span className={styles.coachIcon}>👔</span>
-            <span className={styles.squadPlayerName}>{team.coach_name}</span>
+            <span className={styles.squadPlayerName}>{coachName}</span>
           </div>
         </div>
       )}
