@@ -36,6 +36,7 @@ export default function EditMatchPage() {
   const [benchHome, setBenchHome] = useState<string[]>([])
   const [benchAway, setBenchAway] = useState<string[]>([])
   const [playerStats, setPlayerStats] = useState<Record<string, { goals?: number; assists?: number; yellow_cards?: number; red_cards?: number }>>({})
+  const [originalLineupIds, setOriginalLineupIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (!orgId) return
@@ -99,6 +100,7 @@ export default function EditMatchPage() {
           setBenchHome(homeBench)
           setBenchAway(awayBench)
           setPlayerStats(statMap)
+          setOriginalLineupIds(new Set(existingLineups.map(p => p.player_id)))
         }
       } else {
         toast.error('Match not found')
@@ -175,13 +177,27 @@ export default function EditMatchPage() {
       ...playerStats[p.id]
     }))
 
-    const { error: upsertError } = await supabase
-      .from('match_lineups')
-      .upsert(rows, { onConflict: 'match_id,player_id' })
+    // Delete lineup rows for players that were removed (unchecked from both starter and bench)
+    const currentPlayerIds = new Set(allPlayers.map(p => p.id))
+    const removedIds = [...originalLineupIds].filter(pid => !currentPlayerIds.has(pid))
+    if (removedIds.length > 0) {
+      await supabase
+        .from('match_lineups')
+        .delete()
+        .eq('match_id', matchId)
+        .in('player_id', removedIds)
+    }
 
-    if (upsertError) {
-      toast.error('Failed to save player stats')
-      return
+    // Upsert current selections
+    if (rows.length > 0) {
+      const { error: upsertError } = await supabase
+        .from('match_lineups')
+        .upsert(rows, { onConflict: 'match_id,player_id' })
+
+      if (upsertError) {
+        toast.error('Failed to save player stats')
+        return
+      }
     }
 
     toast.success('Match updated successfully')

@@ -71,6 +71,37 @@ export default function AdminTournamentList() {
     }
   }
 
+  const handleDelete = async (tournamentId: string, tournamentName: string) => {
+    const confirmed = window.confirm(
+      `Delete "${tournamentName}"?\n\nThis will permanently delete all stages, groups, matches, and match data associated with this tournament. This cannot be undone.`
+    )
+    if (!confirmed) return
+
+    // Delete matches referencing this tournament first (FK has no cascade)
+    const { error: matchError } = await supabase
+      .from('matches')
+      .delete()
+      .eq('tournament_id', tournamentId)
+
+    if (matchError) {
+      toast.error('Failed to delete tournament matches')
+      return
+    }
+
+    // Now delete the tournament (stages, groups, group_teams cascade automatically)
+    const { error } = await supabase
+      .from('tournaments')
+      .delete()
+      .eq('id', tournamentId)
+
+    if (error) {
+      toast.error('Failed to delete tournament')
+    } else {
+      toast.success('Tournament deleted')
+      fetchTournaments()
+    }
+  }
+
   if (orgGate) return orgGate
 
   return (
@@ -140,9 +171,18 @@ export default function AdminTournamentList() {
                       <p>{formatDate(t.start_date)} — {formatDate(t.end_date)}</p>
                     </div>
                   </Link>
-                  <button onClick={() => handleEdit(t)} className={styles.secondaryButtonSmall}>
-                    Edit
-                  </button>
+                  <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <button onClick={() => handleEdit(t)} className={styles.secondaryButtonSmall}>
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(t.id, t.name)}
+                      className={styles.secondaryButtonSmall}
+                      style={{ color: '#ef4444', borderColor: '#fecaca' }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               )}
             </li>

@@ -13,9 +13,11 @@ import * as XLSX from 'xlsx'
 import { POSITIONS } from '@/lib/constants/positions'
 
 interface PlayerInput {
-  name: string
+  id?:            string   // existing player UUID — undefined for new players
+  name:           string
   jersey_number?: number
-  position?: string
+  position?:      string
+  _deleted?:      boolean  // soft-mark for removal
 }
 
 export default function EditTeamPage() {
@@ -29,6 +31,7 @@ export default function EditTeamPage() {
   const [logoUrl, setLogoUrl] = useState('')
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [players, setPlayers] = useState<PlayerInput[]>([])
+  const [originalPlayerIds, setOriginalPlayerIds] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -58,9 +61,13 @@ export default function EditTeamPage() {
   if (orgGate) return orgGate
 
   const fetchPlayers = async (teamId: string) => {
-    const { data, error } = await supabase.from('players').select('*').eq('team_id', teamId)
+    const { data, error } = await supabase
+      .from('players')
+      .select('id, name, jersey_number, position')
+      .eq('team_id', teamId)
     if (!error && data) {
       setPlayers(data)
+      setOriginalPlayerIds(new Set(data.map(p => p.id)))
     }
   }
 
@@ -69,21 +76,36 @@ export default function EditTeamPage() {
   }
 
   const handleRemovePlayer = (index: number) => {
-    setPlayers((prev) => prev.filter((_, i) => i !== index))
+    setPlayers((prev) => {
+      const player = prev[index]
+      // If this player has a DB id, we need to track it for deletion
+      if (player.id) {
+        // Mark for deletion instead of removing from array,
+        // so we know which DB rows to delete
+        const updated = [...prev]
+        updated[index] = { ...player, _deleted: true }
+        return updated
+      }
+      // New player (no DB id) — just remove from array
+      return prev.filter((_, i) => i !== index)
+    })
   }
 
   const handlePlayerChange = (index: number, key: keyof PlayerInput, value: any) => {
     setPlayers((prev) => {
-      const updated = [...prev];
-      if (!updated[index]) return prev;
-      updated[index] = { ...updated[index], [key]: value };
-      return updated;
-    });
-  };
+      const updated = [...prev]
+      if (!updated[index]) return prev
+      updated[index] = { ...updated[index], [key]: value }
+      return updated
+    })
+  }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    toast('Spreadsheet import will replace the current roster. Existing players with match data will be preserved if names match.', { duration: 5000 })
+
     const reader = new FileReader()
     reader.onload = (evt) => {
       const bstr = evt.target?.result
@@ -91,11 +113,33 @@ export default function EditTeamPage() {
       const sheet = wb.Sheets[wb.SheetNames[0]]
       const data: any[] = XLSX.utils.sheet_to_json(sheet)
       const parsedPlayers: PlayerInput[] = data.map((row) => ({
-        name: row.name || row.Name,
-        jersey_number: row.jersey_number || row.Number,
-        position: row.position || row.Position,
+        name: String(row.name || row.Name || ''),
+        jersey_number: Number(row.jersey_number || row.Number || 0) || undefined,
+        position: String(row.position || row.Position || ''),
       }))
-      setPlayers(parsedPlayers)
+
+      // Try to match imported players to existing ones by name to preserve IDs
+      const existingByName = new Map<string, PlayerInput>()
+      players.filter(p => p.id && !p._deleted).forEach(p => {
+        existingByName.set(p.name.toLowerCase().trim(), p)
+      })
+
+      const merged = parsedPlayers.map(imported => {
+        const match = existingByName.get(imported.name.toLowerCase().trim())
+        if (match) {
+          existingByName.delete(imported.name.toLowerCase().trim())
+          return { ...match, ...imported, id: match.id }
+        }
+        return imported
+      })
+
+      // Mark unmatched existing players as deleted
+      const deletedExisting: PlayerInput[] = []
+      for (const remaining of existingByName.values()) {
+        deletedExisting.push({ ...remaining, _deleted: true })
+      }
+
+      setPlayers([...merged, ...deletedExisting])
     }
     reader.readAsBinaryString(file)
   }
@@ -132,6 +176,7 @@ export default function EditTeamPage() {
       uploadedLogoUrl = data.publicUrl
     }
 
+    // 1. Update team info
     const { error: updateError } = await supabase.from('teams')
       .update({ name, logo_url: uploadedLogoUrl || null, coach_name: coachName.trim() || null })
       .eq('id', id)
@@ -142,25 +187,74 @@ export default function EditTeamPage() {
       return
     }
 
-    // Replace existing players
-    await supabase.from('players').delete().eq('team_id', id)
+    // 2. Handle players — update existing, insert new, delete removed
+    const toUpdate: PlayerInput[] = []
+    const toInsert: PlayerInput[] = []
+    const toDelete: string[] = []
 
-    const toInsert = players.filter(p => p.name).map(p => ({
-      team_id: id,
-      name: p.name,
-      jersey_number: p.jersey_number,
-      position: p.position,
-    }))
+    for (const player of players) {
+      if (!player.name?.trim()) continue
 
+      if (player._deleted && player.id) {
+        toDelete.push(player.id)
+      } else if (player.id && originalPlayerIds.has(player.id)) {
+        toUpdate.push(player)
+      } else if (!player.id) {
+        toInsert.push(player)
+      }
+    }
+
+    // Also delete any original players that aren't in the current list at all
+    // (shouldn't happen with soft-delete, but safety net)
+    const currentIds = new Set(players.filter(p => p.id && !p._deleted).map(p => p.id!))
+    for (const origId of originalPlayerIds) {
+      if (!currentIds.has(origId) && !toDelete.includes(origId)) {
+        toDelete.push(origId)
+      }
+    }
+
+    // Delete removed players
+    if (toDelete.length) {
+      const { error } = await supabase
+        .from('players')
+        .delete()
+        .in('id', toDelete)
+      if (error) {
+        toast.error(`Failed to remove ${toDelete.length} player(s)`)
+      }
+    }
+
+    // Update existing players
+    for (const player of toUpdate) {
+      await supabase
+        .from('players')
+        .update({
+          name:          player.name.trim(),
+          jersey_number: player.jersey_number ?? null,
+          position:      player.position || null,
+        })
+        .eq('id', player.id!)
+    }
+
+    // Insert new players
     if (toInsert.length) {
-      const { error: playerError } = await supabase.from('players').insert(toInsert)
-      if (playerError) toast.error('Some players failed to save')
+      const rows = toInsert.map(p => ({
+        team_id:       id,
+        name:          p.name.trim(),
+        jersey_number: p.jersey_number ?? null,
+        position:      p.position || null,
+      }))
+      const { error: playerError } = await supabase.from('players').insert(rows)
+      if (playerError) toast.error('Some new players failed to save')
     }
 
     toast.success('Team updated!')
-    setTimeout(() => router.push('/admin/teams'), 1000)
+    setTimeout(() => router.push('/admin/teams'), 800)
     setLoading(false)
   }
+
+  // Filter out soft-deleted players for display
+  const visiblePlayers = players.filter(p => !p._deleted)
 
   return (
     <div className={styles.formContainer}>
@@ -233,36 +327,40 @@ export default function EditTeamPage() {
 
           <button type="button" onClick={handleAddPlayer} className={styles.secondaryButton}>+ Add Player</button>
 
-          {players.map((player, idx) => (
-            <div key={idx} className={styles.playerRow}>
-              <input
-                type="text"
-                placeholder="Player Name"
-                value={player.name}
-                onChange={(e) => handlePlayerChange(idx, 'name', e.target.value)}
-              />
-              <input
-                type="number"
-                placeholder="#"
-                value={player.jersey_number || ''}
-                onChange={(e) => handlePlayerChange(idx, 'jersey_number', Number(e.target.value))}
-                style={{ maxWidth: '64px' }}
-              />
-              <select
-                value={player.position || ''}
-                onChange={(e) => handlePlayerChange(idx, 'position', e.target.value)}
-                style={{ minWidth: '100px' }}
-              >
-                <option value="">Position</option>
-                {POSITIONS.map((pos) => (
-                  <option key={pos.value} value={pos.value}>{pos.short} – {pos.label}</option>
-                ))}
-              </select>
-              <button type="button" onClick={() => handleRemovePlayer(idx)} className={styles.secondaryButton} style={{ padding: '4px 8px', marginTop: 0, fontSize: '0.78rem' }}>
-                Remove
-              </button>
-            </div>
-          ))}
+          {visiblePlayers.map((player, idx) => {
+            // Map visible index back to actual array index
+            const realIdx = players.indexOf(player)
+            return (
+              <div key={player.id || `new-${idx}`} className={styles.playerRow}>
+                <input
+                  type="text"
+                  placeholder="Player Name"
+                  value={player.name}
+                  onChange={(e) => handlePlayerChange(realIdx, 'name', e.target.value)}
+                />
+                <input
+                  type="number"
+                  placeholder="#"
+                  value={player.jersey_number || ''}
+                  onChange={(e) => handlePlayerChange(realIdx, 'jersey_number', Number(e.target.value))}
+                  style={{ maxWidth: '64px' }}
+                />
+                <select
+                  value={player.position || ''}
+                  onChange={(e) => handlePlayerChange(realIdx, 'position', e.target.value)}
+                  style={{ minWidth: '100px' }}
+                >
+                  <option value="">Position</option>
+                  {POSITIONS.map((pos) => (
+                    <option key={pos.value} value={pos.value}>{pos.short} – {pos.label}</option>
+                  ))}
+                </select>
+                <button type="button" onClick={() => handleRemovePlayer(realIdx)} className={styles.secondaryButton} style={{ padding: '4px 8px', marginTop: 0, fontSize: '0.78rem' }}>
+                  Remove
+                </button>
+              </div>
+            )
+          })}
         </div>
 
         <button type="submit" disabled={loading} className={styles.button}>

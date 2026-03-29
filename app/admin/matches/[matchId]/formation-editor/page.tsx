@@ -123,7 +123,13 @@ export default function FormationEditorPage() {
         .update({ home_formation: homeFormation, away_formation: awayFormation })
         .eq('id', matchId)
 
-      // Save slot assignments
+      // First, clear ALL formation_slot values for this match to remove stale assignments
+      await supabase
+        .from('match_lineups')
+        .update({ formation_slot: null })
+        .eq('match_id', matchId)
+
+      // Then set the new assignments
       for (const [key, playerId] of Object.entries(assignments)) {
         if (!playerId) continue
         const slot = parseInt(key.split('-')[1], 10)
