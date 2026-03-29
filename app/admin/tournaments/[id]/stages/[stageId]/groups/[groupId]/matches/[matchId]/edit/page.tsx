@@ -169,13 +169,19 @@ export default function EditMatchPage() {
       ...benchAway.map(id => ({ id, team: awayTeam.id, is_starting: false }))
     ]
 
-    const rows = allPlayers.map(p => ({
-      match_id: matchId,
-      player_id: p.id,
-      team_id: p.team,
-      is_starting: p.is_starting,
-      ...playerStats[p.id]
-    }))
+    const rows = allPlayers.map(p => {
+      const stats = playerStats[p.id] || {}
+      return {
+        match_id:     matchId,
+        player_id:    p.id,
+        team_id:      p.team,
+        is_starting:  p.is_starting,
+        goals:        stats.goals ?? 0,
+        assists:      stats.assists ?? 0,
+        yellow_cards: stats.yellow_cards ?? 0,
+        red_cards:    stats.red_cards ?? 0,
+      }
+    })
 
     // Delete lineup rows for players that were removed (unchecked from both starter and bench)
     const currentPlayerIds = new Set(allPlayers.map(p => p.id))
@@ -188,13 +194,22 @@ export default function EditMatchPage() {
         .in('player_id', removedIds)
     }
 
+    // Deduplicate rows — a player checked in both starter and bench should only appear once
+    const seen = new Set<string>()
+    const dedupedRows = rows.filter(r => {
+      if (seen.has(r.player_id)) return false
+      seen.add(r.player_id)
+      return true
+    })
+
     // Upsert current selections
-    if (rows.length > 0) {
+    if (dedupedRows.length > 0) {
       const { error: upsertError } = await supabase
         .from('match_lineups')
-        .upsert(rows, { onConflict: 'match_id,player_id' })
+        .upsert(dedupedRows, { onConflict: 'match_id,player_id' })
 
       if (upsertError) {
+        console.error('match_lineups upsert error:', upsertError)
         toast.error('Failed to save player stats')
         return
       }
