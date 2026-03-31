@@ -1,13 +1,17 @@
 // app/page.tsx
 // Public homepage — Server Component.
-// Fetches org settings, upcoming fixtures, recent results and active tournaments.
-// Live matches are rendered by a client island (LiveMatchesIsland) that
-// subscribes to realtime updates independently.
+//
+// Bifurcates at the top:
+//   orgId resolved → org homepage (fixtures, results, tournaments, news)
+//   orgId missing  → platform SaaS landing page (marketing, no org data needed)
+//
+// The org homepage fetches live data; the platform landing is fully static.
 
 import type { Metadata }        from 'next'
 import Link                     from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
+import PlatformLanding                from '@/components/platform/PlatformLanding'
 import LiveMatchesIsland              from '@/components/home/LiveMatchesIsland'
 import MatchCard                      from '@/components/ui/MatchCard'
 import SectionHeader                  from '@/components/ui/SectionHeader'
@@ -48,7 +52,7 @@ interface NewsPost {
 // ── Metadata ──────────────────────────────────────────────────────────────────
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const orgId   = await getOrganizationIdServer()
+    const orgId    = await getOrganizationIdServer()
     const supabase = createServerSupabaseClient()
     const { data } = await supabase
       .from('site_settings')
@@ -64,13 +68,16 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     }
   } catch {
-    return { title: 'Football Live' }
+    return {
+      title:       'Football Live — Launch your football website',
+      description: 'The all-in-one platform for tournament organizers. Live scores, fixtures, standings and more.',
+    }
   }
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default async function HomePage() {
-  // ── Data fetching ────────────────────────────────────────────────────────
+  // Try to resolve an organization. If this throws, render the platform landing page.
   let orgId       = ''
   let siteName    = 'Football Live'
   let siteTagline: string | null = null
@@ -145,10 +152,11 @@ export default async function HomePage() {
     tournaments = (tournamentsRes.data || []) as Tournament[]
     newsPosts   = (newsRes.data        || []) as NewsPost[]
   } catch {
-    // DB not yet connected — render skeleton with empty state
+    // No org resolved — render the platform marketing landing page instead
+    return <PlatformLanding />
   }
 
-  // ── Render ───────────────────────────────────────────────────────────────
+  // ── Org homepage ─────────────────────────────────────────────────────────────
   return (
     <>
       {/* Hero */}
@@ -172,15 +180,14 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Live matches client island — renders nothing when no live match */}
-      {orgId && <LiveMatchesIsland orgId={orgId} />}
+      {/* Live matches client island */}
+      <LiveMatchesIsland orgId={orgId} />
 
       {/* Main content */}
       <main className={styles.main}>
 
         {/* Upcoming Fixtures + Latest Results */}
         <div className={styles.twoCol}>
-          {/* Fixtures */}
           <div>
             <SectionHeader
               title="Upcoming Fixtures"
@@ -189,24 +196,15 @@ export default async function HomePage() {
             />
             <div className={styles.matchStack}>
               {fixtures.length === 0 ? (
-                <EmptyState
-                  icon=""
-                  title="No upcoming fixtures"
-                  compact
-                />
+                <EmptyState icon="" title="No upcoming fixtures" compact />
               ) : (
                 fixtures.map((m) => (
-                  <MatchCard
-                    key={m.id}
-                    {...m as any}
-                    href={`/matches/${m.id}`}
-                  />
+                  <MatchCard key={m.id} {...m as any} href={`/matches/${m.id}`} />
                 ))
               )}
             </div>
           </div>
 
-          {/* Results */}
           <div>
             <SectionHeader
               title="Latest Results"
@@ -215,18 +213,10 @@ export default async function HomePage() {
             />
             <div className={styles.matchStack}>
               {results.length === 0 ? (
-                <EmptyState
-                  icon=""
-                  title="No results yet"
-                  compact
-                />
+                <EmptyState icon="" title="No results yet" compact />
               ) : (
                 results.map((m) => (
-                  <MatchCard
-                    key={m.id}
-                    {...m as any}
-                    href={`/matches/${m.id}`}
-                  />
+                  <MatchCard key={m.id} {...m as any} href={`/matches/${m.id}`} />
                 ))
               )}
             </div>
@@ -238,20 +228,12 @@ export default async function HomePage() {
         {/* Active Tournaments */}
         {tournaments.length > 0 && (
           <section className={styles.tournamentsSection} aria-label="Active tournaments">
-            <SectionHeader
-              title="Tournaments"
-              ctaLabel="View all"
-              ctaHref="/tournaments"
-            />
+            <SectionHeader title="Tournaments" ctaLabel="View all" ctaHref="/tournaments" />
             <div className={styles.tournamentGrid}>
               {tournaments.map((t) => (
                 <Link key={t.id} href={`/tournaments/${t.slug}`} className={styles.tournamentCard}>
                   {t.cover_image_url ? (
-                    <img
-                      src={t.cover_image_url}
-                      alt={t.name}
-                      className={styles.tournamentCover}
-                    />
+                    <img src={t.cover_image_url} alt={t.name} className={styles.tournamentCover} />
                   ) : (
                     <div className={styles.tournamentCoverPlaceholder} aria-hidden="true" />
                   )}
@@ -281,11 +263,7 @@ export default async function HomePage() {
           <>
             <hr className={styles.divider} />
             <section aria-label="Latest news">
-              <SectionHeader
-                title="Latest News"
-                ctaLabel="All news"
-                ctaHref="/news"
-              />
+              <SectionHeader title="Latest News" ctaLabel="All news" ctaHref="/news" />
               <div className={styles.tournamentGrid}>
                 {newsPosts.map((post) => (
                   <Link key={post.id} href={`/news/${post.slug}`} className={styles.tournamentCard}>
@@ -302,7 +280,8 @@ export default async function HomePage() {
                     <div>
                       <div className={styles.tournamentName}>{post.title}</div>
                       {post.excerpt && (
-                        <div className={styles.tournamentMeta}
+                        <div
+                          className={styles.tournamentMeta}
                           style={{
                             display: '-webkit-box',
                             WebkitLineClamp: 2,

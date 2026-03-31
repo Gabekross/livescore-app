@@ -3,8 +3,8 @@
 // components/layouts/PublicFooter.tsx
 // Public site footer. Hides on admin, platform, and auth routes.
 //
-// isOrgSite=true  → shows Contact Us link (org contact email)
-// isOrgSite=false → shows platform marketing links (Sign Up, etc.)
+// isOrgSite=true  → dark footer, tournament links, Contact Us
+// isOrgSite=false → light footer, platform marketing links (Pricing, Sign In, Get Started)
 
 import Link            from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -17,13 +17,21 @@ interface Props {
   isOrgSite:     boolean
 }
 
-const FOOTER_LINKS = [
+const ORG_FOOTER_LINKS = [
   { href: '/matches',     label: 'Matches' },
   { href: '/table',       label: 'Table' },
   { href: '/teams',       label: 'Teams' },
   { href: '/tournaments', label: 'Tournaments' },
   { href: '/news',        label: 'News' },
   { href: '/archive',     label: 'Archive' },
+]
+
+const PLATFORM_FOOTER_LINKS = [
+  { href: '/#features',     label: 'Features' },
+  { href: '/#how-it-works', label: 'How it Works' },
+  { href: '/#pricing',      label: 'Pricing' },
+  { href: '/login',         label: 'Sign In' },
+  { href: '/signup',        label: 'Get Started' },
 ]
 
 export default function PublicFooter({ siteName, footerText, contactEmail, isOrgSite }: Props) {
@@ -34,24 +42,31 @@ export default function PublicFooter({ siteName, footerText, contactEmail, isOrg
   if (hideOn.some((p) => pathname === p || pathname.startsWith(p + '/'))) return null
 
   const year = new Date().getFullYear()
+  const footerLinks = isOrgSite ? ORG_FOOTER_LINKS : PLATFORM_FOOTER_LINKS
+  const footerClass = `${styles.footer} ${!isOrgSite ? styles.footerPlatform : ''}`
 
   return (
-    <footer className={styles.footer}>
+    <footer className={footerClass}>
       <div className={styles.inner}>
-        <div className={styles.brand}>
+        <div className={`${styles.brand} ${!isOrgSite ? styles.brandPlatform : ''}`}>
           <span className={styles.brandEmoji}>&#9917;</span>
-          {siteName}
+          {isOrgSite ? siteName : 'Football Live'}
         </div>
 
         <ul className={styles.links} role="list">
-          {FOOTER_LINKS.map(({ href, label }) => (
+          {footerLinks.map(({ href, label }) => (
             <li key={href}>
-              <Link href={href}>{label}</Link>
+              <Link
+                href={href}
+                className={!isOrgSite ? styles.platformLink : undefined}
+              >
+                {label}
+              </Link>
             </li>
           ))}
         </ul>
 
-        {/* Contact Us — shown on org sites */}
+        {/* Contact Us — shown on org sites with an email */}
         {isOrgSite && contactEmail && (
           <div className={styles.contact}>
             <a href={`mailto:${contactEmail}`} className={styles.contactLink}>
@@ -60,17 +75,8 @@ export default function PublicFooter({ siteName, footerText, contactEmail, isOrg
           </div>
         )}
 
-        {/* Platform CTA — shown only on generic platform pages */}
-        {!isOrgSite && (
-          <div className={styles.contact}>
-            <Link href="/signup" className={styles.contactLink}>
-              Create Your Site
-            </Link>
-          </div>
-        )}
-
-        <p className={styles.copy}>
-          {footerText || `\u00A9 ${year} ${siteName}. All rights reserved.`}
+        <p className={`${styles.copy} ${!isOrgSite ? styles.copyPlatform : ''}`}>
+          {footerText || `\u00A9 ${year} ${isOrgSite ? siteName : 'Football Live'}. All rights reserved.`}
         </p>
       </div>
     </footer>

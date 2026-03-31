@@ -68,3 +68,25 @@
     text-align: right;
   }
 }
+
+/* ── Platform (light) footer overrides ──────────────────────── */
+.footerPlatform {
+  background-color: #f1f5f9;
+  border-top-color: #e2e8f0;
+  margin-top: 0;
+}
+
+.brandPlatform {
+  color: #0f172a;
+}
+
+.platformLink {
+  color: #64748b !important;
+  transition: color 150ms ease;
+
+  &:hover { color: #0f172a !important; }
+}
+
+.copyPlatform {
+  color: #94a3b8;
+}

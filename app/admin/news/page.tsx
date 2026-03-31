@@ -100,6 +100,7 @@ export default function AdminNewsPage() {
           </Link>
         </p>
       ) : (
+        <div className={styles.tableWrapper}>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -161,6 +162,7 @@ export default function AdminNewsPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   )

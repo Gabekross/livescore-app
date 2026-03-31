@@ -146,6 +146,7 @@ export default function PlayerStatsPage() {
           No stats available yet. Player statistics will appear here once matches have been played.
         </div>
       ) : (
+        <div className={styles.tableWrapper}>
         <table className={styles.statsTable}>
           <thead>
             <tr>
@@ -172,6 +173,7 @@ export default function PlayerStatsPage() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   )

@@ -1,0 +1,1404 @@
+// PlatformLanding.module.scss
+// Light-theme SaaS marketing page.
+// Uses direct hex values — does NOT inherit dark globals.css variables.
+// Note: @extend is avoided due to SCSS modules variable scoping issues.
+
+// ── Shared values ──────────────────────────────────────────────────────────────
+// Colours
+$blue:        #2563eb;
+$blue-dark:   #1d4ed8;
+$blue-bg:     #eff6ff;
+$blue-border: #bfdbfe;
+$navy:        #0f172a;
+$navy-hero:   #0c1829;
+$navy-card:   #162847;
+$navy-mid:    #1e3a5f;
+$slate:       #334155;
+$muted:       #64748b;
+$border:      #e2e8f0;
+$border-med:  #cbd5e1;
+$bg-light:    #f8fafc;
+$bg-slate:    #f1f5f9;
+$green:       #059669;
+
+// Shadows
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+$shadow-md: 0 4px 12px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.04);
+$shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
+
+// ── Page wrapper ───────────────────────────────────────────────────────────────
+.page {
+  background:              #ffffff;
+  min-height:              100vh;
+  font-family:             'Inter', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing:  antialiased;
+  color:                   $navy;
+}
+
+.container {
+  max-width: 1120px;
+  margin:    0 auto;
+  padding:   0 1.5rem;
+}
+
+// ── Shared section typography ──────────────────────────────────────────────────
+.sectionTag {
+  display:        inline-block;
+  font-size:      0.72rem;
+  font-weight:    700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color:          $blue;
+  background:     $blue-bg;
+  border:         1px solid $blue-border;
+  border-radius:  9999px;
+  padding:        0.3rem 0.85rem;
+  margin-bottom:  1rem;
+}
+
+.sectionTitle {
+  font-size:      clamp(1.75rem, 3.5vw, 2.5rem);
+  font-weight:    800;
+  line-height:    1.15;
+  letter-spacing: -0.03em;
+  color:          $navy;
+  margin-bottom:  0.75rem;
+}
+
+.sectionSub {
+  font-size:   1.05rem;
+  color:       $muted;
+  line-height: 1.65;
+  max-width:   600px;
+}
+
+.sectionHeader {
+  margin-bottom: 3rem;
+}
+
+.sectionHeaderCenter {
+  margin-bottom: 3rem;
+  text-align:    center;
+
+  .sectionSub { margin: 0 auto; }
+}
+
+// ── 1. HERO ───────────────────────────────────────────────────────────────────
+.hero {
+  background: linear-gradient(160deg, #f0f6ff 0%, #ffffff 50%, #f8fafc 100%);
+  padding:    calc(60px + 5rem) 1.5rem 5rem;
+  position:   relative;
+  overflow:   hidden;
+
+  &::before {
+    content:        '';
+    position:       absolute;
+    top:            -40%;
+    right:          -20%;
+    width:          700px;
+    height:         700px;
+    border-radius:  50%;
+    background:     radial-gradient(circle, rgba(37, 99, 235, 0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+.heroInner {
+  max-width:    1120px;
+  margin:       0 auto;
+  display:      grid;
+  grid-template-columns: 1fr 1fr;
+  align-items:  center;
+  gap:          4rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap:        3rem;
+    text-align: center;
+  }
+}
+
+.heroText { max-width: 560px; }
+
+.heroBadge {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            0.4rem;
+  font-size:      0.78rem;
+  font-weight:    700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color:          $blue;
+  background:     $blue-bg;
+  border:         1px solid $blue-border;
+  border-radius:  9999px;
+  padding:        0.35rem 0.9rem;
+  margin-bottom:  1.25rem;
+}
+
+.heroTitle {
+  font-size:      clamp(2.4rem, 5vw, 3.6rem);
+  font-weight:    900;
+  line-height:    1.1;
+  letter-spacing: -0.04em;
+  color:          $navy;
+  margin-bottom:  1.25rem;
+
+  span { color: $blue; }
+}
+
+.heroSub {
+  font-size:    1.1rem;
+  color:        $slate;
+  line-height:  1.7;
+  margin-bottom: 2rem;
+  max-width:    500px;
+}
+
+.heroCtas {
+  display:     flex;
+  gap:         0.75rem;
+  flex-wrap:   wrap;
+  margin-bottom: 1rem;
+
+  @media (max-width: 900px) { justify-content: center; }
+}
+
+.ctaPrimary {
+  display:      inline-flex;
+  align-items:  center;
+  padding:      0.75rem 1.75rem;
+  background:   $blue;
+  color:        #ffffff;
+  font-size:    0.92rem;
+  font-weight:  700;
+  border-radius: 9999px;
+  box-shadow:   0 4px 14px rgba(37, 99, 235, 0.3);
+  transition:   background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
+
+  &:hover {
+    background:   $blue-dark;
+    transform:    translateY(-1px);
+    box-shadow:   0 6px 20px rgba(37, 99, 235, 0.38);
+  }
+}
+
+.ctaSecondary {
+  display:      inline-flex;
+  align-items:  center;
+  padding:      0.75rem 1.75rem;
+  background:   #ffffff;
+  color:        $navy;
+  font-size:    0.92rem;
+  font-weight:  600;
+  border-radius: 9999px;
+  border:       1.5px solid $border;
+  transition:   border-color 150ms ease, background 150ms ease, color 150ms ease;
+
+  &:hover {
+    border-color: $blue;
+    background:   $blue-bg;
+    color:        $blue;
+  }
+}
+
+.heroNote {
+  font-size: 0.78rem;
+  color:     $muted;
+
+  @media (max-width: 900px) { text-align: center; }
+}
+
+.heroVisual {
+  position: relative;
+
+  @media (max-width: 900px) {
+    max-width: 480px;
+    margin:    0 auto;
+  }
+}
+
+// ── Browser mockup (hero + demo section) ──────────────────────────────────────
+.browserMockup {
+  background:    #ffffff;
+  border-radius: 12px;
+  border:        1px solid $border;
+  box-shadow:    $shadow-lg;
+  overflow:      hidden;
+}
+
+.browserBar {
+  display:       flex;
+  align-items:   center;
+  gap:           0.6rem;
+  padding:       0.6rem 0.85rem;
+  background:    $bg-light;
+  border-bottom: 1px solid $border;
+}
+
+.browserDots {
+  display: flex;
+  gap:     5px;
+
+  &::before, &::after, span {
+    content:       '';
+    display:       block;
+    width:         10px;
+    height:        10px;
+    border-radius: 50%;
+  }
+
+  &::before { background: #fc5c63; }
+  &::after  { background: #fdc043; }
+  span      { background: #29d063; }
+}
+
+.browserUrl {
+  flex:          1;
+  font-size:     0.7rem;
+  color:         $muted;
+  background:    #ffffff;
+  border:        1px solid $border;
+  border-radius: 6px;
+  padding:       0.2rem 0.65rem;
+  font-family:   monospace;
+  text-align:    center;
+}
+
+.browserContent {
+  background: $navy-card;
+  padding:    1rem;
+  min-height: 280px;
+}
+
+// Mini product preview inside hero browser mockup
+.previewNav {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0.5rem 0.75rem;
+  background:      rgba(255, 255, 255, 0.06);
+  border-radius:   7px;
+  margin-bottom:   0.85rem;
+}
+
+.previewNavBrand {
+  font-size:  0.72rem;
+  font-weight: 700;
+  color:      #ffffff;
+}
+
+.previewNavLinks {
+  display: flex;
+  gap:     0.6rem;
+
+  span {
+    font-size: 0.6rem;
+    color:     rgba(255, 255, 255, 0.5);
+  }
+}
+
+.previewLiveChip {
+  font-size:      0.55rem;
+  font-weight:    800;
+  color:          #ef4444;
+  background:     rgba(239, 68, 68, 0.12);
+  border:         1px solid rgba(239, 68, 68, 0.3);
+  border-radius:  4px;
+  padding:        0.15rem 0.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.previewMatchCard {
+  background:    rgba(255, 255, 255, 0.06);
+  border:        1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding:       0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.previewMatchMeta {
+  font-size:      0.6rem;
+  color:          rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom:  0.5rem;
+  display:        flex;
+  align-items:    center;
+  justify-content: space-between;
+}
+
+.previewMatchRow {
+  display:     flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.previewTeam {
+  font-size:  0.68rem;
+  font-weight: 600;
+  color:      rgba(255, 255, 255, 0.9);
+  flex:       1;
+}
+
+.previewTeamRight { text-align: right; }
+
+.previewScores {
+  font-size:  1rem;
+  font-weight: 900;
+  color:      #ffffff;
+  display:    flex;
+  align-items: center;
+  gap:        0.35rem;
+  padding:    0 0.5rem;
+
+  span:nth-child(2) {
+    color:     rgba(255, 255, 255, 0.3);
+    font-size: 0.7rem;
+  }
+}
+
+.previewStandings {
+  background:    rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  padding:       0.5rem 0.6rem;
+}
+
+.previewStandingsTitle {
+  font-size:      0.58rem;
+  font-weight:    700;
+  color:          rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom:  0.5rem;
+}
+
+.previewStandingsRow {
+  display:     flex;
+  align-items: center;
+  gap:         0.4rem;
+  padding:     0.2rem 0;
+
+  &:not(:last-child) { border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
+}
+
+.previewStandingsPos {
+  font-size: 0.6rem;
+  color:     rgba(255, 255, 255, 0.35);
+  width:     14px;
+}
+
+.previewStandingsTeam {
+  font-size:  0.62rem;
+  color:      rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  flex:       1;
+}
+
+.previewStandingsStats {
+  display: flex;
+  gap:     0.5rem;
+
+  span {
+    font-size:  0.6rem;
+    color:      rgba(255, 255, 255, 0.4);
+    width:      16px;
+    text-align: right;
+  }
+}
+
+.previewPts {
+  font-size:  0.62rem !important;
+  font-weight: 700 !important;
+  color:      rgba(255, 255, 255, 0.85) !important;
+}
+
+// ── 2. TRUST BAR ──────────────────────────────────────────────────────────────
+.trustBar {
+  background:    $bg-slate;
+  border-top:    1px solid $border;
+  border-bottom: 1px solid $border;
+  padding:       1.25rem 1.5rem;
+}
+
+.trustBarInner {
+  max-width:       1120px;
+  margin:          0 auto;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  gap:             2rem;
+  flex-wrap:       wrap;
+}
+
+.trustLabel {
+  font-size:      0.75rem;
+  font-weight:    600;
+  color:          $muted;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space:    nowrap;
+}
+
+.trustNames {
+  display:        flex;
+  gap:            1.5rem;
+  flex-wrap:      wrap;
+  justify-content: center;
+
+  span {
+    font-size:  0.82rem;
+    font-weight: 600;
+    color:      $slate;
+  }
+}
+
+// ── 3. PRODUCT SHOWCASE ───────────────────────────────────────────────────────
+.showcaseSection {
+  padding:    5rem 1.5rem;
+  background: #ffffff;
+}
+
+.showcaseGrid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   1.25rem;
+
+  @media (max-width: 900px)  { grid-template-columns: 1fr; }
+  @media (min-width: 640px) and (max-width: 900px) { grid-template-columns: 1fr 1fr; }
+}
+
+.showcaseCard {
+  border-radius: 14px;
+  overflow:      hidden;
+  border:        1px solid $border;
+  box-shadow:    $shadow-md;
+  transition:    transform 200ms ease, box-shadow 200ms ease;
+
+  &:hover {
+    transform:  translateY(-3px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+.showcaseCardHeader {
+  padding:         0.65rem 0.9rem;
+  background:      $bg-light;
+  border-bottom:   1px solid $border;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+}
+
+.showcaseCardLabel {
+  font-size:      0.7rem;
+  font-weight:    700;
+  color:          $muted;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+// Demo match card
+.demoMatchBody {
+  background: $navy-card;
+  padding:    1.25rem 1rem;
+}
+
+.demoMatchMeta {
+  font-size:      0.62rem;
+  color:          rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom:  0.85rem;
+  display:        flex;
+  align-items:    center;
+  justify-content: space-between;
+}
+
+.demoLive {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            0.25rem;
+  font-size:      0.6rem;
+  font-weight:    800;
+  color:          #ef4444;
+  background:     rgba(239, 68, 68, 0.12);
+  border:         1px solid rgba(239, 68, 68, 0.25);
+  border-radius:  4px;
+  padding:        0.15rem 0.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  &::before { content: '●'; font-size: 0.55rem; }
+}
+
+.demoMatchScoreRow {
+  display:      flex;
+  align-items:  center;
+  justify-content: space-between;
+  gap:          0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.demoTeamName {
+  font-size:  0.75rem;
+  font-weight: 700;
+  color:      rgba(255, 255, 255, 0.9);
+  flex:       1;
+}
+
+.demoTeamNameR { text-align: right; }
+
+.demoScoreBox {
+  display:       flex;
+  align-items:   center;
+  gap:           0.35rem;
+  background:    rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding:       0.3rem 0.65rem;
+
+  span:nth-child(1),
+  span:nth-child(3) {
+    font-size:  1.1rem;
+    font-weight: 900;
+    color:      #ffffff;
+  }
+
+  span:nth-child(2) {
+    font-size: 0.7rem;
+    color:     rgba(255, 255, 255, 0.35);
+  }
+}
+
+.demoMatchEvents {
+  display:        flex;
+  justify-content: space-between;
+  font-size:      0.62rem;
+  color:          rgba(255, 255, 255, 0.5);
+}
+
+// Demo standings card
+.demoStandingsBody {
+  background: #ffffff;
+  padding:    1rem;
+}
+
+.demoTable {
+  width:           100%;
+  border-collapse: collapse;
+  font-size:       0.72rem;
+
+  th {
+    color:          $muted;
+    font-weight:    600;
+    text-align:     left;
+    padding:        0.25rem 0.35rem;
+    border-bottom:  1px solid $border;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size:      0.62rem;
+  }
+
+  td {
+    padding:       0.45rem 0.35rem;
+    color:         $slate;
+    border-bottom: 1px solid $bg-light;
+  }
+
+  tr:first-child td { color: $navy; font-weight: 700; }
+}
+
+.demoPos { color: $muted; }
+.demoPts { font-weight: 800 !important; color: $navy !important; }
+
+// Demo team card
+.demoTeamBody {
+  background: #ffffff;
+  padding:    1.25rem 1rem;
+}
+
+.demoTeamHeader {
+  display:       flex;
+  align-items:   center;
+  gap:           0.85rem;
+  margin-bottom: 1rem;
+}
+
+.demoTeamAvatar {
+  width:           48px;
+  height:          48px;
+  border-radius:   50%;
+  background:      $blue-bg;
+  border:          2px solid $blue-border;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       1.1rem;
+  font-weight:     900;
+  color:           $blue;
+  flex-shrink:     0;
+}
+
+.demoTeamInfo {
+  h4 {
+    font-size:    0.88rem;
+    font-weight:  800;
+    color:        $navy;
+    margin-bottom: 0.15rem;
+  }
+
+  span {
+    font-size: 0.68rem;
+    color:     $muted;
+  }
+}
+
+.demoTeamStats {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   0.5rem;
+}
+
+.demoStatBox {
+  background:    $bg-light;
+  border-radius: 7px;
+  padding:       0.5rem;
+  text-align:    center;
+}
+
+.demoStatNum {
+  font-size:  1rem;
+  font-weight: 900;
+  color:      $navy;
+  display:    block;
+}
+
+.demoStatLabel {
+  font-size:      0.58rem;
+  color:          $muted;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// ── 4. WHO IT'S FOR ───────────────────────────────────────────────────────────
+.whoSection {
+  padding:    5rem 1.5rem;
+  background: $bg-slate;
+}
+
+.whoGrid {
+  display:               grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap:                   1rem;
+
+  @media (max-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 640px)  { grid-template-columns: repeat(2, 1fr); }
+}
+
+.whoCard {
+  background:    #ffffff;
+  border:        1px solid $border;
+  border-radius: 12px;
+  padding:       1.25rem 1rem;
+  text-align:    center;
+  box-shadow:    $shadow-sm;
+  transition:    transform 200ms ease, box-shadow 200ms ease;
+
+  &:hover {
+    transform:  translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.whoIcon {
+  font-size:     1.75rem;
+  margin-bottom: 0.65rem;
+  display:       block;
+}
+
+.whoName {
+  font-size:  0.82rem;
+  font-weight: 700;
+  color:      $navy;
+  line-height: 1.3;
+}
+
+// ── 5. HOW IT WORKS ───────────────────────────────────────────────────────────
+.howSection {
+  padding:    5rem 1.5rem;
+  background: #ffffff;
+}
+
+.howSteps {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   2rem;
+  position:              relative;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; gap: 1.5rem; }
+
+  &::before {
+    content:    '';
+    position:   absolute;
+    top:        28px;
+    left:       calc(100% / 6);
+    right:      calc(100% / 6);
+    height:     1px;
+    background: linear-gradient(90deg, #{$border} 0%, #{$blue-border} 50%, #{$border} 100%);
+
+    @media (max-width: 768px) { display: none; }
+  }
+}
+
+.howStep {
+  text-align: center;
+  position:   relative;
+}
+
+.howStepNumber {
+  width:           56px;
+  height:          56px;
+  border-radius:   50%;
+  background:      $blue;
+  color:           #ffffff;
+  font-size:       1.1rem;
+  font-weight:     900;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  margin:          0 auto 1.25rem;
+  box-shadow:      0 4px 14px rgba(37, 99, 235, 0.3);
+  position:        relative;
+  z-index:         1;
+}
+
+.howStepTitle {
+  font-size:    1.05rem;
+  font-weight:  800;
+  color:        $navy;
+  margin-bottom: 0.5rem;
+}
+
+.howStepText {
+  font-size:  0.88rem;
+  color:      $muted;
+  line-height: 1.6;
+}
+
+// ── 6. WHAT YOUR SITE INCLUDES ────────────────────────────────────────────────
+.includesSection {
+  padding:    5rem 1.5rem;
+  background: $bg-light;
+}
+
+.includesGrid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   1.25rem;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.includesCard {
+  background:    #ffffff;
+  border:        1px solid $border;
+  border-radius: 12px;
+  padding:       1.5rem;
+  box-shadow:    $shadow-sm;
+  transition:    border-color 200ms ease, box-shadow 200ms ease;
+
+  &:hover {
+    border-color: $blue-border;
+    box-shadow:   $shadow-md;
+  }
+}
+
+.includesIcon {
+  font-size:     1.5rem;
+  margin-bottom: 0.75rem;
+  display:       block;
+}
+
+.includesTitle {
+  font-size:    0.95rem;
+  font-weight:  800;
+  color:        $navy;
+  margin-bottom: 0.4rem;
+}
+
+.includesText {
+  font-size:  0.82rem;
+  color:      $muted;
+  line-height: 1.55;
+}
+
+// ── 7. BUILT FOR MATCH DAY ────────────────────────────────────────────────────
+.matchDaySection {
+  padding:    5rem 1.5rem;
+  background: $navy-hero;
+  position:   relative;
+  overflow:   hidden;
+
+  &::before {
+    content:        '';
+    position:       absolute;
+    top:            -60%;
+    left:           -20%;
+    width:          600px;
+    height:         600px;
+    border-radius:  50%;
+    background:     radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .sectionTag {
+    background:   rgba(37, 99, 235, 0.15);
+    border-color: rgba(37, 99, 235, 0.3);
+    color:        #93c5fd;
+  }
+
+  .sectionTitle { color: #ffffff; }
+  .sectionSub   { color: rgba(255, 255, 255, 0.6); }
+}
+
+.matchDayGrid {
+  display:               grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:                   1.25rem;
+  margin-top:            3rem;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.matchDayCard {
+  background:    rgba(255, 255, 255, 0.05);
+  border:        1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding:       1.5rem;
+  transition:    background 200ms ease, border-color 200ms ease;
+
+  &:hover {
+    background:   rgba(255, 255, 255, 0.08);
+    border-color: rgba(37, 99, 235, 0.35);
+  }
+}
+
+.matchDayCardIcon {
+  font-size:     1.5rem;
+  margin-bottom: 0.85rem;
+  display:       block;
+}
+
+.matchDayCardTitle {
+  font-size:    1rem;
+  font-weight:  800;
+  color:        #ffffff;
+  margin-bottom: 0.45rem;
+}
+
+.matchDayCardText {
+  font-size:  0.85rem;
+  color:      rgba(255, 255, 255, 0.55);
+  line-height: 1.6;
+}
+
+// ── 8. DEMO / DEVICE MOCKUP ───────────────────────────────────────────────────
+.demoSection {
+  padding:    5rem 1.5rem;
+  background: #ffffff;
+}
+
+.demoDevices {
+  display:               grid;
+  grid-template-columns: 1fr 2fr;
+  gap:                   2.5rem;
+  align-items:           center;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+}
+
+.demoDevicesReversed {
+  display:               grid;
+  grid-template-columns: 2fr 1fr;
+  gap:                   2.5rem;
+  align-items:           center;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+}
+
+// Phone mockup
+.phoneMockup {
+  max-width: 220px;
+  margin:    0 auto;
+}
+
+.phoneFrame {
+  background:    $navy;
+  border-radius: 36px;
+  padding:       10px;
+  box-shadow:    0 20px 60px rgba(0, 0, 0, 0.25), 0 8px 20px rgba(0, 0, 0, 0.15);
+  border:        1px solid rgba(255, 255, 255, 0.07);
+}
+
+.phoneNotch {
+  width:         70px;
+  height:        20px;
+  background:    $navy;
+  border-radius: 0 0 14px 14px;
+  margin:        0 auto 8px;
+  position:      relative;
+  z-index:       2;
+}
+
+.phoneScreen {
+  background:    $navy-card;
+  border-radius: 28px;
+  overflow:      hidden;
+  aspect-ratio:  9/19;
+}
+
+.videoPlaceholder {
+  width:           100%;
+  height:          100%;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             0.6rem;
+  background:      linear-gradient(160deg, #{$navy-card} 0%, #{$navy-mid} 100%);
+  cursor:          pointer;
+  transition:      opacity 200ms ease;
+
+  &:hover { opacity: 0.9; }
+}
+
+.playBtn {
+  width:           44px;
+  height:          44px;
+  border-radius:   50%;
+  background:      rgba(255, 255, 255, 0.15);
+  border:          2px solid rgba(255, 255, 255, 0.3);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       1rem;
+  color:           #ffffff;
+  flex-shrink:     0;
+}
+
+.videoLabel {
+  font-size:  0.65rem;
+  font-weight: 600;
+  color:      rgba(255, 255, 255, 0.6);
+  text-align: center;
+  padding:    0 0.75rem;
+  line-height: 1.4;
+}
+
+// Browser mockup for demo section
+.demoBrowserMockup {
+  background:    #ffffff;
+  border-radius: 12px;
+  border:        1px solid $border;
+  box-shadow:    $shadow-lg;
+  overflow:      hidden;
+}
+
+.demoBrowserContent {
+  background:    $navy-card;
+  padding:       1.25rem;
+  aspect-ratio:  16/10;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+}
+
+.demoTextBlock {
+  max-width: 400px;
+
+  @media (max-width: 768px) { text-align: center; }
+}
+
+.demoTextTag {
+  display:        inline-block;
+  font-size:      0.72rem;
+  font-weight:    700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color:          $blue;
+  background:     $blue-bg;
+  border:         1px solid $blue-border;
+  border-radius:  9999px;
+  padding:        0.3rem 0.85rem;
+  margin-bottom:  0.85rem;
+}
+
+.demoTextTitle {
+  font-size:    1.35rem;
+  font-weight:  800;
+  color:        $navy;
+  line-height:  1.25;
+  margin-bottom: 0.75rem;
+}
+
+.demoTextBody {
+  font-size:  0.9rem;
+  color:      $muted;
+  line-height: 1.65;
+}
+
+// ── 9. FEATURE HIGHLIGHTS ─────────────────────────────────────────────────────
+.featuresSection {
+  padding:    5rem 1.5rem;
+  background: $bg-slate;
+}
+
+.featuresGrid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   1.25rem;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.featureCard {
+  background:    #ffffff;
+  border:        1px solid $border;
+  border-radius: 14px;
+  padding:       1.5rem;
+  box-shadow:    $shadow-sm;
+  transition:    border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+
+  &:hover {
+    border-color: $blue-border;
+    transform:    translateY(-2px);
+    box-shadow:   $shadow-md;
+  }
+}
+
+.featureCardIcon {
+  width:           42px;
+  height:          42px;
+  border-radius:   10px;
+  background:      $blue-bg;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  font-size:       1.1rem;
+  margin-bottom:   1rem;
+}
+
+.featureCardTitle {
+  font-size:    0.95rem;
+  font-weight:  800;
+  color:        $navy;
+  margin-bottom: 0.4rem;
+}
+
+.featureCardText {
+  font-size:  0.82rem;
+  color:      $muted;
+  line-height: 1.55;
+}
+
+// ── 10. PRICING ───────────────────────────────────────────────────────────────
+.pricingSection {
+  padding:    5rem 1.5rem;
+  background: #ffffff;
+}
+
+.pricingComingSoonWrap { text-align: center; }
+
+.pricingComingSoon {
+  text-align:    center;
+  margin-bottom: 2.5rem;
+  padding:       0.6rem 1.25rem;
+  background:    $bg-light;
+  border:        1px dashed $border-med;
+  border-radius: 9999px;
+  display:       inline-block;
+  font-size:     0.78rem;
+  color:         $muted;
+  font-weight:   600;
+}
+
+.pricingGrid {
+  display:               grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:                   1.5rem;
+  margin-top:            2.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    max-width:             440px;
+    margin-left:           auto;
+    margin-right:          auto;
+  }
+}
+
+.pricingCard {
+  background:    #ffffff;
+  border:        1.5px solid $border;
+  border-radius: 16px;
+  padding:       2rem 1.75rem;
+  position:      relative;
+  box-shadow:    $shadow-sm;
+  transition:    border-color 200ms ease, box-shadow 200ms ease;
+
+  &:hover {
+    border-color: $blue-border;
+    box-shadow:   $shadow-md;
+  }
+}
+
+.pricingCardFeatured {
+  background:    #ffffff;
+  border:        1.5px solid $blue;
+  border-radius: 16px;
+  padding:       2rem 1.75rem;
+  position:      relative;
+  box-shadow:    0 0 0 4px rgba(37, 99, 235, 0.08), #{$shadow-md};
+  transition:    border-color 200ms ease, box-shadow 200ms ease;
+
+  &:hover {
+    border-color: $blue-dark;
+    box-shadow:   0 0 0 4px rgba(37, 99, 235, 0.12), #{$shadow-lg};
+  }
+}
+
+.pricingBadge {
+  position:       absolute;
+  top:            -12px;
+  left:           50%;
+  transform:      translateX(-50%);
+  font-size:      0.68rem;
+  font-weight:    800;
+  color:          #ffffff;
+  background:     $blue;
+  border-radius:  9999px;
+  padding:        0.2rem 0.85rem;
+  white-space:    nowrap;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pricingPlanName {
+  font-size:      0.78rem;
+  font-weight:    700;
+  color:          $blue;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom:  0.5rem;
+}
+
+.pricingPrice {
+  font-size:    2rem;
+  font-weight:  900;
+  color:        $navy;
+  line-height:  1;
+  margin-bottom: 0.3rem;
+
+  span {
+    font-size:  1rem;
+    font-weight: 600;
+    color:      $muted;
+  }
+}
+
+.pricingPriceSub {
+  font-size:     0.78rem;
+  color:         $muted;
+  margin-bottom: 1.5rem;
+  font-style:    italic;
+}
+
+.pricingFeatures {
+  list-style: none;
+  padding:    0;
+  margin:     0 0 1.75rem;
+  display:    flex;
+  flex-direction: column;
+  gap:        0.5rem;
+
+  li {
+    display:     flex;
+    align-items: flex-start;
+    gap:         0.5rem;
+    font-size:   0.85rem;
+    color:       $slate;
+    line-height: 1.5;
+
+    &::before {
+      content:    '✓';
+      color:      $green;
+      font-weight: 800;
+      font-size:  0.82rem;
+      flex-shrink: 0;
+      margin-top: 0.1em;
+    }
+  }
+}
+
+.pricingBtnPrimary {
+  display:       block;
+  text-align:    center;
+  padding:       0.7rem 1.25rem;
+  font-size:     0.88rem;
+  font-weight:   700;
+  border-radius: 9999px;
+  background:    $blue;
+  color:         #ffffff;
+  box-shadow:    0 4px 12px rgba(37, 99, 235, 0.25);
+  transition:    all 150ms ease;
+
+  &:hover {
+    background: $blue-dark;
+    transform:  translateY(-1px);
+  }
+}
+
+.pricingBtnOutline {
+  display:       block;
+  text-align:    center;
+  padding:       0.7rem 1.25rem;
+  font-size:     0.88rem;
+  font-weight:   700;
+  border-radius: 9999px;
+  background:    transparent;
+  color:         $navy;
+  border:        1.5px solid $border;
+  transition:    all 150ms ease;
+
+  &:hover {
+    border-color: $blue;
+    color:        $blue;
+    background:   $blue-bg;
+  }
+}
+
+// ── 11. FAQ ───────────────────────────────────────────────────────────────────
+.faqSection {
+  padding:    5rem 1.5rem;
+  background: $bg-slate;
+}
+
+.faqGrid {
+  display:               grid;
+  grid-template-columns: 1fr 1fr;
+  gap:                   1.25rem;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+}
+
+.faqItem {
+  background:    #ffffff;
+  border:        1px solid $border;
+  border-radius: 12px;
+  padding:       1.5rem;
+  box-shadow:    $shadow-sm;
+}
+
+.faqQuestion {
+  font-size:    0.92rem;
+  font-weight:  800;
+  color:        $navy;
+  margin-bottom: 0.6rem;
+  line-height:  1.35;
+}
+
+.faqAnswer {
+  font-size:  0.85rem;
+  color:      $muted;
+  line-height: 1.65;
+}
+
+// ── 12. FINAL CTA ─────────────────────────────────────────────────────────────
+.finalCta {
+  padding:    5rem 1.5rem;
+  background: $navy-hero;
+  text-align: center;
+  position:   relative;
+  overflow:   hidden;
+
+  &::before {
+    content:        '';
+    position:       absolute;
+    top:            -50%;
+    left:           50%;
+    transform:      translateX(-50%);
+    width:          800px;
+    height:         500px;
+    border-radius:  50%;
+    background:     radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+.finalCtaInner {
+  max-width: 640px;
+  margin:    0 auto;
+  position:  relative;
+  z-index:   1;
+}
+
+.finalCtaTitle {
+  font-size:      clamp(1.75rem, 4vw, 2.75rem);
+  font-weight:    900;
+  color:          #ffffff;
+  letter-spacing: -0.03em;
+  line-height:    1.15;
+  margin-bottom:  1rem;
+}
+
+.finalCtaSub {
+  font-size:     1.05rem;
+  color:         rgba(255, 255, 255, 0.6);
+  line-height:   1.65;
+  margin-bottom: 2.5rem;
+}
+
+.finalCtaBtns {
+  display:         flex;
+  gap:             0.85rem;
+  justify-content: center;
+  flex-wrap:       wrap;
+}
+
+.finalCtaBtnPrimary {
+  display:      inline-flex;
+  align-items:  center;
+  padding:      0.9rem 2.25rem;
+  background:   $blue;
+  color:        #ffffff;
+  font-size:    1rem;
+  font-weight:  700;
+  border-radius: 9999px;
+  box-shadow:   0 4px 14px rgba(37, 99, 235, 0.3);
+  transition:   background 150ms ease, transform 150ms ease;
+
+  &:hover {
+    background: $blue-dark;
+    transform:  translateY(-1px);
+  }
+}
+
+.finalCtaBtnSecondary {
+  display:      inline-flex;
+  align-items:  center;
+  padding:      0.9rem 2.25rem;
+  background:   rgba(255, 255, 255, 0.07);
+  color:        rgba(255, 255, 255, 0.85);
+  font-size:    1rem;
+  font-weight:  600;
+  border-radius: 9999px;
+  border:       1.5px solid rgba(255, 255, 255, 0.15);
+  transition:   background 150ms ease, border-color 150ms ease;
+
+  &:hover {
+    background:   rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+}

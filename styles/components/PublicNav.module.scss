@@ -168,3 +168,56 @@
   color:            var(--color-text, #e8e8f4) !important;
   background-color: var(--color-accent-dim, rgba(37, 99, 235, 0.15));
 }
+
+/* ── Platform (light) nav overrides ─────────────────────────── */
+/* Applied when isOrgSite=false — replaces dark theme vars with light values */
+
+.navPlatform {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-bottom-color: #e2e8f0;
+  backdrop-filter: blur(12px);
+}
+
+.brandPlatform {
+  color: #0f172a;
+  &:hover { opacity: 0.8; }
+}
+
+.linkPlatform {
+  color: #334155;
+
+  &:hover {
+    color:            #0f172a;
+    background-color: #f1f5f9;
+  }
+}
+
+.signupBtnPlatform {
+  background: #1d4ed8;
+
+  &:hover { background: #1e40af; }
+}
+
+.hamburgerPlatform {
+  border-color: #e2e8f0;
+  color: #64748b;
+
+  &:hover {
+    color:         #0f172a;
+    border-color:  #cbd5e1;
+  }
+}
+
+.mobileMenuPlatform {
+  background-color: #ffffff;
+  border-bottom-color: #e2e8f0;
+}
+
+.mobileLinkPlatform {
+  color: #334155;
+
+  &:hover {
+    color:            #0f172a;
+    background-color: #f1f5f9;
+  }
+}
