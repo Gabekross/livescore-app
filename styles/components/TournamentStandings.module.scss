@@ -1,54 +1,99 @@
+/*
+ * TournamentStandings.module.scss  (used by TournamentStandings.tsx)
+ *
+ * Phase 3 fixes:
+ *  - Migrated all hardcoded hex values → CSS custom properties
+ *  - Removed overflow:hidden + text-overflow:ellipsis from cells
+ *  - Table gets a min-width for mobile scrolling; container scrolls
+ *  - Consistent padding and typography with the rest of the public UI
+ */
+
+/* ── Outer container ─────────────────────────────────────── */
 .container {
-    margin-top: 2rem;
-    background: #111;
-    padding: 1rem;
-    border-radius: 8px;
-    color: white;
-    overflow-x: auto;
+  margin-top:    var(--sp-6, 1.5rem);
+  background:    var(--color-card, #13132a);
+  border:        1px solid var(--color-border-subtle, #1c1c35);
+  border-radius: var(--radius-xl, 16px);
+  overflow:      hidden;
+}
+
+/* ── Heading ─────────────────────────────────────────────── */
+.heading {
+  font-size:      var(--text-subheading, clamp(1rem, 2.5vw, 1.25rem));
+  font-weight:    700;
+  color:          var(--color-text, #e8e8f4);
+  padding:        var(--sp-4, 1rem) var(--sp-5, 1.25rem);
+  border-bottom:  1px solid var(--color-border-subtle, #1c1c35);
+  background:     var(--color-surface, #0f0f1e);
+  margin:         0;
+  text-align:     left;
+}
+
+/* ── Table scroll wrapper (used when TSX wraps table in .tableScroll) */
+.tableScroll {
+  overflow-x:    auto;
+  overflow-y:    visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+/* ── Table ───────────────────────────────────────────────── */
+.table {
+  width:           100%;
+  border-collapse: collapse;
+  font-size:       0.87rem;
+  background:      var(--color-card, #13132a);
+  color:           var(--color-text, #e8e8f4);
+
+  th,
+  td {
+    padding:     var(--sp-3, 0.75rem);
+    text-align:  center;
+    white-space: nowrap;
+    /* NO overflow:hidden — let table scroll, not truncate */
   }
-  
-  .heading {
-    margin-bottom: 1rem;
-    font-size: 1.3rem;
-    text-align: center;
+
+  th {
+    background:     var(--color-surface, #0f0f1e);
+    color:          var(--color-text-dim, #48487a);
+    font-size:      0.7rem;
+    font-weight:    700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom:  1px solid var(--color-border-subtle, #1c1c35);
   }
-  
+
+  /* Team name column — left-align */
+  td:nth-child(2),
+  th:nth-child(2) {
+    text-align:   left;
+    padding-left: var(--sp-4, 1rem);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--color-border-subtle, #1c1c35);
+    transition:    background-color var(--transition-fast);
+
+    &:last-child      { border-bottom: none; }
+    &:nth-child(even) { background-color: var(--color-surface, #0f0f1e); }
+    &:hover           { background-color: var(--color-card-hover, #1a1a36); }
+  }
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .container {
+    border-radius: var(--radius-md, 8px);
+  }
+
   .table {
-    width: 100%;
-    border-collapse: collapse;
+    min-width: 580px;
+    font-size: 0.82rem;
+  }
+
+  .heading {
     font-size: 0.95rem;
-  
-    th,
-    td {
-      padding: 0.5rem;
-      text-align: center;
-      border-bottom: 1px solid #333;
-    }
-  
-    th {
-      color: #ccc;
-      font-weight: 600;
-      background: #000;
-    }
-  
-    tr:nth-child(even) {
-      background-color: #181818;
-    }
+    padding:   var(--sp-3, 0.75rem) var(--sp-4, 1rem);
   }
-  @media (max-width: 768px) {
-    .standingsContainer {
-      overflow-x: auto;
-    }
-  
-    .table {
-      min-width: 600px;
-      font-size: 0.85rem;
-    }
-  
-    .heading {
-      font-size: 1rem;
-      text-align: center;
-      margin-top: 1rem;
-    }
-  }
-  
+}

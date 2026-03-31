@@ -11,10 +11,11 @@
 }
 
 .heading {
-  font-size:     1.6rem;
+  font-size:     var(--text-heading, clamp(1.25rem, 3vw, 1.8rem));
   font-weight:   800;
   margin-bottom: var(--sp-6, 1.5rem);
   color:         var(--color-text, #e8e8f4);
+  line-height:   1.2;
 }
 
 /* ── Teams grid ──────────────────────────────────────────── */

@@ -1,56 +1,70 @@
+/*
+ * MatchCard.module.scss
+ *
+ * Legacy card style — migrated from hardcoded hex values to CSS custom
+ * properties so it respects the active org theme.
+ */
+
 .card {
-    background-color: #1b1b1b;
-    border: 1px solid #333;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #f1f1f1;
-    font-family: 'Inter', sans-serif;
-    flex-wrap: wrap;
-    text-decoration: none;
+  background-color: var(--color-card, #13132a);
+  border:           1px solid var(--color-border-subtle, #1c1c35);
+  border-radius:    var(--radius-lg, 12px);
+  padding:          var(--sp-3, 0.75rem) var(--sp-5, 1.25rem);
+  margin-bottom:    var(--sp-3, 0.75rem);
+  display:          flex;
+  align-items:      center;
+  justify-content:  space-between;
+  color:            var(--color-text, #e8e8f4);
+  font-family:      var(--font-sans);
+  flex-wrap:        wrap;
+  text-decoration:  none;
+  transition:       background-color var(--transition-fast),
+                    border-color var(--transition-fast),
+                    transform var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-card-hover, #1a1a36);
+    border-color:     var(--color-border, #2a2a48);
+    transform:        translateY(-1px);
   }
-  
-  .status {
-    flex: 1;
-    font-size: 0.9rem;
-    color: #bbb;
-    font-weight: 500;
+}
+
+.status {
+  flex:        1;
+  font-size:   var(--text-small, 0.82rem);
+  color:       var(--color-text-muted, #7272a0);
+  font-weight: 500;
+}
+
+.teams {
+  flex:           3;
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  text-align:     center;
+  font-weight:    500;
+  gap:            0.3rem;
+  min-width:      0;
+}
+
+.score {
+  font-size:            clamp(1.3rem, 4vw, 1.8rem);
+  font-weight:          700;
+  letter-spacing:       1px;
+  color:                var(--color-text, #e8e8f4);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: var(--sp-3, 0.75rem);
   }
-  
+
   .teams {
-    flex: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    font-weight: 500;
-    gap: 0.3rem;
+    font-size: 0.9rem;
   }
-  
-  .score {
-    font-size: 1.8rem;
-    font-weight: 700;
-    letter-spacing: 1px;
+
+  .status {
+    font-size: 0.72rem;
   }
-  
-  @media (max-width: 600px) {
-    .card {
-      padding: 0.75rem;
-    }
-  
-    .score {
-      font-size: 1.4rem;
-    }
-  
-    .teams {
-      font-size: 0.95rem;
-    }
-  
-    .status {
-      font-size: 0.75rem;
-    }
-  }
-  
+}

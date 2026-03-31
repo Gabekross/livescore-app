@@ -1,108 +1,103 @@
-// .container {
-//   max-width: 900px;
-//   margin: 2rem auto;
-//   padding: 1.5rem;
-//   background-color: #1a1a1a;
-//   color: #eee;
-//   border-radius: 8px;
-//   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-// }
+/*
+ * TournamentStandingsPage.module.scss
+ * (used by app/public/tournaments/[id]/standings/page.tsx)
+ *
+ * Phase 3 fixes:
+ *  - Removed all dead commented-out code
+ *  - Migrated hardcoded colors → CSS variables
+ *  - Removed overflow:hidden + text-overflow:ellipsis from table cells
+ *  - Page wrapper padded correctly for all screen sizes
+ */
 
-// .heading {
-//   text-align: center;
-//   font-size: 2rem;
-//   margin-bottom: 1.5rem;
-//   color: #fff;
-// }
-
-// .backLink {
-//   color: #ccc;
-//   margin-bottom: 1rem;
-//   display: inline-block;
-//   font-size: 0.95rem;
-//   text-decoration: none;
-//   transition: color 0.2s ease;
-// }
-
-// .backLink:hover {
-//   color: #fff;
-// }
-// @media (max-width: 768px) {
-//   .standingsContainer {
-//     overflow-x: auto;
-//   }
-
-//   .table {
-//     min-width: 600px;
-//     font-size: 0.85rem;
-//   }
-
-//   th,
-//   td {
-//     padding: 0.4rem;
-//   }
-
-//   .heading {
-//     font-size: 1rem;
-//     text-align: center;
-//     margin-top: 1rem;
-//   }
-// }
-
+/* ── Page container ──────────────────────────────────────── */
 .container {
-  padding: 1rem;
-  color: #f0f0f0;
-  background-color: #121212;
-  min-height: 100vh;
+  max-width:    var(--max-width, 1200px);
+  margin:       0 auto;
+  padding:      calc(var(--nav-height, 60px) + var(--sp-8, 2rem))
+                var(--content-padding, 1.25rem)
+                var(--sp-10, 2.5rem);
+  min-height:   100vh;
+  color:        var(--color-text, #e8e8f4);
 }
 
+/* ── Back link ───────────────────────────────────────────── */
+.backLink {
+  display:       inline-flex;
+  align-items:   center;
+  gap:           0.3em;
+  font-size:     0.85rem;
+  font-weight:   600;
+  color:         var(--color-text-muted, #7272a0);
+  margin-bottom: var(--sp-6, 1.5rem);
+  transition:    color var(--transition-fast);
+
+  &:hover { color: var(--color-text, #e8e8f4); }
+}
+
+/* ── Page heading ────────────────────────────────────────── */
 .heading {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  color: #fff;
-  text-align: center;
+  font-size:     var(--text-heading, clamp(1.25rem, 3vw, 1.8rem));
+  font-weight:   800;
+  color:         var(--color-text, #e8e8f4);
+  margin-bottom: var(--sp-6, 1.5rem);
+  line-height:   1.2;
 }
 
+/* ── Table wrapper (direct use — now on the TournamentStandings */
+/* component, but kept here as a standalone utility class)       */
 .tableWrapper {
-  overflow-x: auto;
+  overflow-x:    auto;
+  overflow-y:    visible;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-lg, 12px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
 }
 
+/* ── Table (if rendered directly on this page) ───────────── */
 .table {
-  width: 100%;
+  width:           100%;
   border-collapse: collapse;
-  background-color: #1e1e1e;
-  color: #fff;
-  min-width: 650px;
+  background:      var(--color-card, #13132a);
+  color:           var(--color-text, #e8e8f4);
+  font-size:       0.87rem;
 
   th,
   td {
-    padding: 0.5rem;
-    text-align: center;
-    border: 1px solid #444;
+    padding:     var(--sp-3, 0.75rem);
+    text-align:  center;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    border:      1px solid var(--color-border-subtle, #1c1c35);
+    /* NO overflow:hidden / text-overflow:ellipsis on table cells */
   }
 
   th {
-    background-color: #2a2a2a;
+    background:     var(--color-surface, #0f0f1e);
+    color:          var(--color-text-dim, #48487a);
+    font-size:      0.72rem;
+    font-weight:    700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
-  tbody tr:nth-child(even) {
-    background-color: #2c2c2c;
-  }
-
-  tbody tr:hover {
-    background-color: #3a3a3a;
-  }
+  tbody tr:nth-child(even) { background-color: var(--color-surface, #0f0f1e); }
+  tbody tr:hover            { background-color: var(--color-card-hover, #1a1a36); }
 }
 
+/* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   .heading {
-    font-size: 1.2rem;
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
   }
 
   .table {
-    font-size: 0.85rem;
+    min-width: 580px;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-top: calc(var(--nav-height, 60px) + var(--sp-5, 1.25rem));
   }
 }

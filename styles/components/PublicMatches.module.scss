@@ -1,265 +1,313 @@
+/*
+ * PublicMatches.module.scss
+ *
+ * Fully migrated from hardcoded hex values to CSS custom properties so this
+ * component respects the active org theme (UEFA dark, green-gold, slate,
+ * blue-light) and all future themes automatically.
+ *
+ * Structure preserved — only colors, font-family, and a few sizing values
+ * have been updated.  Responsive breakpoints are kept.
+ */
+
+/* ── Page wrapper ────────────────────────────────────────── */
 .wrapper {
-  display: flex;
-  min-height: 100vh;
-  background: #111;
-  color: #eee;
-  font-family: 'Segoe UI', sans-serif;
+  display:        flex;
+  min-height:     100vh;
+  background:     var(--color-bg);
+  color:          var(--color-text);
+  font-family:    var(--font-sans);
   flex-direction: row;
-  padding: 1rem;
-  gap: 1rem;
+  padding:        var(--sp-4, 1rem);
+  gap:            var(--sp-4, 1rem);
 
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: center; // 🆕 center content on mobile
+    align-items:    stretch;
   }
 }
 
+/* ── Sidebar ─────────────────────────────────────────────── */
 .sidebar {
-  width: 200px;
-  padding: 1.0rem;
-  background: #1c1c1c;
-  border-radius: 8px;
-  border-right: 1px solid #333;
-  align-items: center; /* 🆕 center content horizontally */
-  text-align: center; /* 🆕 center text inside */
-  
+  width:         200px;
+  flex-shrink:   0;
+  padding:       var(--sp-4, 1rem);
+  background:    var(--color-surface);
+  border-radius: var(--radius-lg, 12px);
+  border:        1px solid var(--color-border-subtle);
+  text-align:    center;
+
+  @media (max-width: 768px) {
+    width:      100%;
+    padding:    var(--sp-3, 0.75rem);
+  }
 
   h3 {
-    margin-bottom: 1rem;
-    font-size: 1rem;
+    margin-bottom: var(--sp-4, 1rem);
+    font-size:     0.85rem;
+    font-weight:   700;
     text-transform: uppercase;
-    color: #fff;
+    letter-spacing: 0.06em;
+    color:          var(--color-text-muted);
   }
 
   ul {
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding:    0;
+    margin:     0;
 
     li button {
-      display: block;
-      width: 100%;
-      background: none;
-      border: none;
-      color: #eee;
-      padding: 0.5rem;
-      text-align: left;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background 0.2s ease;
+      display:       block;
+      width:         100%;
+      background:    none;
+      border:        none;
+      color:         var(--color-text-muted);
+      padding:       var(--sp-2, 0.5rem);
+      text-align:    left;
+      cursor:        pointer;
+      border-radius: var(--radius-sm, 4px);
+      font-size:     0.875rem;
+      transition:    background var(--transition-fast), color var(--transition-fast);
 
       &:hover {
-        background: #333;
+        background: var(--color-card-hover);
+        color:      var(--color-text);
       }
 
       &.activeTab {
-        background: #555;
-        font-weight: bold;
-        color: #fff;
+        background: var(--color-accent-dim);
+        font-weight: 700;
+        color:      var(--color-text);
+        border:     1px solid var(--color-accent);
       }
     }
   }
 }
 
+/* ── Main container ──────────────────────────────────────── */
 .container {
-  flex: 1;
-  padding: 1rem;
+  flex:      1;
+  padding:   var(--sp-4, 1rem);
   max-width: 1000px;
-  margin: 0 auto;
+  margin:    0 auto;
+  min-width: 0; /* prevent flex overflow */
 }
 
 .heading {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  text-align: center;
+  font-size:     var(--text-heading, clamp(1.25rem, 3vw, 1.8rem));
+  font-weight:   800;
+  margin-bottom: var(--sp-4, 1rem);
+  text-align:    center;
+  color:         var(--color-text);
 }
 
+/* ── Top controls ────────────────────────────────────────── */
 .topControls {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  justify-content: center; /* 🆕 center buttons */
-  align-items: center;
-  margin-bottom: 1rem;
-  gap: 1rem;
+  display:         flex;
+  flex-wrap:       wrap;
+  justify-content: center;
+  align-items:     center;
+  margin-bottom:   var(--sp-4, 1rem);
+  gap:             var(--sp-3, 0.75rem);
 }
 
 .tabs {
   display: flex;
-  gap: 0.5rem;
+  gap:     var(--sp-2, 0.5rem);
+  flex-wrap: wrap;
 
   button {
-    background: #222;
-    color: #eee;
-    padding: 0.4rem 1rem;
-    border: 1px solid #444;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
+    background:    var(--color-card);
+    color:         var(--color-text-muted);
+    padding:       0.4rem 1rem;
+    border:        1px solid var(--color-border);
+    border-radius: var(--radius-sm, 4px);
+    cursor:        pointer;
+    font-size:     0.875rem;
+    font-family:   var(--font-sans);
+    transition:    all var(--transition-fast);
 
     &.activeTab {
-      background: #555;
-      font-weight: bold;
-      color: #fff;
+      background:  var(--color-accent-dim);
+      border-color: var(--color-accent);
+      font-weight: 700;
+      color:       var(--color-text);
     }
 
     &:hover {
-      background: #333;
+      background: var(--color-card-hover);
+      color:      var(--color-text);
     }
   }
 }
 
 .toggle {
-  display: flex;
+  display:     flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.9rem;
+  gap:         var(--sp-1, 0.25rem);
+  font-size:   0.875rem;
+  color:       var(--color-text-muted);
 }
 
+/* ── Match list ──────────────────────────────────────────── */
 .matchList {
-  display: flex;
+  display:        flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap:            var(--sp-3, 0.75rem);
 }
 
+/* ── Match card ──────────────────────────────────────────── */
 .card {
-  background-color: #1b1b1b;
-  padding: 0.6rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #333;
-  transition: transform 0.2s;
-  text-decoration: none;
-  color: #fff;
-  font-size: 0.95rem;
+  background-color: var(--color-card);
+  padding:          var(--sp-3, 0.75rem) var(--sp-4, 1rem);
+  border-radius:    var(--radius-lg, 12px);
+  border:           1px solid var(--color-border-subtle);
+  transition:       background-color var(--transition-fast),
+                    border-color var(--transition-fast),
+                    transform var(--transition-fast);
+  text-decoration:  none;
+  color:            var(--color-text);
+  font-size:        0.95rem;
 
   &:hover {
-    transform: scale(1.02);
+    background-color: var(--color-card-hover);
+    border-color:     var(--color-border);
+    transform:        translateY(-1px);
   }
 }
 
 .matchMeta {
-  display: flex;
+  display:         flex;
   justify-content: space-between;
-  font-size: 0.75rem;
-  color: #bbb;
-  margin-bottom: 0.5rem;
+  font-size:       0.75rem;
+  color:           var(--color-text-muted);
+  margin-bottom:   var(--sp-2, 0.5rem);
 
   .live {
-    color: #ff3c3c;
-    font-weight: bold;
-    animation: pulse 0.5s infinite alternate;
-    font-size: 0.80rem;
+    color:       var(--color-live);
+    font-weight: 700;
+    animation:   pulse-dot 1.5s ease infinite;
+    font-size:   0.8rem;
   }
 }
 
-/* DESKTOP STYLE */
+/* ── Teams — desktop layout ──────────────────────────────── */
 .teamsDesktop {
-  display: flex;
+  display:     flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  gap: 0.5rem;
+  width:       100%;
+  gap:         var(--sp-2, 0.5rem);
 
   .teamLeft,
   .teamRight {
-    display: flex;
+    display:    flex;
     align-items: center;
-    font-size: 0.95rem;
-    gap: 0.4rem;
-    max-width: 40%;
-    flex-wrap: wrap;
-    white-space: normal;
+    font-size:   0.95rem;
+    gap:         var(--sp-1, 0.4rem);
+    flex:        1;
+    min-width:   0;
     line-height: 1.2;
-    word-break: break-word;
-    gap: 0.4rem;
-    flex: 1;
-    min-width: 0; // allow text to wrap if needed
+    word-break:  break-word;
+    white-space: normal;
   }
-  .teamLeft {
-    justify-content: flex-start;
-  }
+
+  .teamLeft  { justify-content: flex-start; }
   .teamRight {
     justify-content: flex-end;
-    text-align: right;
+    text-align:      right;
   }
-  
 
   .score {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    min-width: 60px;
+    font-size:   clamp(1.3rem, 3vw, 1.5rem);
+    font-weight: 700;
+    text-align:  center;
+    min-width:   60px;
     flex-shrink: 0;
-  
+    color:       var(--color-text);
+    font-variant-numeric: tabular-nums;
   }
 }
 
-/* MOBILE STYLE */
+/* ── Teams — mobile layout ───────────────────────────────── */
 .teamsMobile {
   display: none;
 }
 
+/* ── Logo ────────────────────────────────────────────────── */
 .logo {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
+  width:         24px;
+  height:        24px;
+  border-radius: var(--radius-full, 9999px);
+  object-fit:    cover;
+  flex-shrink:   0;
 }
 
+/* ── Name ────────────────────────────────────────────────── */
 .name {
-  font-size: 0.95rem;
-  word-wrap: break-word;
+  font-size:   0.95rem;
+  word-wrap:   break-word;
   white-space: normal;
   line-height: 1.3;
 }
 
+/* ── Mobile score ────────────────────────────────────────── */
 .mobileScore {
-  font-weight: bold;
-  font-size: 1.4rem;
+  font-weight: 700;
+  font-size:   clamp(1.2rem, 4vw, 1.4rem);
   margin-left: auto;
+  flex-shrink: 0;
+  color:       var(--color-text);
+  font-variant-numeric: tabular-nums;
 }
 
+/* ── Row (mobile layout helper) ──────────────────────────── */
 .row {
-  display: flex;
+  display:     flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  padding: 0.2rem 0;
+  gap:         var(--sp-2, 0.5rem);
+  padding:     0.2rem 0;
 }
 
-/* BACK TO TOP */
+/* ── Back to top ─────────────────────────────────────────── */
 .backToTop {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  background: #0070f3;
-  color: #fff;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  z-index: 1000;
+  position:      fixed;
+  bottom:        var(--sp-4, 1rem);
+  right:         var(--sp-4, 1rem);
+  background:    var(--color-accent);
+  color:         #fff;
+  border:        none;
+  padding:       0.6rem 1rem;
+  border-radius: var(--radius-full, 9999px);
+  cursor:        pointer;
+  z-index:       1000;
+  font-size:     0.82rem;
+  font-weight:   600;
+  font-family:   var(--font-sans);
+  transition:    background var(--transition-fast), transform var(--transition-fast);
+  box-shadow:    var(--shadow-md);
+
+  &:hover { background: var(--color-accent-light); transform: translateY(-2px); }
 }
 
+/* ── Tournament context header ───────────────────────────── */
 .tournamentLink {
-  display: inline-block;
-  margin-top: 1rem;
-  margin: 1rem 0 1.5rem; // Adds 1.5rem space *below* the link
-  background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
-  color: #fff;
-  padding: 0.6rem 1.2rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  border-radius: 6px;
-  border: 1px solid #444;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  display:       inline-block;
+  margin:        var(--sp-4, 1rem) 0 var(--sp-6, 1.5rem);
+  background:    var(--color-card);
+  color:         var(--color-text);
+  padding:       0.6rem 1.2rem;
+  font-size:     0.95rem;
+  font-weight:   500;
+  border-radius: var(--radius-md, 8px);
+  border:        1px solid var(--color-border);
+  box-shadow:    var(--shadow-sm);
   text-decoration: none;
-  transition: background 0.3s, transform 0.2s;
-  gap: 0.5rem;
+  transition:    background var(--transition-fast), transform var(--transition-fast);
 
   &:hover {
-    background: #333;
-    transform: scale(1.03);
+    background: var(--color-card-hover);
+    transform:  scale(1.02);
   }
 
   &:active {
@@ -268,47 +316,37 @@
 }
 
 .tournamentHeader {
-  display: inline-block;
-  margin-top: 1rem;
-  margin: 1rem 0 1.5rem; // Adds 1.5rem space *below* the link
-  background: linear-gradient(145deg, #161616, #111111);
-  color: yellowgreen;
-  color: #fff;
-  padding: 0.6rem 1.2rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-radius: 6px;
-  border: 1px solid #444;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
-  text-decoration: none;
-  transition: background 0.3s, transform 0.2s;
-  gap: 0.5rem;
-
-  &:hover {
-    background: #242424;
-    transform: scale(1.03);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
+  display:       block;
+  margin:        var(--sp-4, 1rem) 0 var(--sp-6, 1.5rem);
+  background:    var(--color-surface);
+  color:         var(--color-text);
+  padding:       var(--sp-3, 0.75rem) var(--sp-4, 1.2rem);
+  font-size:     1rem;
+  font-weight:   600;
+  border-radius: var(--radius-md, 8px);
+  border:        1px solid var(--color-border-subtle);
+  line-height:   1.5;
 }
 
-/* RESPONSIVE BREAKPOINTS */
+/* ── Responsive breakpoints ──────────────────────────────── */
 @media (max-width: 768px) {
-  .teamsDesktop {
-    display: none;
+  .teamsDesktop { display: none; }
+  .teamsMobile  { display: block; }
+
+  .card { padding: var(--sp-3, 0.75rem); }
+}
+
+@media (max-width: 520px) {
+  .wrapper {
+    padding: var(--sp-3, 0.75rem);
+    gap:     var(--sp-3, 0.75rem);
   }
 
-  .teamsMobile {
-    display: block;
+  .container {
+    padding: 0;
   }
 
-  .card {
-    padding: 0.8rem;
-  }
-
-  .mobileScore {
-    font-size: 1.3rem;
+  .name {
+    font-size: 0.875rem;
   }
 }

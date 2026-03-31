@@ -3,10 +3,11 @@
 // Works as a server component (no hooks, no client state).
 // Wraps in a <Link> when href is provided; otherwise renders as a <div>.
 
-import Link       from 'next/link'
-import TeamLogo   from './TeamLogo'
+import Link        from 'next/link'
+import TeamLogo    from './TeamLogo'
 import StatusBadge from './StatusBadge'
-import type { MatchStatus } from '@/lib/utils/match'
+import type { MatchStatus }       from '@/lib/utils/match'
+import { formatTeamName }         from '@/lib/formatters'
 import styles from '@/styles/components/MatchCardShared.module.scss'
 
 interface Team {
@@ -71,7 +72,7 @@ export default function MatchCard({
       {/* Teams + score */}
       <div className={styles.matchup}>
         <div className={`${styles.team} ${styles.teamHome}`}>
-          <span title={home_team.name}>{home_team.name}</span>
+          <span title={formatTeamName(home_team.name)}>{formatTeamName(home_team.name)}</span>
           <TeamLogo src={home_team.logo_url} alt={home_team.name} size={20} />
         </div>
 
@@ -89,7 +90,7 @@ export default function MatchCard({
 
         <div className={`${styles.team} ${styles.teamAway}`}>
           <TeamLogo src={away_team.logo_url} alt={away_team.name} size={20} />
-          <span title={away_team.name}>{away_team.name}</span>
+          <span title={formatTeamName(away_team.name)}>{formatTeamName(away_team.name)}</span>
         </div>
       </div>
 

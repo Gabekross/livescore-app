@@ -7,6 +7,7 @@ import { supabase }            from '@/lib/supabase'
 import { getOrganizationId }   from '@/lib/org'
 import styles                  from '@/styles/components/PublicMatches.module.scss'
 import TournamentQuickLink     from '@/components/TournamentQuickLink'
+import { formatTeamName }      from '@/lib/formatters'
 
 interface Match {
   id:           string
@@ -224,13 +225,13 @@ export default function PublicMatchesPage() {
                     {match.home_team.logo_url && (
                       <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
                     )}
-                    <span>{match.home_team.name}</span>
+                    <span>{formatTeamName(match.home_team.name)}</span>
                   </div>
                   <div className={styles.score}>
                     {match.home_score ?? '-'} – {match.away_score ?? '-'}
                   </div>
                   <div className={styles.teamRight}>
-                    <span>{match.away_team.name}</span>
+                    <span>{formatTeamName(match.away_team.name)}</span>
                     {match.away_team.logo_url && (
                       <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
                     )}
@@ -243,14 +244,14 @@ export default function PublicMatchesPage() {
                     {match.home_team.logo_url && (
                       <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
                     )}
-                    <span className={styles.name}>{match.home_team.name}</span>
+                    <span className={styles.name}>{formatTeamName(match.home_team.name)}</span>
                     <span className={styles.mobileScore}>{match.home_score ?? '-'}</span>
                   </div>
                   <div className={styles.row}>
                     {match.away_team.logo_url && (
                       <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
                     )}
-                    <span className={styles.name}>{match.away_team.name}</span>
+                    <span className={styles.name}>{formatTeamName(match.away_team.name)}</span>
                     <span className={styles.mobileScore}>{match.away_score ?? '-'}</span>
                   </div>
                 </div>

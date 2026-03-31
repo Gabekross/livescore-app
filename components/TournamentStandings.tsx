@@ -12,6 +12,7 @@
 import { useEffect, useState } from 'react'
 import { supabase }            from '@/lib/supabase'
 import styles                  from '@/styles/components/TournamentStandings.module.scss'
+import { formatTeamName }      from '@/lib/formatters'
 
 interface Standing {
   team_id:  string
@@ -130,6 +131,8 @@ export default function TournamentStandings({
   return (
     <div className={styles.container}>
       <h2 className={styles.heading}>Tournament Standings</h2>
+      {/* table-scroll = global utility from globals.css for polished mobile scroll */}
+      <div className="table-scroll">
       <table className={styles.table}>
         <thead>
           <tr>
@@ -142,13 +145,14 @@ export default function TournamentStandings({
           {standings.map((team, idx) => (
             <tr key={team.team_id}>
               <td>{idx + 1}</td>
-              <td>{team.team_name}</td>
+              <td>{formatTeamName(team.team_name)}</td>
               <td>{team.mp}</td><td>{team.w}</td><td>{team.d}</td><td>{team.l}</td>
               <td>{team.gf}</td><td>{team.ga}</td><td>{team.gd}</td><td>{team.pts}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { getOrganizationIdServer }    from '@/lib/org-server'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import EmptyState                     from '@/components/ui/EmptyState'
 import styles                         from '@/styles/components/TeamsPage.module.scss'
+import { formatTeamName, nameInitial } from '@/lib/formatters'
 
 export const metadata: Metadata = {
   title:       'Teams',
@@ -52,10 +53,10 @@ export default async function TeamsPage() {
                 <div className={styles.logoWrap}>
                   {team.logo_url
                     ? <img src={team.logo_url} alt={team.name} className={styles.logo} />
-                    : team.name.charAt(0).toUpperCase()
+                    : nameInitial(team.name)
                   }
                 </div>
-                <span className={styles.name}>{team.name}</span>
+                <span className={styles.name}>{formatTeamName(team.name)}</span>
               </Link>
             ))}
           </div>

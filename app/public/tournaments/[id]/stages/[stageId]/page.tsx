@@ -7,6 +7,7 @@ import { getOrganizationId }    from '@/lib/org'
 import styles                   from '@/styles/components/PublicStageDetail.module.scss'
 import GroupStandings           from '@/components/GroupStandings'
 import TournamentStandings      from '@/components/TournamentStandings'
+import { formatTeamName }       from '@/lib/formatters'
 
 interface Group {
   id:       string
@@ -138,11 +139,11 @@ export default function PublicStageDetailPage() {
           {match.home_team.logo_url && (
             <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
           )}
-          <span>{match.home_team.name}</span>
+          <span>{formatTeamName(match.home_team.name)}</span>
         </div>
         <div className={styles.score}>{match.home_score ?? '-'} – {match.away_score ?? '-'}</div>
         <div className={styles.teamRight}>
-          <span>{match.away_team.name}</span>
+          <span>{formatTeamName(match.away_team.name)}</span>
           {match.away_team.logo_url && (
             <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
           )}
@@ -154,14 +155,14 @@ export default function PublicStageDetailPage() {
           {match.home_team.logo_url && (
             <img src={match.home_team.logo_url} alt="home logo" className={styles.logo} />
           )}
-          <span className={styles.name}>{match.home_team.name}</span>
+          <span className={styles.name}>{formatTeamName(match.home_team.name)}</span>
           <span className={styles.mobileScore}>{match.home_score ?? '-'}</span>
         </div>
         <div className={styles.row}>
           {match.away_team.logo_url && (
             <img src={match.away_team.logo_url} alt="away logo" className={styles.logo} />
           )}
-          <span className={styles.name}>{match.away_team.name}</span>
+          <span className={styles.name}>{formatTeamName(match.away_team.name)}</span>
           <span className={styles.mobileScore}>{match.away_score ?? '-'}</span>
         </div>
       </div>

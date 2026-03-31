@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import styles from '@/styles/components/StandingsTable.module.scss'
+import { formatTeamName } from '@/lib/formatters'
 
 interface StandingRow {
   team_id: string
@@ -66,6 +67,9 @@ export default function GroupStandings({ groupId }: { groupId: string }) {
   return (
     <div className={styles.standingsContainer}>
       <h4 className={styles.heading}>Standings</h4>
+      {/* table-scroll is a global utility class from globals.css — gives polished
+          horizontal scroll on mobile without breaking the page layout */}
+      <div className="table-scroll">
       <table className={styles.table}>
         <thead>
           <tr>
@@ -85,7 +89,7 @@ export default function GroupStandings({ groupId }: { groupId: string }) {
           {standings.map((team, idx) => (
             <tr key={team.team_id}>
               <td>{idx + 1}</td>
-              <td>{team.team_name}</td>
+              <td>{formatTeamName(team.team_name)}</td>
               <td>{team.played}</td>
               <td>{team.wins}</td>
               <td>{team.draws}</td>
@@ -98,6 +102,7 @@ export default function GroupStandings({ groupId }: { groupId: string }) {
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }
