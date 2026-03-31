@@ -126,11 +126,76 @@
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
+
+/* Tablet / narrow desktop */
+@media (max-width: 700px) {
+  .statusCol { flex: 0 0 60px; font-size: 0.74rem; }
+  .team      { font-size: 0.85rem; }
+  .scoreBox  { min-width: 50px; font-size: 1rem; padding: 3px 10px; }
+}
+
+/* Mobile */
 @media (max-width: 520px) {
-  .card    { padding: var(--sp-3, 0.75rem); flex-wrap: wrap; }
-  .statusCol { flex: 0 0 56px; font-size: 0.72rem; }
-  .matchup   { gap: var(--sp-2, 0.5rem); }
-  .team      { font-size: 0.82rem; }
-  .scoreBox  { font-size: 0.95rem; min-width: 48px; padding: 2px 8px; }
-  .badgeCol  { display: none; }
+  .card {
+    padding:   var(--sp-3, 0.75rem);
+    flex-wrap: nowrap;
+  }
+  .statusCol {
+    flex:      0 0 auto;
+    min-width: 44px;
+    font-size: 0.68rem;
+  }
+  .matchup {
+    gap: var(--sp-1, 0.25rem);
+  }
+  .team {
+    font-size: 0.78rem;
+    gap:       var(--sp-1, 0.25rem);
+
+    /* Ensure team names show — allow wrapping for very long names */
+    span {
+      white-space:   normal;
+      word-break:    break-word;
+      overflow:      visible;
+      text-overflow: unset;
+      line-height:   1.2;
+    }
+  }
+  .scoreBox {
+    font-size:  0.9rem;
+    min-width:  42px;
+    padding:    2px 6px;
+    flex-shrink: 0;
+  }
+  .badgeCol {
+    display:    flex;
+    flex:       0 0 auto;
+    min-width:  0;
+
+    /* Keep friendly badge visible on mobile */
+    span {
+      font-size: 0.58rem !important;
+    }
+  }
+}
+
+/* Very small screens (< 380px) */
+@media (max-width: 380px) {
+  .card {
+    padding: 0.5rem;
+    gap:     var(--sp-2, 0.5rem);
+  }
+  .statusCol {
+    flex:      0 0 auto;
+    min-width: 38px;
+    font-size: 0.64rem;
+  }
+  .team {
+    font-size: 0.72rem;
+  }
+  .scoreBox {
+    font-size: 0.82rem;
+    min-width: 38px;
+    padding:   2px 4px;
+  }
 }

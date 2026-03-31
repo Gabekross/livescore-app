@@ -188,3 +188,65 @@
   flex-direction: column;
   gap:            var(--sp-2, 0.5rem);
 }
+
+/* ── Stats grid ─────────────────────────────────────────── */
+.statsGrid {
+  display:               grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap:                   var(--sp-4, 1rem);
+}
+
+.statsCard {
+  background:    var(--color-surface, #0f0f1e);
+  border:        1px solid var(--color-border-subtle, #1c1c35);
+  border-radius: var(--radius-lg, 12px);
+  padding:       var(--sp-4, 1rem) var(--sp-5, 1.25rem);
+}
+
+.statsCardTitle {
+  font-size:      0.72rem;
+  font-weight:    700;
+  color:          var(--color-text-dim, #48487a);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom:  var(--sp-3, 0.75rem);
+}
+
+.statsCardTitleFriendly {
+  color: var(--color-friendly, #f59e0b);
+}
+
+.statsRow {
+  display:     flex;
+  gap:         var(--sp-4, 1rem);
+  flex-wrap:   wrap;
+}
+
+.statItem {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  min-width:      36px;
+  flex:           1;
+}
+
+.statValue {
+  font-size:   1.4rem;
+  font-weight: 800;
+  color:       var(--color-text, #e8e8f4);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.statWin  { color: #22c55e; }
+.statDraw { color: #60a5fa; }
+.statLoss { color: #ef4444; }
+
+.statLabel {
+  font-size:      0.65rem;
+  font-weight:    700;
+  color:          var(--color-text-dim, #48487a);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top:     2px;
+}
