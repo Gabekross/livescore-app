@@ -11,10 +11,13 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { createAdminSupabaseClient }  from '@/lib/supabase-admin'
 import { NextRequest, NextResponse }  from 'next/server'
 
-/** Verify the caller is org_admin/power_admin and return their org_id */
+/** Verify the caller is org_admin/power_admin and return their org_id.
+ *  Uses the session client only for auth identity, then the admin (service role)
+ *  client for the profile lookup to avoid RLS/grant issues on admin_profiles. */
 async function authorizeOrgAdmin(): Promise<
   { orgId: string; userId: string } | NextResponse
 > {
+  // Verify identity via session JWT
   const supabase = createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -22,7 +25,9 @@ async function authorizeOrgAdmin(): Promise<
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  const { data: profile } = await supabase
+  // Use admin client for the profile query (bypasses RLS)
+  const adminClient = createAdminSupabaseClient()
+  const { data: profile, error: profileError } = await adminClient
     .from('admin_profiles')
     .select('role, organization_id')
     .eq('id', user.id)
@@ -30,12 +35,11 @@ async function authorizeOrgAdmin(): Promise<
 
   if (!profile || !['org_admin', 'power_admin'].includes(profile.role)) {
     return NextResponse.json(
-      { error: 'Only org admins can manage operators' },
+      { error: `Only org admins can manage operators [debug: user=${user.id}, profile=${JSON.stringify(profile)}, err=${profileError?.message || 'none'}]` },
       { status: 403 }
     )
   }
 
-  // For org_admin, use their org. For power_admin, org_id must be provided in the request.
   const orgId = profile.organization_id
   if (!orgId && profile.role === 'org_admin') {
     return NextResponse.json(
@@ -54,8 +58,10 @@ export async function GET() {
   if (auth instanceof NextResponse) return auth
   const { orgId } = auth
 
-  const supabase = createServerSupabaseClient()
-  const { data, error } = await supabase
+  // Use admin client (service role) to list operators — the caller was already
+  // authorized above. The user-session client can't read other users' profiles.
+  const adminClient = createAdminSupabaseClient()
+  const { data, error } = await adminClient
     .from('admin_profiles')
     .select('id, full_name, role, created_at')
     .eq('role', 'match_operator')
@@ -65,9 +71,6 @@ export async function GET() {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  // Fetch emails from auth.users via the admin client
-  const adminClient = createAdminSupabaseClient()
   const profilesWithEmail = await Promise.all(
     (data || []).map(async (p) => {
       const { data: authUser } = await adminClient.auth.admin.getUserById(p.id)

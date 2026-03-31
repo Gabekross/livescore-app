@@ -29,6 +29,11 @@ const THEMES = [
     name:   'Midnight Slate',
     swatch: ['#0c0c0f', '#7c3aed', '#1a1a1f'],
   },
+  {
+    id:     'theme-blue-light',
+    name:   'Professional Light',
+    swatch: ['#eef4fb', '#2563eb', '#ffffff'],
+  },
 ]
 
 // ── Default settings ──────────────────────────────────────────────────────────
