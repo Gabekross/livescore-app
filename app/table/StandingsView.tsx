@@ -164,45 +164,47 @@ function GroupTable({ groupName, rows }: { groupName: string; rows: StandingRow[
           No matches played yet
         </div>
       ) : (
-        <table className={styles.table}>
-          <thead className={styles.thead}>
-            <tr>
-              <th className={styles.thPos}>#</th>
-              <th className={styles.thTeam}>Team</th>
-              <th className={styles.thStat}>MP</th>
-              <th className={styles.thStat}>W</th>
-              <th className={`${styles.thStat} ${styles.hideOnMobile}`}>D</th>
-              <th className={`${styles.thStat} ${styles.hideOnMobile}`}>L</th>
-              <th className={`${styles.thStat} ${styles.hideOnMobile}`}>GF</th>
-              <th className={`${styles.thStat} ${styles.hideOnMobile}`}>GA</th>
-              <th className={styles.thStat}>GD</th>
-              <th className={styles.thStat}>Pts</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, i) => (
-              <tr
-                key={row.team_id}
-                className={`${styles.tr} ${i < 2 ? styles.trTop : ''}`}
-              >
-                <td className={styles.tdPos}>{i + 1}</td>
-                <td>
-                  <div className={styles.tdTeam}>
-                    <span className={styles.teamName}>{row.team_name}</span>
-                  </div>
-                </td>
-                <td className={styles.tdStat}>{row.played}</td>
-                <td className={styles.tdStat}>{row.wins}</td>
-                <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.draws}</td>
-                <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.losses}</td>
-                <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.goals_for}</td>
-                <td className={`${styles.tdStat} ${styles.hideOnMobile}`}>{row.goals_against}</td>
-                <td className={styles.tdStat}>{row.goal_difference > 0 ? `+${row.goal_difference}` : row.goal_difference}</td>
-                <td className={styles.tdPts}>{row.points}</td>
+        <div className={styles.tableScroll}>
+          <table className={styles.table}>
+            <thead className={styles.thead}>
+              <tr>
+                <th className={styles.thPos}>#</th>
+                <th className={styles.thTeam}>Team</th>
+                <th className={styles.thStat}>MP</th>
+                <th className={styles.thStat}>W</th>
+                <th className={styles.thStat}>D</th>
+                <th className={styles.thStat}>L</th>
+                <th className={styles.thStat}>GF</th>
+                <th className={styles.thStat}>GA</th>
+                <th className={styles.thStat}>GD</th>
+                <th className={styles.thStat}>Pts</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => (
+                <tr
+                  key={row.team_id}
+                  className={`${styles.tr} ${i < 2 ? styles.trTop : ''}`}
+                >
+                  <td className={styles.tdPos}>{i + 1}</td>
+                  <td>
+                    <div className={styles.tdTeam}>
+                      <span className={styles.teamName}>{row.team_name}</span>
+                    </div>
+                  </td>
+                  <td className={styles.tdStat}>{row.played}</td>
+                  <td className={styles.tdStat}>{row.wins}</td>
+                  <td className={styles.tdStat}>{row.draws}</td>
+                  <td className={styles.tdStat}>{row.losses}</td>
+                  <td className={styles.tdStat}>{row.goals_for}</td>
+                  <td className={styles.tdStat}>{row.goals_against}</td>
+                  <td className={styles.tdStat}>{row.goal_difference > 0 ? `+${row.goal_difference}` : row.goal_difference}</td>
+                  <td className={styles.tdPts}>{row.points}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )

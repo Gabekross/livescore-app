@@ -2,6 +2,16 @@
 // Unified match card for use across all public pages.
 // Works as a server component (no hooks, no client state).
 // Wraps in a <Link> when href is provided; otherwise renders as a <div>.
+//
+// Layout
+// ──────────────────────────────────────────────────────────────────────
+// Desktop (>520px):
+//   [status]  Home name  logo  [ H – A ]  logo  Away name  [badges]
+//
+// Mobile (≤520px):  stacked sports-app style
+//   [status]  logo  Home name        H
+//             logo  Away name        A
+//             (friendly label, if any)
 
 import Link        from 'next/link'
 import TeamLogo    from './TeamLogo'
@@ -55,21 +65,25 @@ export default function MatchCard({
 
   const inner = (
     <>
-      {/* Status / time column */}
+      {/* ── Status / time column (left) ──────────────────────── */}
       <div className={styles.statusCol}>
         {isScheduled && timeLabel ? (
           <>
-            <div style={{ fontSize: '0.72rem', color: 'var(--color-text-dim)' }}>
+            <div className={styles.statusDate}>
               {new Date(match_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
             </div>
-            <div style={{ fontWeight: 700, color: 'var(--color-text)' }}>{timeLabel}</div>
+            <div className={styles.statusTime}>{timeLabel}</div>
           </>
         ) : (
           <StatusBadge status={status} matchDate={match_date} />
         )}
+        {/* Friendly label — shown on mobile only (desktop uses badgeCol) */}
+        {isFriendly && (
+          <span className={styles.friendlyLabelMobile}>Friendly</span>
+        )}
       </div>
 
-      {/* Teams + score */}
+      {/* ── Desktop matchup: Home name logo [score] logo Away name ── */}
       <div className={styles.matchup}>
         <div className={`${styles.team} ${styles.teamHome}`}>
           <span title={formatTeamName(home_team.name)}>{formatTeamName(home_team.name)}</span>
@@ -80,7 +94,7 @@ export default function MatchCard({
           {hasScore ? (
             <>
               <span>{home_score}</span>
-              <span className={styles.scoreDash}>–</span>
+              <span className={styles.scoreDash}>&ndash;</span>
               <span>{away_score}</span>
             </>
           ) : (
@@ -94,14 +108,41 @@ export default function MatchCard({
         </div>
       </div>
 
-      {/* Right badges */}
+      {/* ── Mobile matchup: stacked rows ─────────────────────── */}
+      <div className={styles.matchupMobile}>
+        {/* Home row */}
+        <div className={styles.mobileTeamRow}>
+          <TeamLogo src={home_team.logo_url} alt={home_team.name} size={18} />
+          <span className={styles.mobileTeamName} title={formatTeamName(home_team.name)}>
+            {formatTeamName(home_team.name)}
+          </span>
+          <span className={styles.mobileScore}>
+            {hasScore ? home_score : ''}
+          </span>
+        </div>
+        {/* Away row */}
+        <div className={styles.mobileTeamRow}>
+          <TeamLogo src={away_team.logo_url} alt={away_team.name} size={18} />
+          <span className={styles.mobileTeamName} title={formatTeamName(away_team.name)}>
+            {formatTeamName(away_team.name)}
+          </span>
+          <span className={styles.mobileScore}>
+            {hasScore ? away_score : ''}
+          </span>
+        </div>
+        {/* vs label for scheduled */}
+        {!hasScore && (
+          <div className={styles.mobileVs}>
+            {timeLabel ? timeLabel : 'vs'}
+          </div>
+        )}
+      </div>
+
+      {/* ── Right badges (desktop only) ──────────────────────── */}
       <div className={styles.badgeCol}>
         {!isScheduled && <StatusBadge status={status} matchDate={match_date} />}
         {isFriendly && (
-          <span style={{
-            fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.05em',
-            color: 'var(--color-friendly)', textTransform: 'uppercase',
-          }}>
+          <span className={styles.friendlyLabel}>
             Friendly
           </span>
         )}

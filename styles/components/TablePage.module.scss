@@ -58,6 +58,15 @@
   background:  var(--color-surface, #0f0f1e);
 }
 
+/* ── Table scroll wrapper ────────────────────────────────── */
+.tableScroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border, #2a2a48) transparent;
+}
+
 /* ── Standings table ─────────────────────────────────────── */
 .table {
   width:           100%;
@@ -136,7 +145,18 @@
   color:       var(--color-text, #e8e8f4);
 }
 
-/* ── Responsive: hide some columns on mobile ─────────────── */
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .groupSection {
+    border-radius: var(--radius-md, 8px);
+  }
+
+  .table {
+    min-width: 580px;    /* force scroll rather than squash */
+    font-size: 0.82rem;
+  }
+}
+
 @media (max-width: 480px) {
   .hideOnMobile { display: none; }
 }
