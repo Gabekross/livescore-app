@@ -1,9 +1,7 @@
 // app/tournaments/[slug]/page.tsx
 // Tournament overview — Server Component.
-// Fetches by slug (SEO-friendly URL). Shows cover, stages with groups and
-// their matches, and a "Recent Matches" section.
-//
-// Rendering hierarchy:  Stage → Group/Table → Matches  (all statuses)
+// Fetches by slug (SEO-friendly URL). Shows cover image, stage → group →
+// matches hierarchy (all statuses included).
 
 import type { Metadata }              from 'next'
 import Link                           from 'next/link'
@@ -155,11 +153,6 @@ export default async function TournamentDetailPage({ params }: Props) {
     }
   }
 
-  // Recent matches for the top section (last 8 by date, all statuses)
-  const recentMatches = [...allMatches]
-    .sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())
-    .slice(0, 8)
-
   const dateRange = [
     tournament.start_date
       ? new Date(tournament.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -194,24 +187,6 @@ export default async function TournamentDetailPage({ params }: Props) {
               Table
             </Link>
           </div>
-        </div>
-
-        {/* Recent matches */}
-        <div style={{ marginBottom: 'var(--sp-8)' }}>
-          <SectionHeader
-            title="Recent Matches"
-            ctaLabel="All fixtures"
-            ctaHref={`/tournaments/${params.slug}/fixtures`}
-          />
-          {recentMatches.length === 0 ? (
-            <EmptyState icon="" title="No matches yet" compact />
-          ) : (
-            <div className={styles.matchStack}>
-              {recentMatches.map((m) => (
-                <MatchCard key={m.id} {...m as any} href={`/matches/${m.id}`} />
-              ))}
-            </div>
-          )}
         </div>
 
         {/* ── Stages → Groups → Matches ──────────────────────── */}
