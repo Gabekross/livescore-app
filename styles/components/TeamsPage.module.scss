@@ -18,6 +18,26 @@
   line-height:   1.2;
 }
 
+/* ── Search ─────────────────────────────────────────────── */
+.searchWrap {
+  margin-bottom: var(--sp-5, 1.25rem);
+}
+
+.searchInput {
+  width:         100%;
+  max-width:     360px;
+  padding:       10px 14px;
+  background:    var(--color-card, #13132a);
+  border:        1px solid var(--color-border, #2a2a48);
+  border-radius: var(--radius-full, 9999px);
+  color:         var(--color-text, #e8e8f4);
+  font-size:     0.87rem;
+  font-weight:   500;
+
+  &::placeholder { color: var(--color-text-dim, #48487a); }
+  &:focus { outline: none; border-color: var(--color-accent, #2563eb); }
+}
+
 /* ── Teams grid ──────────────────────────────────────────── */
 .grid {
   display:               grid;
@@ -182,6 +202,12 @@
   border:           1px solid rgba(37, 99, 235, 0.25);
   font-size:        0.78rem;
   font-weight:      700;
+}
+
+.positionCell {
+  font-size:      0.78rem;
+  color:          var(--color-text-muted, #7272a0);
+  text-transform: capitalize;
 }
 
 .matchStack {

@@ -218,3 +218,109 @@
   flex-direction: column;
   gap:            var(--sp-2, 0.5rem);
 }
+
+/* ── Archive stats summary ──────────────────────────────── */
+.statsSummary {
+  display:               grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap:                   var(--sp-4, 1rem);
+  margin-bottom:         var(--sp-6, 1.5rem);
+}
+
+.statBox {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            var(--sp-1, 0.25rem);
+  padding:        var(--sp-5, 1.25rem) var(--sp-4, 1rem);
+  background:     var(--color-card, #13132a);
+  border:         1px solid var(--color-border-subtle, #1c1c35);
+  border-radius:  var(--radius-xl, 16px);
+}
+
+.statBoxValue {
+  font-size:            1.6rem;
+  font-weight:          800;
+  color:                var(--color-text, #e8e8f4);
+  font-variant-numeric: tabular-nums;
+  line-height:          1.2;
+}
+
+.statBoxLabel {
+  font-size:      0.68rem;
+  font-weight:    700;
+  color:          var(--color-text-dim, #48487a);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Filter tabs ────────────────────────────────────────── */
+.controls {
+  display:       flex;
+  align-items:   center;
+  gap:           var(--sp-3, 0.75rem);
+  flex-wrap:     wrap;
+  margin-bottom: var(--sp-5, 1.25rem);
+}
+
+.tabs {
+  display:       flex;
+  gap:           var(--sp-1, 0.25rem);
+  background:    var(--color-card, #13132a);
+  border:        1px solid var(--color-border-subtle, #1c1c35);
+  border-radius: var(--radius-full, 9999px);
+  padding:       3px;
+}
+
+.tab {
+  padding:       6px 14px;
+  border-radius: var(--radius-full, 9999px);
+  font-size:     0.8rem;
+  font-weight:   600;
+  color:         var(--color-text-muted, #7272a0);
+  background:    transparent;
+  border:        none;
+  cursor:        pointer;
+  transition:    background-color var(--transition-fast), color var(--transition-fast);
+  white-space:   nowrap;
+  &:hover { color: var(--color-text, #e8e8f4); }
+}
+
+.tabActive {
+  background-color: var(--color-accent, #2563eb);
+  color:            #fff !important;
+}
+
+.dateLabel {
+  font-size:      0.72rem;
+  font-weight:    700;
+  color:          var(--color-text-dim, #48487a);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom:  var(--sp-2, 0.5rem);
+  padding:        0 var(--sp-1, 0.25rem);
+}
+
+.dateGroup {
+  margin-bottom: var(--sp-4, 1rem);
+}
+
+/* ── Search ─────────────────────────────────────────────── */
+.searchWrap {
+  margin-bottom: var(--sp-5, 1.25rem);
+}
+
+.searchInput {
+  width:         100%;
+  max-width:     360px;
+  padding:       10px 14px;
+  background:    var(--color-card, #13132a);
+  border:        1px solid var(--color-border, #2a2a48);
+  border-radius: var(--radius-full, 9999px);
+  color:         var(--color-text, #e8e8f4);
+  font-size:     0.87rem;
+  font-weight:   500;
+
+  &::placeholder { color: var(--color-text-dim, #48487a); }
+  &:focus { outline: none; border-color: var(--color-accent, #2563eb); }
+}

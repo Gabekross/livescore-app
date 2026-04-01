@@ -129,6 +129,16 @@
   font-size:   0.9rem;
 }
 
+.teamLink {
+  font-weight:     600;
+  color:           var(--color-text, #e8e8f4);
+  font-size:       0.9rem;
+  text-decoration: none;
+  transition:      color var(--transition-fast);
+
+  &:hover { color: var(--color-accent-light, #3b82f6); }
+}
+
 .tdStat {
   text-align:  center;
   padding:     var(--sp-3, 0.75rem);

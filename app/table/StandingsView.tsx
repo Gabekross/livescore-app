@@ -6,8 +6,10 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter, useSearchParams }        from 'next/navigation'
 import { supabase }                          from '@/lib/supabase'
+import Link                                  from 'next/link'
 import SectionHeader                         from '@/components/ui/SectionHeader'
 import EmptyState                            from '@/components/ui/EmptyState'
+import { formatTeamName }                    from '@/lib/formatters'
 import styles                               from '@/styles/components/TablePage.module.scss'
 
 interface Tournament { id: string; name: string; slug: string }
@@ -189,7 +191,9 @@ function GroupTable({ groupName, rows }: { groupName: string; rows: StandingRow[
                   <td className={styles.tdPos}>{i + 1}</td>
                   <td>
                     <div className={styles.tdTeam}>
-                      <span className={styles.teamName}>{row.team_name}</span>
+                      <Link href={`/teams/${row.team_id}`} className={styles.teamLink}>
+                        {formatTeamName(row.team_name)}
+                      </Link>
                     </div>
                   </td>
                   <td className={styles.tdStat}>{row.played}</td>

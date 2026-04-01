@@ -14,6 +14,7 @@ interface Props {
   siteName:      string
   footerText?:   string | null
   contactEmail?: string | null
+  logoUrl?:      string | null
   isOrgSite:     boolean
 }
 
@@ -34,7 +35,7 @@ const PLATFORM_FOOTER_LINKS = [
   { href: '/signup',        label: 'Get Started' },
 ]
 
-export default function PublicFooter({ siteName, footerText, contactEmail, isOrgSite }: Props) {
+export default function PublicFooter({ siteName, footerText, contactEmail, logoUrl, isOrgSite }: Props) {
   const pathname = usePathname()
 
   // Hide on admin, platform, and auth pages
@@ -49,7 +50,11 @@ export default function PublicFooter({ siteName, footerText, contactEmail, isOrg
     <footer className={footerClass}>
       <div className={styles.inner}>
         <div className={`${styles.brand} ${!isOrgSite ? styles.brandPlatform : ''}`}>
-          <span className={styles.brandEmoji}>&#9917;</span>
+          {logoUrl ? (
+            <img src={logoUrl} alt={siteName} className={styles.brandLogo} />
+          ) : (
+            <span className={styles.brandEmoji}>&#9917;</span>
+          )}
           {isOrgSite ? siteName : 'Football Live'}
         </div>
 

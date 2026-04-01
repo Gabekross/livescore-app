@@ -87,6 +87,7 @@ export default async function RootLayout({
           siteName={settings.site_name}
           footerText={settings.footer_text}
           contactEmail={settings.contact_email}
+          logoUrl={settings.logo_url}
           isOrgSite={settings.isOrgSite}
         />
 

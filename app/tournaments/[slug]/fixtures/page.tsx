@@ -6,9 +6,8 @@ import Link                           from 'next/link'
 import { notFound }                   from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
-import MatchCard                      from '@/components/ui/MatchCard'
 import SectionHeader                  from '@/components/ui/SectionHeader'
-import EmptyState                     from '@/components/ui/EmptyState'
+import TournamentFixturesList         from '@/components/ui/TournamentFixturesList'
 import type { MatchStatus }           from '@/lib/utils/match'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
 
@@ -60,13 +59,6 @@ export default async function TournamentFixturesPage({ params }: Props) {
     away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
   }))
 
-  // Group by date
-  const grouped = new Map<string, typeof matches>()
-  for (const m of matches) {
-    const key = m.match_date.slice(0, 10)
-    grouped.set(key, [...(grouped.get(key) ?? []), m])
-  }
-
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
@@ -79,27 +71,11 @@ export default async function TournamentFixturesPage({ params }: Props) {
           subtitle={tournRes.data.name}
         />
 
-        {matches.length === 0 ? (
-          <EmptyState icon="" title="No matches scheduled yet" />
-        ) : (
-          Array.from(grouped.entries()).map(([date, dayMatches]) => (
-            <div key={date} style={{ marginBottom: 'var(--sp-5)' }}>
-              <div style={{
-                fontSize: '0.72rem', fontWeight: 700, color: 'var(--color-text-dim)',
-                letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 'var(--sp-2)',
-              }}>
-                {new Date(date + 'T00:00:00').toLocaleDateString('en-GB', {
-                  weekday: 'long', day: 'numeric', month: 'long',
-                })}
-              </div>
-              <div className={styles.matchStack}>
-                {dayMatches.map((m) => (
-                  <MatchCard key={m.id} {...m as any} href={`/matches/${m.id}`} />
-                ))}
-              </div>
-            </div>
-          ))
-        )}
+        <TournamentFixturesList
+          matches={matches}
+          tournamentName={tournRes.data.name}
+          tournamentSlug={params.slug}
+        />
       </div>
     </div>
   )

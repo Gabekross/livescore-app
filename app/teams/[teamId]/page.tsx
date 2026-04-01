@@ -35,6 +35,7 @@ interface Player {
   id:             string
   name:           string
   jersey_number?: number | null
+  position?:      string | null
 }
 
 interface MatchRow {
@@ -98,7 +99,7 @@ export default async function TeamDetailPage({ params }: Props) {
 
     supabase
       .from('players')
-      .select('id, name, jersey_number')
+      .select('id, name, jersey_number, position')
       .eq('team_id', teamId)
       .order('jersey_number', { ascending: true, nullsFirst: false }),
 
@@ -256,6 +257,7 @@ export default async function TeamDetailPage({ params }: Props) {
                 <tr>
                   <th>#</th>
                   <th>Name</th>
+                  <th>Position</th>
                 </tr>
               </thead>
               <tbody>
@@ -267,6 +269,7 @@ export default async function TeamDetailPage({ params }: Props) {
                       </span>
                     </td>
                     <td>{p.name}</td>
+                    <td className={styles.positionCell}>{p.position ?? '–'}</td>
                   </tr>
                 ))}
               </tbody>

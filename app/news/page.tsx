@@ -28,9 +28,10 @@ interface Post {
 
 function formatDate(iso: string | null) {
   if (!iso) return ''
-  return new Date(iso).toLocaleDateString('en-GB', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  })
+  const d = new Date(iso)
+  const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' }
+  if (d.getFullYear() !== new Date().getFullYear()) opts.year = 'numeric'
+  return d.toLocaleDateString('en-GB', opts)
 }
 
 export default async function NewsPage() {

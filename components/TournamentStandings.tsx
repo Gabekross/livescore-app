@@ -10,6 +10,7 @@
 //   - org scoping added via organization_id filter on matches
 
 import { useEffect, useState } from 'react'
+import Link                    from 'next/link'
 import { supabase }            from '@/lib/supabase'
 import styles                  from '@/styles/components/TournamentStandings.module.scss'
 import { formatTeamName }      from '@/lib/formatters'
@@ -145,7 +146,7 @@ export default function TournamentStandings({
           {standings.map((team, idx) => (
             <tr key={team.team_id}>
               <td>{idx + 1}</td>
-              <td>{formatTeamName(team.team_name)}</td>
+              <td><Link href={`/teams/${team.team_id}`} style={{ color: 'inherit', textDecoration: 'none', fontWeight: 600 }}>{formatTeamName(team.team_name)}</Link></td>
               <td>{team.mp}</td><td>{team.w}</td><td>{team.d}</td><td>{team.l}</td>
               <td>{team.gf}</td><td>{team.ga}</td><td>{team.gd}</td><td>{team.pts}</td>
             </tr>

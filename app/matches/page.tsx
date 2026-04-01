@@ -60,7 +60,9 @@ function formatDateHeading(isoDate: string): string {
   if (sameDay(d, yesterday)) return 'Yesterday'
   if (sameDay(d, tomorrow)) return 'Tomorrow'
 
-  return d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  const opts: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long' }
+  if (d.getFullYear() !== today.getFullYear()) opts.year = 'numeric'
+  return d.toLocaleDateString('en-GB', opts)
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -170,11 +172,17 @@ export default function MatchesPage() {
     router.push(`/matches?${p}`, { scroll: false })
   }
 
+  // Compute counts per tab (respecting tournament filter)
+  const tourneyFiltered = tourney ? matches.filter((m) => m.tournament_id === tourney) : matches
+  const fixtureCount = tourneyFiltered.filter((m) => m.status === 'scheduled').length
+  const resultCount  = tourneyFiltered.filter((m) => m.status === 'completed').length
+  const liveCount    = tourneyFiltered.filter((m) => m.status === 'live' || m.status === 'halftime').length
+
   const TABS: { key: Tab; label: string }[] = [
-    { key: 'all',      label: 'All' },
-    { key: 'fixtures', label: 'Fixtures' },
-    { key: 'results',  label: 'Results' },
-    { key: 'live',     label: '● Live' },
+    { key: 'all',      label: `All (${tourneyFiltered.length})` },
+    { key: 'fixtures', label: `Fixtures (${fixtureCount})` },
+    { key: 'results',  label: `Results (${resultCount})` },
+    { key: 'live',     label: `● Live${liveCount > 0 ? ` (${liveCount})` : ''}` },
   ]
 
   // ── Render ─────────────────────────────────────────────────────────────

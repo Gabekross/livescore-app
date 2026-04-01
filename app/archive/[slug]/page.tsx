@@ -62,13 +62,16 @@ export default async function ArchiveTournamentPage({ params }: Props) {
     `)
     .eq('tournament_id', tournament.id)
     .order('match_date', { ascending: false })
-    .limit(20)
 
   const matches = ((matchData || []) as MatchRow[]).map((m) => ({
     ...m,
     home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
     away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
   }))
+
+  // Compute tournament stats summary
+  const completed = matches.filter((m) => m.status === 'completed' && m.home_score !== null && m.away_score !== null)
+  const totalGoals = completed.reduce((sum, m) => sum + (m.home_score ?? 0) + (m.away_score ?? 0), 0)
 
   const dateRange = [
     tournament.start_date ? new Date(tournament.start_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : null,
@@ -94,9 +97,27 @@ export default async function ArchiveTournamentPage({ params }: Props) {
           </div>
         </div>
 
+        {/* Stats summary */}
+        {completed.length > 0 && (
+          <div className={styles.statsSummary}>
+            <div className={styles.statBox}>
+              <span className={styles.statBoxValue}>{completed.length}</span>
+              <span className={styles.statBoxLabel}>Matches Played</span>
+            </div>
+            <div className={styles.statBox}>
+              <span className={styles.statBoxValue}>{totalGoals}</span>
+              <span className={styles.statBoxLabel}>Goals Scored</span>
+            </div>
+            <div className={styles.statBox}>
+              <span className={styles.statBoxValue}>{completed.length > 0 ? (totalGoals / completed.length).toFixed(1) : '0'}</span>
+              <span className={styles.statBoxLabel}>Goals / Match</span>
+            </div>
+          </div>
+        )}
+
         <SectionHeader title="Results" />
         {matches.length === 0 ? (
-          <EmptyState icon="" title="No matches recorded" compact />
+          <EmptyState title="No matches recorded" compact />
         ) : (
           <div className={styles.matchStack}>
             {matches.map((m) => (
