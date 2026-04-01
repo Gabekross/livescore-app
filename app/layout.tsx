@@ -4,9 +4,11 @@
 // client nav / footer.  Falls back gracefully if DB is unreachable.
 
 import type { Metadata }    from 'next'
+import { headers }          from 'next/headers'
 import { Toaster }          from 'react-hot-toast'
 import PublicNav            from '@/components/layouts/PublicNav'
 import PublicFooter         from '@/components/layouts/PublicFooter'
+import { resolveMetadataBase } from '@/lib/seo'
 import '@/app/globals.css'
 
 // ── Org / site-settings fetch (best-effort) ───────────────────────────────────
@@ -55,13 +57,37 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
   }
 }
 
-// ── Static metadata (enhanced per-page via generateMetadata) ─────────────────
-export const metadata: Metadata = {
-  title: {
-    default:  'Football Live',
-    template: '%s | Football Live',
-  },
-  description: 'Live football scores, fixtures, standings and more.',
+// ── Dynamic root metadata (provides metadataBase + fallback title) ────────────
+export async function generateMetadata(): Promise<Metadata> {
+  const host = headers().get('host')
+  const metadataBase = resolveMetadataBase(host)
+
+  return {
+    metadataBase,
+    title: {
+      default:  'Football Live',
+      template: '%s | Football Live',
+    },
+    description: 'Live football scores, fixtures, standings and more.',
+    // Prevent Vercel preview URLs and non-www from being indexed
+    ...(isNonCanonicalHost(host) ? { robots: { index: false, follow: false } } : {}),
+  }
+}
+
+/**
+ * Returns true if the current host is a Vercel preview/deployment URL
+ * or any hostname that should not be indexed by search engines.
+ */
+function isNonCanonicalHost(host: string | null): boolean {
+  if (!host) return false
+  const hostname = host.split(':')[0]
+  // Block indexing of Vercel preview/deployment URLs
+  if (hostname.endsWith('.vercel.app')) return true
+  // Block indexing of bare apex if www is canonical (handled by Vercel redirect,
+  // but belt-and-suspenders)
+  const rootDomain = process.env.NEXT_PUBLIC_ROOT_DOMAIN?.split(':')[0]
+  if (rootDomain && hostname === rootDomain) return true
+  return false
 }
 
 // ── Root layout ───────────────────────────────────────────────────────────────

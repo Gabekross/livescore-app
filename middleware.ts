@@ -1,7 +1,14 @@
 // middleware.ts
-// Two responsibilities:
+// Three responsibilities:
 //   1. Subdomain → org-slug header injection for all requests
-//   2. Route protection (admin/platform auth checks)
+//   2. app.kolusports.com → admin route rewriting
+//   3. Route protection (admin/platform auth checks)
+//
+// Hostname routing:
+//   www.kolusports.com      → public site (no org-slug header)
+//   kolusports.com          → redirected to www by Vercel DNS
+//   app.kolusports.com      → admin area (paths rewritten to /admin/*)
+//   {org}.kolusports.com    → tenant site (org-slug header injected)
 //
 // Route protection:
 //   /admin/*          → requires authenticated user with admin_profiles row
@@ -16,16 +23,63 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse }        from 'next/server'
 import type { NextRequest }    from 'next/server'
-import { getOrgSlugFromHostname } from '@/lib/subdomain'
+import { extractSubdomain, getOrgSlugFromHostname } from '@/lib/subdomain'
+
+/** Paths on app.kolusports.com that should NOT be prefixed with /admin */
+const APP_PASSTHROUGH = new Set([
+  '/login',
+  '/signup',
+  '/forgot-password',
+  '/reset-password',
+])
 
 export async function middleware(request: NextRequest) {
-  // ── Inject org slug from subdomain into request headers ───────────────
-  const orgSlug = getOrgSlugFromHostname(request.headers.get('host') || '')
+  const host = request.headers.get('host') || ''
+  const subdomain = extractSubdomain(host)
+  const { pathname } = request.nextUrl
+
+  // ── app.kolusports.com rewriting ────────────────────────────────────────
+  // Rewrites paths so the admin panel is accessible at the root of the
+  // app subdomain:
+  //   app.kolusports.com/              → /login
+  //   app.kolusports.com/dashboard     → /admin/dashboard
+  //   app.kolusports.com/tournaments   → /admin/tournaments
+  //   app.kolusports.com/login         → /login (passthrough)
+  if (subdomain === 'app') {
+    // Root of app subdomain → admin login
+    if (pathname === '/') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.rewrite(url)
+    }
+
+    // If path doesn't already start with /admin, /api, /_next, or an auth page,
+    // rewrite it into the /admin namespace
+    if (
+      !pathname.startsWith('/admin') &&
+      !pathname.startsWith('/api') &&
+      !pathname.startsWith('/_next') &&
+      !pathname.startsWith('/platform') &&
+      !APP_PASSTHROUGH.has(pathname)
+    ) {
+      const url = request.nextUrl.clone()
+      url.pathname = `/admin${pathname}`
+      return NextResponse.rewrite(url)
+    }
+  }
+
+  // ── Inject org slug from subdomain into request headers ─────────────────
+  const orgSlug = getOrgSlugFromHostname(host)
   if (orgSlug) {
     request.headers.set('x-org-slug', orgSlug)
   }
 
   let response = NextResponse.next({ request })
+
+  // ── Add X-Robots-Tag for admin/platform pages ───────────────────────────
+  if (pathname.startsWith('/admin') || pathname.startsWith('/platform')) {
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -43,6 +97,10 @@ export async function middleware(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
           )
+          // Re-apply X-Robots-Tag after response recreation
+          if (pathname.startsWith('/admin') || pathname.startsWith('/platform')) {
+            response.headers.set('X-Robots-Tag', 'noindex, nofollow')
+          }
         },
       },
     }
@@ -52,8 +110,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  const { pathname } = request.nextUrl
 
   // ── Protect /admin/* routes ─────────────────────────────────────────────
   // /admin (bare) is the legacy login page — redirect to new /login
