@@ -142,13 +142,18 @@ export default function StandingsView({
             description="This stage has no groups, or standings aren't enabled."
           />
         ) : (
-          groups.map((group) => (
-            <GroupTable
-              key={group.id}
-              groupName={group.name}
-              rows={standings[group.id] || []}
-            />
-          ))
+          groups.map((group) => {
+            const tourn = tournaments.find((t) => t.id === tournId)
+            return (
+              <GroupTable
+                key={group.id}
+                groupId={group.id}
+                groupName={group.name}
+                rows={standings[group.id] || []}
+                tournamentSlug={tourn?.slug}
+              />
+            )
+          })
         )}
       </div>
     </div>
@@ -156,10 +161,23 @@ export default function StandingsView({
 }
 
 // ── Group table ───────────────────────────────────────────────────────────────
-function GroupTable({ groupName, rows }: { groupName: string; rows: StandingRow[] }) {
+function GroupTable({ groupId, groupName, rows, tournamentSlug }: {
+  groupId: string; groupName: string; rows: StandingRow[]; tournamentSlug?: string
+}) {
+  const heading = tournamentSlug ? (
+    <Link
+      href={`/tournaments/${tournamentSlug}/groups/${groupId}`}
+      className={styles.groupHeadingLink}
+    >
+      {groupName} →
+    </Link>
+  ) : (
+    <div className={styles.groupHeading}>{groupName}</div>
+  )
+
   return (
     <div className={styles.groupSection}>
-      <div className={styles.groupHeading}>{groupName}</div>
+      {heading}
 
       {rows.length === 0 ? (
         <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--color-text-dim)', fontSize: '0.85rem' }}>

@@ -196,6 +196,12 @@
   justify-content: space-between;
 }
 
+.stageLinks {
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-4, 1rem);
+}
+
 .stageLink {
   font-size:  0.75rem;
   color:      var(--color-accent-light, #3b82f6);
@@ -204,12 +210,17 @@
 
 /* Group sub-heading inside a stage block */
 .groupLabel {
-  padding:        var(--sp-3, 0.75rem) var(--sp-5, 1.25rem) 0;
-  font-size:      0.72rem;
-  font-weight:    700;
-  color:          var(--color-text-dim, #48487a);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  display:         block;
+  padding:         var(--sp-3, 0.75rem) var(--sp-5, 1.25rem) 0;
+  font-size:       0.72rem;
+  font-weight:     700;
+  color:           var(--color-text-dim, #48487a);
+  letter-spacing:  0.08em;
+  text-transform:  uppercase;
+  text-decoration: none;
+  transition:      color var(--transition-fast, 150ms ease);
+
+  &:hover { color: var(--color-accent-light, #3b82f6); }
 }
 
 .matchStack {

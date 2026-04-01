@@ -58,6 +58,22 @@
   background:  var(--color-surface, #0f0f1e);
 }
 
+.groupHeadingLink {
+  display:          block;
+  font-size:        0.72rem;
+  font-weight:      700;
+  color:            var(--color-text-dim, #48487a);
+  letter-spacing:   0.1em;
+  text-transform:   uppercase;
+  text-decoration:  none;
+  padding:          var(--sp-4, 1rem) var(--sp-5, 1.25rem);
+  border-bottom:    1px solid var(--color-border-subtle, #1c1c35);
+  background:       var(--color-surface, #0f0f1e);
+  transition:       color var(--transition-fast, 150ms ease);
+
+  &:hover { color: var(--color-accent-light, #3b82f6); }
+}
+
 /* ── Table scroll wrapper ────────────────────────────────── */
 .tableScroll {
   overflow-x: auto;

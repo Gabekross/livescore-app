@@ -205,14 +205,24 @@ export default async function TournamentDetailPage({ params }: Props) {
                   {/* Stage heading */}
                   <div className={styles.stageHeading}>
                     {stage.stage_name}
-                    {stage.show_standings && (
-                      <Link
-                        href={`/tournaments/${params.slug}/table`}
-                        className={styles.stageLink}
-                      >
-                        View table →
-                      </Link>
-                    )}
+                    <span className={styles.stageLinks}>
+                      {stageGroups.length === 1 && (
+                        <Link
+                          href={`/tournaments/${params.slug}/groups/${stageGroups[0].id}`}
+                          className={styles.stageLink}
+                        >
+                          All matches →
+                        </Link>
+                      )}
+                      {stage.show_standings && (
+                        <Link
+                          href={`/tournaments/${params.slug}/table`}
+                          className={styles.stageLink}
+                        >
+                          View table →
+                        </Link>
+                      )}
+                    </span>
                   </div>
 
                   {/* Groups inside this stage */}
@@ -224,7 +234,12 @@ export default async function TournamentDetailPage({ params }: Props) {
                       <div key={group.id}>
                         {/* Show group label when the stage has more than one group */}
                         {stageGroups.length > 1 && (
-                          <div className={styles.groupLabel}>{group.name}</div>
+                          <Link
+                            href={`/tournaments/${params.slug}/groups/${group.id}`}
+                            className={styles.groupLabel}
+                          >
+                            {group.name} →
+                          </Link>
                         )}
                         <div className={styles.matchStack}>
                           {groupMatches.map((m) => (
