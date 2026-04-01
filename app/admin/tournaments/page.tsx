@@ -71,6 +71,28 @@ export default function AdminTournamentList() {
     }
   }
 
+  const handleArchiveToggle = async (tournament: Tournament) => {
+    const action = tournament.is_archived ? 'unarchive' : 'archive'
+    const confirmed = window.confirm(
+      tournament.is_archived
+        ? `Restore "${tournament.name}" to active tournaments?`
+        : `Archive "${tournament.name}"?\n\nIt will move to the archive section and no longer appear under active tournaments. All data is preserved.`
+    )
+    if (!confirmed) return
+
+    const { error } = await supabase
+      .from('tournaments')
+      .update({ is_archived: !tournament.is_archived })
+      .eq('id', tournament.id)
+
+    if (error) {
+      toast.error(`Failed to ${action} tournament`)
+    } else {
+      toast.success(tournament.is_archived ? 'Tournament restored to active' : 'Tournament archived')
+      fetchTournaments()
+    }
+  }
+
   const handleDelete = async (tournamentId: string, tournamentName: string) => {
     const confirmed = window.confirm(
       `Delete "${tournamentName}"?\n\nThis will permanently delete all stages, groups, matches, and match data associated with this tournament. This cannot be undone.`
@@ -174,6 +196,16 @@ export default function AdminTournamentList() {
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                     <button onClick={() => handleEdit(t)} className={styles.secondaryButtonSmall}>
                       Edit
+                    </button>
+                    <button
+                      onClick={() => handleArchiveToggle(t)}
+                      className={styles.secondaryButtonSmall}
+                      style={t.is_archived
+                        ? { color: '#16a34a', borderColor: '#bbf7d0' }
+                        : { color: '#d97706', borderColor: '#fde68a' }
+                      }
+                    >
+                      {t.is_archived ? 'Unarchive' : 'Archive'}
                     </button>
                     <button
                       onClick={() => handleDelete(t.id, t.name)}
