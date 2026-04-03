@@ -1,10 +1,14 @@
 // components/platform/PlatformLanding.tsx
 // SaaS marketing landing page — rendered when no org is resolved (main platform domain).
-// Entirely static — no data fetching. Light theme with dark-blue accents.
-// Positioned as a multi-sport platform for leagues, tournaments, and clubs.
+// Conversion-focused. Sports-agnostic. Light theme with dark-blue accents.
+// Pricing is sourced from config/pricing.ts — never hardcoded here.
 
 import Link   from 'next/link'
 import styles from '@/styles/components/PlatformLanding.module.scss'
+import {
+  PRO_TIERS, FREE_PLAN, PRO_PLAN, PLAN_FEATURES,
+  PRO_VALUE_FEATURES, formatPrice,
+} from '@/config/pricing'
 
 // ── Small static sub-components ───────────────────────────────────────────────
 
@@ -23,26 +27,28 @@ function HeroSection() {
       <div className={styles.heroInner}>
         <div className={styles.heroText}>
           <div className={styles.heroBadge}>
-            &#127942; Sports Platform
+            &#127942; Built for Sports Organizers
           </div>
           <h1 className={styles.heroTitle}>
-            Launch your league or<br />
-            <span>tournament website in minutes</span>
+            Your league deserves a<br />
+            <span>professional website</span>
           </h1>
           <p className={styles.heroSub}>
-            The all-in-one platform for leagues, tournaments, and sports
-            organizations. Live scores, fixtures, standings, team pages,
-            and match-day operations — professional and ready to share.
+            Launch a live-updated sports site for your league, tournament, or
+            club — with fixtures, standings, team pages, and real-time match
+            management. Start free. Scale when you&apos;re ready.
           </p>
           <div className={styles.heroCtas}>
             <Link href="/signup" className={styles.ctaPrimary}>
-              Get Started Free
+              Start Your Free Trial
             </Link>
-            <Link href="/login" className={styles.ctaSecondary}>
-              Sign In
-            </Link>
+            <a href="#pricing" className={styles.ctaSecondary}>
+              See Pricing
+            </a>
           </div>
-          <p className={styles.heroNote}>No credit card required &middot; Set up in minutes</p>
+          <p className={styles.heroNote}>
+            {FREE_PLAN.trialDays}-day free trial &middot; No credit card required &middot; Set up in minutes
+          </p>
         </div>
 
         {/* Browser mockup — mini preview of the product */}
@@ -519,80 +525,101 @@ function FeaturesSection() {
 
 // ── Section: Pricing ──────────────────────────────────────────────────────────
 function PricingSection() {
+  const monthlyTier = PRO_TIERS.find(t => t.interval === 'month')!
+
   return (
     <section id="pricing" className={styles.pricingSection} aria-label="Pricing">
       <div className={styles.container}>
         <div className={styles.sectionHeaderCenter}>
           <div className={styles.sectionTag}>Pricing</div>
-          <h2 className={styles.sectionTitle}>Plans for every stage</h2>
+          <h2 className={styles.sectionTitle}>Simple pricing. Powerful results.</h2>
           <p className={styles.sectionSub}>
-            Simple, transparent plans. Start free — upgrade as you grow.
+            Start with a {FREE_PLAN.trialDays}-day free trial. Upgrade when your league is ready to grow.
           </p>
-          <div className={styles.pricingComingSoonWrap} style={{ marginTop: '0.75rem' }}>
-            <span className={styles.pricingComingSoon}>
-              &#x1F6A7; Pricing plans launching soon &mdash; contact us for early access
-            </span>
-          </div>
         </div>
 
         <div className={styles.pricingGrid}>
-          {/* Starter */}
+          {/* ── Free Trial ────────────────────────── */}
           <div className={styles.pricingCard}>
-            <div className={styles.pricingPlanName}>Starter</div>
+            <div className={styles.pricingPlanName}>{FREE_PLAN.name}</div>
             <div className={styles.pricingPrice}>Free</div>
-            <div className={styles.pricingPriceSub}>Perfect for getting started</div>
+            <div className={styles.pricingPriceSub}>{FREE_PLAN.tagline}</div>
             <ul className={styles.pricingFeatures}>
-              <li>1 organization</li>
-              <li>Up to 2 active tournaments</li>
-              <li>Up to 10 teams</li>
+              <li>{FREE_PLAN.trialDays} days to explore everything</li>
+              <li>Up to {FREE_PLAN.teamLimit} teams</li>
               <li>Live scores &amp; standings</li>
               <li>Team &amp; player pages</li>
-              <li>Public site on platform subdomain</li>
+              <li>Fixtures, results &amp; match centre</li>
+              <li>Your own site on kolusports.com</li>
             </ul>
             <Link href="/signup" className={styles.pricingBtnOutline}>
-              Get started free
+              {FREE_PLAN.cta}
             </Link>
           </div>
 
-          {/* Pro */}
+          {/* ── Pro Plan ──────────────────────────── */}
           <div className={styles.pricingCardFeatured}>
-            <div className={styles.pricingBadge}>Most Popular</div>
-            <div className={styles.pricingPlanName}>Pro</div>
+            <div className={styles.pricingBadge}>{PRO_PLAN.name}</div>
+            <div className={styles.pricingPlanName}>{PRO_PLAN.name}</div>
             <div className={styles.pricingPrice}>
-              TBD <span>/ month</span>
+              {formatPrice(monthlyTier.price)} <span>/ month</span>
             </div>
-            <div className={styles.pricingPriceSub}>For growing leagues &amp; academies</div>
+            <div className={styles.pricingPriceSub}>{PRO_PLAN.tagline}</div>
+
+            {/* Billing selector */}
+            <div className={styles.billingSelector}>
+              {PRO_TIERS.map((tier) => (
+                <div key={tier.interval} className={styles.billingSelectorOption}>
+                  <span className={styles.billingSelectorLabel}>{tier.label}</span>
+                  <span className={styles.billingSelectorPrice}>
+                    {formatPrice(tier.price)}{tier.interval === 'year' ? '/yr' : `/${tier.interval === 'week' ? 'wk' : 'mo'}`}
+                  </span>
+                  {tier.badge && (
+                    <span className={
+                      tier.badge === 'Most Popular'
+                        ? styles.billingSelectorBadgePopular
+                        : styles.billingSelectorBadgeSave
+                    }>
+                      {tier.savings || tier.badge}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+
             <ul className={styles.pricingFeatures}>
-              <li>Everything in Starter</li>
-              <li>Unlimited tournaments</li>
-              <li>Custom domain support</li>
-              <li>News &amp; media publishing</li>
-              <li>Match operator accounts</li>
-              <li>Advanced site settings &amp; branding</li>
-              <li>Priority support</li>
+              <li>Everything in Free Trial, plus:</li>
+              {PRO_VALUE_FEATURES.map((f) => (
+                <li key={f.title}>{f.title}</li>
+              ))}
             </ul>
             <Link href="/signup" className={styles.pricingBtnPrimary}>
-              Get started
+              {PRO_PLAN.cta}
             </Link>
           </div>
+        </div>
 
-          {/* Enterprise */}
-          <div className={styles.pricingCard}>
-            <div className={styles.pricingPlanName}>Enterprise</div>
-            <div className={styles.pricingPrice}>Custom</div>
-            <div className={styles.pricingPriceSub}>For large organizations &amp; federations</div>
-            <ul className={styles.pricingFeatures}>
-              <li>Everything in Pro</li>
-              <li>Multi-organization management</li>
-              <li>Dedicated support</li>
-              <li>Custom onboarding</li>
-              <li>SLA &amp; uptime guarantees</li>
-              <li>White-label options</li>
-            </ul>
-            <a href="mailto:hello@kolusports.com" className={styles.pricingBtnOutline}>
-              Contact sales
-            </a>
-          </div>
+        {/* ── Feature comparison ────────────────── */}
+        <div className={styles.pricingComparison}>
+          <h3 className={styles.pricingComparisonTitle}>Compare plans</h3>
+          <table className={styles.pricingTable}>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Free</th>
+                <th className={styles.pricingTableProHead}>Pro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {PLAN_FEATURES.map((f) => (
+                <tr key={f.name}>
+                  <td>{f.name}</td>
+                  <td>{f.free}</td>
+                  <td className={styles.pricingTableProCell}>{f.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </section>
@@ -604,27 +631,27 @@ function FaqSection() {
   const faqs = [
     {
       q: 'How quickly can I launch my site?',
-      a: "Sign up, name your organization, and your public site is live instantly. Adding teams and matches takes just minutes from the admin dashboard.",
+      a: 'Sign up, name your organization, and your public site is live instantly. Adding teams and matches takes just minutes from the admin dashboard.',
     },
     {
       q: 'Do I need technical skills?',
       a: 'No. The platform is designed for sports organizers, not developers. Everything is point-and-click — no code, no hosting setup.',
     },
     {
+      q: 'What happens when my free trial ends?',
+      a: 'Your data is safe — nothing gets deleted. You can still view everything, but creating and editing content requires upgrading to Pro.',
+    },
+    {
+      q: 'Can I change my billing plan later?',
+      a: 'Yes. You can switch between weekly, monthly, and yearly billing at any time from your settings. Upgrades take effect immediately.',
+    },
+    {
       q: 'How do live scores work?',
-      a: "You (or a match operator you assign) update the score from any phone during the match. Your public site reflects every change in real time.",
+      a: 'You (or a match operator you assign) update the score from any phone during the match. Your public site reflects every change in real time.',
     },
     {
-      q: 'Can I give someone else access?',
-      a: 'Yes. You can create match operator accounts for game-day staff with restricted access — they can only update scores, nothing else.',
-    },
-    {
-      q: 'Can I use a custom domain name?',
-      a: 'Custom domains are available on the Pro plan. All sites get a free subdomain at yourleague.kolusports.com on the Starter plan.',
-    },
-    {
-      q: 'What happens to my data?',
-      a: 'Your data is stored securely and belongs to you. All match history, team data, and content remains accessible as long as your account is active.',
+      q: 'What happens to my data if I cancel?',
+      a: 'Your data is stored securely and belongs to you. All match history, team data, and content remains accessible. You just lose access to Pro features.',
     },
   ]
 
@@ -654,20 +681,23 @@ function FinalCtaSection() {
     <section className={styles.finalCta} aria-label="Get started">
       <div className={styles.finalCtaInner}>
         <h2 className={styles.finalCtaTitle}>
-          Ready to launch your<br />sports website?
+          Ready to run your league<br />like a pro?
         </h2>
         <p className={styles.finalCtaSub}>
-          Join leagues, tournaments, and clubs running professional sites with live
-          scores, standings, and match management — all in one place.
+          Join sports organizers who trust our platform to power their live scores,
+          standings, and match-day operations — all from one dashboard.
         </p>
         <div className={styles.finalCtaBtns}>
           <Link href="/signup" className={styles.finalCtaBtnPrimary}>
-            Get Started Free
+            Start Your Free Trial
           </Link>
-          <a href="mailto:hello@kolusports.com" className={styles.finalCtaBtnSecondary}>
-            Contact Us
+          <a href="#pricing" className={styles.finalCtaBtnSecondary}>
+            See Plans
           </a>
         </div>
+        <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.75rem' }}>
+          {FREE_PLAN.trialDays}-day free trial &middot; No credit card required
+        </p>
       </div>
     </section>
   )

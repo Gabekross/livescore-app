@@ -7,6 +7,9 @@
 import Link                    from 'next/link'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
+import UpgradePrompt           from '@/components/admin/UpgradePrompt'
+import PlanBadge               from '@/components/admin/PlanBadge'
+import WelcomeOnboarding       from '@/components/admin/WelcomeOnboarding'
 import styles                  from '@/styles/components/AdminDashboard.module.scss'
 
 function getPublicSiteUrl(slug: string | null): string | null {
@@ -25,16 +28,18 @@ function getPublicSiteUrl(slug: string | null): string | null {
 }
 
 export default function AdminDashboardPage() {
-  const { role, orgName, orgSlug } = useAdminOrg()
+  const { role, orgName, orgSlug, plan } = useAdminOrg()
   const orgGate = useAdminOrgGate()
 
   if (orgGate) return orgGate
 
   return (
     <div className={styles.container}>
+      <WelcomeOnboarding />
+      <UpgradePrompt />
       <div className={styles.header}>
         <h2 className={styles.heading}>
-          {orgName || 'Admin Dashboard'}
+          {orgName || 'Admin Dashboard'} <PlanBadge />
         </h2>
         <p className={styles.subheading}>
           Manage your sports site — teams, tournaments, matches, and content.
@@ -88,11 +93,11 @@ export default function AdminDashboardPage() {
       <div className={styles.sectionLabel}>Content &amp; Site</div>
       <div className={styles.grid}>
         <Link href="/admin/news" className={styles.card}>
-          News &amp; Articles
+          News &amp; Articles {!plan?.canPublishNews && <span style={{ fontSize: '0.65rem', color: '#60a5fa', fontWeight: 700 }}>PRO</span>}
           <span className={styles.hint}>Publish and manage posts</span>
         </Link>
         <Link href="/admin/media" className={styles.card}>
-          Media Library
+          Media Library {!plan?.canManageMedia && <span style={{ fontSize: '0.65rem', color: '#60a5fa', fontWeight: 700 }}>PRO</span>}
           <span className={styles.hint}>Images and videos</span>
         </Link>
         <Link href="/admin/settings" className={styles.card}>
@@ -105,7 +110,7 @@ export default function AdminDashboardPage() {
       <div className={styles.sectionLabel}>People &amp; Access</div>
       <div className={styles.grid}>
         <Link href="/admin/operators" className={styles.card}>
-          Match Operators
+          Match Operators {!plan?.canUseOperators && <span style={{ fontSize: '0.65rem', color: '#60a5fa', fontWeight: 700 }}>PRO</span>}
           <span className={styles.hint}>Game-day score updaters</span>
         </Link>
         <Link href="/admin/operator" className={styles.card}>

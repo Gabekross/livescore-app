@@ -8,6 +8,7 @@ import Link                                  from 'next/link'
 import { supabase }                          from '@/lib/supabase'
 import { useAdminOrg }                       from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }                   from '@/components/admin/AdminOrgGate'
+import FeatureGate                           from '@/components/admin/FeatureGate'
 import toast                                 from 'react-hot-toast'
 import styles                                from '@/styles/components/AdminNews.module.scss'
 
@@ -82,6 +83,7 @@ export default function AdminNewsPage() {
   if (orgGate) return orgGate
 
   return (
+    <FeatureGate feature="canPublishNews" label="News & Articles">
     <div className={styles.container}>
       <div className={styles.topBar}>
         <h1 className={styles.heading}>News &amp; Blog</h1>
@@ -165,5 +167,6 @@ export default function AdminNewsPage() {
         </div>
       )}
     </div>
+    </FeatureGate>
   )
 }

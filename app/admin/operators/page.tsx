@@ -7,6 +7,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useAdminOrg }     from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
+import FeatureGate         from '@/components/admin/FeatureGate'
 import toast               from 'react-hot-toast'
 
 interface Operator {
@@ -104,6 +105,7 @@ export default function ManageOperatorsPage() {
   }
 
   return (
+    <FeatureGate feature="canUseOperators" label="Match Operators">
     <div style={{ maxWidth: '720px', margin: '0 auto', padding: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
         <div>
@@ -296,6 +298,7 @@ export default function ManageOperatorsPage() {
         </div>
       )}
     </div>
+    </FeatureGate>
   )
 }
 

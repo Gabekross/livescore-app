@@ -7,12 +7,20 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import toast        from 'react-hot-toast'
 
+interface OrgSubscription {
+  plan:           string
+  status:         string
+  trial_ends_at:  string | null
+  billing_interval: string | null
+}
+
 interface Organization {
-  id:         string
-  name:       string
-  slug:       string
-  created_at: string
-  _adminCount?: number
+  id:            string
+  name:          string
+  slug:          string
+  created_at:    string
+  _adminCount?:  number
+  _sub?:         OrgSubscription | null
 }
 
 export default function PlatformOrganizationsPage() {
@@ -27,7 +35,22 @@ export default function PlatformOrganizationsPage() {
       .from('organizations')
       .select('id, name, slug, created_at')
       .order('name')
-    setOrgs((data || []) as Organization[])
+
+    const orgList = (data || []) as Organization[]
+
+    // Fetch subscription data for all orgs
+    if (orgList.length > 0) {
+      const { data: subs } = await supabase
+        .from('subscriptions')
+        .select('organization_id, plan, status, trial_ends_at, billing_interval')
+
+      const subMap = new Map((subs || []).map((s: { organization_id: string } & OrgSubscription) => [s.organization_id, s]))
+      for (const org of orgList) {
+        org._sub = (subMap.get(org.id) as OrgSubscription) || null
+      }
+    }
+
+    setOrgs(orgList)
     setLoading(false)
   }, [])
 
@@ -140,14 +163,17 @@ export default function PlatformOrganizationsPage() {
           {orgs.map((org) => (
             <div key={org.id} style={{
               ...cardStyle, display: 'flex', alignItems: 'center',
-              justifyContent: 'space-between', gap: '1rem',
+              justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap',
             }}>
-              <div>
+              <div style={{ flex: 1, minWidth: '160px' }}>
                 <div style={{ fontWeight: 700, color: '#e8e8f0', fontSize: '0.9rem' }}>{org.name}</div>
                 <div style={{ fontSize: '0.75rem', color: '#666688', fontFamily: 'monospace' }}>{org.slug}</div>
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#6666888' }}>
-                {new Date(org.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <SubBadge sub={org._sub || null} />
+                <span style={{ fontSize: '0.72rem', color: '#666688' }}>
+                  {new Date(org.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
               </div>
             </div>
           ))}
@@ -155,4 +181,37 @@ export default function PlatformOrganizationsPage() {
       )}
     </div>
   )
+}
+
+/* ── Sub-components ──────────────────────────────────────────── */
+
+function SubBadge({ sub }: { sub: OrgSubscription | null }) {
+  if (!sub) {
+    return <span style={{ ...badgeBase, background: '#1e1e2e', color: '#555566' }}>No Plan</span>
+  }
+
+  const { plan, status } = sub
+
+  if (plan === 'pro' && status === 'active') {
+    return <span style={{ ...badgeBase, background: 'rgba(37,99,235,0.15)', color: '#60a5fa' }}>Pro</span>
+  }
+  if (status === 'trialing') {
+    const daysLeft = sub.trial_ends_at
+      ? Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / 86_400_000))
+      : 0
+    return <span style={{ ...badgeBase, background: 'rgba(251,191,36,0.12)', color: '#fbbf24' }}>Trial {daysLeft}d</span>
+  }
+  if (status === 'past_due') {
+    return <span style={{ ...badgeBase, background: 'rgba(239,68,68,0.12)', color: '#f87171' }}>Past Due</span>
+  }
+  if (status === 'canceled' || status === 'expired') {
+    return <span style={{ ...badgeBase, background: 'rgba(239,68,68,0.08)', color: '#888' }}>Expired</span>
+  }
+  return <span style={{ ...badgeBase, background: '#1e1e2e', color: '#666' }}>Free</span>
+}
+
+const badgeBase: React.CSSProperties = {
+  display: 'inline-block', padding: '2px 8px', borderRadius: 9999,
+  fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.04em',
+  textTransform: 'uppercase', whiteSpace: 'nowrap',
 }

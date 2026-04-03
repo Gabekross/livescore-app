@@ -8,6 +8,7 @@ import { useState }  from 'react'
 import { useRouter } from 'next/navigation'
 import Link          from 'next/link'
 import { supabase }  from '@/lib/supabase'
+import { FREE_PLAN } from '@/config/pricing'
 import styles        from '@/styles/components/Auth.module.scss'
 
 function toSlug(s: string): string {
@@ -113,9 +114,9 @@ export default function SignupPage() {
       <div className={styles.card}>
         <div className={styles.brand}>
           <div className={styles.brandIcon}>&#127942;</div>
-          <h1 className={styles.brandTitle}>Create Your Site</h1>
+          <h1 className={styles.brandTitle}>Start Your Free Trial</h1>
           <p className={styles.brandSub}>
-            Set up your sports platform in minutes. No credit card required.
+            Launch your league site in minutes. {FREE_PLAN.trialDays} days free — no credit card required.
           </p>
         </div>
 
@@ -193,8 +194,15 @@ export default function SignupPage() {
 
           <button type="submit" className={styles.submitBtn} disabled={loading}>
             {loading && <span className={styles.spinner} />}
-            {loading ? 'Creating your site...' : 'Create My Site'}
+            {loading ? 'Setting up your league...' : 'Start My Free Trial'}
           </button>
+
+          <p style={{
+            textAlign: 'center', fontSize: '0.72rem', color: '#94a3b8',
+            marginTop: '0.5rem', lineHeight: 1.5,
+          }}>
+            {FREE_PLAN.trialDays}-day free trial &middot; Up to {FREE_PLAN.teamLimit} teams &middot; Cancel anytime
+          </p>
         </form>
 
         <div className={styles.footer}>

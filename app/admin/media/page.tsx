@@ -12,6 +12,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { supabase }                                  from '@/lib/supabase'
 import { useAdminOrg }                               from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }                           from '@/components/admin/AdminOrgGate'
+import FeatureGate                                   from '@/components/admin/FeatureGate'
 import toast                                         from 'react-hot-toast'
 import styles                                        from '@/styles/components/AdminMedia.module.scss'
 
@@ -141,6 +142,7 @@ export default function AdminMediaPage() {
   if (orgGate) return orgGate
 
   return (
+    <FeatureGate feature="canManageMedia" label="Media Library">
     <div className={styles.container}>
       <h1 className={styles.heading}>Media Library</h1>
       <p className={styles.subheading}>
@@ -236,5 +238,6 @@ export default function AdminMediaPage() {
         </div>
       )}
     </div>
+    </FeatureGate>
   )
 }

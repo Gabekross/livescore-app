@@ -16,6 +16,8 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { getOrgSlugFromHostname } from '@/lib/subdomain'
+import { computePlanAccess } from '@/lib/subscription'
+import type { PlanAccess, Subscription } from '@/lib/subscription'
 
 type AdminRole = 'power_admin' | 'org_admin' | 'match_operator' | null
 
@@ -24,18 +26,19 @@ interface AdminOrgContextValue {
   orgSlug: string | null
   role:    AdminRole
   orgName: string | null
+  plan:    PlanAccess | null
   loading: boolean
   error:   Error  | null
   retry:   () => void
 }
 
 const AdminOrgContext = createContext<AdminOrgContextValue>({
-  orgId: null, orgSlug: null, role: null, orgName: null, loading: true, error: null, retry: () => {},
+  orgId: null, orgSlug: null, role: null, orgName: null, plan: null, loading: true, error: null, retry: () => {},
 })
 
 export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<Omit<AdminOrgContextValue, 'retry'>>({
-    orgId: null, orgSlug: null, role: null, orgName: null, loading: true, error: null,
+    orgId: null, orgSlug: null, role: null, orgName: null, plan: null, loading: true, error: null,
   })
 
   const resolve = useCallback(async () => {
@@ -160,11 +163,28 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // ── Step 4: Build final state ─────────────────────────────────────────
+    // ── Step 4: Fetch subscription for plan access ─────────────────────────
+    let planAccess: PlanAccess | null = null
+
+    if (orgId) {
+      try {
+        const { data: subData } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('organization_id', orgId)
+          .single()
+
+        planAccess = computePlanAccess((subData as Subscription) ?? null)
+      } catch {
+        // If subscriptions table doesn't exist yet, default to free
+        planAccess = computePlanAccess(null)
+      }
+    }
+
+    // ── Step 5: Build final state ─────────────────────────────────────────
     let finalError: Error | null = null
 
     if (!orgId) {
-      // Build a user-friendly message with diagnostics for debugging
       const userMsg = !userId
         ? 'Not authenticated. Please sign in.'
         : 'Could not determine organization.'
@@ -174,7 +194,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       finalError = new Error(userMsg + debugInfo)
     }
 
-    setState({ orgId, orgSlug, role, orgName, loading: false, error: finalError })
+    setState({ orgId, orgSlug, role, orgName, plan: planAccess, loading: false, error: finalError })
   }, [])
 
   useEffect(() => { resolve() }, [resolve])

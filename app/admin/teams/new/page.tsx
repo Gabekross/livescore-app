@@ -6,6 +6,8 @@ import Link          from 'next/link'
 import { supabase }  from '@/lib/supabase'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
+import { useTeamLimit } from '@/hooks/useTeamLimit'
+import UpgradeModal  from '@/components/admin/UpgradeModal'
 import toast         from 'react-hot-toast'
 import styles        from '@/styles/components/TeamForm.module.scss'
 import { v4 as uuidv4 } from 'uuid'
@@ -22,6 +24,7 @@ export default function CreateTeamPage() {
   const router = useRouter()
   const { orgId, loading: orgLoading } = useAdminOrg()
   const orgGate = useAdminOrgGate()
+  const { canAddTeam, teamCount, teamLimit } = useTeamLimit()
 
   const [name,      setName]      = useState('')
   const [coachName, setCoachName] = useState('')
@@ -125,6 +128,34 @@ export default function CreateTeamPage() {
   }
 
   if (orgGate) return orgGate
+
+  if (!canAddTeam) {
+    return (
+      <>
+        <div style={{ maxWidth: 520, margin: '3rem auto', textAlign: 'center', padding: '2rem' }}>
+          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🏟️</div>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+            You&apos;ve hit the {teamLimit}-team limit
+          </h2>
+          <p style={{ fontSize: '0.87rem', color: '#6b7280', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+            Your league is growing! Upgrade to Pro to add unlimited teams
+            and unlock media, news publishing, and more.
+          </p>
+          <UpgradeModal
+            open={true}
+            onClose={() => window.history.back()}
+            headline={`You've hit the ${teamLimit}-team limit`}
+            subtext="Run leagues of any size without limits. Upgrade to Pro for unlimited teams, media, and match operators."
+          />
+          <div style={{ marginTop: '1rem' }}>
+            <Link href="/admin/teams" style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+              ← Back to Teams
+            </Link>
+          </div>
+        </div>
+      </>
+    )
+  }
 
   return (
     <div className={styles.formContainer}>

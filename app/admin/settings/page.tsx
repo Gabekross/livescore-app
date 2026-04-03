@@ -9,6 +9,7 @@ import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import MediaPicker             from '@/components/admin/MediaPicker'
+import BillingSection          from '@/components/admin/BillingSection'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/AdminSettings.module.scss'
 
@@ -418,6 +419,9 @@ export default function AdminSettingsPage() {
           />
         </div>
       </div>
+
+      {/* ── Billing ── */}
+      <BillingSection />
 
       {/* Save */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
