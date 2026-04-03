@@ -1,6 +1,7 @@
 // components/platform/PlatformLanding.tsx
 // SaaS marketing landing page — rendered when no org is resolved (main platform domain).
 // Entirely static — no data fetching. Light theme with dark-blue accents.
+// Positioned as a multi-sport platform for leagues, tournaments, and clubs.
 
 import Link   from 'next/link'
 import styles from '@/styles/components/PlatformLanding.module.scss'
@@ -22,16 +23,16 @@ function HeroSection() {
       <div className={styles.heroInner}>
         <div className={styles.heroText}>
           <div className={styles.heroBadge}>
-            &#9917; Football Platform
+            &#127942; Sports Platform
           </div>
           <h1 className={styles.heroTitle}>
-            Launch your football<br />
-            <span>website in minutes</span>
+            Launch your league or<br />
+            <span>tournament website in minutes</span>
           </h1>
           <p className={styles.heroSub}>
-            The all-in-one platform for tournament organizers. Live scores,
-            fixtures, standings, team pages, and match-day operations —
-            professional and ready to share.
+            The all-in-one platform for leagues, tournaments, and sports
+            organizations. Live scores, fixtures, standings, team pages,
+            and match-day operations — professional and ready to share.
           </p>
           <div className={styles.heroCtas}>
             <Link href="/signup" className={styles.ctaPrimary}>
@@ -49,12 +50,12 @@ function HeroSection() {
           <div className={styles.browserMockup} role="presentation" aria-hidden="true">
             <div className={styles.browserBar}>
               <BrowserDots />
-              <div className={styles.browserUrl}>yourleague.footballlive.com</div>
+              <div className={styles.browserUrl}>yourleague.kolusports.com</div>
             </div>
             <div className={styles.browserContent}>
               {/* Mini nav */}
               <div className={styles.previewNav}>
-                <span className={styles.previewNavBrand}>&#9917; Spring League</span>
+                <span className={styles.previewNavBrand}>&#127942; Spring League</span>
                 <div className={styles.previewNavLinks}>
                   <span>Fixtures</span>
                   <span>Table</span>
@@ -135,7 +136,7 @@ function ShowcaseSection() {
           <div className={styles.sectionTag}>Product Preview</div>
           <h2 className={styles.sectionTitle}>See what your site looks like</h2>
           <p className={styles.sectionSub}>
-            A professional, live-updated football site — built and published
+            A professional, live-updated sports website — built and published
             from your admin dashboard.
           </p>
         </div>
@@ -250,8 +251,8 @@ function ShowcaseSection() {
 function WhoSection() {
   const orgs = [
     { icon: '&#127942;', name: 'Community Tournaments' },
-    { icon: '&#9917;',   name: 'Amateur Clubs' },
-    { icon: '&#127979;', name: 'Academy Competitions' },
+    { icon: '&#127941;', name: 'Amateur Clubs' },
+    { icon: '&#127979;', name: 'Academies &amp; Schools' },
     { icon: '&#9813;',   name: 'Church Leagues' },
     { icon: '&#127757;', name: 'Regional Federations' },
   ]
@@ -261,10 +262,10 @@ function WhoSection() {
       <div className={styles.container}>
         <div className={styles.sectionHeaderCenter}>
           <div className={styles.sectionTag}>Who It&apos;s For</div>
-          <h2 className={styles.sectionTitle}>Built for football organizers</h2>
+          <h2 className={styles.sectionTitle}>Built for sports organizers</h2>
           <p className={styles.sectionSub}>
-            Whether you run a local community tournament or a regional competition,
-            this platform gives you the tools to run a professional football site.
+            Whether you run a local community tournament, a club league, or a regional
+            competition, this platform gives you the tools to run a professional sports website.
           </p>
         </div>
         <div className={styles.whoGrid}>
@@ -331,7 +332,7 @@ function IncludesSection() {
     { icon: '&#128197;', title: 'Fixtures & Results', text: 'Full match calendar with real-time status updates and final scores.' },
     { icon: '&#127942;', title: 'Standings Tables',   text: 'Automatic group standings updated instantly when matches are completed.' },
     { icon: '&#128101;', title: 'Team Pages',         text: 'Club profiles with squad rosters, player stats, and logos.' },
-    { icon: '&#9917;',   title: 'Match Centre',       text: 'Live match detail with lineups, goal scorers, cards, and substitutions.' },
+    { icon: '&#128308;', title: 'Match Centre',       text: 'Live match detail with lineups, scorers, cards, and substitutions.' },
     { icon: '&#128240;', title: 'News & Media',       text: 'Publish articles, post updates, and manage your media library.' },
   ]
 
@@ -342,7 +343,7 @@ function IncludesSection() {
           <div className={styles.sectionTag}>What You Get</div>
           <h2 className={styles.sectionTitle}>Everything your site needs</h2>
           <p className={styles.sectionSub}>
-            Your organization site comes with a complete suite of football
+            Your organization site comes with a complete suite of competition
             features — ready to go live from day one.
           </p>
         </div>
@@ -395,8 +396,8 @@ function MatchDaySection() {
           <div className={styles.sectionTag}>Match Day</div>
           <h2 className={styles.sectionTitle}>Powerful on the pitch. Effortless in the admin.</h2>
           <p className={styles.sectionSub}>
-            Designed for real football operations — fast, mobile-ready, and built
-            for the pressure of live match management.
+            Designed for real match-day operations — fast, mobile-ready, and built
+            for the pressure of live competition management.
           </p>
         </div>
         <div className={styles.matchDayGrid}>
@@ -428,9 +429,10 @@ function DemoSection() {
             <div className={styles.phoneFrame}>
               <div className={styles.phoneNotch} />
               <div className={styles.phoneScreen}>
-                <div className={styles.videoPlaceholder}>
-                  <div className={styles.playBtn}>&#9654;</div>
-                  <span className={styles.videoLabel}>Live match view<br />on mobile</span>
+                {/* Image placeholder — swap with: /placeholders/mobile-live-score-preview.webp */}
+                <div className={styles.imagePlaceholder}>
+                  <div className={styles.imagePlaceholderIcon}>&#128241;</div>
+                  <span className={styles.imagePlaceholderLabel}>Mobile live score view</span>
                 </div>
               </div>
             </div>
@@ -460,12 +462,13 @@ function DemoSection() {
           <div className={styles.demoBrowserMockup} role="presentation" aria-hidden="true">
             <div className={styles.browserBar}>
               <BrowserDots />
-              <div className={styles.browserUrl}>yourleague.com/admin</div>
+              <div className={styles.browserUrl}>app.kolusports.com</div>
             </div>
             <div className={styles.demoBrowserContent}>
-              <div className={styles.videoPlaceholder}>
-                <div className={styles.playBtn}>&#9654;</div>
-                <span className={styles.videoLabel}>Admin dashboard<br />walkthrough</span>
+              {/* Image placeholder — swap with: /placeholders/admin-dashboard-preview.webp */}
+              <div className={styles.imagePlaceholder}>
+                <div className={styles.imagePlaceholderIcon}>&#9881;</div>
+                <span className={styles.imagePlaceholderLabel}>Admin dashboard</span>
               </div>
             </div>
           </div>
@@ -586,7 +589,7 @@ function PricingSection() {
               <li>SLA &amp; uptime guarantees</li>
               <li>White-label options</li>
             </ul>
-            <a href="mailto:hello@footballlive.com" className={styles.pricingBtnOutline}>
+            <a href="mailto:hello@kolusports.com" className={styles.pricingBtnOutline}>
               Contact sales
             </a>
           </div>
@@ -605,7 +608,7 @@ function FaqSection() {
     },
     {
       q: 'Do I need technical skills?',
-      a: 'No. The platform is designed for football organizers, not developers. Everything is point-and-click — no code, no hosting setup.',
+      a: 'No. The platform is designed for sports organizers, not developers. Everything is point-and-click — no code, no hosting setup.',
     },
     {
       q: 'How do live scores work?',
@@ -617,7 +620,7 @@ function FaqSection() {
     },
     {
       q: 'Can I use a custom domain name?',
-      a: 'Custom domains are available on the Pro plan. All sites get a free subdomain at yourleague.footballlive.com on the Starter plan.',
+      a: 'Custom domains are available on the Pro plan. All sites get a free subdomain at yourleague.kolusports.com on the Starter plan.',
     },
     {
       q: 'What happens to my data?',
@@ -651,17 +654,17 @@ function FinalCtaSection() {
     <section className={styles.finalCta} aria-label="Get started">
       <div className={styles.finalCtaInner}>
         <h2 className={styles.finalCtaTitle}>
-          Ready to launch your<br />football website?
+          Ready to launch your<br />sports website?
         </h2>
         <p className={styles.finalCtaSub}>
-          Join football organizers who are running professional sites with live
+          Join leagues, tournaments, and clubs running professional sites with live
           scores, standings, and match management — all in one place.
         </p>
         <div className={styles.finalCtaBtns}>
           <Link href="/signup" className={styles.finalCtaBtnPrimary}>
             Get Started Free
           </Link>
-          <a href="mailto:hello@footballlive.com" className={styles.finalCtaBtnSecondary}>
+          <a href="mailto:hello@kolusports.com" className={styles.finalCtaBtnSecondary}>
             Contact Us
           </a>
         </div>

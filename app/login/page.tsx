@@ -136,10 +136,10 @@ export default function LoginPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.brand}>
-          <div className={styles.brandIcon}>&#9917;</div>
+          <div className={styles.brandIcon}>&#127942;</div>
           <h1 className={styles.brandTitle}>Welcome Back</h1>
           <p className={styles.brandSub}>
-            Sign in to manage your football site.
+            Sign in to manage your sports site.
           </p>
         </div>
 

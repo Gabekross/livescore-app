@@ -25,7 +25,7 @@ interface SiteSettings {
 
 async function fetchSiteSettings(): Promise<SiteSettings> {
   const defaults: SiteSettings = {
-    site_name:     'Football Live',
+    site_name:     'KoluSports',
     site_tagline:  null,
     logo_url:      null,
     footer_text:   null,
@@ -65,10 +65,10 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase,
     title: {
-      default:  'Football Live',
-      template: '%s | Football Live',
+      default:  'KoluSports',
+      template: '%s | KoluSports',
     },
-    description: 'Live football scores, fixtures, standings and more.',
+    description: 'Live scores, fixtures, standings, and more for leagues and tournaments.',
     // Prevent Vercel preview URLs and non-www from being indexed
     ...(isNonCanonicalHost(host) ? { robots: { index: false, follow: false } } : {}),
   }

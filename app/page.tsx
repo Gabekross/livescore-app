@@ -61,16 +61,16 @@ export async function generateMetadata(): Promise<Metadata> {
       .single()
 
     return {
-      title:       data?.site_name ?? 'Football Live',
-      description: data?.site_tagline ?? 'Live football scores, fixtures and standings.',
+      title:       data?.site_name ?? 'KoluSports',
+      description: data?.site_tagline ?? 'Live scores, fixtures, standings, and more.',
       openGraph: {
         images: data?.og_image_url ? [data.og_image_url] : [],
       },
     }
   } catch {
     return {
-      title:       'Football Live — Launch your football website',
-      description: 'The all-in-one platform for tournament organizers. Live scores, fixtures, standings and more.',
+      title:       'KoluSports — The all-in-one sports platform',
+      description: 'Launch your league or tournament website with live scores, fixtures, standings, and more.',
     }
   }
 }
@@ -79,7 +79,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   // Try to resolve an organization. If this throws, render the platform landing page.
   let orgId       = ''
-  let siteName    = 'Football Live'
+  let siteName    = 'KoluSports'
   let siteTagline: string | null = null
   let fixtures:    MatchRow[] = []
   let results:     MatchRow[] = []

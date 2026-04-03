@@ -112,10 +112,10 @@ export default function SignupPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.brand}>
-          <div className={styles.brandIcon}>&#9917;</div>
+          <div className={styles.brandIcon}>&#127942;</div>
           <h1 className={styles.brandTitle}>Create Your Site</h1>
           <p className={styles.brandSub}>
-            Set up your football platform in minutes. No credit card required.
+            Set up your sports platform in minutes. No credit card required.
           </p>
         </div>
 
@@ -140,7 +140,7 @@ export default function SignupPage() {
               className={styles.input}
               value={orgName}
               onChange={(e) => handleOrgNameChange(e.target.value)}
-              placeholder="City Football League"
+              placeholder="City Sports League"
               required
             />
           </div>
@@ -148,13 +148,13 @@ export default function SignupPage() {
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Site URL</label>
             <div className={styles.slugRow}>
-              <span className={styles.slugPrefix}>sportsite.com/</span>
+              <span className={styles.slugPrefix}>kolusports.com/</span>
               <input
                 type="text"
                 className={styles.slugInput}
                 value={slug}
                 onChange={(e) => handleSlugChange(e.target.value)}
-                placeholder="city-football-league"
+                placeholder="city-sports-league"
                 required
               />
             </div>

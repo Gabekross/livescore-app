@@ -27,6 +27,21 @@
 
 .brandEmoji { font-size: 1.2rem; }
 
+.brandMark {
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  width:           24px;
+  height:          24px;
+  border-radius:   6px;
+  background:      var(--color-accent, #2563eb);
+  color:           #fff;
+  font-size:       0.72rem;
+  font-weight:     800;
+  line-height:     1;
+  flex-shrink:     0;
+}
+
 .brandLogo {
   width:         24px;
   height:        24px;

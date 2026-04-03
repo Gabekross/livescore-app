@@ -7,9 +7,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name:             'Football Live',
-    short_name:       'Football',
-    description:      'Live football scores, fixtures, standings and more.',
+    name:             'KoluSports',
+    short_name:       'KoluSports',
+    description:      'Live scores, fixtures, standings, and more for leagues and tournaments.',
     start_url:        '/',
     display:          'standalone',
     background_color: '#070710',

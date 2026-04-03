@@ -63,7 +63,7 @@ export default function PlatformOrganizationsPage() {
       await supabase.from('site_settings').insert({
         organization_id: org.id,
         site_name: name.trim(),
-        site_tagline: 'Live football scores, fixtures and standings.',
+        site_tagline: 'Live scores, fixtures, standings, and more.',
         active_theme: 'theme-uefa-dark',
       })
     }

@@ -66,9 +66,9 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
           <Link href="/" className={`${styles.brand} ${!isOrgSite ? styles.brandPlatform : ''}`} onClick={() => setOpen(false)}>
             {siteLogo
               ? <img src={siteLogo} alt={siteName} className={styles.brandLogo} />
-              : <span className={styles.brandEmoji}>&#9917;</span>
+              : <span className={styles.brandMark}>K</span>
             }
-            {isOrgSite ? siteName : 'Football Live'}
+            {isOrgSite ? siteName : 'KoluSports'}
           </Link>
 
           {/* Desktop links */}

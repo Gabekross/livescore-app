@@ -37,7 +37,7 @@ export default function AdminDashboardPage() {
           {orgName || 'Admin Dashboard'}
         </h2>
         <p className={styles.subheading}>
-          Manage your football site — teams, tournaments, matches, and content.
+          Manage your sports site — teams, tournaments, matches, and content.
         </p>
         {orgSlug && (
           <div style={{ marginTop: '0.75rem' }}>
@@ -59,8 +59,8 @@ export default function AdminDashboardPage() {
         )}
       </div>
 
-      {/* ── Football Operations ──────────────────────────────── */}
-      <div className={styles.sectionLabel}>Football Operations</div>
+      {/* ── Operations ────────────────────────────────────────── */}
+      <div className={styles.sectionLabel}>Operations</div>
       <div className={styles.grid}>
         <Link href="/admin/tournaments" className={styles.card}>
           Tournaments

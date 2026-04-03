@@ -53,9 +53,9 @@ export default function PublicFooter({ siteName, footerText, contactEmail, logoU
           {logoUrl ? (
             <img src={logoUrl} alt={siteName} className={styles.brandLogo} />
           ) : (
-            <span className={styles.brandEmoji}>&#9917;</span>
+            <span className={styles.brandMark}>K</span>
           )}
-          {isOrgSite ? siteName : 'Football Live'}
+          {isOrgSite ? siteName : 'KoluSports'}
         </div>
 
         <ul className={styles.links} role="list">
@@ -81,7 +81,7 @@ export default function PublicFooter({ siteName, footerText, contactEmail, logoU
         )}
 
         <p className={`${styles.copy} ${!isOrgSite ? styles.copyPlatform : ''}`}>
-          {footerText || `\u00A9 ${year} ${isOrgSite ? siteName : 'Football Live'}. All rights reserved.`}
+          {footerText || `\u00A9 ${year} ${isOrgSite ? siteName : 'KoluSports'}. All rights reserved.`}
         </p>
       </div>
     </footer>
