@@ -75,3 +75,6 @@ pnpm-debug.log*
 
 .vercel
 CLAUDE.md
+.agents/
+.claude/
+skills-lock.json
