@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)" rx="8"/>
+  <!-- Table container -->
+  <rect x="70" y="40" width="260" height="220" rx="10" fill="#ffffff" stroke="#bfdbfe" stroke-width="2"/>
+  <!-- Header row -->
+  <rect x="70" y="40" width="260" height="32" rx="10" fill="#2563eb" opacity="0.1"/>
+  <rect x="86" y="52" width="14" height="6" rx="3" fill="#2563eb" opacity="0.4"/>
+  <rect x="115" y="52" width="60" height="6" rx="3" fill="#2563eb" opacity="0.4"/>
+  <rect x="240" y="52" width="20" height="6" rx="3" fill="#2563eb" opacity="0.4"/>
+  <rect x="275" y="52" width="20" height="6" rx="3" fill="#2563eb" opacity="0.4"/>
+  <!-- Row 1 - gold accent -->
+  <rect x="78" y="82" width="244" height="28" rx="4" fill="#f8fafc"/>
+  <circle cx="92" cy="96" r="9" fill="#2563eb" opacity="0.15"/>
+  <rect x="86" y="93" width="12" height="6" rx="2" fill="#2563eb" opacity="0.5"/>
+  <rect x="115" y="93" width="70" height="6" rx="3" fill="#e2e8f0"/>
+  <rect x="240" y="93" width="18" height="6" rx="3" fill="#2563eb" opacity="0.25"/>
+  <rect x="275" y="93" width="18" height="6" rx="3" fill="#e2e8f0"/>
+  <!-- Row 2 -->
+  <rect x="78" y="116" width="244" height="28" rx="4" fill="#ffffff"/>
+  <circle cx="92" cy="130" r="9" fill="#2563eb" opacity="0.1"/>
+  <rect x="86" y="127" width="12" height="6" rx="2" fill="#2563eb" opacity="0.4"/>
+  <rect x="115" y="127" width="65" height="6" rx="3" fill="#e2e8f0"/>
+  <rect x="240" y="127" width="18" height="6" rx="3" fill="#2563eb" opacity="0.2"/>
+  <rect x="275" y="127" width="18" height="6" rx="3" fill="#e2e8f0"/>
+  <!-- Row 3 -->
+  <rect x="78" y="150" width="244" height="28" rx="4" fill="#f8fafc"/>
+  <circle cx="92" cy="164" r="9" fill="#2563eb" opacity="0.08"/>
+  <rect x="86" y="161" width="12" height="6" rx="2" fill="#2563eb" opacity="0.35"/>
+  <rect x="115" y="161" width="72" height="6" rx="3" fill="#e2e8f0"/>
+  <rect x="240" y="161" width="18" height="6" rx="3" fill="#2563eb" opacity="0.15"/>
+  <rect x="275" y="161" width="18" height="6" rx="3" fill="#e2e8f0"/>
+  <!-- Row 4 -->
+  <rect x="78" y="184" width="244" height="28" rx="4" fill="#ffffff"/>
+  <circle cx="92" cy="198" r="9" fill="#2563eb" opacity="0.06"/>
+  <rect x="86" y="195" width="12" height="6" rx="2" fill="#2563eb" opacity="0.3"/>
+  <rect x="115" y="195" width="58" height="6" rx="3" fill="#e2e8f0"/>
+  <rect x="240" y="195" width="18" height="6" rx="3" fill="#2563eb" opacity="0.12"/>
+  <rect x="275" y="195" width="18" height="6" rx="3" fill="#e2e8f0"/>
+  <!-- Row 5 -->
+  <rect x="78" y="218" width="244" height="28" rx="4" fill="#f8fafc"/>
+  <circle cx="92" cy="232" r="9" fill="#2563eb" opacity="0.05"/>
+  <rect x="86" y="229" width="12" height="6" rx="2" fill="#2563eb" opacity="0.25"/>
+  <rect x="115" y="229" width="62" height="6" rx="3" fill="#e2e8f0"/>
+  <rect x="240" y="229" width="18" height="6" rx="3" fill="#2563eb" opacity="0.1"/>
+  <rect x="275" y="229" width="18" height="6" rx="3" fill="#e2e8f0"/>
+</svg>

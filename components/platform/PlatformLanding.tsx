@@ -254,15 +254,15 @@ function ShowcaseSection() {
 }
 
 // ── Section: Who It's For ─────────────────────────────────────────────────────
-function WhoSection() {
-  const orgs = [
-    { icon: '&#127942;', name: 'Community Tournaments' },
-    { icon: '&#127941;', name: 'Amateur Clubs' },
-    { icon: '&#127979;', name: 'Academies &amp; Schools' },
-    { icon: '&#9813;',   name: 'Church Leagues' },
-    { icon: '&#127757;', name: 'Regional Federations' },
-  ]
+const USE_CASES = [
+  { title: 'Community Tournaments', image: '/images/use-cases/community-tournaments.webp', alt: 'Community football tournament match in action' },
+  { title: 'Amateur Clubs',        image: '/images/use-cases/amateur-clubs.webp',          alt: 'Amateur football club team photo' },
+  { title: 'Academies & Schools',  image: '/images/use-cases/academies-schools.webp',      alt: 'Youth football academy coaching session' },
+  { title: 'Church Leagues',       image: '/images/use-cases/church-leagues.webp',         alt: 'Church league football match with players' },
+  { title: 'Regional Federations', image: '/images/use-cases/regional-federations.webp',   alt: 'Regional football federation team lineup in stadium' },
+]
 
+function WhoSection() {
   return (
     <section className={styles.whoSection}>
       <div className={styles.container}>
@@ -275,13 +275,12 @@ function WhoSection() {
           </p>
         </div>
         <div className={styles.whoGrid}>
-          {orgs.map((org) => (
-            <div key={org.name} className={styles.whoCard}>
-              <span
-                className={styles.whoIcon}
-                dangerouslySetInnerHTML={{ __html: org.icon }}
-              />
-              <span className={styles.whoName}>{org.name}</span>
+          {USE_CASES.map((item) => (
+            <div key={item.title} className={styles.whoCard}>
+              <div className={styles.whoImageWrap}>
+                <img src={item.image} alt={item.alt} className={styles.whoImage} loading="lazy" />
+              </div>
+              <span className={styles.whoName}>{item.title}</span>
             </div>
           ))}
         </div>
@@ -332,16 +331,16 @@ function HowSection() {
 }
 
 // ── Section: What Your Site Includes ─────────────────────────────────────────
-function IncludesSection() {
-  const items = [
-    { icon: '&#127968;', title: 'Homepage',          text: 'Branded landing page with live matches, upcoming fixtures, and latest results.' },
-    { icon: '&#128197;', title: 'Fixtures & Results', text: 'Full match calendar with real-time status updates and final scores.' },
-    { icon: '&#127942;', title: 'Standings Tables',   text: 'Automatic group standings updated instantly when matches are completed.' },
-    { icon: '&#128101;', title: 'Team Pages',         text: 'Club profiles with squad rosters, player stats, and logos.' },
-    { icon: '&#128308;', title: 'Match Centre',       text: 'Live match detail with lineups, scorers, cards, and substitutions.' },
-    { icon: '&#128240;', title: 'News & Media',       text: 'Publish articles, post updates, and manage your media library.' },
-  ]
+const INCLUDES_ITEMS = [
+  { title: 'Homepage',           text: 'Branded landing page with live matches, upcoming fixtures, and latest results.',        image: '/images/includes/homepage.svg',           alt: 'Organization homepage with live matches and fixtures' },
+  { title: 'Fixtures & Results', text: 'Full match calendar with real-time status updates and final scores.',                   image: '/images/includes/fixtures-results.svg',   alt: 'Match calendar with real-time updates' },
+  { title: 'Standings Tables',   text: 'Automatic group standings updated instantly when matches are completed.',               image: '/images/includes/standings-tables.svg',   alt: 'Auto-computed league standings table' },
+  { title: 'Team Pages',         text: 'Club profiles with squad rosters, player stats, and logos.',                            image: '/images/includes/team-pages.svg',         alt: 'Team profile with squad roster' },
+  { title: 'Match Centre',       text: 'Live match detail with lineups, scorers, cards, and substitutions.',                    image: '/images/includes/match-centre.svg',       alt: 'Live match centre with score and events' },
+  { title: 'News & Media',       text: 'Publish articles, post updates, and manage your media library.',                        image: '/images/includes/news-media-includes.svg', alt: 'News article cards and media grid' },
+]
 
+function IncludesSection() {
   return (
     <section className={styles.includesSection}>
       <div className={styles.container}>
@@ -354,12 +353,11 @@ function IncludesSection() {
           </p>
         </div>
         <div className={styles.includesGrid}>
-          {items.map((item) => (
+          {INCLUDES_ITEMS.map((item) => (
             <div key={item.title} className={styles.includesCard}>
-              <span
-                className={styles.includesIcon}
-                dangerouslySetInnerHTML={{ __html: item.icon }}
-              />
+              <div className={styles.includesImageWrap}>
+                <img src={item.image} alt={item.alt} className={styles.includesImage} loading="lazy" />
+              </div>
               <h3 className={styles.includesTitle}>{item.title}</h3>
               <p className={styles.includesText}>{item.text}</p>
             </div>
@@ -371,30 +369,14 @@ function IncludesSection() {
 }
 
 // ── Section: Built for Match Day ──────────────────────────────────────────────
-function MatchDaySection() {
-  const cards = [
-    {
-      icon: '&#128308;',
-      title: 'Live score updates',
-      text: 'Update scorelines in real time from any device. Your audience sees changes the moment you save.',
-    },
-    {
-      icon: '&#128100;',
-      title: 'Match operator role',
-      text: 'Give game-day staff a restricted login — they can only update scores and match status, nothing else.',
-    },
-    {
-      icon: '&#128241;',
-      title: 'Mobile-first design',
-      text: 'The admin panel and public site are both built for phones. No laptop required on match day.',
-    },
-    {
-      icon: '&#9889;',
-      title: 'Instant publishing',
-      text: 'Every score update, result, and standings change is reflected immediately on your public site.',
-    },
-  ]
+const MATCH_DAY_CARDS = [
+  { title: 'Live score updates',  text: 'Update scorelines in real time from any device. Your audience sees changes the moment you save.',           image: '/images/match-day/live-updates.svg',       alt: 'Real-time score update interface' },
+  { title: 'Match operator role', text: 'Give game-day staff a restricted login — they can only update scores and match status, nothing else.',       image: '/images/match-day/match-operator.svg',     alt: 'Match operator updating scores on device' },
+  { title: 'Mobile-first design', text: 'The admin panel and public site are both built for phones. No laptop required on match day.',                image: '/images/match-day/mobile-first.svg',       alt: 'Mobile-optimized sports interface' },
+  { title: 'Instant publishing',  text: 'Every score update, result, and standings change is reflected immediately on your public site.',             image: '/images/match-day/instant-publishing.svg', alt: 'Instant content publishing interface' },
+]
 
+function MatchDaySection() {
   return (
     <section className={styles.matchDaySection} aria-label="Match day features">
       <div className={styles.container}>
@@ -407,12 +389,11 @@ function MatchDaySection() {
           </p>
         </div>
         <div className={styles.matchDayGrid}>
-          {cards.map((card) => (
+          {MATCH_DAY_CARDS.map((card) => (
             <div key={card.title} className={styles.matchDayCard}>
-              <span
-                className={styles.matchDayCardIcon}
-                dangerouslySetInnerHTML={{ __html: card.icon }}
-              />
+              <div className={styles.matchDayImageWrap}>
+                <img src={card.image} alt={card.alt} className={styles.matchDayImage} loading="lazy" />
+              </div>
               <h3 className={styles.matchDayCardTitle}>{card.title}</h3>
               <p className={styles.matchDayCardText}>{card.text}</p>
             </div>
@@ -486,16 +467,16 @@ function DemoSection() {
 }
 
 // ── Section: Feature Highlights ───────────────────────────────────────────────
-function FeaturesSection() {
-  const features = [
-    { icon: '&#128308;', title: 'Live Scores',        text: 'Real-time score updates during matches with automatic standings recalculation.' },
-    { icon: '&#128197;', title: 'Fixtures & Standings', text: 'Full match calendar and auto-computed group tables after each completed match.' },
-    { icon: '&#128101;', title: 'Teams & Players',    text: 'Manage club rosters, player profiles, and squad assignments per tournament.' },
-    { icon: '&#128240;', title: 'News & Media',       text: 'Publish articles and updates to your audience with a built-in rich text editor.' },
-    { icon: '&#9881;',   title: 'Admin Dashboard',    text: 'A clean, role-based admin panel for you and your staff — no coding needed.' },
-    { icon: '&#128241;', title: 'PWA / Mobile Ready', text: 'Installable as a progressive web app. Fast, offline-aware, and mobile-optimized.' },
-  ]
+const FEATURES = [
+  { title: 'Live Scores',          text: 'Real-time score updates during matches with automatic standings recalculation.',     image: '/images/features/live-scores.webp',         alt: 'Live football scoreboard and match update interface' },
+  { title: 'Fixtures & Standings', text: 'Full match calendar and auto-computed group tables after each completed match.',      image: '/images/features/fixtures-standings.webp',  alt: 'Fixtures calendar and league standings table' },
+  { title: 'Teams & Players',     text: 'Manage club rosters, player profiles, and squad assignments per tournament.',         image: '/images/features/teams-players.webp',       alt: 'Team lineup and player roster management' },
+  { title: 'News & Media',        text: 'Publish articles and updates to your audience with a built-in rich text editor.',     image: '/images/features/news-media.webp',          alt: 'Sports photographer and media content creation' },
+  { title: 'Admin Dashboard',     text: 'A clean, role-based admin panel for you and your staff — no coding needed.',          image: '/images/features/admin-dashboard.webp',     alt: 'Admin dashboard with analytics and controls' },
+  { title: 'PWA / Mobile Ready',  text: 'Installable as a progressive web app. Fast, offline-aware, and mobile-optimized.',   image: '/images/features/pwa-mobile.webp',          alt: 'Mobile phone showing live sports app' },
+]
 
+function FeaturesSection() {
   return (
     <section className={styles.featuresSection} aria-label="Feature highlights">
       <div className={styles.container}>
@@ -508,10 +489,10 @@ function FeaturesSection() {
           </p>
         </div>
         <div className={styles.featuresGrid}>
-          {features.map((f) => (
+          {FEATURES.map((f) => (
             <div key={f.title} className={styles.featureCard}>
-              <div className={styles.featureCardIcon}>
-                <span dangerouslySetInnerHTML={{ __html: f.icon }} />
+              <div className={styles.featureCardImageWrap}>
+                <img src={f.image} alt={f.alt} className={styles.featureCardImage} loading="lazy" />
               </div>
               <h3 className={styles.featureCardTitle}>{f.title}</h3>
               <p className={styles.featureCardText}>{f.text}</p>

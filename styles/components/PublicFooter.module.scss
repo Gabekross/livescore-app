@@ -113,3 +113,34 @@
 .copyPlatform {
   color: #94a3b8;
 }
+
+/* ── Legal links row ───────────────────────────────────────────── */
+.legalLinks {
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-4, 1rem);
+  list-style:  none;
+  flex-wrap:   wrap;
+  width:       100%;
+  justify-content: center;
+  padding-top: var(--sp-3, 0.75rem);
+  border-top:  1px solid var(--color-border-subtle, #1c1c35);
+  margin-top:  var(--sp-3, 0.75rem);
+
+  a {
+    font-size:  0.78rem;
+    color:      var(--color-text-dim, #48487a);
+    transition: color var(--transition-fast, 150ms ease);
+
+    &:hover { color: var(--color-text-muted, #7272a0); }
+  }
+}
+
+.legalLinksPlatform {
+  border-top-color: #e2e8f0;
+
+  a {
+    color: #94a3b8 !important;
+    &:hover { color: #64748b !important; }
+  }
+}

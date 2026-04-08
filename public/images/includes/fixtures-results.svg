@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)" rx="8"/>
+  <!-- Calendar -->
+  <rect x="90" y="40" width="220" height="220" rx="10" fill="#ffffff" stroke="#bfdbfe" stroke-width="2"/>
+  <rect x="90" y="40" width="220" height="35" rx="10" fill="#2563eb" opacity="0.08"/>
+  <!-- Day headers -->
+  <circle cx="125" cy="58" r="4" fill="#bfdbfe"/>
+  <circle cx="165" cy="58" r="4" fill="#bfdbfe"/>
+  <circle cx="205" cy="58" r="4" fill="#bfdbfe"/>
+  <circle cx="245" cy="58" r="4" fill="#bfdbfe"/>
+  <circle cx="280" cy="58" r="4" fill="#bfdbfe"/>
+  <!-- Calendar cells with checkmarks -->
+  <rect x="108" y="85" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="148" y="85" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="188" y="85" width="32" height="28" rx="4" fill="#2563eb" opacity="0.1"/>
+  <polyline points="196,99 202,105 212,93" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <rect x="228" y="85" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="265" y="85" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="108" y="122" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="148" y="122" width="32" height="28" rx="4" fill="#2563eb" opacity="0.1"/>
+  <polyline points="156,136 162,142 172,130" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <rect x="188" y="122" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="228" y="122" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="265" y="122" width="32" height="28" rx="4" fill="#2563eb" opacity="0.1"/>
+  <polyline points="273,136 279,142 289,130" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <rect x="108" y="159" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="148" y="159" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="188" y="159" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="228" y="159" width="32" height="28" rx="4" fill="#2563eb" opacity="0.1"/>
+  <polyline points="236,173 242,179 252,167" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
+  <rect x="265" y="159" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="108" y="196" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="148" y="196" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="188" y="196" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="228" y="196" width="32" height="28" rx="4" fill="#f8fafc"/>
+  <rect x="265" y="196" width="32" height="28" rx="4" fill="#f8fafc"/>
+</svg>

@@ -69,6 +69,31 @@ export async function generateMetadata(): Promise<Metadata> {
       template: '%s | KoluSports',
     },
     description: 'Live scores, fixtures, standings, and more for leagues and tournaments.',
+    // PWA & mobile
+    viewport: {
+      width:        'device-width',
+      initialScale: 1,
+      maximumScale: 5,
+      viewportFit:  'cover',
+    },
+    themeColor: [
+      { media: '(prefers-color-scheme: dark)',  color: '#070710' },
+      { media: '(prefers-color-scheme: light)', color: '#2563eb' },
+    ],
+    appleWebApp: {
+      capable:          true,
+      statusBarStyle:   'black-translucent',
+      title:            'KoluSports',
+    },
+    icons: {
+      icon:  [
+        { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+      ],
+      apple: [
+        { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      ],
+    },
     // Prevent Vercel preview URLs and non-www from being indexed
     ...(isNonCanonicalHost(host) ? { robots: { index: false, follow: false } } : {}),
   }

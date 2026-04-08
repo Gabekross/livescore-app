@@ -700,29 +700,41 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
 .whoCard {
   background:    #ffffff;
   border:        1px solid $border;
-  border-radius: 12px;
-  padding:       1.25rem 1rem;
-  text-align:    center;
+  border-radius: 14px;
+  overflow:      hidden;
   box-shadow:    $shadow-sm;
   transition:    transform 200ms ease, box-shadow 200ms ease;
 
   &:hover {
-    transform:  translateY(-2px);
+    transform:  translateY(-3px);
     box-shadow: $shadow-md;
   }
 }
 
-.whoIcon {
-  font-size:     1.75rem;
-  margin-bottom: 0.65rem;
-  display:       block;
+.whoImageWrap {
+  width:         100%;
+  aspect-ratio:  4 / 3;
+  overflow:      hidden;
+  background:    $bg-slate;
+}
+
+.whoImage {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  display:    block;
+  transition: transform 400ms ease;
+
+  .whoCard:hover & { transform: scale(1.04); }
 }
 
 .whoName {
-  font-size:  0.82rem;
+  font-size:   0.82rem;
   font-weight: 700;
-  color:      $navy;
+  color:       $navy;
   line-height: 1.3;
+  padding:     0.85rem 0.75rem;
+  text-align:  center;
 }
 
 // ── 5. HOW IT WORKS ───────────────────────────────────────────────────────────
@@ -805,21 +817,31 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
 .includesCard {
   background:    #ffffff;
   border:        1px solid $border;
-  border-radius: 12px;
-  padding:       1.5rem;
+  border-radius: 14px;
+  overflow:      hidden;
   box-shadow:    $shadow-sm;
-  transition:    border-color 200ms ease, box-shadow 200ms ease;
+  transition:    border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
 
   &:hover {
     border-color: $blue-border;
+    transform:    translateY(-2px);
     box-shadow:   $shadow-md;
   }
 }
 
-.includesIcon {
-  font-size:     1.5rem;
-  margin-bottom: 0.75rem;
-  display:       block;
+.includesImageWrap {
+  width:         100%;
+  aspect-ratio:  16 / 9;
+  overflow:      hidden;
+  background:    $bg-slate;
+  border-bottom: 1px solid $border;
+}
+
+.includesImage {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  display:    block;
 }
 
 .includesTitle {
@@ -827,12 +849,14 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   font-weight:  800;
   color:        $navy;
   margin-bottom: 0.4rem;
+  padding:      1.25rem 1.25rem 0;
 }
 
 .includesText {
-  font-size:  0.82rem;
-  color:      $muted;
+  font-size:   0.82rem;
+  color:       $muted;
   line-height: 1.55;
+  padding:     0 1.25rem 1.25rem;
 }
 
 // ── 7. BUILT FOR MATCH DAY ────────────────────────────────────────────────────
@@ -877,7 +901,7 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   background:    rgba(255, 255, 255, 0.05);
   border:        1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
-  padding:       1.5rem;
+  overflow:      hidden;
   transition:    background 200ms ease, border-color 200ms ease;
 
   &:hover {
@@ -886,10 +910,22 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   }
 }
 
-.matchDayCardIcon {
-  font-size:     1.5rem;
-  margin-bottom: 0.85rem;
-  display:       block;
+.matchDayImageWrap {
+  width:         100%;
+  aspect-ratio:  16 / 9;
+  overflow:      hidden;
+  background:    rgba(255, 255, 255, 0.03);
+}
+
+.matchDayImage {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  display:    block;
+  opacity:    0.85;
+  transition: opacity 200ms ease;
+
+  .matchDayCard:hover & { opacity: 1; }
 }
 
 .matchDayCardTitle {
@@ -897,12 +933,14 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   font-weight:  800;
   color:        #ffffff;
   margin-bottom: 0.45rem;
+  padding:      1.25rem 1.25rem 0;
 }
 
 .matchDayCardText {
-  font-size:  0.85rem;
-  color:      rgba(255, 255, 255, 0.55);
+  font-size:   0.85rem;
+  color:       rgba(255, 255, 255, 0.55);
   line-height: 1.6;
+  padding:     0 1.25rem 1.25rem;
 }
 
 // ── 8. DEMO / DEVICE MOCKUP ───────────────────────────────────────────────────
@@ -1131,27 +1169,32 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   background:    #ffffff;
   border:        1px solid $border;
   border-radius: 14px;
-  padding:       1.5rem;
+  overflow:      hidden;
   box-shadow:    $shadow-sm;
   transition:    border-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
 
   &:hover {
     border-color: $blue-border;
-    transform:    translateY(-2px);
+    transform:    translateY(-3px);
     box-shadow:   $shadow-md;
   }
 }
 
-.featureCardIcon {
-  width:           42px;
-  height:          42px;
-  border-radius:   10px;
-  background:      $blue-bg;
-  display:         flex;
-  align-items:     center;
-  justify-content: center;
-  font-size:       1.1rem;
-  margin-bottom:   1rem;
+.featureCardImageWrap {
+  width:         100%;
+  aspect-ratio:  16 / 9;
+  overflow:      hidden;
+  background:    $bg-slate;
+}
+
+.featureCardImage {
+  width:      100%;
+  height:     100%;
+  object-fit: cover;
+  display:    block;
+  transition: transform 400ms ease;
+
+  .featureCard:hover & { transform: scale(1.04); }
 }
 
 .featureCardTitle {
@@ -1159,12 +1202,14 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   font-weight:  800;
   color:        $navy;
   margin-bottom: 0.4rem;
+  padding:      1.25rem 1.25rem 0;
 }
 
 .featureCardText {
-  font-size:  0.82rem;
-  color:      $muted;
+  font-size:   0.82rem;
+  color:       $muted;
   line-height: 1.55;
+  padding:     0 1.25rem 1.25rem;
 }
 
 // ── 10. PRICING ───────────────────────────────────────────────────────────────

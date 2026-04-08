@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)" rx="8"/>
+  <!-- Hand shape (simplified abstract) -->
+  <path d="M150 260 Q130 250 125 220 L125 170 Q125 160 135 160 L145 160 Q148 160 148 165 L148 190" fill="none" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+  <path d="M250 260 Q270 250 275 220 L275 170 Q275 160 265 160 L255 160 Q252 160 252 165 L252 190" fill="none" stroke="#e2e8f0" stroke-width="3" stroke-linecap="round"/>
+  <!-- Phone -->
+  <rect x="152" y="35" width="96" height="230" rx="16" fill="#ffffff" stroke="#0f172a" stroke-width="2.5" stroke-opacity="0.15"/>
+  <!-- Notch -->
+  <rect x="178" y="42" width="44" height="7" rx="3" fill="#e2e8f0"/>
+  <!-- Screen -->
+  <rect x="160" y="56" width="80" height="182" rx="3" fill="#2563eb" opacity="0.03"/>
+  <!-- App header -->
+  <rect x="160" y="56" width="80" height="22" rx="3" fill="#2563eb" opacity="0.1"/>
+  <rect x="168" y="63" width="40" height="5" rx="2" fill="#2563eb" opacity="0.35"/>
+  <!-- Score card on screen -->
+  <rect x="166" y="86" width="68" height="36" rx="5" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
+  <circle cx="182" cy="100" r="6" fill="#2563eb" opacity="0.15"/>
+  <circle cx="218" cy="100" r="6" fill="#1d4ed8" opacity="0.15"/>
+  <rect x="195" y="96" width="6" height="8" rx="2" fill="#2563eb" opacity="0.3"/>
+  <rect x="203" y="96" width="6" height="8" rx="2" fill="#2563eb" opacity="0.3"/>
+  <!-- List items -->
+  <rect x="166" y="130" width="68" height="16" rx="4" fill="#ffffff" stroke="#bfdbfe" stroke-width="0.8"/>
+  <rect x="172" y="135" width="30" height="4" rx="2" fill="#e2e8f0"/>
+  <rect x="166" y="150" width="68" height="16" rx="4" fill="#ffffff" stroke="#bfdbfe" stroke-width="0.8"/>
+  <rect x="172" y="155" width="35" height="4" rx="2" fill="#e2e8f0"/>
+  <rect x="166" y="170" width="68" height="16" rx="4" fill="#ffffff" stroke="#bfdbfe" stroke-width="0.8"/>
+  <rect x="172" y="175" width="28" height="4" rx="2" fill="#e2e8f0"/>
+  <!-- Bottom nav -->
+  <rect x="160" y="215" width="80" height="23" rx="3" fill="#f8fafc"/>
+  <circle cx="180" cy="227" r="4" fill="#2563eb" opacity="0.35"/>
+  <circle cx="200" cy="227" r="4" fill="#e2e8f0"/>
+  <circle cx="220" cy="227" r="4" fill="#e2e8f0"/>
+  <!-- Touch ripple -->
+  <circle cx="200" cy="104" r="18" fill="#2563eb" opacity="0.05"/>
+  <circle cx="200" cy="104" r="28" fill="#2563eb" opacity="0.03"/>
+</svg>

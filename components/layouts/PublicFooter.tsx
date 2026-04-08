@@ -35,6 +35,13 @@ const PLATFORM_FOOTER_LINKS = [
   { href: '/signup',        label: 'Get Started' },
 ]
 
+const LEGAL_LINKS = [
+  { href: '/terms',          label: 'Terms' },
+  { href: '/privacy',        label: 'Privacy' },
+  { href: '/cookies',        label: 'Cookies' },
+  { href: '/acceptable-use', label: 'Acceptable Use' },
+]
+
 export default function PublicFooter({ siteName, footerText, contactEmail, logoUrl, isOrgSite }: Props) {
   const pathname = usePathname()
 
@@ -83,6 +90,14 @@ export default function PublicFooter({ siteName, footerText, contactEmail, logoU
         <p className={`${styles.copy} ${!isOrgSite ? styles.copyPlatform : ''}`}>
           {footerText || `\u00A9 ${year} ${isOrgSite ? siteName : 'KoluSports'}. All rights reserved.`}
         </p>
+
+        <ul className={`${styles.legalLinks} ${!isOrgSite ? styles.legalLinksPlatform : ''}`} role="list">
+          {LEGAL_LINKS.map(({ href, label }) => (
+            <li key={href}>
+              <Link href={href}>{label}</Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </footer>
   )

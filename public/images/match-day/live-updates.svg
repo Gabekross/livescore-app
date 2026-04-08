@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#f8fafc"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg)" rx="8"/>
+  <!-- Pulse/heartbeat line -->
+  <polyline points="40,160 90,160 110,160 125,120 140,190 155,140 170,170 185,155 200,160 400,160" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  <!-- Score card overlay -->
+  <rect x="115" y="60" width="170" height="80" rx="12" fill="#ffffff" stroke="#bfdbfe" stroke-width="2"/>
+  <!-- Team dots -->
+  <circle cx="155" cy="92" r="14" fill="#2563eb" opacity="0.12"/>
+  <circle cx="245" cy="92" r="14" fill="#1d4ed8" opacity="0.12"/>
+  <!-- Score display -->
+  <rect x="185" y="82" width="14" height="18" rx="4" fill="#2563eb" opacity="0.25"/>
+  <circle cx="203" cy="91" r="2" fill="#0f172a" opacity="0.25"/>
+  <rect x="209" y="82" width="14" height="18" rx="4" fill="#2563eb" opacity="0.25"/>
+  <!-- Live indicator -->
+  <circle cx="200" cy="120" r="4" fill="#2563eb" opacity="0.7"/>
+  <circle cx="200" cy="120" r="8" fill="#2563eb" opacity="0.2"/>
+  <circle cx="200" cy="120" r="12" fill="#2563eb" opacity="0.08"/>
+  <!-- Second pulse line behind -->
+  <polyline points="40,200 80,200 100,200 112,180 125,215 138,195 150,205 165,198 180,200 400,200" fill="none" stroke="#bfdbfe" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Decorative dots -->
+  <circle cx="80" cy="80" r="3" fill="#bfdbfe"/>
+  <circle cx="320" cy="80" r="3" fill="#bfdbfe"/>
+  <circle cx="100" cy="240" r="4" fill="#2563eb" opacity="0.15"/>
+  <circle cx="300" cy="240" r="4" fill="#2563eb" opacity="0.15"/>
+</svg>
