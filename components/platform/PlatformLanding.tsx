@@ -332,12 +332,12 @@ function HowSection() {
 
 // ── Section: What Your Site Includes ─────────────────────────────────────────
 const INCLUDES_ITEMS = [
-  { title: 'Homepage',           text: 'Branded landing page with live matches, upcoming fixtures, and latest results.',        image: '/images/includes/homepage.svg',           alt: 'Organization homepage with live matches and fixtures' },
-  { title: 'Fixtures & Results', text: 'Full match calendar with real-time status updates and final scores.',                   image: '/images/includes/fixtures-results.svg',   alt: 'Match calendar with real-time updates' },
-  { title: 'Standings Tables',   text: 'Automatic group standings updated instantly when matches are completed.',               image: '/images/includes/standings-tables.svg',   alt: 'Auto-computed league standings table' },
-  { title: 'Team Pages',         text: 'Club profiles with squad rosters, player stats, and logos.',                            image: '/images/includes/team-pages.svg',         alt: 'Team profile with squad roster' },
-  { title: 'Match Centre',       text: 'Live match detail with lineups, scorers, cards, and substitutions.',                    image: '/images/includes/match-centre.svg',       alt: 'Live match centre with score and events' },
-  { title: 'News & Media',       text: 'Publish articles, post updates, and manage your media library.',                        image: '/images/includes/news-media-includes.svg', alt: 'News article cards and media grid' },
+  { num: '01', title: 'Homepage',           text: 'Branded landing page with live matches, upcoming fixtures, and latest results.' },
+  { num: '02', title: 'Fixtures & Results', text: 'Full match calendar with real-time status updates and final scores.' },
+  { num: '03', title: 'Standings Tables',   text: 'Automatic group standings updated instantly when matches are completed.' },
+  { num: '04', title: 'Team Pages',         text: 'Club profiles with squad rosters, player stats, and logos.' },
+  { num: '05', title: 'Match Centre',       text: 'Live match detail with lineups, scorers, cards, and substitutions.' },
+  { num: '06', title: 'News & Media',       text: 'Publish articles, post updates, and manage your media library.' },
 ]
 
 function IncludesSection() {
@@ -355,9 +355,7 @@ function IncludesSection() {
         <div className={styles.includesGrid}>
           {INCLUDES_ITEMS.map((item) => (
             <div key={item.title} className={styles.includesCard}>
-              <div className={styles.includesImageWrap}>
-                <img src={item.image} alt={item.alt} className={styles.includesImage} loading="lazy" />
-              </div>
+              <span className={styles.includesNum}>{item.num}</span>
               <h3 className={styles.includesTitle}>{item.title}</h3>
               <p className={styles.includesText}>{item.text}</p>
             </div>
@@ -369,11 +367,34 @@ function IncludesSection() {
 }
 
 // ── Section: Built for Match Day ──────────────────────────────────────────────
-const MATCH_DAY_CARDS = [
-  { title: 'Live score updates',  text: 'Update scorelines in real time from any device. Your audience sees changes the moment you save.',           image: '/images/match-day/live-updates.svg',       alt: 'Real-time score update interface' },
-  { title: 'Match operator role', text: 'Give game-day staff a restricted login — they can only update scores and match status, nothing else.',       image: '/images/match-day/match-operator.svg',     alt: 'Match operator updating scores on device' },
-  { title: 'Mobile-first design', text: 'The admin panel and public site are both built for phones. No laptop required on match day.',                image: '/images/match-day/mobile-first.svg',       alt: 'Mobile-optimized sports interface' },
-  { title: 'Instant publishing',  text: 'Every score update, result, and standings change is reflected immediately on your public site.',             image: '/images/match-day/instant-publishing.svg', alt: 'Instant content publishing interface' },
+const MATCH_DAY_CARDS: {
+  title:   string
+  text:    string
+  image:   string
+  alt:     string
+  variant: 'photo' | 'device'
+}[] = [
+  {
+    title:   'Live score updates',
+    text:    'Update scorelines in real time from any device. Your audience sees changes the moment you save.',
+    image:   '/images/match-day/live-updates.png',
+    alt:     'Live match score and formation view on mobile',
+    variant: 'device',
+  },
+  {
+    title:   'Match operator role',
+    text:    'Give game-day staff a restricted login — they can only update scores and match status, nothing else.',
+    image:   '/images/match-day/match-operator.png',
+    alt:     'Match operator managing game day scores on tablet and phone',
+    variant: 'photo',
+  },
+  {
+    title:   'Mobile-first design',
+    text:    'The admin panel and public site are both built for phones. No laptop required on match day.',
+    image:   '/images/match-day/mobile-first.png',
+    alt:     'Matches list with live filters on a mobile device',
+    variant: 'device',
+  },
 ]
 
 function MatchDaySection() {
@@ -391,8 +412,13 @@ function MatchDaySection() {
         <div className={styles.matchDayGrid}>
           {MATCH_DAY_CARDS.map((card) => (
             <div key={card.title} className={styles.matchDayCard}>
-              <div className={styles.matchDayImageWrap}>
-                <img src={card.image} alt={card.alt} className={styles.matchDayImage} loading="lazy" />
+              <div className={`${styles.matchDayImageWrap} ${card.variant === 'photo' ? styles.matchDayImageWrapPhoto : styles.matchDayImageWrapDevice}`}>
+                <img
+                  src={card.image}
+                  alt={card.alt}
+                  className={`${styles.matchDayImage} ${card.variant === 'photo' ? styles.matchDayImagePhoto : styles.matchDayImageDevice}`}
+                  loading="lazy"
+                />
               </div>
               <h3 className={styles.matchDayCardTitle}>{card.title}</h3>
               <p className={styles.matchDayCardText}>{card.text}</p>
@@ -515,7 +541,7 @@ function PricingSection() {
           <div className={styles.sectionTag}>Pricing</div>
           <h2 className={styles.sectionTitle}>Simple pricing. Powerful results.</h2>
           <p className={styles.sectionSub}>
-            Start with a {FREE_PLAN.trialDays}-day free trial. Upgrade when your league is ready to grow.
+            Start with a {FREE_PLAN.trialDays}-day Basic trial. Upgrade when your league is ready to grow.
           </p>
         </div>
 
@@ -587,7 +613,7 @@ function PricingSection() {
             <thead>
               <tr>
                 <th>Feature</th>
-                <th>Free</th>
+                <th>Basic</th>
                 <th className={styles.pricingTableProHead}>Pro</th>
               </tr>
             </thead>
@@ -677,7 +703,7 @@ function FinalCtaSection() {
           </a>
         </div>
         <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.75rem' }}>
-          {FREE_PLAN.trialDays}-day free trial &middot; No credit card required
+          {FREE_PLAN.trialDays}-day Basic trial &middot; No credit card required
         </p>
       </div>
     </section>
@@ -695,7 +721,6 @@ export default function PlatformLanding() {
       <HowSection />
       <IncludesSection />
       <MatchDaySection />
-      <DemoSection />
       <FeaturesSection />
       <PricingSection />
       <FaqSection />

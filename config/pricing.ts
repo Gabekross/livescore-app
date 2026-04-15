@@ -81,13 +81,13 @@ export const PRO_TIERS: PricingTier[] = [
   },
 ]
 
-// ── Free plan constants ───────────────────────────────────────────────────────
+// ── Basic (trial) plan constants ──────────────────────────────────────────────
 export const FREE_PLAN = {
-  name:      'Free Trial',
+  name:      'Basic',
   trialDays: envNum('NEXT_PUBLIC_TRIAL_DAYS', 7),
   teamLimit: envNum('NEXT_PUBLIC_FREE_TEAM_LIMIT', 8),
   tagline:   'Everything you need to get started',
-  cta:       'Start Free Trial',
+  cta:       'Start Basic Trial',
 }
 
 // ── Pro plan display info ─────────────────────────────────────────────────────
