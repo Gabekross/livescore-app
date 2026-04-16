@@ -28,35 +28,46 @@ interface ThemeTokens {
 
 // Renders a scaled-down site mockup using the theme's actual token values.
 // All styles are inlined — zero CSS leakage, works for dark and light themes.
-function ThemePreviewMock({ tokens }: { tokens: ThemeTokens }) {
+// Pass large={true} to render the modal-sized version (~170px tall).
+function ThemePreviewMock({ tokens, large = false }: { tokens: ThemeTokens; large?: boolean }) {
+  const h    = large ? '170px'    : '90px'
+  const navV = large ? '9px'      : '5px'
+  const navH = large ? '14px'     : '8px'
+  const dot  = large ? 13         : 7
+  const bH   = large ? 5          : 3
+  const cPad = large ? '8px 10px' : '5px 6px'
+  const cGap = large ? '7px'      : '4px'
+  const gap2 = large ? 3          : 2
+
   const card: React.CSSProperties = {
     background:   tokens.card,
     border:       `1px solid ${tokens.border}`,
-    borderRadius: '4px',
-    padding:      '4px 6px',
+    borderRadius: large ? '6px' : '4px',
+    padding:      large ? '7px 10px' : '4px 6px',
     display:      'flex',
     alignItems:   'center',
-    gap:          '4px',
+    gap:          large ? '6px' : '4px',
     flex:         1,
   }
-  const badge = (color: string, label: string): React.CSSProperties => ({
+  const badge = (color: string): React.CSSProperties => ({
     background:    `${color}25`,
     color,
-    fontSize:      '5.5px',
+    fontSize:      large ? '9px' : '5.5px',
     fontWeight:    700,
-    padding:       '1px 4px',
+    padding:       large ? '2px 6px' : '1px 4px',
     borderRadius:  '99px',
     border:        `1px solid ${color}50`,
     letterSpacing: '0.05em',
     flexShrink:    0,
     whiteSpace:    'nowrap',
   })
+
   return (
     <div style={{
       width:         '100%',
-      height:        '90px',
+      height:        h,
       background:    tokens.bg,
-      borderRadius:  '6px',
+      borderRadius:  large ? '8px' : '6px',
       overflow:      'hidden',
       border:        `1px solid ${tokens.border}`,
       display:       'flex',
@@ -68,100 +79,143 @@ function ThemePreviewMock({ tokens }: { tokens: ThemeTokens }) {
       {/* Nav bar */}
       <div style={{
         background:   tokens.nav,
-        padding:      '5px 8px',
+        padding:      `${navV} ${navH}`,
         display:      'flex',
         alignItems:   'center',
-        gap:          '5px',
+        gap:          large ? '8px' : '5px',
         borderBottom: `1px solid ${tokens.border}`,
         flexShrink:   0,
       }}>
-        <div style={{ width: 7, height: 7, borderRadius: '50%', background: tokens.accent, flexShrink: 0 }} />
-        <div style={{ width: 30, height: 3, borderRadius: 2, background: tokens.text, opacity: 0.45 }} />
-        <div style={{ marginLeft: 'auto', width: 16, height: 3, borderRadius: 2, background: tokens.accent, opacity: 0.65 }} />
+        <div style={{ width: dot, height: dot, borderRadius: '50%', background: tokens.accent, flexShrink: 0 }} />
+        <div style={{ width: large ? 50 : 30, height: bH, borderRadius: 2, background: tokens.text, opacity: 0.45 }} />
+        <div style={{ marginLeft: 'auto', width: large ? 26 : 16, height: bH, borderRadius: 2, background: tokens.accent, opacity: 0.65 }} />
       </div>
 
       {/* Match cards */}
-      <div style={{ padding: '5px 6px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+      <div style={{ padding: cPad, display: 'flex', flexDirection: 'column', gap: cGap, flex: 1 }}>
         {/* Live match */}
         <div style={card}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 0 }}>
-            <div style={{ width: '52%', height: 3, borderRadius: 2, background: tokens.text,      opacity: 0.70 }} />
-            <div style={{ width: '40%', height: 3, borderRadius: 2, background: tokens.text,      opacity: 0.70 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: gap2, flex: 1, minWidth: 0 }}>
+            <div style={{ width: '52%', height: bH, borderRadius: 2, background: tokens.text,      opacity: 0.70 }} />
+            <div style={{ width: '40%', height: bH, borderRadius: 2, background: tokens.text,      opacity: 0.70 }} />
           </div>
-          <div style={{ fontSize: 8, fontWeight: 700, color: tokens.text, flexShrink: 0 }}>2–1</div>
-          <div style={badge(tokens.live, 'LIVE')}>LIVE</div>
+          <div style={{ fontSize: large ? '14px' : '8px', fontWeight: 700, color: tokens.text, flexShrink: 0 }}>2–1</div>
+          <div style={badge(tokens.live)}>LIVE</div>
         </div>
 
         {/* Scheduled match */}
         <div style={card}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 2, flex: 1, minWidth: 0 }}>
-            <div style={{ width: '48%', height: 3, borderRadius: 2, background: tokens.textMuted, opacity: 0.65 }} />
-            <div style={{ width: '36%', height: 3, borderRadius: 2, background: tokens.textMuted, opacity: 0.65 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: gap2, flex: 1, minWidth: 0 }}>
+            <div style={{ width: '48%', height: bH, borderRadius: 2, background: tokens.textMuted, opacity: 0.65 }} />
+            <div style={{ width: '36%', height: bH, borderRadius: 2, background: tokens.textMuted, opacity: 0.65 }} />
           </div>
-          <div style={{ fontSize: 7, fontWeight: 600, color: tokens.textMuted, flexShrink: 0 }}>18:00</div>
-          <div style={badge(tokens.scheduled, 'SCH')}>SCH</div>
+          <div style={{ fontSize: large ? '11px' : '7px', fontWeight: 600, color: tokens.textMuted, flexShrink: 0 }}>18:00</div>
+          <div style={badge(tokens.scheduled)}>SCH</div>
         </div>
       </div>
 
       {/* Accent bottom bar */}
-      <div style={{ height: 2, background: tokens.accent, opacity: 0.85, flexShrink: 0 }} />
+      <div style={{ height: large ? 3 : 2, background: tokens.accent, opacity: 0.85, flexShrink: 0 }} />
     </div>
   )
 }
 
 // ── Theme definitions ─────────────────────────────────────────────────────────
 const THEMES: Array<{
-  id: string; name: string; category: string; tokens: ThemeTokens
+  id: string; name: string; category: string; swatch: string[]; tokens: ThemeTokens
 }> = [
   {
     id: 'theme-uefa-dark', name: 'UEFA Dark', category: 'Classic Dark',
+    swatch: ['#070710', '#2563eb', '#13132a'],
     tokens: { bg: '#070710', nav: '#09091a', card: '#13132a', border: '#1c1c35',
               accent: '#2563eb', text: '#e8e8f4', textMuted: '#7272a0',
               live: '#ef4444', scheduled: '#60a5fa' },
   },
   {
     id: 'theme-green-gold', name: 'Forest Green', category: 'Classic Dark',
+    swatch: ['#060c08', '#16a34a', '#111a14'],
     tokens: { bg: '#060c08', nav: '#080f0a', card: '#111a14', border: '#162019',
               accent: '#16a34a', text: '#e8f4ec', textMuted: '#6a9a78',
               live: '#ef4444', scheduled: '#fbbf24' },
   },
   {
     id: 'theme-slate', name: 'Midnight Slate', category: 'Classic Dark',
+    swatch: ['#0c0c0f', '#7c3aed', '#1a1a1f'],
     tokens: { bg: '#0c0c0f', nav: '#0a0a0d', card: '#1a1a1f', border: '#1f1f28',
               accent: '#7c3aed', text: '#f0f0f5', textMuted: '#8080a0',
               live: '#ef4444', scheduled: '#60a5fa' },
   },
   {
     id: 'theme-blue-light', name: 'Professional Light', category: 'Classic Light',
+    swatch: ['#eef4fb', '#2563eb', '#ffffff'],
     tokens: { bg: '#eef4fb', nav: '#ffffff', card: '#ffffff', border: '#e2e8f0',
               accent: '#2563eb', text: '#0f172a', textMuted: '#475569',
               live: '#dc2626', scheduled: '#2563eb' },
   },
   {
     id: 'luxury-dark', name: 'Luxury Dark', category: 'Luxury',
+    swatch: ['#091A22', '#FF8C42', '#11222A'],
     tokens: { bg: '#091A22', nav: '#0B1D26', card: '#102229', border: 'rgba(255,255,255,0.08)',
               accent: '#FF8C42', text: '#E6F1F3', textMuted: '#9FB7BB',
               live: '#EF4444', scheduled: '#7ECFD4' },
   },
   {
     id: 'luxury-light', name: 'Luxury Light', category: 'Luxury',
+    swatch: ['#F4F8FA', '#E57A2E', '#ffffff'],
     tokens: { bg: '#F4F8FA', nav: '#F4F8FA', card: '#ffffff', border: 'rgba(9,26,34,0.08)',
               accent: '#E57A2E', text: '#102229', textMuted: '#415860',
               live: '#DC2626', scheduled: '#0D7D8A' },
   },
   {
     id: 'naija-green', name: 'Naija Green', category: 'Flag Series',
+    swatch: ['#050D07', '#00A651', '#0F2018'],
     tokens: { bg: '#050D07', nav: '#060F09', card: '#0F2018', border: '#132518',
               accent: '#00A651', text: '#E5F2E8', textMuted: '#6B9A76',
               live: '#EF4444', scheduled: '#56CCB8' },
   },
   {
     id: 'ghana-gold', name: 'Ghana Gold', category: 'Flag Series',
+    swatch: ['#0D0900', '#FCD116', '#1E1500'],
     tokens: { bg: '#0D0900', nav: '#0D0900', card: '#1E1500', border: '#221900',
               accent: '#FCD116', text: '#F5EDD0', textMuted: '#B89040',
               live: '#CE1126', scheduled: '#5BC8A8' },
   },
 ]
+
+// ── Theme preview modal ────────────────────────────────────────────────────────
+function ThemePreviewModal({
+  theme,
+  isApplied,
+  onClose,
+  onApply,
+}: {
+  theme:     typeof THEMES[number]
+  isApplied: boolean
+  onClose:   () => void
+  onApply:   () => void
+}) {
+  return (
+    <div className={styles.modalBackdrop} onClick={onClose}>
+      <div className={styles.modalPanel} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.modalClose} onClick={onClose} aria-label="Close preview">✕</button>
+        <ThemePreviewMock tokens={theme.tokens} large />
+        <div className={styles.modalMeta}>
+          <div className={styles.modalThemeName}>{theme.name}</div>
+          <div className={styles.modalThemeCategory}>{theme.category}</div>
+        </div>
+        <div className={styles.modalActions}>
+          <button className={styles.modalCancelBtn} onClick={onClose}>Cancel</button>
+          <button
+            className={`${styles.modalApplyBtn} ${isApplied ? styles.modalApplyBtnApplied : ''}`}
+            onClick={onApply}
+          >
+            {isApplied ? '✓ Applied' : 'Apply Theme'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 // ── Default settings ──────────────────────────────────────────────────────────
 interface SiteSettings {
@@ -217,8 +271,16 @@ export default function AdminSettingsPage() {
   const [loading,   setLoading]   = useState(true)
   const [saving,    setSaving]    = useState(false)
   const [saved,     setSaved]     = useState(false)
-  const [showLogoPicker, setShowLogoPicker] = useState(false)
-  const [showOgPicker,   setShowOgPicker]   = useState(false)
+  const [showLogoPicker,  setShowLogoPicker]  = useState(false)
+  const [showOgPicker,    setShowOgPicker]    = useState(false)
+  const [previewThemeId,  setPreviewThemeId]  = useState<string | null>(null)
+
+  // Close preview modal on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setPreviewThemeId(null) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   useEffect(() => {
     if (!orgId) return
@@ -490,12 +552,38 @@ export default function AdminSettingsPage() {
                 checked={settings.active_theme === theme.id}
                 onChange={() => set('active_theme', theme.id)}
               />
-              <ThemePreviewMock tokens={theme.tokens} />
+              <div className={styles.themeSwatch}>
+                {theme.swatch.map((color, i) => (
+                  <div key={i} className={styles.themeSwatchSegment} style={{ background: color }} />
+                ))}
+              </div>
               <span className={styles.themeName}>{theme.name}</span>
               <span className={styles.themeCategory}>{theme.category}</span>
+              <button
+                type="button"
+                className={styles.previewBtn}
+                onClick={(e) => { e.stopPropagation(); e.preventDefault(); setPreviewThemeId(theme.id) }}
+                aria-label={`Preview ${theme.name} theme`}
+              >
+                👁 Preview
+              </button>
             </label>
           ))}
         </div>
+
+        {/* Theme preview modal */}
+        {previewThemeId && (() => {
+          const t = THEMES.find(th => th.id === previewThemeId)
+          if (!t) return null
+          return (
+            <ThemePreviewModal
+              theme={t}
+              isApplied={settings.active_theme === previewThemeId}
+              onClose={() => setPreviewThemeId(null)}
+              onApply={() => { set('active_theme', previewThemeId); setPreviewThemeId(null) }}
+            />
+          )
+        })()}
       </div>
 
       {/* ── SEO ── */}
