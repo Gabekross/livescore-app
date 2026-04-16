@@ -202,6 +202,112 @@
   --color-friendly-bg:    rgba(217, 119,  6, 0.07);
 }
 
+/* ── Theme: Luxury Dark (deep ocean · orange accent) ────── */
+/* Inspired by premium mobile sports apps — screenshot ref.  */
+/* Rich teal-navy backgrounds, warm orange labels, glass     */
+/* cards with hair-thin borders, no harsh outlines.          */
+[data-theme="luxury-dark"] {
+  /* Backgrounds — deep ocean / teal-navy family */
+  --color-bg:             #091A22;
+  --color-surface:        #11222A;
+  --color-card:           rgba(255, 255, 255, 0.03);
+  --color-card-hover:     rgba(255, 255, 255, 0.06);
+  --color-nav:            #0B1D26;
+
+  /* Solid card fallback (for surfaces that can't use rgba)   */
+  --color-card-solid:     #102229;
+
+  /* Borders — hair-thin, barely there                        */
+  --color-border:         rgba(255, 255, 255, 0.08);
+  --color-border-subtle:  rgba(255, 255, 255, 0.04);
+
+  /* Text — cool white with teal warmth                       */
+  --color-text:           #E6F1F3;
+  --color-text-muted:     #9FB7BB;
+  --color-text-dim:       #5C7A80;
+
+  /* Brand accent — warm orange (signature of this theme)     */
+  --color-accent:         #FF8C42;
+  --color-accent-light:   #FFB07A;
+  --color-accent-dim:     rgba(255, 140, 66, 0.12);
+  --color-accent-glow:    rgba(255, 140, 66, 0.25);
+
+  /* Shadows — deep, velvety premium feel                     */
+  --shadow-sm:            0 1px 4px  rgba(0, 0, 0, 0.40);
+  --shadow-md:            0 4px 20px rgba(0, 0, 0, 0.50);
+  --shadow-lg:            0 12px 40px rgba(0, 0, 0, 0.60);
+  --shadow-accent:        0 0 24px rgba(255, 140, 66, 0.22);
+  --shadow-live:          0 0 16px rgba(239,  68,  68, 0.30);
+
+  /* Status — legible on dark teal backgrounds                */
+  --color-live:           #EF4444;
+  --color-live-bg:        rgba(239,  68,  68, 0.12);
+  --color-live-glow:      rgba(239,  68,  68, 0.30);
+  --color-halftime:       #A78BFA;
+  --color-halftime-bg:    rgba(167, 139, 250, 0.12);
+  --color-scheduled:      #7ECFD4;
+  --color-scheduled-bg:   rgba(126, 207, 212, 0.12);
+  --color-completed:      #4A6670;
+  --color-completed-bg:   rgba(74,  102, 112, 0.15);
+  --color-success:        #34D399;
+  --color-warning:        #FBBF24;
+  --color-friendly:       #FBBF24;
+  --color-friendly-bg:    rgba(251, 191,  36, 0.10);
+}
+
+/* ── Theme: Luxury Light (premium daylight · orange accent) */
+/* Daytime sibling of luxury-dark. Same design language,     */
+/* same orange accent, inverted tonal hierarchy.             */
+/* Clean whites, soft teal-grey surfaces, warm orange CTA.  */
+[data-theme="luxury-light"] {
+  /* Backgrounds — soft light with faint teal warmth          */
+  --color-bg:             #F4F8FA;
+  --color-surface:        #EAF1F4;
+  --color-card:           rgba(255, 255, 255, 0.88);
+  --color-card-hover:     #FFFFFF;
+  --color-nav:            rgba(244, 248, 250, 0.96);
+
+  /* Solid card fallback                                      */
+  --color-card-solid:     #FFFFFF;
+
+  /* Borders — very soft, barely visible on white             */
+  --color-border:         rgba(9, 26, 34, 0.08);
+  --color-border-subtle:  rgba(9, 26, 34, 0.04);
+
+  /* Text — deep teal-navy hierarchy                          */
+  --color-text:           #102229;
+  --color-text-muted:     #415860;
+  --color-text-dim:       #6E7F86;
+
+  /* Brand accent — same warm orange as luxury-dark           */
+  --color-accent:         #E57A2E;
+  --color-accent-light:   #FF8C42;
+  --color-accent-dim:     rgba(255, 140, 66, 0.10);
+  --color-accent-glow:    rgba(255, 140, 66, 0.20);
+
+  /* Shadows — soft elevation, visible on light backgrounds   */
+  --shadow-sm:            0 1px 3px  rgba(9, 26, 34, 0.06), 0 1px 2px rgba(9, 26, 34, 0.04);
+  --shadow-md:            0 4px 12px rgba(9, 26, 34, 0.08), 0 2px 4px rgba(9, 26, 34, 0.04);
+  --shadow-lg:            0 12px 32px rgba(9, 26, 34, 0.10), 0 4px 8px rgba(9, 26, 34, 0.06);
+  --shadow-accent:        0 0 20px rgba(255, 140, 66, 0.20);
+  --shadow-live:          0 0 12px rgba(220,  38,  38, 0.20);
+
+  /* Status — tuned for light-bg legibility                   */
+  --color-live:           #DC2626;
+  --color-live-bg:        rgba(220,  38,  38, 0.07);
+  --color-live-glow:      rgba(220,  38,  38, 0.18);
+  --color-halftime:       #7C3AED;
+  --color-halftime-bg:    rgba(124,  58, 237, 0.07);
+  --color-scheduled:      #0D7D8A;
+  --color-scheduled-bg:   rgba(13,  125, 138, 0.08);
+  --color-completed:      #5C7A80;
+  --color-completed-bg:   rgba(92,  122, 128, 0.08);
+  --color-success:        #059669;
+  --color-warning:        #D97706;
+  --color-friendly:       #D97706;
+  --color-friendly-bg:    rgba(217, 119,   6, 0.07);
+}
+
 /* ── Responsive token overrides ─────────────────────────── */
 /* Narrow screen: tighten content padding so cards don't feel  */
 /* squished against the viewport edge at 375px / 320px.        */

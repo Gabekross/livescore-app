@@ -35,6 +35,16 @@ const THEMES = [
     name:   'Professional Light',
     swatch: ['#eef4fb', '#2563eb', '#ffffff'],
   },
+  {
+    id:     'luxury-dark',
+    name:   'Luxury Dark',
+    swatch: ['#091A22', '#FF8C42', '#11222A'],
+  },
+  {
+    id:     'luxury-light',
+    name:   'Luxury Light',
+    swatch: ['#F4F8FA', '#E57A2E', '#ffffff'],
+  },
 ]
 
 // ── Default settings ──────────────────────────────────────────────────────────

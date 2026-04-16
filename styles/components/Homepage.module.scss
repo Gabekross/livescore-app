@@ -10,7 +10,7 @@
     position:   absolute;
     inset:      0;
     background: radial-gradient(ellipse 80% 60% at 50% 0%,
-                  rgba(37, 99, 235, 0.18) 0%,
+                  var(--color-accent-glow) 0%,
                   transparent 70%);
     pointer-events: none;
   }
@@ -79,10 +79,10 @@
 
 /* ── Live strip ──────────────────────────────────────────── */
 .liveSection {
-  background-color: rgba(239, 68, 68, 0.06);
-  border-top:    1px solid rgba(239, 68, 68, 0.2);
-  border-bottom: 1px solid rgba(239, 68, 68, 0.2);
-  padding:       var(--sp-4, 1rem) 0;
+  background-color: var(--color-live-bg, rgba(239, 68, 68, 0.06));
+  border-top:       1px solid var(--color-live-glow, rgba(239, 68, 68, 0.2));
+  border-bottom:    1px solid var(--color-live-glow, rgba(239, 68, 68, 0.2));
+  padding:          var(--sp-4, 1rem) 0;
 }
 
 .liveHeader {
