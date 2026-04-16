@@ -181,7 +181,7 @@ function GroupTable({ groupId, groupName, rows, tournamentSlug }: {
 
       {rows.length === 0 ? (
         <div style={{ padding: '1.5rem', textAlign: 'center', color: 'var(--color-text-dim)', fontSize: '0.85rem' }}>
-          No matches played yet
+          No teams assigned to this group yet.
         </div>
       ) : (
         <div className={styles.tableScroll}>

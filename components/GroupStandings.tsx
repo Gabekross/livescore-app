@@ -63,7 +63,7 @@ export default function GroupStandings({ groupId }: { groupId: string }) {
     }
   }, [groupId])
 
-  if (!standings.length) return <p>No results yet.</p>
+  if (!standings.length) return <p style={{ fontSize: '0.85rem', color: '#9ca3af' }}>No teams assigned to this group yet.</p>
 
   return (
     <div className={styles.standingsContainer}>

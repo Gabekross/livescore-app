@@ -61,26 +61,33 @@ export default function TournamentStandings({
       .eq('status', 'completed')         // was: .neq('status', 'scheduled')
       .eq('affects_standings', true)     // excludes friendly matches
 
-    const { data: teams } = await supabase
-      .from('teams')
-      .select('id, name')
+    // Fetch all teams assigned to these groups — used as the base so every
+    // team appears with 0s even before any matches have been played.
+    const { data: groupTeamRows } = await supabase
+      .from('group_teams')
+      .select('team_id, teams!inner(id, name)')
+      .in('group_id', groupIds)
 
     const teamMap: Record<string, string> = {}
-    teams?.forEach((t) => { teamMap[t.id] = t.name })
+    groupTeamRows?.forEach((row) => {
+      const t = Array.isArray(row.teams) ? row.teams[0] : row.teams
+      if (t) teamMap[t.id] = t.name
+    })
 
+    // Seed the standings map with every assigned team at zero
     const temp: Record<string, Standing> = {}
+    Object.entries(teamMap).forEach(([teamId, teamName]) => {
+      temp[teamId] = { team_id: teamId, team_name: teamName, mp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 }
+    })
 
     matches?.forEach((m) => {
       if (m.home_score === null || m.away_score === null) return
 
-      const makeEntry = (teamId: string): Standing => ({
-        team_id: teamId,
-        team_name: teamMap[teamId] ?? `Team ${teamId.slice(0, 4)}`,
-        mp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0,
-      })
+      // Guard: only process teams that are in the group assignments
+      if (!temp[m.home_team_id] || !temp[m.away_team_id]) return
 
-      const home = temp[m.home_team_id] ?? makeEntry(m.home_team_id)
-      const away = temp[m.away_team_id] ?? makeEntry(m.away_team_id)
+      const home = temp[m.home_team_id]
+      const away = temp[m.away_team_id]
 
       home.mp += 1; away.mp += 1
       home.gf += m.home_score; home.ga += m.away_score
@@ -96,9 +103,6 @@ export default function TournamentStandings({
 
       home.gd = home.gf - home.ga
       away.gd = away.gf - away.ga
-
-      temp[m.home_team_id] = home
-      temp[m.away_team_id] = away
     })
 
     const sorted = Object.values(temp).sort((a, b) => {
@@ -126,7 +130,7 @@ export default function TournamentStandings({
   }, [tournamentId, showStandings])
 
   if (standings.length === 0) {
-    return <p style={{ color: 'gray', textAlign: 'center' }}>Standings not available yet.</p>
+    return <p style={{ color: 'gray', textAlign: 'center' }}>No teams assigned yet.</p>
   }
 
   return (
