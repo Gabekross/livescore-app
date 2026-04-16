@@ -10,6 +10,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import ShareButton                    from '@/components/ui/ShareButton'
+import ArticleCarousel                from '@/components/ui/ArticleCarousel'
 import styles                         from '@/styles/components/ArticlePage.module.scss'
 
 interface Props { params: { slug: string } }
@@ -21,6 +22,7 @@ interface Post {
   body:            string | null
   excerpt:         string | null
   cover_image_url: string | null
+  cover_images:    string[] | null
   og_image_url:    string | null
   seo_title:       string | null
   seo_description: string | null
@@ -88,7 +90,7 @@ export default async function ArticlePage({ params }: Props) {
   const { data: post } = await supabase
     .from('posts')
     .select(`
-      id, title, slug, body, excerpt, cover_image_url, og_image_url,
+      id, title, slug, body, excerpt, cover_image_url, cover_images, og_image_url,
       seo_title, seo_description, published_at, updated_at, tournament_id,
       tournament:tournament_id(id, name, slug)
     `)
@@ -143,21 +145,25 @@ export default async function ArticlePage({ params }: Props) {
       />
 
       <article className={styles.page}>
-        {/* Hero image */}
-        {article.cover_image_url ? (
-          <div className={styles.hero}>
-            <img
-              src={article.cover_image_url}
-              alt={article.title}
-              className={styles.heroImage}
-            />
-            <div className={styles.heroOverlay} />
-          </div>
-        ) : (
-          <div className={styles.hero}>
-            <div className={styles.heroPlaceholder} aria-hidden="true" />
-          </div>
-        )}
+        {/* Hero / carousel */}
+        {(() => {
+          // Build ordered image list: active cover first, then the rest
+          const allImages: string[] = Array.isArray(article.cover_images) && article.cover_images.length > 0
+            ? article.cover_images
+            : article.cover_image_url ? [article.cover_image_url] : []
+
+          const coverFirst = article.cover_image_url && allImages.includes(article.cover_image_url)
+            ? [article.cover_image_url, ...allImages.filter((u) => u !== article.cover_image_url)]
+            : allImages
+
+          return coverFirst.length > 0
+            ? <ArticleCarousel images={coverFirst} title={article.title} />
+            : (
+              <div className={styles.hero}>
+                <div className={styles.heroPlaceholder} aria-hidden="true" />
+              </div>
+            )
+        })()}
 
         <div className={styles.container}>
           {/* Breadcrumb */}

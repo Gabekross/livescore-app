@@ -350,3 +350,162 @@
   margin-top:  2px;
   font-family: 'ui-monospace', monospace;
 }
+
+/* ── Cover image carousel manager ───────────────────────── */
+
+/* Main preview wrapper — holds the image + arrow buttons */
+.carouselPreview {
+  position:   relative;
+  width:      100%;
+  overflow:   hidden;
+  border-radius: 8px;
+}
+
+/* "Cover" badge overlaid on the active cover image */
+.carouselCoverBadge {
+  position:      absolute;
+  top:           8px;
+  left:          8px;
+  background:    #2563eb;
+  color:         #fff;
+  font-size:     0.68rem;
+  font-weight:   700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding:       2px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+/* Left / right arrow buttons over the preview image */
+.carouselArrow {
+  position:      absolute;
+  top:           50%;
+  transform:     translateY(-50%);
+  background:    rgba(0, 0, 0, 0.55);
+  color:         #fff;
+  border:        none;
+  border-radius: 50%;
+  width:         28px;
+  height:        28px;
+  font-size:     1.1rem;
+  line-height:   1;
+  display:       flex;
+  align-items:   center;
+  justify-content: center;
+  cursor:        pointer;
+  transition:    background 0.15s ease;
+
+  &:hover { background: rgba(0, 0, 0, 0.8); }
+}
+
+.carouselArrowLeft  { left:  6px; }
+.carouselArrowRight { right: 6px; }
+
+/* Dot row below the preview image */
+.carouselDots {
+  display:         flex;
+  justify-content: center;
+  gap:             5px;
+  margin-top:      6px;
+}
+
+.carouselDot {
+  width:         8px;
+  height:        8px;
+  border-radius: 50%;
+  border:        none;
+  background:    #d1d5db;
+  cursor:        pointer;
+  padding:       0;
+  transition:    background 0.15s ease, transform 0.15s ease;
+
+  &:hover { background: #9ca3af; }
+}
+
+.carouselDotActive {
+  background:  #2563eb;
+  transform:   scale(1.25);
+}
+
+/* Thumbnail strip below the dots */
+.coverThumbStrip {
+  display:    flex;
+  gap:        6px;
+  overflow-x: auto;
+  padding:    2px 0 4px;
+  scrollbar-width: thin;
+}
+
+.coverThumb {
+  flex-shrink:   0;
+  width:         52px;
+  height:        38px;
+  border-radius: 5px;
+  overflow:      hidden;
+  border:        2px solid transparent;
+  cursor:        pointer;
+  padding:       0;
+  background:    #f3f4f6;
+  transition:    border-color 0.15s ease, opacity 0.15s ease;
+  opacity:       0.7;
+
+  img {
+    width:      100%;
+    height:     100%;
+    object-fit: cover;
+    display:    block;
+  }
+
+  &:hover { opacity: 1; }
+}
+
+/* Currently previewed in the main viewer */
+.coverThumbSelected {
+  border-color: #6b7280;
+  opacity:      1;
+}
+
+/* The admin-designated cover image */
+.coverThumbActive {
+  border-color: #2563eb !important;
+  opacity:      1;
+}
+
+/* Row of action buttons below the strip */
+.carouselActions {
+  display:  flex;
+  gap:      0.5rem;
+  flex-wrap: wrap;
+}
+
+.coverSetBtn {
+  flex:          1;
+  padding:       5px 10px;
+  background:    rgba(37, 99, 235, 0.1);
+  border:        1px solid rgba(37, 99, 235, 0.3);
+  border-radius: 6px;
+  font-size:     0.78rem;
+  font-weight:   600;
+  color:         #2563eb;
+  cursor:        pointer;
+  transition:    background 0.15s ease;
+  white-space:   nowrap;
+
+  &:hover { background: rgba(37, 99, 235, 0.2); }
+}
+
+.coverRemoveBtn {
+  padding:       5px 10px;
+  background:    rgba(239, 68, 68, 0.08);
+  border:        1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 6px;
+  font-size:     0.78rem;
+  font-weight:   600;
+  color:         #ef4444;
+  cursor:        pointer;
+  transition:    background 0.15s ease;
+  white-space:   nowrap;
+
+  &:hover { background: rgba(239, 68, 68, 0.15); }
+}

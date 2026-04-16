@@ -15,6 +15,7 @@ interface RawPost {
   excerpt:         string | null
   body:            string | null
   cover_image_url: string | null
+  cover_images:    string[] | null
   og_image_url:    string | null
   seo_title:       string | null
   seo_description: string | null
@@ -31,7 +32,7 @@ export default function EditPostPage() {
     if (!id) return
     supabase
       .from('posts')
-      .select('id, title, slug, excerpt, body, cover_image_url, og_image_url, seo_title, seo_description, status, tournament_id')
+      .select('id, title, slug, excerpt, body, cover_image_url, cover_images, og_image_url, seo_title, seo_description, status, tournament_id')
       .eq('id', id)
       .single()
       .then(({ data, error: e }) => {
@@ -58,6 +59,7 @@ export default function EditPostPage() {
     excerpt:         post.excerpt         ?? '',
     body:            post.body            ?? '',
     cover_image_url: post.cover_image_url ?? '',
+    cover_images:    post.cover_images    ?? (post.cover_image_url ? [post.cover_image_url] : []),
     og_image_url:    post.og_image_url    ?? '',
     seo_title:       post.seo_title       ?? '',
     seo_description: post.seo_description ?? '',

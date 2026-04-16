@@ -27,6 +27,7 @@ export interface PostFormValues {
   excerpt:         string
   body:            string
   cover_image_url: string
+  cover_images:    string[]
   og_image_url:    string
   seo_title:       string
   seo_description: string
@@ -47,6 +48,7 @@ const EMPTY: PostFormValues = {
   excerpt:         '',
   body:            '',
   cover_image_url: '',
+  cover_images:    [],
   og_image_url:    '',
   seo_title:       '',
   seo_description: '',
@@ -65,6 +67,7 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
   const [slugEdited, setSlugEdited] = useState(!!postId) // don't auto-derive slug when editing
   const [showCoverPicker, setShowCoverPicker] = useState(false)
   const [showOgPicker, setShowOgPicker]       = useState(false)
+  const [coverCarouselIndex, setCoverCarouselIndex] = useState(0)
 
   useEffect(() => {
     if (!orgId) return
@@ -78,7 +81,7 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
     })()
   }, [orgId])
 
-  const set = (field: keyof PostFormValues, value: string) => {
+  const set = (field: Exclude<keyof PostFormValues, 'cover_images'>, value: string) => {
     setValues((prev) => {
       const next = { ...prev, [field]: value }
       // Auto-derive slug from title only if user hasn't manually set it
@@ -88,6 +91,35 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
       return next
     })
   }
+
+  // ── Cover image carousel helpers ──────────────────────────────────────────
+  const addCoverImage = (url: string) => {
+    setValues((prev) => {
+      if (prev.cover_images.includes(url)) return prev
+      const next = [...prev.cover_images, url]
+      setCoverCarouselIndex(next.length - 1)
+      return {
+        ...prev,
+        cover_images:    next,
+        // auto-select as cover if it's the first image added
+        cover_image_url: prev.cover_image_url || url,
+      }
+    })
+  }
+
+  const removeCoverImage = (url: string) => {
+    setValues((prev) => {
+      const next = prev.cover_images.filter((u) => u !== url)
+      setCoverCarouselIndex((i) => Math.min(i, Math.max(0, next.length - 1)))
+      return {
+        ...prev,
+        cover_images:    next,
+        cover_image_url: prev.cover_image_url === url ? (next[0] ?? '') : prev.cover_image_url,
+      }
+    })
+  }
+
+  const setCoverImage = (url: string) => set('cover_image_url', url)
 
   const handleSlugChange = (raw: string) => {
     setSlugEdited(true)
@@ -111,6 +143,7 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
       excerpt:         values.excerpt.trim() || null,
       body:            values.body.trim() || null,
       cover_image_url: values.cover_image_url.trim() || null,
+      cover_images:    values.cover_images,
       og_image_url:    values.og_image_url.trim() || null,
       seo_title:       values.seo_title.trim() || null,
       seo_description: values.seo_description.trim() || null,
@@ -140,7 +173,9 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
 
   if (orgGate) return orgGate
 
-  const coverUrl = values.cover_image_url.trim()
+  const coverImages    = values.cover_images
+  const activeCoverUrl = values.cover_image_url.trim()
+  const carouselIdx    = Math.min(coverCarouselIndex, Math.max(0, coverImages.length - 1))
 
   return (
     <div className={styles.formContainer}>
@@ -270,40 +305,117 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
             </select>
           </div>
 
-          {/* Cover image */}
+          {/* Cover image carousel manager */}
           <div className={styles.sideCard}>
-            <div className={styles.sideCardTitle}>Cover Image</div>
-            <div className={styles.fieldGroup}>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input
-                  type="url"
-                  className={styles.input}
-                  value={values.cover_image_url}
-                  onChange={(e) => set('cover_image_url', e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  style={{ flex: 1 }}
-                />
-                <button
-                  type="button"
-                  className={styles.editBtn}
-                  onClick={() => setShowCoverPicker(true)}
-                  style={{ whiteSpace: 'nowrap' }}
-                >
-                  Browse
-                </button>
-              </div>
+            <div className={styles.sideCardTitle}>
+              Cover Images
+              <span className={styles.labelHint} style={{ marginLeft: '0.4rem', textTransform: 'none', letterSpacing: 0 }}>
+                ({coverImages.length})
+              </span>
             </div>
-            {coverUrl ? (
-              <img src={coverUrl} alt="Cover preview" className={styles.coverPreview} />
+
+            {/* Main preview with prev/next */}
+            {coverImages.length > 0 ? (
+              <div className={styles.carouselPreview}>
+                <img
+                  src={coverImages[carouselIdx]}
+                  alt={`Image ${carouselIdx + 1}`}
+                  className={styles.coverPreview}
+                />
+                {/* Cover badge */}
+                {coverImages[carouselIdx] === activeCoverUrl && (
+                  <div className={styles.carouselCoverBadge}>Cover</div>
+                )}
+                {/* Nav arrows */}
+                {coverImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className={`${styles.carouselArrow} ${styles.carouselArrowLeft}`}
+                      onClick={() => setCoverCarouselIndex((i) => (i - 1 + coverImages.length) % coverImages.length)}
+                      aria-label="Previous image"
+                    >‹</button>
+                    <button
+                      type="button"
+                      className={`${styles.carouselArrow} ${styles.carouselArrowRight}`}
+                      onClick={() => setCoverCarouselIndex((i) => (i + 1) % coverImages.length)}
+                      aria-label="Next image"
+                    >›</button>
+                  </>
+                )}
+              </div>
             ) : (
               <div className={styles.coverPlaceholder} aria-hidden="true" />
             )}
+
+            {/* Dot indicators */}
+            {coverImages.length > 1 && (
+              <div className={styles.carouselDots}>
+                {coverImages.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`${styles.carouselDot} ${i === carouselIdx ? styles.carouselDotActive : ''}`}
+                    onClick={() => setCoverCarouselIndex(i)}
+                    aria-label={`Image ${i + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Thumbnail strip */}
+            {coverImages.length > 0 && (
+              <div className={styles.coverThumbStrip}>
+                {coverImages.map((url, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className={`${styles.coverThumb} ${i === carouselIdx ? styles.coverThumbSelected : ''} ${url === activeCoverUrl ? styles.coverThumbActive : ''}`}
+                    onClick={() => setCoverCarouselIndex(i)}
+                    title={url === activeCoverUrl ? 'Active cover' : 'Click to preview'}
+                  >
+                    <img src={url} alt={`Thumb ${i + 1}`} />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Action buttons for current image */}
+            {coverImages.length > 0 && (
+              <div className={styles.carouselActions}>
+                {coverImages[carouselIdx] !== activeCoverUrl && (
+                  <button
+                    type="button"
+                    className={styles.coverSetBtn}
+                    onClick={() => setCoverImage(coverImages[carouselIdx])}
+                  >
+                    ★ Set as Cover
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={styles.coverRemoveBtn}
+                  onClick={() => removeCoverImage(coverImages[carouselIdx])}
+                >
+                  Remove
+                </button>
+              </div>
+            )}
+
+            <button
+              type="button"
+              className={styles.editBtn}
+              onClick={() => setShowCoverPicker(true)}
+              style={{ width: '100%', justifyContent: 'center' }}
+            >
+              + Add Image
+            </button>
           </div>
 
           <MediaPicker
             open={showCoverPicker}
             onClose={() => setShowCoverPicker(false)}
-            onSelect={(url) => { set('cover_image_url', url); setShowCoverPicker(false) }}
+            onSelect={(url) => { addCoverImage(url); setShowCoverPicker(false) }}
           />
 
           {/* Tournament */}
