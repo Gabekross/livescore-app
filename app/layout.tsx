@@ -8,7 +8,9 @@ import { headers }          from 'next/headers'
 import { Toaster }          from 'react-hot-toast'
 import PublicNav            from '@/components/layouts/PublicNav'
 import PublicFooter         from '@/components/layouts/PublicFooter'
+import GlobalSponsorStrip   from '@/components/layouts/GlobalSponsorStrip'
 import { resolveMetadataBase } from '@/lib/seo'
+import type { SponsorItem } from '@/components/ui/SponsorStrip'
 import '@/app/globals.css'
 
 // ── Org / site-settings fetch (best-effort) ───────────────────────────────────
@@ -21,6 +23,8 @@ interface SiteSettings {
   active_theme: string
   /** True when we successfully resolved an organization for this request. */
   isOrgSite:    boolean
+  /** Org-wide active sponsors — passed to GlobalSponsorStrip. */
+  sponsors:     SponsorItem[]
 }
 
 async function fetchSiteSettings(): Promise<SiteSettings> {
@@ -32,6 +36,7 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     contact_email: null,
     active_theme:  'theme-uefa-dark',
     isOrgSite:     false,   // no org resolved → show platform marketing nav
+    sponsors:      [],
   }
 
   try {
@@ -39,18 +44,32 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     const { getOrganizationIdServer }    = await import('@/lib/org-server')
     const { createServerSupabaseClient } = await import('@/lib/supabase-server')
 
-    const orgId   = await getOrganizationIdServer()
+    const orgId    = await getOrganizationIdServer()
     const supabase = createServerSupabaseClient()
 
-    const { data } = await supabase
-      .from('site_settings')
-      .select('site_name, site_tagline, logo_url, footer_text, contact_email, active_theme')
-      .eq('organization_id', orgId)
-      .single()
+    const [settingsRes, sponsorsRes] = await Promise.all([
+      supabase
+        .from('site_settings')
+        .select('site_name, site_tagline, logo_url, footer_text, contact_email, active_theme')
+        .eq('organization_id', orgId)
+        .single(),
 
-    return data
-      ? { ...defaults, ...data, isOrgSite: true }
-      : { ...defaults, isOrgSite: true }  // org resolved but no settings row yet
+      // Org-wide sponsors (tournament_id IS NULL) shown across all public pages
+      supabase
+        .from('sponsors')
+        .select('id, name, logo_url, website_url, tagline, tier')
+        .eq('organization_id', orgId)
+        .is('tournament_id', null)
+        .eq('is_active', true)
+        .order('display_order')
+        .order('name'),
+    ])
+
+    const sponsors = (sponsorsRes.data || []) as SponsorItem[]
+
+    return settingsRes.data
+      ? { ...defaults, ...settingsRes.data, isOrgSite: true, sponsors }
+      : { ...defaults, isOrgSite: true, sponsors }
   } catch {
     // Dev mode / DB not yet seeded / no org in context — show platform defaults
     return defaults
@@ -133,6 +152,8 @@ export default async function RootLayout({
         />
 
         {children}
+
+        <GlobalSponsorStrip sponsors={settings.sponsors} />
 
         <PublicFooter
           siteName={settings.site_name}

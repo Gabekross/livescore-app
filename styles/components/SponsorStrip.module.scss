@@ -90,6 +90,37 @@
   white-space:    nowrap;
 }
 
+/* ── Tier-specific sizing ────────────────────────────────── */
+/*
+ *  Gold   — prominent, full size
+ *  Silver — one step smaller, slightly more muted
+ *  Bronze — smallest, most muted (acknowledgement level)
+ */
+
+.tierGold   .logo {
+  max-height: 36px;
+  max-width:  130px;
+  filter:     grayscale(30%) opacity(0.85);
+
+  .tierGold:hover & { filter: grayscale(0%) opacity(1); }
+}
+
+.tierSilver .logo {
+  max-height: 26px;
+  max-width:  100px;
+  filter:     grayscale(50%) opacity(0.65);
+
+  .tierSilver:hover & { filter: grayscale(0%) opacity(1); }
+}
+
+.tierBronze .logo {
+  max-height: 20px;
+  max-width:   80px;
+  filter:     grayscale(65%) opacity(0.50);
+
+  .tierBronze:hover & { filter: grayscale(0%) opacity(1); }
+}
+
 /* ── Mobile ──────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .logosRow {
@@ -105,4 +136,7 @@
     max-height: 44px;
     max-width:  160px;
   }
+
+  .tierSilver .logo { max-height: 20px; max-width: 80px; }
+  .tierBronze .logo { max-height: 16px; max-width: 64px; }
 }

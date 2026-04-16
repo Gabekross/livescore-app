@@ -2,6 +2,7 @@
 // Public sponsor display — homepage (global sponsors) and tournament pages.
 // Renders nothing when the sponsors array is empty.
 // Title-tier sponsor gets a featured row above the rest.
+// Gold / Silver / Bronze appear in the same row but at decreasing sizes.
 
 import styles from '@/styles/components/SponsorStrip.module.scss'
 
@@ -22,6 +23,13 @@ interface Props {
 // Tier sort weight: title → gold → silver → bronze
 const TIER_ORDER: Record<string, number> = {
   title: 0, gold: 1, silver: 2, bronze: 3,
+}
+
+// If a URL was saved without a protocol (e.g. "sponsor.com") the browser
+// would treat it as a same-origin relative path.  Always ensure https://.
+function toAbsoluteUrl(url: string): string {
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  return `https://${url}`
 }
 
 export default function SponsorStrip({ sponsors, label = 'Our Sponsors' }: Props) {
@@ -47,7 +55,7 @@ export default function SponsorStrip({ sponsors, label = 'Our Sponsors' }: Props
     s.website_url
       ? (
         <a
-          href={s.website_url}
+          href={toAbsoluteUrl(s.website_url)}
           target="_blank"
           rel="noopener noreferrer"
           className={className}
@@ -57,6 +65,13 @@ export default function SponsorStrip({ sponsors, label = 'Our Sponsors' }: Props
         </a>
       )
       : <div className={className}>{children}</div>
+
+  // Tier → CSS module class for size/prominence
+  const tierClass: Record<string, string> = {
+    gold:   styles.tierGold,
+    silver: styles.tierSilver,
+    bronze: styles.tierBronze,
+  }
 
   return (
     <section className={styles.strip} aria-label={label}>
@@ -77,11 +92,15 @@ export default function SponsorStrip({ sponsors, label = 'Our Sponsors' }: Props
         </div>
       )}
 
-      {/* Gold / Silver / Bronze — horizontal row */}
+      {/* Gold / Silver / Bronze — horizontal row, size decreases by tier */}
       {otherSponsors.length > 0 && (
         <div className={styles.logosRow}>
           {otherSponsors.map((s) => (
-            <Wrap key={s.id} s={s} className={styles.logoLink}>
+            <Wrap
+              key={s.id}
+              s={s}
+              className={`${styles.logoLink} ${tierClass[s.tier] ?? ''}`}
+            >
               <Logo s={s} className={styles.logo} />
             </Wrap>
           ))}

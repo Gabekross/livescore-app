@@ -89,8 +89,6 @@ export default async function TournamentDetailPage({ params }: Props) {
   const tournament = tournRes.data
 
   // Step 2: fetch stages + ALL matches + sponsors in parallel
-  let tournamentSponsors: SponsorItem[] = []
-
   const [stagesRes, matchesRes, sponsorsRes] = await Promise.all([
     supabase
       .from('tournament_stages')
@@ -108,7 +106,9 @@ export default async function TournamentDetailPage({ params }: Props) {
       .eq('tournament_id', tournament.id)
       .order('match_date'),
 
-    // Tournament-specific sponsors; fallback to org-wide is handled below
+    // Tournament-specific sponsors only.
+    // Org-wide sponsors are handled by the root layout (GlobalSponsorStrip)
+    // and will appear below the page content on every public page anyway.
     supabase
       .from('sponsors')
       .select('id, name, logo_url, website_url, tagline, tier')
@@ -119,20 +119,7 @@ export default async function TournamentDetailPage({ params }: Props) {
       .order('name'),
   ])
 
-  tournamentSponsors = (sponsorsRes.data || []) as SponsorItem[]
-
-  // If no tournament-specific sponsors, fall back to org-wide sponsors
-  if (tournamentSponsors.length === 0) {
-    const { data: globalSponsors } = await supabase
-      .from('sponsors')
-      .select('id, name, logo_url, website_url, tagline, tier')
-      .eq('organization_id', orgId)
-      .is('tournament_id', null)
-      .eq('is_active', true)
-      .order('display_order')
-      .order('name')
-    tournamentSponsors = (globalSponsors || []) as SponsorItem[]
-  }
+  const tournamentSponsors = (sponsorsRes.data || []) as SponsorItem[]
 
   const stages = (stagesRes.data || []) as Stage[]
 
