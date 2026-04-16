@@ -38,14 +38,43 @@ export default function AdminTeamListPage() {
 
   useEffect(() => { fetchTeams() }, [fetchTeams])
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this team?')) return
+  const handleDelete = async (id: string, name: string) => {
+    // Count matches that reference this team so we can warn the user
+    const { count } = await supabase
+      .from('matches')
+      .select('id', { count: 'exact', head: true })
+      .or(`home_team_id.eq.${id},away_team_id.eq.${id}`)
+
+    const matchCount = count ?? 0
+
+    const msg = matchCount > 0
+      ? `"${name}" is linked to ${matchCount} match${matchCount === 1 ? '' : 'es'}.\n\nDeleting this team will permanently remove those matches and their lineups too.\n\nThis cannot be undone. Continue?`
+      : `Delete "${name}"? This cannot be undone.`
+
+    if (!window.confirm(msg)) return
+
     setLoading(true)
 
+    // matches.home_team_id / away_team_id have no ON DELETE CASCADE so we
+    // must remove them first; match_lineups then cascade automatically.
+    if (matchCount > 0) {
+      const { error: matchErr } = await supabase
+        .from('matches')
+        .delete()
+        .or(`home_team_id.eq.${id},away_team_id.eq.${id}`)
+
+      if (matchErr) {
+        toast.error(`Could not remove matches: ${matchErr.message}`)
+        setLoading(false)
+        return
+      }
+    }
+
+    // group_teams and players cascade automatically when the team is deleted
     const { error } = await supabase.from('teams').delete().eq('id', id)
 
     if (error) {
-      toast.error('Failed to delete team')
+      toast.error(`Failed to delete team: ${error.message}`)
     } else {
       toast.success('Team deleted')
       fetchTeams()
@@ -94,7 +123,7 @@ export default function AdminTeamListPage() {
                 <Link href={`/admin/teams/view/${team.id}`}  className={styles.viewButton}>View</Link>
                 <Link href={`/admin/teams/edit/${team.id}`}  className={styles.editButton}>Edit</Link>
                 <button
-                  onClick={() => handleDelete(team.id)}
+                  onClick={() => handleDelete(team.id, team.name)}
                   disabled={loading}
                   className={styles.deleteButton}
                 >
