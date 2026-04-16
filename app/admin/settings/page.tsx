@@ -26,48 +26,62 @@ interface ThemeTokens {
   scheduled: string
 }
 
-// Renders a scaled-down site mockup using the theme's actual token values.
-// All styles are inlined — zero CSS leakage, works for dark and light themes.
-// Pass large={true} to render the modal-sized version (~170px tall).
-function ThemePreviewMock({ tokens, large = false }: { tokens: ThemeTokens; large?: boolean }) {
-  const h    = large ? '170px'    : '90px'
-  const navV = large ? '9px'      : '5px'
-  const navH = large ? '14px'     : '8px'
-  const dot  = large ? 13         : 7
-  const bH   = large ? 5          : 3
-  const cPad = large ? '8px 10px' : '5px 6px'
-  const cGap = large ? '7px'      : '4px'
-  const gap2 = large ? 3          : 2
+// Renders a homepage-style site mockup using the theme's real token values.
+// siteName → pulled from settings (falls back to "Kolusports").
+// All styles inlined — zero CSS leakage, works for dark + light themes.
+function ThemePreviewMock({
+  tokens,
+  siteName = 'Kolusports',
+}: {
+  tokens:   ThemeTokens
+  siteName?: string
+}) {
+  const name = siteName.trim() || 'Kolusports'
+  // Truncate nav label so it never wraps
+  const navLabel = name.length > 22 ? name.slice(0, 20) + '…' : name
 
-  const card: React.CSSProperties = {
-    background:   tokens.card,
-    border:       `1px solid ${tokens.border}`,
-    borderRadius: large ? '6px' : '4px',
-    padding:      large ? '7px 10px' : '4px 6px',
-    display:      'flex',
-    alignItems:   'center',
-    gap:          large ? '6px' : '4px',
-    flex:         1,
-  }
-  const badge = (color: string): React.CSSProperties => ({
-    background:    `${color}25`,
-    color,
-    fontSize:      large ? '9px' : '5.5px',
-    fontWeight:    700,
-    padding:       large ? '2px 6px' : '1px 4px',
-    borderRadius:  '99px',
-    border:        `1px solid ${color}50`,
-    letterSpacing: '0.05em',
-    flexShrink:    0,
-    whiteSpace:    'nowrap',
-  })
+  const matchRow = (
+    badge: string, bColor: string,
+    home: string, away: string,
+    right: React.ReactNode,
+    key: number,
+  ) => (
+    <div key={key} style={{
+      background:   tokens.card,
+      border:       `1px solid ${tokens.border}`,
+      borderRadius: '4px',
+      padding:      '3px 6px',
+      display:      'flex',
+      alignItems:   'center',
+      gap:          '5px',
+    }}>
+      {/* Status badge */}
+      <div style={{
+        background:    `${bColor}22`,
+        color:         bColor,
+        fontSize:      '5px',
+        fontWeight:    700,
+        padding:       '1px 3px',
+        borderRadius:  '99px',
+        border:        `1px solid ${bColor}44`,
+        flexShrink:    0,
+        letterSpacing: '0.04em',
+      }}>{badge}</div>
+      {/* Teams */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: '6.5px', fontWeight: 600, color: tokens.text,      lineHeight: 1.3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{home}</div>
+        <div style={{ fontSize: '6.5px', fontWeight: 600, color: tokens.textMuted, lineHeight: 1.3, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{away}</div>
+      </div>
+      {right}
+    </div>
+  )
 
   return (
     <div style={{
       width:         '100%',
-      height:        h,
+      height:        '248px',
       background:    tokens.bg,
-      borderRadius:  large ? '8px' : '6px',
+      borderRadius:  '8px',
       overflow:      'hidden',
       border:        `1px solid ${tokens.border}`,
       display:       'flex',
@@ -76,46 +90,100 @@ function ThemePreviewMock({ tokens, large = false }: { tokens: ThemeTokens; larg
       pointerEvents: 'none',
       userSelect:    'none',
     }}>
-      {/* Nav bar */}
+
+      {/* ── Nav ───────────────────────────────────────────────── */}
       <div style={{
         background:   tokens.nav,
-        padding:      `${navV} ${navH}`,
+        padding:      '5px 10px',
         display:      'flex',
         alignItems:   'center',
-        gap:          large ? '8px' : '5px',
+        gap:          '6px',
         borderBottom: `1px solid ${tokens.border}`,
         flexShrink:   0,
       }}>
-        <div style={{ width: dot, height: dot, borderRadius: '50%', background: tokens.accent, flexShrink: 0 }} />
-        <div style={{ width: large ? 50 : 30, height: bH, borderRadius: 2, background: tokens.text, opacity: 0.45 }} />
-        <div style={{ marginLeft: 'auto', width: large ? 26 : 16, height: bH, borderRadius: 2, background: tokens.accent, opacity: 0.65 }} />
+        {/* Logo dot */}
+        <div style={{ width: 9, height: 9, borderRadius: '50%', background: tokens.accent, flexShrink: 0 }} />
+        <span style={{ fontSize: '7px', fontWeight: 700, color: tokens.text, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+          {navLabel}
+        </span>
+        {/* Hamburger */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', flexShrink: 0 }}>
+          {[12, 12, 8].map((w, i) => (
+            <div key={i} style={{ width: w, height: 1.5, borderRadius: 1, background: tokens.text, opacity: 0.55 }} />
+          ))}
+        </div>
       </div>
 
-      {/* Match cards */}
-      <div style={{ padding: cPad, display: 'flex', flexDirection: 'column', gap: cGap, flex: 1 }}>
-        {/* Live match */}
-        <div style={card}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: gap2, flex: 1, minWidth: 0 }}>
-            <div style={{ width: '52%', height: bH, borderRadius: 2, background: tokens.text,      opacity: 0.70 }} />
-            <div style={{ width: '40%', height: bH, borderRadius: 2, background: tokens.text,      opacity: 0.70 }} />
-          </div>
-          <div style={{ fontSize: large ? '14px' : '8px', fontWeight: 700, color: tokens.text, flexShrink: 0 }}>2–1</div>
-          <div style={badge(tokens.live)}>LIVE</div>
+      {/* ── Hero ──────────────────────────────────────────────── */}
+      <div style={{
+        padding:      '7px 10px 6px',
+        borderBottom: `1px solid ${tokens.border}`,
+        flexShrink:   0,
+        background:   tokens.bg,
+      }}>
+        <div style={{
+          fontSize:    '10px',
+          fontWeight:  800,
+          color:       tokens.accent,
+          lineHeight:  1.2,
+          marginBottom:'2px',
+          overflow:    'hidden',
+          display:     '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+        } as React.CSSProperties}>
+          {name}
         </div>
+        <div style={{ fontSize: '6px', color: tokens.textMuted, marginBottom: '5px', lineHeight: 1.4 }}>
+          Live scores, fixtures &amp; standings
+        </div>
+        {/* CTA buttons */}
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <div style={{ background: tokens.accent, color: '#fff', fontSize: '5.5px', fontWeight: 700, padding: '2px 7px', borderRadius: '99px' }}>
+            Fixtures &amp; Results
+          </div>
+          <div style={{ background: 'transparent', color: tokens.text, fontSize: '5.5px', fontWeight: 600, padding: '2px 7px', borderRadius: '99px', border: `1px solid ${tokens.border}` }}>
+            Standings
+          </div>
+        </div>
+      </div>
 
-        {/* Scheduled match */}
-        <div style={card}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: gap2, flex: 1, minWidth: 0 }}>
-            <div style={{ width: '48%', height: bH, borderRadius: 2, background: tokens.textMuted, opacity: 0.65 }} />
-            <div style={{ width: '36%', height: bH, borderRadius: 2, background: tokens.textMuted, opacity: 0.65 }} />
-          </div>
-          <div style={{ fontSize: large ? '11px' : '7px', fontWeight: 600, color: tokens.textMuted, flexShrink: 0 }}>18:00</div>
-          <div style={badge(tokens.scheduled)}>SCH</div>
+      {/* ── Live Now ──────────────────────────────────────────── */}
+      <div style={{
+        background:   `${tokens.live}0c`,
+        borderBottom: `1px solid ${tokens.live}30`,
+        padding:      '5px 8px',
+        flexShrink:   0,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
+          <div style={{ width: 5, height: 5, borderRadius: '50%', background: tokens.live, flexShrink: 0 }} />
+          <span style={{ fontSize: '5.5px', fontWeight: 700, color: tokens.live, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+            Live Now
+          </span>
         </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+          {matchRow('LIVE', tokens.live, 'Team A', 'Team D', (
+            <div style={{ fontSize: '8.5px', fontWeight: 800, color: tokens.text, flexShrink: 0 }}>4–1</div>
+          ), 0)}
+          {matchRow('LIVE', tokens.live, 'Team G', 'Team B', (
+            <div style={{ fontSize: '8.5px', fontWeight: 800, color: tokens.text, flexShrink: 0 }}>2–0</div>
+          ), 1)}
+        </div>
+      </div>
+
+      {/* ── Upcoming Fixtures ─────────────────────────────────── */}
+      <div style={{ padding: '5px 8px', flex: 1 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+          <span style={{ fontSize: '6.5px', fontWeight: 700, color: tokens.text }}>Upcoming Fixtures</span>
+          <span style={{ fontSize: '5.5px', fontWeight: 600, color: tokens.accent }}>All fixtures →</span>
+        </div>
+        {matchRow('SCH', tokens.scheduled, 'Team C', 'Team F', (
+          <div style={{ fontSize: '6px', fontWeight: 600, color: tokens.scheduled, flexShrink: 0 }}>21:33</div>
+        ), 2)}
       </div>
 
       {/* Accent bottom bar */}
-      <div style={{ height: large ? 3 : 2, background: tokens.accent, opacity: 0.85, flexShrink: 0 }} />
+      <div style={{ height: 3, background: tokens.accent, opacity: 0.85, flexShrink: 0 }} />
     </div>
   )
 }
@@ -186,11 +254,13 @@ const THEMES: Array<{
 function ThemePreviewModal({
   theme,
   isApplied,
+  siteName,
   onClose,
   onApply,
 }: {
   theme:     typeof THEMES[number]
   isApplied: boolean
+  siteName:  string
   onClose:   () => void
   onApply:   () => void
 }) {
@@ -198,7 +268,7 @@ function ThemePreviewModal({
     <div className={styles.modalBackdrop} onClick={onClose}>
       <div className={styles.modalPanel} onClick={(e) => e.stopPropagation()}>
         <button className={styles.modalClose} onClick={onClose} aria-label="Close preview">✕</button>
-        <ThemePreviewMock tokens={theme.tokens} large />
+        <ThemePreviewMock tokens={theme.tokens} siteName={siteName} />
         <div className={styles.modalMeta}>
           <div className={styles.modalThemeName}>{theme.name}</div>
           <div className={styles.modalThemeCategory}>{theme.category}</div>
@@ -579,6 +649,7 @@ export default function AdminSettingsPage() {
             <ThemePreviewModal
               theme={t}
               isApplied={settings.active_theme === previewThemeId}
+              siteName={settings.site_name.trim() || 'Kolusports'}
               onClose={() => setPreviewThemeId(null)}
               onApply={() => { set('active_theme', previewThemeId); setPreviewThemeId(null) }}
             />
