@@ -157,6 +157,20 @@ export default function TournamentStagesPage() {
     }
   }
 
+  const handleDeleteGroup = async (groupId: string) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this group? This will also remove all group team assignments.')
+    if (!confirmDelete) return
+
+    const { error } = await supabase.from('groups').delete().eq('id', groupId)
+    if (error) {
+      toast.error('Failed to delete group')
+    } else {
+      toast.success('Group deleted')
+      fetchGroups()
+      fetchStages()
+    }
+  }
+
   const handleSaveStageName = async (stageId: string) => {
     const { error } = await supabase
       .from('tournament_stages')
@@ -251,9 +265,6 @@ export default function TournamentStagesPage() {
               </div>
 
               <div className={styles.stageActions}>
-                <Link href={`/admin/tournaments/${id}/stages/edit/${stage.id}`} className={styles.secondaryButton}>
-                  Edit Stage
-                </Link>
                 <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/new`} className={styles.primaryButtonSmall}>
                   + Add Group
                 </Link>
@@ -316,6 +327,12 @@ export default function TournamentStagesPage() {
                         <Link href={`/admin/tournaments/${id}/stages/${stage.id}/groups/${group.id}/matches`}>
                           View Matches
                         </Link>
+                        <button
+                          onClick={() => handleDeleteGroup(group.id)}
+                          className={styles.dangerButtonSmall}
+                        >
+                          Delete
+                        </button>
                       </div>
                     </li>
                   ))}

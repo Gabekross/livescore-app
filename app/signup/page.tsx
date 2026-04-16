@@ -14,8 +14,7 @@ import styles        from '@/styles/components/Auth.module.scss'
 function toSlug(s: string): string {
   return s
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
+    .replace(/[^a-z0-9]/g, '')   // strip everything except letters & numbers (no hyphens)
     .slice(0, 48)
 }
 
@@ -40,7 +39,7 @@ export default function SignupPage() {
 
   const handleSlugChange = (val: string) => {
     setSlugEdited(true)
-    setSlug(val.toLowerCase().replace(/[^a-z0-9-]/g, '').replace(/-+/g, '-'))
+    setSlug(val.toLowerCase().replace(/[^a-z0-9]/g, ''))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -155,7 +154,7 @@ export default function SignupPage() {
                 className={styles.slugInput}
                 value={slug}
                 onChange={(e) => handleSlugChange(e.target.value)}
-                placeholder="city-sports-league"
+                placeholder="citysportsleague"
                 required
               />
             </div>

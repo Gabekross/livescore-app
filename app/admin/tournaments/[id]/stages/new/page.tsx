@@ -77,7 +77,7 @@ export default function NewStagePage() {
 
           <div className={styles.fieldGroup}>
             <label className={styles.label}>
-              Order Number <span className={styles.labelHint}>(determines display sequence)</span>
+              Order Number <span className={styles.labelHint}>(display sequence — e.g. 1 = Group Stage, 2 = Semi-Finals, 3 = Final)</span>
             </label>
             <input
               type="number"
