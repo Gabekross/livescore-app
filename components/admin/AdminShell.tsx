@@ -39,8 +39,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         borderBottom:   '1px solid #e5e7eb',
         gap:            '1rem',
       }}>
-        {/* Left: brand + org name */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+        {/* Left: brand + org name + nav links */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
           <Link
             href={role === 'match_operator' ? '/admin/operator' : '/admin/dashboard'}
             style={{
@@ -52,6 +52,28 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             {orgName || 'Admin'}
           </Link>
           <PlanBadge />
+
+          {/* Quick-access nav links for org admins */}
+          {(role === 'org_admin' || role === 'power_admin') && (
+            <>
+              <Link href="/admin/sponsors" style={{
+                fontSize: '0.78rem', fontWeight: 600, color: '#6b7280',
+                textDecoration: 'none', padding: '3px 0',
+                borderBottom: pathname?.startsWith('/admin/sponsors') ? '2px solid #2563eb' : '2px solid transparent',
+                transition: 'color 0.15s ease',
+              }}>
+                Sponsors
+              </Link>
+              <Link href="/admin/settings" style={{
+                fontSize: '0.78rem', fontWeight: 600, color: '#6b7280',
+                textDecoration: 'none', padding: '3px 0',
+                borderBottom: pathname?.startsWith('/admin/settings') ? '2px solid #2563eb' : '2px solid transparent',
+                transition: 'color 0.15s ease',
+              }}>
+                Settings
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Right: role badge + sign out */}

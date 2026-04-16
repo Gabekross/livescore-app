@@ -16,6 +16,8 @@ import LiveMatchesIsland              from '@/components/home/LiveMatchesIsland'
 import MatchCard                      from '@/components/ui/MatchCard'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import EmptyState                     from '@/components/ui/EmptyState'
+import SponsorStrip                   from '@/components/ui/SponsorStrip'
+import type { SponsorItem }           from '@/components/ui/SponsorStrip'
 import styles                         from '@/styles/components/Homepage.module.scss'
 import type { MatchStatus }           from '@/lib/utils/match'
 
@@ -85,6 +87,7 @@ export default async function HomePage() {
   let results:     MatchRow[] = []
   let tournaments: Tournament[] = []
   let newsPosts:   NewsPost[] = []
+  let sponsors:    SponsorItem[] = []
 
   try {
     orgId = await getOrganizationIdServer()
@@ -96,7 +99,7 @@ export default async function HomePage() {
       away_team:away_team_id(id, name, logo_url)
     `
 
-    const [settingsRes, fixturesRes, resultsRes, tournamentsRes, newsRes] = await Promise.all([
+    const [settingsRes, fixturesRes, resultsRes, tournamentsRes, newsRes, sponsorsRes] = await Promise.all([
       supabase
         .from('site_settings')
         .select('site_name, site_tagline')
@@ -134,6 +137,16 @@ export default async function HomePage() {
         .eq('status', 'published')
         .order('published_at', { ascending: false })
         .limit(4),
+
+      // Org-wide sponsors (tournament_id is null)
+      supabase
+        .from('sponsors')
+        .select('id, name, logo_url, website_url, tagline, tier')
+        .eq('organization_id', orgId)
+        .is('tournament_id', null)
+        .eq('is_active', true)
+        .order('display_order')
+        .order('name'),
     ])
 
     if (settingsRes.data) {
@@ -151,6 +164,7 @@ export default async function HomePage() {
     results     = (resultsRes.data     || []).map(normalise) as MatchRow[]
     tournaments = (tournamentsRes.data || []) as Tournament[]
     newsPosts   = (newsRes.data        || []) as NewsPost[]
+    sponsors    = (sponsorsRes.data    || []) as SponsorItem[]
   } catch {
     // No org resolved — render the platform marketing landing page instead
     return <PlatformLanding />
@@ -307,6 +321,14 @@ export default async function HomePage() {
             </section>
           </>
         )}
+        {/* Sponsors */}
+        {sponsors.length > 0 && (
+          <>
+            <hr className={styles.divider} />
+            <SponsorStrip sponsors={sponsors} />
+          </>
+        )}
+
       </main>
     </>
   )

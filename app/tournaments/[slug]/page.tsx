@@ -11,6 +11,8 @@ import { getOrganizationIdServer }    from '@/lib/org-server'
 import MatchCard                      from '@/components/ui/MatchCard'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import EmptyState                     from '@/components/ui/EmptyState'
+import SponsorStrip                   from '@/components/ui/SponsorStrip'
+import type { SponsorItem }           from '@/components/ui/SponsorStrip'
 import type { MatchStatus }           from '@/lib/utils/match'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
 
@@ -86,8 +88,10 @@ export default async function TournamentDetailPage({ params }: Props) {
 
   const tournament = tournRes.data
 
-  // Step 2: fetch stages + ALL matches in parallel
-  const [stagesRes, matchesRes] = await Promise.all([
+  // Step 2: fetch stages + ALL matches + sponsors in parallel
+  let tournamentSponsors: SponsorItem[] = []
+
+  const [stagesRes, matchesRes, sponsorsRes] = await Promise.all([
     supabase
       .from('tournament_stages')
       .select('id, stage_name, order_number, show_standings')
@@ -103,7 +107,32 @@ export default async function TournamentDetailPage({ params }: Props) {
       `)
       .eq('tournament_id', tournament.id)
       .order('match_date'),
+
+    // Tournament-specific sponsors; fallback to org-wide is handled below
+    supabase
+      .from('sponsors')
+      .select('id, name, logo_url, website_url, tagline, tier')
+      .eq('organization_id', orgId)
+      .eq('tournament_id', tournament.id)
+      .eq('is_active', true)
+      .order('display_order')
+      .order('name'),
   ])
+
+  tournamentSponsors = (sponsorsRes.data || []) as SponsorItem[]
+
+  // If no tournament-specific sponsors, fall back to org-wide sponsors
+  if (tournamentSponsors.length === 0) {
+    const { data: globalSponsors } = await supabase
+      .from('sponsors')
+      .select('id, name, logo_url, website_url, tagline, tier')
+      .eq('organization_id', orgId)
+      .is('tournament_id', null)
+      .eq('is_active', true)
+      .order('display_order')
+      .order('name')
+    tournamentSponsors = (globalSponsors || []) as SponsorItem[]
+  }
 
   const stages = (stagesRes.data || []) as Stage[]
 
@@ -278,6 +307,14 @@ export default async function TournamentDetailPage({ params }: Props) {
           </div>
         )}
       </div>
+
+      {/* Sponsors */}
+      {tournamentSponsors.length > 0 && (
+        <SponsorStrip
+          sponsors={tournamentSponsors}
+          label="Tournament Sponsors"
+        />
+      )}
     </div>
   )
 }
