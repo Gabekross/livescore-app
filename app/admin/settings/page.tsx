@@ -16,34 +16,52 @@ import styles                  from '@/styles/components/AdminSettings.module.sc
 // ── Theme definitions ─────────────────────────────────────────────────────────
 const THEMES = [
   {
-    id:     'theme-uefa-dark',
-    name:   'UEFA Dark',
-    swatch: ['#070710', '#2563eb', '#13132a'],
+    id:       'theme-uefa-dark',
+    name:     'UEFA Dark',
+    category: 'Classic Dark',
+    swatch:   ['#070710', '#2563eb', '#13132a'],
   },
   {
-    id:     'theme-green-gold',
-    name:   'Forest Green',
-    swatch: ['#060c08', '#16a34a', '#111a14'],
+    id:       'theme-green-gold',
+    name:     'Forest Green',
+    category: 'Classic Dark',
+    swatch:   ['#060c08', '#16a34a', '#111a14'],
   },
   {
-    id:     'theme-slate',
-    name:   'Midnight Slate',
-    swatch: ['#0c0c0f', '#7c3aed', '#1a1a1f'],
+    id:       'theme-slate',
+    name:     'Midnight Slate',
+    category: 'Classic Dark',
+    swatch:   ['#0c0c0f', '#7c3aed', '#1a1a1f'],
   },
   {
-    id:     'theme-blue-light',
-    name:   'Professional Light',
-    swatch: ['#eef4fb', '#2563eb', '#ffffff'],
+    id:       'theme-blue-light',
+    name:     'Professional Light',
+    category: 'Classic Light',
+    swatch:   ['#eef4fb', '#2563eb', '#ffffff'],
   },
   {
-    id:     'luxury-dark',
-    name:   'Luxury Dark',
-    swatch: ['#091A22', '#FF8C42', '#11222A'],
+    id:       'luxury-dark',
+    name:     'Luxury Dark',
+    category: 'Luxury',
+    swatch:   ['#091A22', '#FF8C42', '#11222A'],
   },
   {
-    id:     'luxury-light',
-    name:   'Luxury Light',
-    swatch: ['#F4F8FA', '#E57A2E', '#ffffff'],
+    id:       'luxury-light',
+    name:     'Luxury Light',
+    category: 'Luxury',
+    swatch:   ['#F4F8FA', '#E57A2E', '#ffffff'],
+  },
+  {
+    id:       'naija-green',
+    name:     'Naija Green',
+    category: 'Flag Series',
+    swatch:   ['#050D07', '#00A651', '#0F2018'],
+  },
+  {
+    id:       'ghana-gold',
+    name:     'Ghana Gold',
+    category: 'Flag Series',
+    swatch:   ['#0D0900', '#FCD116', '#1E1500'],
   },
 ]
 
@@ -380,6 +398,7 @@ export default function AdminSettingsPage() {
                 ))}
               </div>
               <span className={styles.themeName}>{theme.name}</span>
+              <span className={styles.themeCategory}>{theme.category}</span>
             </label>
           ))}
         </div>

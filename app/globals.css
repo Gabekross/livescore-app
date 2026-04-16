@@ -101,6 +101,16 @@
   /* ── Safe horizontal padding for narrow screens ─────────── */
   --content-padding-xs: 0.75rem;  /* < 380px  */
   --content-padding-sm: 1rem;     /* 380–480px */
+
+  /* ── Status badge border tokens ──────────────────────────── */
+  /* Semantic 1px border colours for StatusBadge, MatchDetail  */
+  /* jersey badges, and any component using status colours.    */
+  /* Override only when a theme changes the base status hue.   */
+  --color-live-border:       rgba(239,  68,  68, 0.30);
+  --color-halftime-border:   rgba(168,  85, 247, 0.30);
+  --color-scheduled-border:  rgba(96,  165, 250, 0.30);
+  --color-completed-border:  rgba(107, 114, 128, 0.25);
+  --color-friendly-border:   rgba(245, 158,  11, 0.30);
 }
 
 /* ── Theme: Forest Green / Gold ──────────────────────────── */
@@ -127,8 +137,9 @@
   --shadow-accent:        0 0 24px rgba(22, 163, 74, 0.3);
 
   /* Gold status overlay for scheduled */
-  --color-scheduled:      #fbbf24;
-  --color-scheduled-bg:   rgba(251, 191, 36, 0.1);
+  --color-scheduled:        #fbbf24;
+  --color-scheduled-bg:     rgba(251, 191, 36, 0.10);
+  --color-scheduled-border: rgba(251, 191, 36, 0.30);
 }
 
 /* ── Theme: Midnight Slate (light-on-dark neutral) ──────── */
@@ -187,19 +198,24 @@
   --shadow-live:          0 0 12px rgba(220, 38,  38, 0.22);
 
   /* Status — tuned for light-bg legibility                   */
-  --color-live:           #dc2626;
-  --color-live-bg:        rgba(220, 38,  38, 0.07);
-  --color-live-glow:      rgba(220, 38,  38, 0.20);
-  --color-halftime:       #7c3aed;
-  --color-halftime-bg:    rgba(124, 58, 237, 0.07);
-  --color-scheduled:      #2563eb;
-  --color-scheduled-bg:   rgba(37,  99, 235, 0.07);
-  --color-completed:      #64748b;
-  --color-completed-bg:   rgba(100, 116, 139, 0.07);
-  --color-success:        #059669;
-  --color-warning:        #d97706;
-  --color-friendly:       #d97706;
-  --color-friendly-bg:    rgba(217, 119,  6, 0.07);
+  --color-live:             #dc2626;
+  --color-live-bg:          rgba(220,  38,  38, 0.07);
+  --color-live-glow:        rgba(220,  38,  38, 0.20);
+  --color-live-border:      rgba(220,  38,  38, 0.22);
+  --color-halftime:         #7c3aed;
+  --color-halftime-bg:      rgba(124,  58, 237, 0.07);
+  --color-halftime-border:  rgba(124,  58, 237, 0.22);
+  --color-scheduled:        #2563eb;
+  --color-scheduled-bg:     rgba(37,   99, 235, 0.07);
+  --color-scheduled-border: rgba(37,   99, 235, 0.22);
+  --color-completed:        #64748b;
+  --color-completed-bg:     rgba(100, 116, 139, 0.07);
+  --color-completed-border: rgba(100, 116, 139, 0.20);
+  --color-success:          #059669;
+  --color-warning:          #d97706;
+  --color-friendly:         #d97706;
+  --color-friendly-bg:      rgba(217, 119,   6, 0.07);
+  --color-friendly-border:  rgba(217, 119,   6, 0.22);
 }
 
 /* ── Theme: Luxury Dark (deep ocean · orange accent) ────── */
@@ -240,19 +256,22 @@
   --shadow-live:          0 0 16px rgba(239,  68,  68, 0.30);
 
   /* Status — legible on dark teal backgrounds                */
-  --color-live:           #EF4444;
-  --color-live-bg:        rgba(239,  68,  68, 0.12);
-  --color-live-glow:      rgba(239,  68,  68, 0.30);
-  --color-halftime:       #A78BFA;
-  --color-halftime-bg:    rgba(167, 139, 250, 0.12);
-  --color-scheduled:      #7ECFD4;
-  --color-scheduled-bg:   rgba(126, 207, 212, 0.12);
-  --color-completed:      #4A6670;
-  --color-completed-bg:   rgba(74,  102, 112, 0.15);
-  --color-success:        #34D399;
-  --color-warning:        #FBBF24;
-  --color-friendly:       #FBBF24;
-  --color-friendly-bg:    rgba(251, 191,  36, 0.10);
+  --color-live:             #EF4444;
+  --color-live-bg:          rgba(239,  68,  68, 0.12);
+  --color-live-glow:        rgba(239,  68,  68, 0.30);
+  --color-halftime:         #A78BFA;
+  --color-halftime-bg:      rgba(167, 139, 250, 0.12);
+  --color-halftime-border:  rgba(167, 139, 250, 0.30);
+  --color-scheduled:        #7ECFD4;
+  --color-scheduled-bg:     rgba(126, 207, 212, 0.12);
+  --color-scheduled-border: rgba(126, 207, 212, 0.30);
+  --color-completed:        #4A6670;
+  --color-completed-bg:     rgba(74,  102, 112, 0.15);
+  --color-completed-border: rgba(74,  102, 112, 0.25);
+  --color-success:          #34D399;
+  --color-warning:          #FBBF24;
+  --color-friendly:         #FBBF24;
+  --color-friendly-bg:      rgba(251, 191,  36, 0.10);
 }
 
 /* ── Theme: Luxury Light (premium daylight · orange accent) */
@@ -293,19 +312,137 @@
   --shadow-live:          0 0 12px rgba(220,  38,  38, 0.20);
 
   /* Status — tuned for light-bg legibility                   */
-  --color-live:           #DC2626;
-  --color-live-bg:        rgba(220,  38,  38, 0.07);
-  --color-live-glow:      rgba(220,  38,  38, 0.18);
-  --color-halftime:       #7C3AED;
-  --color-halftime-bg:    rgba(124,  58, 237, 0.07);
-  --color-scheduled:      #0D7D8A;
-  --color-scheduled-bg:   rgba(13,  125, 138, 0.08);
-  --color-completed:      #5C7A80;
-  --color-completed-bg:   rgba(92,  122, 128, 0.08);
-  --color-success:        #059669;
-  --color-warning:        #D97706;
-  --color-friendly:       #D97706;
-  --color-friendly-bg:    rgba(217, 119,   6, 0.07);
+  --color-live:             #DC2626;
+  --color-live-bg:          rgba(220,  38,  38, 0.07);
+  --color-live-glow:        rgba(220,  38,  38, 0.18);
+  --color-live-border:      rgba(220,  38,  38, 0.22);
+  --color-halftime:         #7C3AED;
+  --color-halftime-bg:      rgba(124,  58, 237, 0.07);
+  --color-halftime-border:  rgba(124,  58, 237, 0.22);
+  --color-scheduled:        #0D7D8A;
+  --color-scheduled-bg:     rgba(13,  125, 138, 0.08);
+  --color-scheduled-border: rgba(13,  125, 138, 0.25);
+  --color-completed:        #5C7A80;
+  --color-completed-bg:     rgba(92,  122, 128, 0.08);
+  --color-completed-border: rgba(92,  122, 128, 0.22);
+  --color-success:          #059669;
+  --color-warning:          #D97706;
+  --color-friendly:         #D97706;
+  --color-friendly-bg:      rgba(217, 119,   6, 0.07);
+  --color-friendly-border:  rgba(217, 119,   6, 0.22);
+}
+
+/* ── Theme: Naija Green (Nigeria-inspired) ───────────────── */
+/* Nigerian flag: green (#008751) and white (#FFFFFF).        */
+/* Design: deep forest-night backgrounds, vivid Lagos-green   */
+/* accent, cool cream text. Premium dark sports aesthetic.    */
+[data-theme="naija-green"] {
+  /* Backgrounds — deep forest night with green earth tones   */
+  --color-bg:             #050D07;
+  --color-surface:        #0B1810;
+  --color-card:           #0F2018;
+  --color-card-hover:     #162B20;
+  --color-nav:            #060F09;
+  --color-card-solid:     #0F2018;
+
+  /* Borders — dark green-tinted hairlines                    */
+  --color-border:         #1D3828;
+  --color-border-subtle:  #132518;
+
+  /* Text — cool cream with green warmth                      */
+  --color-text:           #E5F2E8;
+  --color-text-muted:     #6B9A76;
+  --color-text-dim:       #3D5E47;
+
+  /* Brand accent — Lagos green (vivid, flag-faithful)        */
+  --color-accent:         #00A651;
+  --color-accent-light:   #00CC64;
+  --color-accent-dim:     rgba(0, 166, 81, 0.15);
+  --color-accent-glow:    rgba(0, 166, 81, 0.30);
+
+  /* Shadows — deep forest dark                               */
+  --shadow-sm:            0 1px 4px  rgba(0, 0, 0, 0.50);
+  --shadow-md:            0 4px 20px rgba(0, 0, 0, 0.60);
+  --shadow-lg:            0 12px 40px rgba(0, 0, 0, 0.70);
+  --shadow-accent:        0 0 24px rgba(0, 166,  81, 0.28);
+  --shadow-live:          0 0 16px rgba(239,  68,  68, 0.30);
+
+  /* Status                                                   */
+  --color-live:             #EF4444;
+  --color-live-bg:          rgba(239,  68,  68, 0.12);
+  --color-live-glow:        rgba(239,  68,  68, 0.30);
+  --color-halftime:         #A78BFA;
+  --color-halftime-bg:      rgba(167, 139, 250, 0.12);
+  --color-halftime-border:  rgba(167, 139, 250, 0.30);
+  --color-scheduled:        #56CCB8;
+  --color-scheduled-bg:     rgba(86,  204, 184, 0.12);
+  --color-scheduled-border: rgba(86,  204, 184, 0.30);
+  --color-completed:        #4A6A55;
+  --color-completed-bg:     rgba(74,  106,  85, 0.18);
+  --color-completed-border: rgba(74,  106,  85, 0.28);
+  --color-success:          #00CC64;
+  --color-warning:          #FBBF24;
+  --color-friendly:         #FBBF24;
+  --color-friendly-bg:      rgba(251, 191,  36, 0.10);
+}
+
+/* ── Theme: Ghana Gold (Ghana-inspired) ─────────────────── */
+/* Ghanaian flag: red (#CE1126), gold (#FCD116),             */
+/* green (#006B3F), black star.                              */
+/* Design: rich dark ochre-earth backgrounds, Ghanaian gold  */
+/* accent. Flag red = live danger. Flag green = success.     */
+/* The most semantically coherent flag theme possible.       */
+[data-theme="ghana-gold"] {
+  /* Backgrounds — dark warm earth / roasted ochre            */
+  --color-bg:             #0D0900;
+  --color-surface:        #181000;
+  --color-card:           #1E1500;
+  --color-card-hover:     #271C00;
+  --color-nav:            #0D0900;
+  --color-card-solid:     #1E1500;
+
+  /* Borders — deep amber-tinted hairlines                    */
+  --color-border:         #332500;
+  --color-border-subtle:  #221900;
+
+  /* Text — warm cream / parchment                            */
+  --color-text:           #F5EDD0;
+  --color-text-muted:     #B89040;
+  --color-text-dim:       #7A6020;
+
+  /* Brand accent — Ghanaian gold (flag-exact #FCD116)        */
+  --color-accent:         #FCD116;
+  --color-accent-light:   #FFE033;
+  --color-accent-dim:     rgba(252, 209, 22, 0.12);
+  --color-accent-glow:    rgba(252, 209, 22, 0.28);
+
+  /* Shadows — warm velvety dark                              */
+  --shadow-sm:            0 1px 4px  rgba(0, 0, 0, 0.50);
+  --shadow-md:            0 4px 20px rgba(0, 0, 0, 0.60);
+  --shadow-lg:            0 12px 40px rgba(0, 0, 0, 0.65);
+  --shadow-accent:        0 0 24px rgba(252, 209,  22, 0.32);
+  --shadow-live:          0 0 16px rgba(206,  17,  38, 0.35);
+
+  /* Status — flag colours do double-duty here:               */
+  /* Ghanaian red = live/danger  → semantic perfection        */
+  /* Ghanaian green = success    → semantic perfection        */
+  --color-live:             #CE1126;
+  --color-live-bg:          rgba(206,  17,  38, 0.12);
+  --color-live-glow:        rgba(206,  17,  38, 0.35);
+  --color-live-border:      rgba(206,  17,  38, 0.30);
+  --color-halftime:         #A78BFA;
+  --color-halftime-bg:      rgba(167, 139, 250, 0.12);
+  --color-halftime-border:  rgba(167, 139, 250, 0.30);
+  --color-scheduled:        #5BC8A8;
+  --color-scheduled-bg:     rgba(91,  200, 168, 0.12);
+  --color-scheduled-border: rgba(91,  200, 168, 0.30);
+  --color-completed:        #6B5A20;
+  --color-completed-bg:     rgba(107,  90,  32, 0.18);
+  --color-completed-border: rgba(107,  90,  32, 0.28);
+  --color-success:          #00A86B;  /* Ghanaian flag green  */
+  --color-warning:          #FBBF24;
+  --color-friendly:         #FBBF24;
+  --color-friendly-bg:      rgba(251, 191,  36, 0.10);
 }
 
 /* ── Responsive token overrides ─────────────────────────── */
