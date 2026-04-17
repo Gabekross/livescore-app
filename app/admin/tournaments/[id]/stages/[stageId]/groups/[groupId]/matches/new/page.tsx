@@ -61,7 +61,7 @@ export default function NewMatchPage() {
       group_id:          groupId,
       home_team_id:      teamA,
       away_team_id:      teamB,
-      match_date:        matchDate,
+      match_date:        matchDate ? new Date(matchDate).toISOString() : null,
       venue:             venue || null,
       match_type:        'tournament',
       affects_standings: true,

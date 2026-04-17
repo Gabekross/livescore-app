@@ -78,7 +78,7 @@ export default function NewFriendlyMatchPage() {
       group_id:          null,
       home_team_id:      homeTeam,
       away_team_id:      awayTeam,
-      match_date:        matchDate,
+      match_date:        matchDate ? new Date(matchDate).toISOString() : null,
       venue:             venue.trim() || null,
       match_type:        'friendly',
       affects_standings: false,
