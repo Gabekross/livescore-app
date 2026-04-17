@@ -80,13 +80,16 @@
   flex-direction: column;
   align-items:    center;
   gap:            var(--sp-2, 0.5rem);
+  min-width:      0;
 }
 
 .teamName {
-  font-size:   1rem;
-  font-weight: 700;
-  color:       var(--color-text, #e8e8f4);
-  line-height: 1.3;
+  font-size:     1rem;
+  font-weight:   700;
+  color:         var(--color-text, #e8e8f4);
+  line-height:   1.3;
+  overflow-wrap: break-word;
+  word-break:    break-word;
 }
 
 .scoreDisplay {

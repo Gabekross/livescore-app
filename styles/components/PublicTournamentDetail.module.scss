@@ -1,51 +1,52 @@
 .container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-  }
-  
-  .heading {
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
-    text-align: center;
-  }
-  
-  .meta {
-    font-size: 1rem;
-    color: #444;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
-  }
-  
-  .subheading {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-  
-  .stageList {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .stageList li {
-    padding: 0.75rem 1rem;
-    margin-bottom: 0.5rem;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    transition: background 0.2s ease;
-  }
-  
-  .stageList li:hover {
-    background-color: #f0f8ff;
-  }
-  
-  .stageList li a {
-    color: #0070f3;
-    font-weight: 500;
-    text-decoration: none;
-  }
-  
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.heading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  text-align: center;
+  color: var(--color-text, #e8e8f4);
+}
+
+.meta {
+  font-size: 1rem;
+  color: var(--color-text-muted, #7272a0);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.subheading {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--color-text, #e8e8f4);
+}
+
+.stageList {
+  list-style: none;
+  padding: 0;
+}
+
+.stageList li {
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--color-card, #13132a);
+  border: 1px solid var(--color-border-subtle, #1c1c35);
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.stageList li:hover {
+  background-color: var(--color-card-hover, #1a1a36);
+}
+
+.stageList li a {
+  color: var(--color-accent, #2563eb);
+  font-weight: 500;
+  text-decoration: none;
+}

@@ -252,6 +252,7 @@ export default async function TeamDetailPage({ params }: Props) {
           {players.length === 0 ? (
             <EmptyState icon="" title="No players registered" compact />
           ) : (
+            <div className={styles.playerTableWrapper}>
             <table className={styles.playerTable}>
               <thead>
                 <tr>
@@ -268,12 +269,13 @@ export default async function TeamDetailPage({ params }: Props) {
                         {p.jersey_number ?? '–'}
                       </span>
                     </td>
-                    <td>{p.name}</td>
+                    <td className={styles.playerNameCell}>{p.name}</td>
                     <td className={styles.positionCell}>{p.position ?? '–'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            </div>
           )}
         </div>
 

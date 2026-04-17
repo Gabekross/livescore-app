@@ -21,16 +21,17 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
     <div style={{ minHeight: '100vh', background: '#0a0a12' }}>
       {/* Top bar */}
       <nav style={{
-        padding:        '0 1.5rem',
-        height:         '52px',
+        padding:        '0.5rem 1.5rem',
+        minHeight:      '52px',
         background:     '#111118',
         display:        'flex',
         alignItems:     'center',
         justifyContent: 'space-between',
+        flexWrap:       'wrap',
         borderBottom:   '1px solid #1e1e2e',
-        gap:            '1rem',
+        gap:            '0.5rem 1rem',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
           <Link
             href="/platform"
             style={{ color: '#f0f0ff', fontSize: '0.95rem', fontWeight: 800, textDecoration: 'none' }}
@@ -84,7 +85,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
         </div>
       </nav>
 
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '1.5rem' }}>
+      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(0.75rem, 3vw, 1.5rem)' }}>
         {children}
       </main>
     </div>

@@ -200,6 +200,12 @@
 }
 
 /* ── Mobile ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .editorContainer {
+    padding: 1rem 0.75rem;
+  }
+}
+
 @media (max-width: 600px) {
   .gridField {
     aspect-ratio: 2 / 3;

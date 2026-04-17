@@ -30,14 +30,15 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   return (
     <div style={{ minHeight: '100vh', background: '#f5f5f8' }}>
       <nav style={{
-        padding:        '0 1.5rem',
-        height:         '52px',
+        padding:        '0.5rem 1.5rem',
+        minHeight:      '52px',
         background:     '#fff',
         display:        'flex',
         alignItems:     'center',
         justifyContent: 'space-between',
+        flexWrap:       'wrap',
         borderBottom:   '1px solid #e5e7eb',
-        gap:            '1rem',
+        gap:            '0.5rem 1rem',
       }}>
         {/* Left: brand + org name + nav links */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
@@ -124,7 +125,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </div>
       </nav>
 
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: '1.5rem' }}>
+      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(0.75rem, 3vw, 1.5rem)' }}>
         {/* Settings page is exempt from expired guard (billing must stay accessible) */}
         {pathname?.startsWith('/admin/settings') ? (
           children

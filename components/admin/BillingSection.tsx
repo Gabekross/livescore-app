@@ -109,7 +109,8 @@ export default function BillingSection() {
         <p style={{ fontSize: '0.78rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.75rem' }}>
           Compare Plans
         </p>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+        <div style={{ overflowX: 'auto' }}>
+        <table style={{ width: '100%', minWidth: 360, borderCollapse: 'collapse', fontSize: '0.85rem' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid #e2e8f0' }}>
               <th style={{ textAlign: 'left', padding: '0.5rem 0.5rem', color: '#64748b', fontWeight: 600 }}>Feature</th>
@@ -127,6 +128,7 @@ export default function BillingSection() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Upgrade modal */}

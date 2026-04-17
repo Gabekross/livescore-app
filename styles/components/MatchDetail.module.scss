@@ -76,7 +76,7 @@
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  flex-wrap: nowrap; /* Stay side by side on all screens */
+  flex-wrap: wrap;
   margin: 2rem auto 0;
   max-width: 900px;
   width: 100%;
@@ -168,16 +168,13 @@
   margin-left: 2px;
 }
 
-/* Preserve side-by-side layout on smaller screens */
-@media (max-width: 700px) {
+@media (max-width: 480px) {
   .benchContainer {
-    flex-wrap: nowrap;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
   }
 
   .benchCard {
-    flex: 1 1 50%;
+    flex: 1 1 100%;
   }
 }
 
