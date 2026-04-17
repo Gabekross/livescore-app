@@ -31,6 +31,7 @@ export default async function TeamsPage() {
       .from('teams')
       .select('id, name, logo_url')
       .eq('organization_id', orgId)
+      .eq('show_on_public_teams_page', true)
       .order('name')
 
     teams = (data || []) as Team[]

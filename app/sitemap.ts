@@ -53,6 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .from('teams')
         .select('id, updated_at')
         .eq('organization_id', orgId)
+        .eq('show_on_public_teams_page', true)
         .limit(500),
     ])
 

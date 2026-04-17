@@ -24,12 +24,13 @@ export default function CreateTeamPage() {
   const orgGate = useAdminOrgGate()
   const { canAddTeam, teamCount, teamLimit } = useTeamLimit()
 
-  const [name,      setName]      = useState('')
-  const [coachName, setCoachName] = useState('')
-  const [logoUrl,   setLogoUrl]   = useState('')
-  const [logoFile,  setLogoFile]  = useState<File | null>(null)
-  const [players,  setPlayers]  = useState<PlayerInput[]>([])
-  const [loading,  setLoading]  = useState(false)
+  const [name,               setName]               = useState('')
+  const [coachName,          setCoachName]          = useState('')
+  const [logoUrl,            setLogoUrl]            = useState('')
+  const [logoFile,           setLogoFile]           = useState<File | null>(null)
+  const [players,            setPlayers]            = useState<PlayerInput[]>([])
+  const [loading,            setLoading]            = useState(false)
+  const [showOnPublicPage,   setShowOnPublicPage]   = useState(true)
 
   const handleAddPlayer = () => setPlayers([...players, { name: '' }])
 
@@ -97,7 +98,7 @@ export default function CreateTeamPage() {
 
     const { data: teamData, error } = await supabase
       .from('teams')
-      .insert({ name: name.trim(), logo_url: uploadedLogoUrl || null, coach_name: coachName.trim() || null, organization_id: orgId })
+      .insert({ name: name.trim(), logo_url: uploadedLogoUrl || null, coach_name: coachName.trim() || null, organization_id: orgId, show_on_public_teams_page: showOnPublicPage })
       .select()
       .single()
 
@@ -196,6 +197,21 @@ export default function CreateTeamPage() {
               className={styles.input}
               placeholder="e.g. José Mourinho"
             />
+          </div>
+
+          <div className={styles.toggleRow}>
+            <label className={styles.toggleLabel}>
+              <input
+                type="checkbox"
+                checked={showOnPublicPage}
+                onChange={(e) => setShowOnPublicPage(e.target.checked)}
+                className={styles.toggleCheckbox}
+              />
+              <span className={styles.toggleText}>Show on public Teams page</span>
+            </label>
+            <p className={styles.toggleHint}>
+              When unchecked this team is hidden from visitors but still works in fixtures, match pages, standings, and all admin areas.
+            </p>
           </div>
         </div>
 

@@ -31,6 +31,7 @@ export default function EditTeamPage() {
   const [players, setPlayers] = useState<PlayerInput[]>([])
   const [originalPlayerIds, setOriginalPlayerIds] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(false)
+  const [showOnPublicPage, setShowOnPublicPage] = useState(true)
 
   useEffect(() => {
     const fetchTeam = async () => {
@@ -50,6 +51,7 @@ export default function EditTeamPage() {
       setName(data.name)
       setCoachName(data.coach_name || '')
       setLogoUrl(data.logo_url || '')
+      setShowOnPublicPage(data.show_on_public_teams_page ?? true)
       fetchPlayers(data.id)
     }
 
@@ -177,7 +179,7 @@ export default function EditTeamPage() {
 
     // 1. Update team info
     const { error: updateError } = await supabase.from('teams')
-      .update({ name, logo_url: uploadedLogoUrl || null, coach_name: coachName.trim() || null })
+      .update({ name, logo_url: uploadedLogoUrl || null, coach_name: coachName.trim() || null, show_on_public_teams_page: showOnPublicPage })
       .eq('id', id)
 
     if (updateError) {
@@ -305,6 +307,21 @@ export default function EditTeamPage() {
               className={styles.input}
               placeholder="e.g. José Mourinho"
             />
+          </div>
+
+          <div className={styles.toggleRow}>
+            <label className={styles.toggleLabel}>
+              <input
+                type="checkbox"
+                checked={showOnPublicPage}
+                onChange={(e) => setShowOnPublicPage(e.target.checked)}
+                className={styles.toggleCheckbox}
+              />
+              <span className={styles.toggleText}>Show on public Teams page</span>
+            </label>
+            <p className={styles.toggleHint}>
+              When unchecked this team is hidden from visitors but still works in fixtures, match pages, standings, and all admin areas.
+            </p>
           </div>
         </div>
 
