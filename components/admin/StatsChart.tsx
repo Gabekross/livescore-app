@@ -6,7 +6,6 @@ interface StatRow {
   player_name: string
   goals:       number
   assists:     number
-  [key: string]: unknown
 }
 
 interface Props {
