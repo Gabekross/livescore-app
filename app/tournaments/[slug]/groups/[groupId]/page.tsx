@@ -14,6 +14,8 @@ import EmptyState                     from '@/components/ui/EmptyState'
 import type { MatchStatus }           from '@/lib/utils/match'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
 
+export const revalidate = 30
+
 interface Props { params: { slug: string; groupId: string } }
 
 // ── Metadata ─────────────────────────────────────────────────────────────────
@@ -58,28 +60,37 @@ export default async function GroupMatchesPage({ params }: Props) {
   let orgId = ''
   try { orgId = await getOrganizationIdServer() } catch { notFound() }
 
-  // Verify tournament belongs to this org
-  const tournRes = await supabase
-    .from('tournaments')
-    .select('id, name, slug')
-    .eq('slug', params.slug)
-    .eq('organization_id', orgId)
-    .single()
+  // Parallelize: tournament, group, and matches can all be fetched at once
+  // (matches and group only need groupId/slug which are already in params)
+  const [tournRes, groupRes, matchRes] = await Promise.all([
+    supabase
+      .from('tournaments')
+      .select('id, name, slug')
+      .eq('slug', params.slug)
+      .eq('organization_id', orgId)
+      .single(),
+    supabase
+      .from('groups')
+      .select('id, name, stage_id')
+      .eq('id', params.groupId)
+      .single(),
+    supabase
+      .from('matches')
+      .select(`
+        id, status, match_date, match_type, home_score, away_score,
+        home_team:home_team_id(id, name, logo_url),
+        away_team:away_team_id(id, name, logo_url)
+      `)
+      .eq('group_id', params.groupId)
+      .order('match_date'),
+  ])
 
   if (!tournRes.data) notFound()
-
-  // Fetch group info
-  const groupRes = await supabase
-    .from('groups')
-    .select('id, name, stage_id')
-    .eq('id', params.groupId)
-    .single()
-
   if (!groupRes.data) notFound()
 
   const group = groupRes.data
 
-  // Verify group belongs to this tournament (via its stage)
+  // Stage check must follow (needs group.stage_id + tournament id)
   const stageRes = await supabase
     .from('tournament_stages')
     .select('id, stage_name, show_standings')
@@ -89,16 +100,7 @@ export default async function GroupMatchesPage({ params }: Props) {
 
   if (!stageRes.data) notFound()
 
-  // Fetch ALL matches for this group (every status)
-  const { data: matchData } = await supabase
-    .from('matches')
-    .select(`
-      id, status, match_date, match_type, home_score, away_score,
-      home_team:home_team_id(id, name, logo_url),
-      away_team:away_team_id(id, name, logo_url)
-    `)
-    .eq('group_id', params.groupId)
-    .order('match_date')
+  const { data: matchData } = matchRes
 
   const matches = ((matchData || []) as MatchRow[]).map((m) => ({
     ...m,

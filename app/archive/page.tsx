@@ -2,12 +2,15 @@
 // Past tournaments archive — Server Component.
 
 import type { Metadata }              from 'next'
+import Image                          from 'next/image'
 import Link                           from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import EmptyState                     from '@/components/ui/EmptyState'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
+
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title:       'Archive',
@@ -69,7 +72,9 @@ export default async function ArchivePage() {
               return (
                 <div key={t.id} className={styles.card}>
                   {t.cover_image_url ? (
-                    <img src={t.cover_image_url} alt={t.name} className={styles.cover} />
+                    <div style={{ position: 'relative', width: '100%', height: 140 }}>
+                      <Image src={t.cover_image_url} alt={t.name} fill style={{ objectFit: 'cover' }} sizes="(max-width:600px) 100vw, 320px" />
+                    </div>
                   ) : (
                     <div className={styles.coverPlaceholder} aria-hidden="true" />
                   )}

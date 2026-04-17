@@ -8,6 +8,7 @@
 // isOrgSite=false → platform marketing light nav with product links (Features, Pricing…)
 
 import { useState } from 'react'
+import Image          from 'next/image'
 import Link            from 'next/link'
 import { usePathname } from 'next/navigation'
 import styles from '@/styles/components/PublicNav.module.scss'
@@ -65,7 +66,7 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
           {/* Brand */}
           <Link href="/" className={`${styles.brand} ${!isOrgSite ? styles.brandPlatform : ''}`} onClick={() => setOpen(false)}>
             {siteLogo
-              ? <img src={siteLogo} alt={siteName} className={styles.brandLogo} />
+              ? <Image src={siteLogo} alt={siteName} width={32} height={32} priority className={styles.brandLogo} />
               : <span className={styles.brandMark}>K</span>
             }
             {isOrgSite ? siteName : 'KoluSports'}

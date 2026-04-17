@@ -12,10 +12,20 @@ import EmptyState                     from '@/components/ui/EmptyState'
 import type { MatchStatus }           from '@/lib/utils/match'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
 
+export const revalidate = 300
+
 interface Props { params: { slug: string } }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  return { title: `Fixtures — ${params.slug} (Archive)` }
+  try {
+    const orgId    = await getOrganizationIdServer()
+    const supabase = createServerSupabaseClient()
+    const { data } = await supabase
+      .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).single()
+    return { title: data ? `Fixtures — ${data.name} (Archive)` : 'Fixtures (Archive)' }
+  } catch {
+    return { title: 'Fixtures (Archive)' }
+  }
 }
 
 interface MatchRow {
@@ -30,30 +40,29 @@ export default async function ArchiveFixturesPage({ params }: Props) {
   let orgId = ''
   try { orgId = await getOrganizationIdServer() } catch { notFound() }
 
-  const tournRes = await supabase
+  const { data: tourn } = await supabase
     .from('tournaments')
-    .select('id, name, slug')
+    .select(`
+      id, name, slug,
+      matches(
+        id, status, match_date, match_type, home_score, away_score,
+        home_team:home_team_id(id, name, logo_url),
+        away_team:away_team_id(id, name, logo_url)
+      )
+    `)
     .eq('slug', params.slug)
     .eq('organization_id', orgId)
     .single()
 
-  if (!tournRes.data) notFound()
+  if (!tourn) notFound()
 
-  const { data: matchData } = await supabase
-    .from('matches')
-    .select(`
-      id, status, match_date, match_type, home_score, away_score,
-      home_team:home_team_id(id, name, logo_url),
-      away_team:away_team_id(id, name, logo_url)
-    `)
-    .eq('tournament_id', tournRes.data.id)
-    .order('match_date')
-
-  const matches = ((matchData || []) as MatchRow[]).map((m) => ({
-    ...m,
-    home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
-    away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
-  }))
+  const matches = ((tourn.matches || []) as MatchRow[])
+    .map((m) => ({
+      ...m,
+      home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
+      away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
+    }))
+    .sort((a, b) => a.match_date.localeCompare(b.match_date))
 
   const grouped = new Map<string, typeof matches>()
   for (const m of matches) {
@@ -65,10 +74,10 @@ export default async function ArchiveFixturesPage({ params }: Props) {
     <div className={styles.page}>
       <div className={styles.inner}>
         <Link href={`/archive/${params.slug}`} className={styles.back}>
-          ← {tournRes.data.name}
+          ← {tourn.name}
         </Link>
 
-        <SectionHeader title="All Fixtures" subtitle={`${tournRes.data.name} · Archive`} />
+        <SectionHeader title="All Fixtures" subtitle={`${tourn.name} · Archive`} />
 
         {matches.length === 0 ? (
           <EmptyState icon="" title="No matches recorded" />

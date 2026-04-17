@@ -7,6 +7,8 @@ import { getOrganizationIdServer }    from '@/lib/org-server'
 import TeamsGrid                      from '@/components/ui/TeamsGrid'
 import styles                         from '@/styles/components/TeamsPage.module.scss'
 
+export const revalidate = 60
+
 export const metadata: Metadata = {
   title:       'Teams',
   description: 'View all teams and their squads.',

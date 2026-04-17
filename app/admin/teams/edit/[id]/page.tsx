@@ -8,8 +8,6 @@ import { useAdminOrg }     from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/TeamForm.module.scss'
-import { v4 as uuidv4 } from 'uuid'
-import * as XLSX from 'xlsx'
 import { POSITIONS } from '@/lib/constants/positions'
 
 interface PlayerInput {
@@ -100,12 +98,13 @@ export default function EditTeamPage() {
     })
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     toast('Spreadsheet import will replace the current roster. Existing players with match data will be preserved if names match.', { duration: 5000 })
 
+    const XLSX = await import('xlsx')
     const reader = new FileReader()
     reader.onload = (evt) => {
       const bstr = evt.target?.result
@@ -157,7 +156,7 @@ export default function EditTeamPage() {
 
     if (logoFile) {
       const fileExt = logoFile.name.split('.').pop()
-      const fileName = `${uuidv4()}.${fileExt}`
+      const fileName = `${crypto.randomUUID()}.${fileExt}`
 
       const { error: uploadError } = await supabase.storage
         .from('team-logos')

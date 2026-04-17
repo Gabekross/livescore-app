@@ -7,14 +7,16 @@
 //   1. x-org-slug header (set by middleware from subdomain)
 //   2. NEXT_PUBLIC_ORGANIZATION_SLUG env var (single-org fallback)
 
+import { cache }   from 'react'
 import { headers } from 'next/headers'
 import { createServerSupabaseClient } from './supabase-server'
 
 /**
  * Resolves the current organization's UUID on the server side.
  * Use in: Server Components, Server Actions, API Route handlers.
+ * Wrapped with React.cache() — deduplicated per request.
  */
-export async function getOrganizationIdServer(): Promise<string> {
+export const getOrganizationIdServer = cache(async (): Promise<string> => {
   const headerStore = headers()
   const slug = headerStore.get('x-org-slug') || process.env.NEXT_PUBLIC_ORGANIZATION_SLUG
 
@@ -39,4 +41,4 @@ export async function getOrganizationIdServer(): Promise<string> {
   }
 
   return data.id
-}
+})

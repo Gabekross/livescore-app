@@ -10,6 +10,8 @@ import TournamentsGrid                from '@/components/ui/TournamentsGrid'
 import type { TournamentItem }        from '@/components/ui/TournamentsGrid'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
 
+export const revalidate = 60
+
 export const metadata: Metadata = {
   title:       'Tournaments',
   description: 'Browse all active tournaments.',

@@ -9,7 +9,7 @@ import { Toaster }          from 'react-hot-toast'
 import PublicNav            from '@/components/layouts/PublicNav'
 import PublicFooter         from '@/components/layouts/PublicFooter'
 import GlobalSponsorStrip   from '@/components/layouts/GlobalSponsorStrip'
-import { resolveMetadataBase } from '@/lib/seo'
+import { resolveMetadataBase, CANONICAL_ORIGIN } from '@/lib/seo'
 import type { SponsorItem } from '@/components/ui/SponsorStrip'
 import '@/app/globals.css'
 
@@ -38,6 +38,9 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     isOrgSite:     false,   // no org resolved → show platform marketing nav
     sponsors:      [],
   }
+
+  // Skip DB calls for admin/platform/auth routes — they don't need org settings
+  if (headers().get('x-admin-route') === '1') return defaults
 
   try {
     // Dynamic imports prevent next/headers leaking into the client bundle
@@ -88,6 +91,21 @@ export async function generateMetadata(): Promise<Metadata> {
       template: '%s | KoluSports',
     },
     description: 'Live scores, fixtures, standings, and more for leagues and tournaments.',
+    alternates: {
+      canonical: CANONICAL_ORIGIN,
+    },
+    openGraph: {
+      type:      'website',
+      url:       CANONICAL_ORIGIN,
+      siteName:  'KoluSports',
+      title:     'KoluSports',
+      description: 'Live scores, fixtures, standings, and more for leagues and tournaments.',
+    },
+    twitter: {
+      card:        'summary_large_image',
+      title:       'KoluSports',
+      description: 'Live scores, fixtures, standings, and more for leagues and tournaments.',
+    },
     // PWA & mobile
     viewport: {
       width:        'device-width',

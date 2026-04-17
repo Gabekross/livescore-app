@@ -3,12 +3,15 @@
 // First post rendered as a featured hero card; rest in a responsive grid.
 
 import type { Metadata }              from 'next'
+import Image                          from 'next/image'
 import Link                           from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import EmptyState                     from '@/components/ui/EmptyState'
 import styles                         from '@/styles/components/NewsPage.module.scss'
+
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title:       'News',
@@ -81,11 +84,9 @@ export default async function NewsPage() {
             <Link href={`/news/${featured.slug}`} className={styles.featuredCard}>
               <div>
                 {featured.cover_image_url ? (
-                  <img
-                    src={featured.cover_image_url}
-                    alt={featured.title}
-                    className={styles.featuredImage}
-                  />
+                  <div style={{ position: 'relative', width: '100%', minHeight: 240 }}>
+                    <Image src={featured.cover_image_url} alt={featured.title} fill priority style={{ objectFit: 'cover' }} sizes="(max-width:900px) 100vw, 900px" />
+                  </div>
                 ) : (
                   <div className={styles.featuredImagePlaceholder} aria-hidden="true" />
                 )}
@@ -113,12 +114,9 @@ export default async function NewsPage() {
                 {rest.map((post) => (
                   <Link key={post.id} href={`/news/${post.slug}`} className={styles.card}>
                     {post.cover_image_url ? (
-                      <img
-                        src={post.cover_image_url}
-                        alt={post.title}
-                        className={styles.cardCover}
-                        loading="lazy"
-                      />
+                      <div style={{ position: 'relative', width: '100%', height: 160 }}>
+                        <Image src={post.cover_image_url} alt={post.title} fill style={{ objectFit: 'cover' }} sizes="(max-width:600px) 100vw, 320px" />
+                      </div>
                     ) : (
                       <div className={styles.cardCoverPlaceholder} aria-hidden="true" />
                     )}

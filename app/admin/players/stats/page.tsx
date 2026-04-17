@@ -11,7 +11,9 @@ import { useAdminOrg }           from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }       from '@/components/admin/AdminOrgGate'
 import { YellowCard, RedCard }  from '@/components/ui/CardIcon'
 import styles                    from '@/styles/components/PlayerStatsTable.module.scss'
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import dynamic from 'next/dynamic'
+
+const StatsChart = dynamic(() => import('@/components/admin/StatsChart'), { ssr: false })
 
 interface PlayerStat {
   player_id:     string
@@ -124,18 +126,7 @@ export default function PlayerStatsPage() {
       {!loading && topPlayers.length > 0 && (
         <div className={styles.chartContainer}>
           <h3>Top 5 {chartType === 'goals' ? 'Goal Scorers' : 'Assist Providers'}</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={topPlayers} layout="vertical" margin={{ left: 40, right: 20 }}>
-              <XAxis type="number" allowDecimals={false} />
-              <YAxis dataKey="player_name" type="category" width={120} />
-              <Tooltip />
-              <Bar dataKey={chartType} fill={chartType === 'goals' ? '#2563eb' : '#16a34a'}>
-                {topPlayers.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={chartType === 'goals' ? '#2563eb' : '#16a34a'} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
+          <StatsChart data={topPlayers} chartType={chartType} />
         </div>
       )}
 

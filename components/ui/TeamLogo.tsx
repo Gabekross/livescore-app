@@ -2,6 +2,8 @@
 // Team logo image with a styled fallback when no logo is available.
 // Works in server and client components.
 
+import Image from 'next/image'
+
 interface Props {
   src?:       string | null
   alt:        string
@@ -41,12 +43,13 @@ export default function TeamLogo({ src, alt, size = 24, className }: Props) {
   }
 
   return (
-    <img
+    <Image
       src={src}
       alt={alt}
+      width={size}
+      height={size}
       style={style}
       className={className}
-      loading="lazy"
     />
   )
 }

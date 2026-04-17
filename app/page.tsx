@@ -8,6 +8,7 @@
 // The org homepage fetches live data; the platform landing is fully static.
 
 import type { Metadata }        from 'next'
+import Image                    from 'next/image'
 import Link                     from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
@@ -233,7 +234,9 @@ export default async function HomePage() {
               {tournaments.map((t) => (
                 <Link key={t.id} href={`/tournaments/${t.slug}`} className={styles.tournamentCard}>
                   {t.cover_image_url ? (
-                    <img src={t.cover_image_url} alt={t.name} className={styles.tournamentCover} />
+                    <div style={{ position: 'relative', width: '100%', height: 90 }}>
+                      <Image src={t.cover_image_url} alt={t.name} fill style={{ objectFit: 'cover', borderRadius: 'var(--radius-md, 8px)' }} sizes="(max-width:600px) 100vw, 320px" />
+                    </div>
                   ) : (
                     <div className={styles.tournamentCoverPlaceholder} aria-hidden="true" />
                   )}
@@ -268,12 +271,9 @@ export default async function HomePage() {
                 {newsPosts.map((post) => (
                   <Link key={post.id} href={`/news/${post.slug}`} className={styles.tournamentCard}>
                     {post.cover_image_url ? (
-                      <img
-                        src={post.cover_image_url}
-                        alt={post.title}
-                        className={styles.tournamentCover}
-                        loading="lazy"
-                      />
+                      <div style={{ position: 'relative', width: '100%', height: 90 }}>
+                        <Image src={post.cover_image_url} alt={post.title} fill style={{ objectFit: 'cover', borderRadius: 'var(--radius-md, 8px)' }} sizes="(max-width:600px) 100vw, 320px" />
+                      </div>
                     ) : (
                       <div className={styles.tournamentCoverPlaceholder} aria-hidden="true" />
                     )}

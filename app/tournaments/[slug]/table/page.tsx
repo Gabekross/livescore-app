@@ -10,13 +10,23 @@ import StandingsView                  from '@/app/table/StandingsView'
 import EmptyState                     from '@/components/ui/EmptyState'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
 
+export const revalidate = 30
+
 interface Props {
   params:       { slug: string }
   searchParams: { stage?: string }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  return { title: `Table — ${params.slug}` }
+  try {
+    const orgId    = await getOrganizationIdServer()
+    const supabase = createServerSupabaseClient()
+    const { data } = await supabase
+      .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).single()
+    return { title: data ? `Table — ${data.name}` : 'Table' }
+  } catch {
+    return { title: 'Table' }
+  }
 }
 
 export default async function TournamentTablePage({ params, searchParams }: Props) {

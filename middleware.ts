@@ -33,28 +33,43 @@ const APP_PASSTHROUGH = new Set([
   '/reset-password',
 ])
 
+// ── Role cookie cache helpers ────────────────────────────────────────────────
+const ROLE_COOKIE = '__role'
+const ROLE_TTL_MS = 5 * 60 * 1000 // 5 min
+
+function getCachedRole(request: NextRequest, userId: string): string | null {
+  const cookie = request.cookies.get(ROLE_COOKIE)?.value
+  if (!cookie) return null
+  const parts = cookie.split(':')
+  if (parts.length < 3) return null
+  const [cachedId, role, ts] = parts
+  if (cachedId !== userId) return null
+  if (Date.now() - Number(ts) > ROLE_TTL_MS) return null
+  return role || null
+}
+
+function setCachedRole(response: NextResponse, userId: string, role: string | null): void {
+  response.cookies.set(ROLE_COOKIE, `${userId}:${role ?? ''}:${Date.now()}`, {
+    httpOnly: true,
+    sameSite: 'lax',
+    maxAge:   5 * 60,
+    path:     '/',
+  })
+}
+
 export async function middleware(request: NextRequest) {
   const host = request.headers.get('host') || ''
   const subdomain = extractSubdomain(host)
   const { pathname } = request.nextUrl
 
   // ── app.kolusports.com rewriting ────────────────────────────────────────
-  // Rewrites paths so the admin panel is accessible at the root of the
-  // app subdomain:
-  //   app.kolusports.com/              → /login
-  //   app.kolusports.com/dashboard     → /admin/dashboard
-  //   app.kolusports.com/tournaments   → /admin/tournaments
-  //   app.kolusports.com/login         → /login (passthrough)
   if (subdomain === 'app') {
-    // Root of app subdomain → admin login
     if (pathname === '/') {
       const url = request.nextUrl.clone()
       url.pathname = '/login'
       return NextResponse.rewrite(url)
     }
 
-    // If path doesn't already start with /admin, /api, /_next, or an auth page,
-    // rewrite it into the /admin namespace
     if (
       !pathname.startsWith('/admin') &&
       !pathname.startsWith('/api') &&
@@ -72,6 +87,18 @@ export async function middleware(request: NextRequest) {
   const orgSlug = getOrgSlugFromHostname(host)
   if (orgSlug) {
     request.headers.set('x-org-slug', orgSlug)
+  }
+
+  // ── Mark admin/platform/auth routes so the root layout skips DB calls ───
+  const isAdminRoute =
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/platform') ||
+    pathname === '/login' ||
+    pathname === '/signup' ||
+    pathname === '/forgot-password' ||
+    pathname === '/reset-password'
+  if (isAdminRoute) {
+    request.headers.set('x-admin-route', '1')
   }
 
   let response = NextResponse.next({ request })
@@ -112,18 +139,15 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // ── Protect /admin/* routes ─────────────────────────────────────────────
-  // /admin (bare) is the legacy login page — redirect to new /login
   if (pathname === '/admin') {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // /admin/* requires authentication
   if (pathname.startsWith('/admin/') && !user) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
   // ── Role-based /admin/* access for authenticated users ──────────────────
-  // match_operator may only access /admin/operator — block all other /admin/* paths
   const needsRoleCheck =
     (pathname.startsWith('/admin/') && !!user) ||
     pathname.startsWith('/platform') ||
@@ -131,12 +155,17 @@ export async function middleware(request: NextRequest) {
 
   let profileRole: string | null = null
   if (needsRoleCheck && user) {
-    const { data: profile } = await supabase
-      .from('admin_profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-    profileRole = profile?.role ?? null
+    // Check short-lived cookie first to avoid redundant DB call
+    profileRole = getCachedRole(request, user.id)
+    if (profileRole === null) {
+      const { data: profile } = await supabase
+        .from('admin_profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+      profileRole = profile?.role ?? null
+      setCachedRole(response, user.id, profileRole)
+    }
   }
 
   // match_operator: restrict to /admin/operator only
@@ -154,7 +183,6 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
     if (profileRole !== 'power_admin') {
-      // Not a power admin — redirect to their org admin area
       const fallback = profileRole === 'match_operator' ? '/admin/operator' : '/admin/dashboard'
       return NextResponse.redirect(new URL(fallback, request.url))
     }
@@ -169,7 +197,6 @@ export async function middleware(request: NextRequest) {
     } else if (profileRole) {
       return NextResponse.redirect(new URL('/admin/dashboard', request.url))
     }
-    // No profile yet — let them through (signup may still be provisioning)
   }
 
   return response
@@ -177,7 +204,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match all routes except Next.js internals and static files
-    '/((?!_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    // Match all routes except Next.js internals, static files, and API routes
+    '/((?!api/|_next/static|_next/image|favicon\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 }

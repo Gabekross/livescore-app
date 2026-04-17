@@ -10,8 +10,6 @@ import { useTeamLimit } from '@/hooks/useTeamLimit'
 import UpgradeModal  from '@/components/admin/UpgradeModal'
 import toast         from 'react-hot-toast'
 import styles        from '@/styles/components/TeamForm.module.scss'
-import { v4 as uuidv4 } from 'uuid'
-import * as XLSX     from 'xlsx'
 import { POSITIONS } from '@/lib/constants/positions'
 
 interface PlayerInput {
@@ -48,9 +46,10 @@ export default function CreateTeamPage() {
     setPlayers((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    const XLSX = await import('xlsx')
     const reader = new FileReader()
     reader.onload = (evt) => {
       const bstr = evt.target?.result
@@ -81,7 +80,7 @@ export default function CreateTeamPage() {
 
     if (logoFile) {
       const fileExt  = logoFile.name.split('.').pop()
-      const filePath = `${uuidv4()}.${fileExt}`
+      const filePath = `${crypto.randomUUID()}.${fileExt}`
 
       const { error: uploadError } = await supabase.storage
         .from('team-logos')

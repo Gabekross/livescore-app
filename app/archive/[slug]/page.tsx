@@ -3,6 +3,7 @@
 // but sourced from the archive (is_archived = true).
 
 import type { Metadata }              from 'next'
+import Image                          from 'next/image'
 import Link                           from 'next/link'
 import { notFound }                   from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
@@ -12,6 +13,8 @@ import SectionHeader                  from '@/components/ui/SectionHeader'
 import EmptyState                     from '@/components/ui/EmptyState'
 import type { MatchStatus }           from '@/lib/utils/match'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
+
+export const revalidate = 300
 
 interface Props { params: { slug: string } }
 
@@ -86,7 +89,9 @@ export default async function ArchiveTournamentPage({ params }: Props) {
         <div className={styles.tournHeader}>
           <span className={styles.archiveBadge}>Archived</span>
           {tournament.cover_image_url && (
-            <img src={tournament.cover_image_url} alt={tournament.name} className={styles.tournHeroImage} />
+            <div style={{ position: 'relative', width: '100%', maxHeight: 240, height: 240 }}>
+              <Image src={tournament.cover_image_url} alt={tournament.name} fill priority style={{ objectFit: 'cover', borderRadius: 'var(--radius-xl, 16px)' }} sizes="(max-width:900px) 100vw, 800px" />
+            </div>
           )}
           <h1 className={styles.tournTitle}>{tournament.name}</h1>
           {dateRange && <p className={styles.tournMeta}>{dateRange}</p>}

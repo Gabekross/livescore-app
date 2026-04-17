@@ -11,10 +11,20 @@ import TournamentFixturesList         from '@/components/ui/TournamentFixturesLi
 import type { MatchStatus }           from '@/lib/utils/match'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
 
+export const revalidate = 30
+
 interface Props { params: { slug: string } }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  return { title: `Fixtures — ${params.slug}` }
+  try {
+    const orgId    = await getOrganizationIdServer()
+    const supabase = createServerSupabaseClient()
+    const { data } = await supabase
+      .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).single()
+    return { title: data ? `Fixtures — ${data.name}` : 'Fixtures' }
+  } catch {
+    return { title: 'Fixtures' }
+  }
 }
 
 interface MatchRow {
@@ -34,46 +44,46 @@ export default async function TournamentFixturesPage({ params }: Props) {
   let orgId = ''
   try { orgId = await getOrganizationIdServer() } catch { notFound() }
 
-  const tournRes = await supabase
+  // Single join query replaces two sequential round-trips
+  const { data: tourn } = await supabase
     .from('tournaments')
-    .select('id, name, slug')
+    .select(`
+      id, name, slug,
+      matches(
+        id, status, match_date, match_type, home_score, away_score,
+        home_team:home_team_id(id, name, logo_url),
+        away_team:away_team_id(id, name, logo_url)
+      )
+    `)
     .eq('slug', params.slug)
     .eq('organization_id', orgId)
     .single()
 
-  if (!tournRes.data) notFound()
+  if (!tourn) notFound()
 
-  const { data: matchData } = await supabase
-    .from('matches')
-    .select(`
-      id, status, match_date, match_type, home_score, away_score,
-      home_team:home_team_id(id, name, logo_url),
-      away_team:away_team_id(id, name, logo_url)
-    `)
-    .eq('tournament_id', tournRes.data.id)
-    .order('match_date')
-
-  const matches = ((matchData || []) as MatchRow[]).map((m) => ({
-    ...m,
-    home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
-    away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
-  }))
+  const matches = ((tourn.matches || []) as MatchRow[])
+    .map((m) => ({
+      ...m,
+      home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
+      away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
+    }))
+    .sort((a, b) => a.match_date.localeCompare(b.match_date))
 
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
         <Link href={`/tournaments/${params.slug}`} className={styles.back}>
-          ← {tournRes.data.name}
+          ← {tourn.name}
         </Link>
 
         <SectionHeader
           title="Fixtures & Results"
-          subtitle={tournRes.data.name}
+          subtitle={tourn.name}
         />
 
         <TournamentFixturesList
           matches={matches}
-          tournamentName={tournRes.data.name}
+          tournamentName={tourn.name}
           tournamentSlug={params.slug}
         />
       </div>
