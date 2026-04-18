@@ -12,6 +12,7 @@ import { getOrganizationId } from '@/lib/org'
 import MatchCard             from '@/components/ui/MatchCard'
 import EmptyState            from '@/components/ui/EmptyState'
 import type { MatchStatus }  from '@/lib/utils/match'
+import { sortByRelevance }   from '@/lib/utils/matchSort'
 import styles                from '@/styles/components/MatchesPage.module.scss'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -40,7 +41,17 @@ function groupByDate(matches: Match[]): [string, Match[]][] {
     arr.push(m)
     map.set(key, arr)
   }
+  // Order: today/future ascending, then past dates descending (most recent first)
+  const today = new Date().toISOString().slice(0, 10)
   return Array.from(map.entries())
+    .map(([date, list]) => [date, sortByRelevance(list)] as [string, Match[]])
+    .sort(([a], [b]) => {
+      const aFuture = a >= today
+      const bFuture = b >= today
+      if (aFuture && !bFuture) return -1
+      if (!aFuture && bFuture) return 1
+      return aFuture ? a.localeCompare(b) : b.localeCompare(a)
+    })
 }
 
 function formatDateHeading(isoDate: string): string {

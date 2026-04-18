@@ -8,6 +8,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase }   from '@/lib/supabase'
 import MatchCard      from '@/components/ui/MatchCard'
 import type { MatchStatus } from '@/lib/utils/match'
+import { sortByRelevance } from '@/lib/utils/matchSort'
 import styles         from '@/styles/components/Homepage.module.scss'
 
 interface LiveMatch {
@@ -39,11 +40,12 @@ export default function LiveMatchesIsland({ orgId }: Props) {
       .order('match_date')
 
     if (data) {
-      setMatches(data.map((m) => ({
+      const normalized = data.map((m) => ({
         ...m,
         home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
         away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
-      })) as LiveMatch[])
+      })) as LiveMatch[]
+      setMatches(sortByRelevance(normalized))
     }
   }, [orgId])
 
