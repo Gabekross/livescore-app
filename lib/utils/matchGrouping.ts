@@ -8,7 +8,6 @@ export interface StageRef {
   id?:           string
   stage_name:    string
   order_number?: number | null
-  stage_type?:   string | null
 }
 
 export interface GroupRef {

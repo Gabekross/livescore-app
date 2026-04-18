@@ -28,7 +28,7 @@ export interface NormalizedMatch {
   away_score: number | null
   home_team:  Team
   away_team:  Team
-  stage?:     { id: string; stage_name: string; order_number: number | null; stage_type: string | null } | null
+  stage?:     { id: string; stage_name: string; order_number: number | null } | null
   group?:     { id: string; name: string } | null
 }
 

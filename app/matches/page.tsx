@@ -21,10 +21,9 @@ import styles                from '@/styles/components/MatchesPage.module.scss'
 interface Team { id: string; name: string; logo_url?: string | null }
 
 interface StageInfo {
-  id:           string
-  stage_name:   string
-  order_number: number | null
-  stage_type:   string | null
+  id:            string
+  stage_name:    string
+  order_number:  number | null
   tournament_id: string
 }
 
@@ -39,7 +38,7 @@ interface Match {
   home_team:     Team
   away_team:     Team
   group?:        { id: string; name: string; stage_id?: string | null } | null
-  stage?:        { id: string; stage_name: string; order_number: number | null; stage_type: string | null } | null
+  stage?:        { id: string; stage_name: string; order_number: number | null } | null
 }
 
 interface Tournament { id: string; name: string; slug?: string }
@@ -111,10 +110,10 @@ export default function MatchesPage() {
         .eq('organization_id', orgId)
         .order('match_date'),
 
+      // tournament_stages has no organization_id — scope via tournament_id instead
       supabase
         .from('tournament_stages')
-        .select('id, stage_name, order_number, stage_type, tournament_id')
-        .eq('organization_id', orgId)
+        .select('id, stage_name, order_number, tournament_id')
         .order('order_number'),
     ])
 
@@ -131,7 +130,7 @@ export default function MatchesPage() {
           home_team: (Array.isArray(m.home_team) ? m.home_team[0] : m.home_team) as Team,
           away_team: (Array.isArray(m.away_team) ? m.away_team[0] : m.away_team) as Team,
           group:     rawGroup ? { id: rawGroup.id, name: rawGroup.name, stage_id: rawGroup.stage_id } : null,
-          stage:     stage    ? { id: stage.id, stage_name: stage.stage_name, order_number: stage.order_number ?? null, stage_type: stage.stage_type ?? null } : null,
+          stage:     stage    ? { id: stage.id, stage_name: stage.stage_name, order_number: stage.order_number ?? null } : null,
         }
       }) as Match[])
     }

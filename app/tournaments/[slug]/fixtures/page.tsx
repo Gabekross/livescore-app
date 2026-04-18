@@ -58,7 +58,7 @@ export default async function TournamentFixturesPage({ params }: Props) {
 
     supabase
       .from('tournament_stages')
-      .select('id, stage_name, order_number, stage_type')
+      .select('id, stage_name, order_number')
       .eq('tournament_id', tourn.id)
       .order('order_number'),
   ])
@@ -82,7 +82,7 @@ export default async function TournamentFixturesPage({ params }: Props) {
       home_team:  rawTeamHome as { id: string; name: string; logo_url: string | null },
       away_team:  rawTeamAway as { id: string; name: string; logo_url: string | null },
       group:  rawGroup  ? { id: rawGroup.id,  name: rawGroup.name }  : null,
-      stage:  stage     ? { id: stage.id, stage_name: stage.stage_name, order_number: stage.order_number ?? null, stage_type: stage.stage_type ?? null } : null,
+      stage:  stage     ? { id: stage.id, stage_name: stage.stage_name, order_number: stage.order_number ?? null } : null,
     }
   })
 
