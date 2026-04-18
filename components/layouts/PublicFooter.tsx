@@ -24,7 +24,7 @@ const ORG_FOOTER_LINKS = [
   { href: '/teams',       label: 'Teams' },
   { href: '/tournaments', label: 'Tournaments' },
   { href: '/news',        label: 'News' },
-  { href: '/archive',     label: 'Archive' },
+  // { href: '/archive', label: 'Archive' }, // hidden until further notice
 ]
 
 const PLATFORM_FOOTER_LINKS = [
