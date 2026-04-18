@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 type TeamJoin  = { id: string; name: string; logo_url: string | null }
 type StageJoin = { id: string; stage_name: string; order_number: number | null; stage_type: string | null }
-type GroupJoin = { id: string; name: string }
+type GroupJoin = { id: string; name: string; stage: StageJoin | StageJoin[] | null }
 
 interface MatchRow {
   id:         string
@@ -38,9 +38,8 @@ interface MatchRow {
   match_type: string
   home_score: number | null
   away_score: number | null
-  home_team:  TeamJoin  | TeamJoin[]
-  away_team:  TeamJoin  | TeamJoin[]
-  stage:      StageJoin | StageJoin[] | null
+  home_team:  TeamJoin | TeamJoin[]
+  away_team:  TeamJoin | TeamJoin[]
   group:      GroupJoin | GroupJoin[] | null
 }
 
@@ -59,8 +58,7 @@ export default async function TournamentFixturesPage({ params }: Props) {
         id, status, match_date, match_type, home_score, away_score,
         home_team:home_team_id(id, name, logo_url),
         away_team:away_team_id(id, name, logo_url),
-        stage:stage_id(id, stage_name, order_number, stage_type),
-        group:group_id(id, name)
+        group:group_id(id, name, stage:stage_id(id, stage_name, order_number, stage_type))
       )
     `)
     .eq('slug', params.slug)
@@ -69,13 +67,19 @@ export default async function TournamentFixturesPage({ params }: Props) {
 
   if (!tourn) notFound()
 
-  const matches = ((tourn.matches || []) as MatchRow[]).map((m) => ({
-    ...m,
-    home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
-    away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
-    stage:     Array.isArray(m.stage) ? m.stage[0] ?? null : m.stage,
-    group:     Array.isArray(m.group) ? m.group[0] ?? null : m.group,
-  }))
+  const matches = ((tourn.matches || []) as MatchRow[]).map((m) => {
+    const group = Array.isArray(m.group) ? m.group[0] ?? null : m.group
+    const stage = group
+      ? (Array.isArray(group.stage) ? group.stage[0] ?? null : group.stage)
+      : null
+    return {
+      ...m,
+      home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
+      away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
+      group:     group ? { id: group.id, name: group.name } : null,
+      stage,
+    }
+  })
 
   return (
     <div className={styles.page}>

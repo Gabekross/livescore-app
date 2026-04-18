@@ -22,12 +22,13 @@ import type { MatchStatus }           from '@/lib/utils/match'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface MatchRow {
-  id:         string
-  status:     MatchStatus
-  match_date: string
-  match_type: string
-  home_score: number | null
-  away_score: number | null
+  id:            string
+  status:        MatchStatus
+  match_date:    string
+  match_type:    string
+  home_score:    number | null
+  away_score:    number | null
+  tournament_id: string | null
   home_team:  { id: string; name: string; logo_url: string | null } | { id: string; name: string; logo_url: string | null }[]
   away_team:  { id: string; name: string; logo_url: string | null } | { id: string; name: string; logo_url: string | null }[]
 }
@@ -48,6 +49,32 @@ interface NewsPost {
   excerpt:         string | null
   cover_image_url: string | null
   published_at:    string | null
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function groupByTournament(
+  matches: MatchRow[],
+  tournaments: Tournament[],
+): { tournamentId: string | null; tournamentName: string; tournamentSlug: string | null; matches: MatchRow[] }[] {
+  const tourneyMap = new Map(tournaments.map((t) => [t.id, t]))
+  const buckets    = new Map<string, { tournamentId: string | null; tournamentName: string; tournamentSlug: string | null; matches: MatchRow[] }>()
+
+  for (const m of matches) {
+    const key    = m.tournament_id ?? '__friendly__'
+    const tourny = m.tournament_id ? tourneyMap.get(m.tournament_id) : null
+    if (!buckets.has(key)) {
+      buckets.set(key, {
+        tournamentId:   m.tournament_id,
+        tournamentName: tourny?.name ?? 'Friendlies',
+        tournamentSlug: tourny?.slug ?? null,
+        matches:        [],
+      })
+    }
+    buckets.get(key)!.matches.push(m)
+  }
+
+  return Array.from(buckets.values())
 }
 
 // ── Metadata ──────────────────────────────────────────────────────────────────
@@ -92,7 +119,7 @@ export default async function HomePage() {
     const supabase = createServerSupabaseClient()
 
     const MATCH_SELECT = `
-      id, status, match_date, match_type, home_score, away_score,
+      id, status, match_date, match_type, home_score, away_score, tournament_id,
       home_team:home_team_id(id, name, logo_url),
       away_team:away_team_id(id, name, logo_url)
     `
@@ -195,15 +222,27 @@ export default async function HomePage() {
               ctaLabel="All fixtures"
               ctaHref="/matches?tab=fixtures"
             />
-            <div className={styles.matchStack}>
-              {fixtures.length === 0 ? (
-                <EmptyState icon="" title="No upcoming fixtures" compact />
-              ) : (
-                fixtures.map((m) => (
-                  <MatchCard key={m.id} {...m as any} href={`/matches/${m.id}`} />
-                ))
-              )}
-            </div>
+            {fixtures.length === 0 ? (
+              <EmptyState icon="" title="No upcoming fixtures" compact />
+            ) : (
+              groupByTournament(fixtures, tournaments).map(({ tournamentId, tournamentName, tournamentSlug, matches: tMatches }) => (
+                <div key={tournamentId ?? 'friendly'} className={styles.tournamentGroup}>
+                  <div className={styles.tournamentGroupHeader}>
+                    <span className={styles.tournamentGroupName}>{tournamentName}</span>
+                    {tournamentSlug && (
+                      <Link href={`/tournaments/${tournamentSlug}/fixtures`} className={styles.tournamentGroupLink}>
+                        See all →
+                      </Link>
+                    )}
+                  </div>
+                  <div className={styles.matchStack}>
+                    {tMatches.map((m) => (
+                      <MatchCard key={m.id} {...m as any} href={`/matches/${m.id}`} />
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
           <div>
@@ -212,15 +251,27 @@ export default async function HomePage() {
               ctaLabel="All results"
               ctaHref="/matches?tab=results"
             />
-            <div className={styles.matchStack}>
-              {results.length === 0 ? (
-                <EmptyState icon="" title="No results yet" compact />
-              ) : (
-                results.map((m) => (
-                  <MatchCard key={m.id} {...m as any} href={`/matches/${m.id}`} />
-                ))
-              )}
-            </div>
+            {results.length === 0 ? (
+              <EmptyState icon="" title="No results yet" compact />
+            ) : (
+              groupByTournament(results, tournaments).map(({ tournamentId, tournamentName, tournamentSlug, matches: tMatches }) => (
+                <div key={tournamentId ?? 'friendly'} className={styles.tournamentGroup}>
+                  <div className={styles.tournamentGroupHeader}>
+                    <span className={styles.tournamentGroupName}>{tournamentName}</span>
+                    {tournamentSlug && (
+                      <Link href={`/tournaments/${tournamentSlug}/fixtures`} className={styles.tournamentGroupLink}>
+                        See all →
+                      </Link>
+                    )}
+                  </div>
+                  <div className={styles.matchStack}>
+                    {tMatches.map((m) => (
+                      <MatchCard key={m.id} {...m as any} href={`/matches/${m.id}`} />
+                    ))}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

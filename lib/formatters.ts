@@ -113,27 +113,12 @@ function toPersonTitleCase(name: string): string {
 
 /**
  * Format a football team name for display.
- *
- * Examples:
- *   "REAL MADRID"         → "Real Madrid"
- *   "real madrid"         → "Real Madrid"
- *   "Real Madrid"         → "Real Madrid"   (unchanged — already correct)
- *   "MANCHESTER CITY FC"  → "Manchester City FC"
- *   "al-ahly sc"          → "Al-Ahly SC"
- *   "FC BARCELONA"        → "FC Barcelona"
+ * Returns the name exactly as stored — no case transformation is applied.
+ * Teams are entered by admins who own the casing ("NCCC FC", "CAC", "3 Lions FC").
  */
 export function formatTeamName(name: string | null | undefined): string {
   if (!name) return ''
-  const trimmed = name.trim()
-  if (!trimmed) return ''
-
-  // Only normalise if the string looks like it needs it
-  if (isAllCaps(trimmed) || isAllLower(trimmed)) {
-    return toTitleCase(trimmed)
-  }
-
-  // Already properly cased — return as-is
-  return trimmed
+  return name.trim()
 }
 
 /**

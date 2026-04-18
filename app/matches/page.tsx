@@ -7,6 +7,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import Link                  from 'next/link'
 import { supabase }          from '@/lib/supabase'
 import { getOrganizationId } from '@/lib/org'
 import MatchCard             from '@/components/ui/MatchCard'
@@ -28,52 +29,36 @@ interface Match {
   away_team: { id: string; name: string; logo_url?: string | null }
 }
 
-interface Tournament { id: string; name: string }
+interface Tournament { id: string; name: string; slug?: string }
 
 type Tab = 'all' | 'fixtures' | 'results' | 'live'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function groupByDate(matches: Match[]): [string, Match[]][] {
-  const map = new Map<string, Match[]>()
+function groupByTournament(
+  matches: Match[],
+  tournamentList: Tournament[],
+): { key: string; name: string; slug: string | null; matches: Match[] }[] {
+  const tMap = new Map(tournamentList.map((t) => [t.id, t]))
+  const buckets = new Map<string, { key: string; name: string; slug: string | null; matches: Match[] }>()
+
   for (const m of matches) {
-    const key = m.match_date.slice(0, 10)
-    const arr = map.get(key) ?? []
-    arr.push(m)
-    map.set(key, arr)
+    const bucketKey = m.tournament_id ?? '__friendly__'
+    const t = m.tournament_id ? tMap.get(m.tournament_id) : null
+    if (!buckets.has(bucketKey)) {
+      buckets.set(bucketKey, {
+        key:     bucketKey,
+        name:    t?.name ?? 'Friendlies',
+        slug:    t?.slug ?? null,
+        matches: [],
+      })
+    }
+    buckets.get(bucketKey)!.matches.push(m)
   }
-  // Order: today/future ascending, then past dates descending (most recent first)
-  const today = new Date().toISOString().slice(0, 10)
-  return Array.from(map.entries())
-    .map(([date, list]) => [date, sortByRelevance(list)] as [string, Match[]])
-    .sort(([a], [b]) => {
-      const aFuture = a >= today
-      const bFuture = b >= today
-      if (aFuture && !bFuture) return -1
-      if (!aFuture && bFuture) return 1
-      return aFuture ? a.localeCompare(b) : b.localeCompare(a)
-    })
-}
 
-function formatDateHeading(isoDate: string): string {
-  const d    = new Date(isoDate + 'T00:00:00')
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(today.getDate() - 1)
-  const tomorrow  = new Date(today)
-  tomorrow.setDate(today.getDate() + 1)
-
-  const sameDay = (a: Date, b: Date) =>
-    a.getFullYear() === b.getFullYear() &&
-    a.getMonth() === b.getMonth() &&
-    a.getDate() === b.getDate()
-
-  if (sameDay(d, today))    return 'Today'
-  if (sameDay(d, yesterday)) return 'Yesterday'
-  if (sameDay(d, tomorrow)) return 'Tomorrow'
-
-  const opts: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long' }
-  if (d.getFullYear() !== today.getFullYear()) opts.year = 'numeric'
-  return d.toLocaleDateString('en-GB', opts)
+  return Array.from(buckets.values()).map((b) => ({
+    ...b,
+    matches: sortByRelevance(b.matches),
+  }))
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -99,7 +84,7 @@ export default function MatchesPage() {
     const [{ data: tData }, { data: mData }] = await Promise.all([
       supabase
         .from('tournaments')
-        .select('id, name')
+        .select('id, name, slug')
         .eq('organization_id', orgId)
         .order('name'),
 
@@ -167,7 +152,7 @@ export default function MatchesPage() {
     return true
   })
 
-  const groups = groupByDate(filtered)
+  const groups = groupByTournament(filtered, tournaments)
 
   // ── URL helpers ────────────────────────────────────────────────────────
   const setTab = (t: Tab) => {
@@ -248,16 +233,19 @@ export default function MatchesPage() {
             description="Check back later or try a different filter."
           />
         ) : (
-          groups.map(([date, dayMatches]) => (
-            <div key={date} className={styles.dateGroup}>
-              <div className={styles.dateLabel}>{formatDateHeading(date)}</div>
+          groups.map((group) => (
+            <div key={group.key} className={styles.tournamentGroup}>
+              <div className={styles.tournamentGroupHeader}>
+                <span className={styles.tournamentGroupName}>{group.name}</span>
+                {group.slug && (
+                  <Link href={`/tournaments/${group.slug}/fixtures`} className={styles.tournamentGroupLink}>
+                    See all →
+                  </Link>
+                )}
+              </div>
               <div className={styles.matchList}>
-                {dayMatches.map((m) => (
-                  <MatchCard
-                    key={m.id}
-                    {...m}
-                    href={`/matches/${m.id}`}
-                  />
+                {group.matches.map((m) => (
+                  <MatchCard key={m.id} {...m} href={`/matches/${m.id}`} />
                 ))}
               </div>
             </div>
