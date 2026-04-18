@@ -15,7 +15,7 @@ $blue:   #2563eb;
   min-height:   100vh;
   font-family:  'Inter', 'Segoe UI', system-ui, sans-serif;
   color:        $navy;
-  padding:      calc(60px + 3rem) 1.5rem 4rem;
+  padding:      calc(var(--nav-height, 60px) + 3rem) 1.5rem 4rem;
   -webkit-font-smoothing: antialiased;
 }
 

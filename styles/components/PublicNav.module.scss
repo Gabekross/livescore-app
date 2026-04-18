@@ -4,7 +4,7 @@
   left:             0;
   right:            0;
   z-index:          100;
-  height:           var(--nav-height, 60px);
+  height:           var(--nav-bar-height, 60px);
   background-color: var(--color-nav, #09091a);
   border-bottom:    1px solid var(--color-border-subtle, #1c1c35);
   backdrop-filter:  blur(12px);
@@ -235,4 +235,53 @@
     color:            #0f172a;
     background-color: #f1f5f9;
   }
+}
+
+/* ── Mobile sticky subnav ────────────────────────────────── */
+/* Fixed tab bar directly below the main nav bar on mobile.  */
+/* Always visible — no hamburger required.                   */
+/* Hidden on desktop (links are in the standard nav there).  */
+.mobileStickyNav {
+  display: none;
+
+  @media (max-width: 768px) {
+    display:          flex;
+    align-items:      stretch;
+    position:         fixed;
+    top:              var(--nav-bar-height, 60px);
+    left:             0;
+    right:            0;
+    z-index:          98;
+    height:           44px;
+    background-color: var(--color-nav, #09091a);
+    border-bottom:    1px solid var(--color-border, #2a2a48);
+    overflow-x:       auto;
+    overflow-y:       hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width:  none;
+
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
+.mobileStickyLink {
+  display:     flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding:     0 var(--sp-4, 1rem);
+  height:      100%;
+  font-size:   0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color:       var(--color-text-muted, #7272a0);
+  border-bottom: 2px solid transparent;
+  transition:  color var(--transition-fast, 150ms ease),
+               border-color var(--transition-fast, 150ms ease);
+
+  &:hover { color: var(--color-text, #e8e8f4); }
+}
+
+.mobileStickyLinkActive {
+  color:              var(--color-text, #e8e8f4) !important;
+  border-bottom-color: var(--color-accent, #2563eb);
 }

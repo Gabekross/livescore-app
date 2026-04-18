@@ -48,7 +48,8 @@
   --color-friendly-bg:    rgba(245, 158, 11, 0.12);
 
   /* Layout */
-  --nav-height:           60px;
+  --nav-bar-height:       60px;   /* height of the actual nav bar — never changes */
+  --nav-height:           60px;   /* total top offset for page content (desktop) */
   --max-width:            1200px;
   --content-padding:      1.25rem;
 
@@ -448,6 +449,12 @@
 /* ── Responsive token overrides ─────────────────────────── */
 /* Narrow screen: tighten content padding so cards don't feel  */
 /* squished against the viewport edge at 375px / 320px.        */
+@media (max-width: 768px) {
+  /* Mobile subnav (44px) sits below the 60px nav bar.         */
+  /* Bumping --nav-height here means every page using           */
+  /* padding-top: var(--nav-height) automatically clears both. */
+  :root { --nav-height: 104px; }
+}
 @media (max-width: 480px) {
   :root { --content-padding: var(--content-padding-sm, 1rem); }
 }

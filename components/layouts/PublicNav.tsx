@@ -4,8 +4,13 @@
 // Fixed top navigation for public pages.
 // Hides on admin, platform, and auth routes.
 //
-// isOrgSite=true  → org-branded dark nav with tournament links (Matches, Table, Teams…)
-// isOrgSite=false → platform marketing light nav with product links (Features, Pricing…)
+// isOrgSite=true  → org-branded dark nav with tournament links
+// isOrgSite=false → platform marketing light nav with product links
+//
+// Mobile org-site layout:
+//   Row 1 — fixed 60px bar: brand + hamburger
+//   Row 2 — fixed 44px sticky subnav: primary section links (always visible)
+//   Row 3 — hamburger dropdown: full link list (optional secondary access)
 
 import { useState } from 'react'
 import Image          from 'next/image'
@@ -19,6 +24,7 @@ interface Props {
   isOrgSite: boolean
 }
 
+// Desktop + hamburger links (Archive temporarily hidden)
 const ORG_NAV_LINKS = [
   { href: '/',            label: 'Home' },
   { href: '/matches',     label: 'Matches' },
@@ -26,7 +32,16 @@ const ORG_NAV_LINKS = [
   { href: '/teams',       label: 'Teams' },
   { href: '/tournaments', label: 'Tournaments' },
   { href: '/news',        label: 'News' },
-  { href: '/archive',     label: 'Archive' },
+  // { href: '/archive', label: 'Archive' }, // hidden until further notice
+]
+
+// Always-visible sticky tab bar on mobile (no Home — reachable via brand logo)
+const MOBILE_PRIMARY_LINKS = [
+  { href: '/matches',     label: 'Matches' },
+  { href: '/table',       label: 'Table' },
+  { href: '/teams',       label: 'Teams' },
+  { href: '/tournaments', label: 'Tournaments' },
+  { href: '/news',        label: 'News' },
 ]
 
 const PLATFORM_NAV_LINKS = [
@@ -48,11 +63,10 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
   const navLinks = isOrgSite ? ORG_NAV_LINKS : PLATFORM_NAV_LINKS
 
   const isActive = (href: string) => {
-    if (href.startsWith('/#')) return false // anchor links never "active"
+    if (href.startsWith('/#')) return false
     return href === '/' ? pathname === '/' : pathname.startsWith(href)
   }
 
-  // Platform nav uses light variant; org nav uses dark
   const navClass  = `${styles.nav}  ${!isOrgSite ? styles.navPlatform : ''}`
   const linkClass = (href: string) =>
     `${styles.link} ${!isOrgSite ? styles.linkPlatform : ''} ${isActive(href) ? styles.linkActive : ''}`
@@ -61,6 +75,7 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
 
   return (
     <>
+      {/* ── Main nav bar ── */}
       <nav className={navClass} role="navigation" aria-label="Main navigation">
         <div className={styles.inner}>
           {/* Brand */}
@@ -83,7 +98,7 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
             ))}
           </ul>
 
-          {/* CTAs — only on platform marketing pages, not on org sites */}
+          {/* CTAs — platform marketing only */}
           {!isOrgSite && (
             <div className={styles.authLinks}>
               <Link href="/login" className={styles.loginLink}>Sign In</Link>
@@ -105,7 +120,24 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
         </div>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* ── Mobile sticky subnav ──────────────────────────────────────
+          Always visible on mobile below the main bar.
+          On desktop this element is display:none via SCSS.          */}
+      {isOrgSite && (
+        <nav className={styles.mobileStickyNav} aria-label="Primary navigation">
+          {MOBILE_PRIMARY_LINKS.map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`${styles.mobileStickyLink} ${isActive(href) ? styles.mobileStickyLinkActive : ''}`}
+            >
+              {label}
+            </Link>
+          ))}
+        </nav>
+      )}
+
+      {/* ── Mobile hamburger drawer ── */}
       {open && (
         <div className={`${styles.mobileMenu} ${!isOrgSite ? styles.mobileMenuPlatform : ''}`} role="menu">
           {navLinks.map(({ href, label }) => (
