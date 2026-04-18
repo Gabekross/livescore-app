@@ -27,57 +27,62 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-type TeamJoin  = { id: string; name: string; logo_url: string | null }
-type StageJoin = { id: string; stage_name: string; order_number: number | null; stage_type: string | null }
-type GroupJoin = { id: string; name: string; stage: StageJoin | StageJoin[] | null }
-
-interface MatchRow {
-  id:         string
-  status:     MatchStatus
-  match_date: string
-  match_type: string
-  home_score: number | null
-  away_score: number | null
-  home_team:  TeamJoin | TeamJoin[]
-  away_team:  TeamJoin | TeamJoin[]
-  group:      GroupJoin | GroupJoin[] | null
-}
-
 export default async function TournamentFixturesPage({ params }: Props) {
   const supabase = createServerSupabaseClient()
 
   let orgId = ''
   try { orgId = await getOrganizationIdServer() } catch { notFound() }
 
-  // Single join query replaces two sequential round-trips
+  // ── Step 1: tournament ────────────────────────────────────────────────
   const { data: tourn } = await supabase
     .from('tournaments')
-    .select(`
-      id, name, slug,
-      matches(
-        id, status, match_date, match_type, home_score, away_score,
-        home_team:home_team_id(id, name, logo_url),
-        away_team:away_team_id(id, name, logo_url),
-        group:group_id(id, name, stage:stage_id(id, stage_name, order_number, stage_type))
-      )
-    `)
+    .select('id, name, slug')
     .eq('slug', params.slug)
     .eq('organization_id', orgId)
     .single()
 
   if (!tourn) notFound()
 
-  const matches = ((tourn.matches || []) as MatchRow[]).map((m) => {
-    const group = Array.isArray(m.group) ? m.group[0] ?? null : m.group
-    const stage = group
-      ? (Array.isArray(group.stage) ? group.stage[0] ?? null : group.stage)
-      : null
+  // ── Step 2: matches (with group name) + stages (parallel) ─────────────
+  const [{ data: matchData }, { data: stagesData }] = await Promise.all([
+    supabase
+      .from('matches')
+      .select(`
+        id, status, match_date, match_type, home_score, away_score, group_id,
+        home_team:home_team_id(id, name, logo_url),
+        away_team:away_team_id(id, name, logo_url),
+        group:group_id(id, name, stage_id)
+      `)
+      .eq('tournament_id', tourn.id)
+      .eq('organization_id', orgId),
+
+    supabase
+      .from('tournament_stages')
+      .select('id, stage_name, order_number, stage_type')
+      .eq('tournament_id', tourn.id)
+      .order('order_number'),
+  ])
+
+  // ── Step 3: build stage lookup map then normalise matches ─────────────
+  const stageMap = new Map((stagesData || []).map((s) => [s.id, s]))
+
+  const matches = (matchData || []).map((m) => {
+    const rawTeamHome = Array.isArray(m.home_team) ? m.home_team[0] : m.home_team
+    const rawTeamAway = Array.isArray(m.away_team) ? m.away_team[0] : m.away_team
+    const rawGroup    = Array.isArray(m.group)     ? m.group[0]     : m.group
+    const stage       = rawGroup?.stage_id ? (stageMap.get(rawGroup.stage_id) ?? null) : null
+
     return {
-      ...m,
-      home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
-      away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
-      group:     group ? { id: group.id, name: group.name } : null,
-      stage,
+      id:         m.id,
+      status:     m.status as MatchStatus,
+      match_date: m.match_date,
+      match_type: m.match_type,
+      home_score: m.home_score,
+      away_score: m.away_score,
+      home_team:  rawTeamHome as { id: string; name: string; logo_url: string | null },
+      away_team:  rawTeamAway as { id: string; name: string; logo_url: string | null },
+      group:  rawGroup  ? { id: rawGroup.id,  name: rawGroup.name }  : null,
+      stage:  stage     ? { id: stage.id, stage_name: stage.stage_name, order_number: stage.order_number ?? null, stage_type: stage.stage_type ?? null } : null,
     }
   })
 
