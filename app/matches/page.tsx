@@ -286,7 +286,7 @@ export default function MatchesPage() {
                         <div className={styles.groupHeader}>{g.name}</div>
                         <div className={styles.matchList}>
                           {g.matches.map((m) => (
-                            <MatchCard key={m.id} {...m} context={g.name} href={`/matches/${m.id}`} />
+                            <MatchCard key={m.id} {...m} href={`/matches/${m.id}`} />
                           ))}
                         </div>
                       </div>
