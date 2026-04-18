@@ -3,21 +3,78 @@
 // components/admin/RichTextEditor.tsx
 // TipTap-based rich-text editor for post body content.
 // Outputs HTML. Toolbar: headings, bold, italic, strike, link, image,
-// blockquote, bullet list, ordered list, horizontal rule, undo/redo.
+// video embed (YouTube / Vimeo / direct .mp4), blockquote, lists, hr, undo/redo.
 
 import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import Link from '@tiptap/extension-link'
-import Image from '@tiptap/extension-image'
-import Placeholder from '@tiptap/extension-placeholder'
-import { useCallback, useEffect } from 'react'
-import styles from '@/styles/components/RichTextEditor.module.scss'
+import { Node, mergeAttributes }    from '@tiptap/core'
+import StarterKit                   from '@tiptap/starter-kit'
+import Link                         from '@tiptap/extension-link'
+import Image                        from '@tiptap/extension-image'
+import Placeholder                  from '@tiptap/extension-placeholder'
+import { useCallback, useEffect }   from 'react'
+import styles                       from '@/styles/components/RichTextEditor.module.scss'
 
 interface Props {
   value:    string
   onChange: (html: string) => void
 }
 
+// ── Video embed helper ────────────────────────────────────────────────────────
+function getEmbedInfo(raw: string): { src: string; isVideo: boolean } {
+  const url = raw.trim()
+
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+  if (yt) return { src: `https://www.youtube.com/embed/${yt[1]}?rel=0`, isVideo: false }
+
+  const vim = url.match(/vimeo\.com\/(\d+)/)
+  if (vim) return { src: `https://player.vimeo.com/video/${vim[1]}`, isVideo: false }
+
+  if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) return { src: url, isVideo: true }
+
+  return { src: url, isVideo: false }
+}
+
+// ── Custom VideoEmbed TipTap node ─────────────────────────────────────────────
+// Outputs <div class="video-embed" data-video-embed><iframe|video .../></div>
+// The .video-embed class in globals.css makes it 16:9 and responsive.
+const VideoEmbed = Node.create({
+  name:  'videoEmbed',
+  group: 'block',
+  atom:  true,
+
+  addAttributes() {
+    return {
+      src:     { default: null },
+      isVideo: { default: false },
+    }
+  },
+
+  parseHTML() {
+    return [{ tag: 'div[data-video-embed]' }]
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const { src, isVideo } = HTMLAttributes
+    const mediaAttrs = isVideo
+      ? { src, controls: 'true',     style: 'position:absolute;top:0;left:0;width:100%;height:100%;border:0' }
+      : { src, frameborder: '0', allowfullscreen: 'true',
+          allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
+          style: 'position:absolute;top:0;left:0;width:100%;height:100%;border:0' }
+    const mediaTag = isVideo ? 'video' : 'iframe'
+    return ['div', mergeAttributes({ 'data-video-embed': '', class: 'video-embed' }), [mediaTag, mediaAttrs]]
+  },
+
+  addCommands() {
+    return {
+      setVideoEmbed:
+        (attrs: { src: string; isVideo: boolean }) =>
+        ({ commands }: { commands: any }) =>
+          commands.insertContent({ type: this.name, attrs }),
+    } as any
+  },
+})
+
+// ── Component ─────────────────────────────────────────────────────────────────
 export default function RichTextEditor({ value, onChange }: Props) {
   const editor = useEditor({
     extensions: [
@@ -35,6 +92,7 @@ export default function RichTextEditor({ value, onChange }: Props) {
       Placeholder.configure({
         placeholder: 'Write the full article here...',
       }),
+      VideoEmbed,
     ],
     content: value,
     onUpdate: ({ editor: ed }) => {
@@ -42,12 +100,10 @@ export default function RichTextEditor({ value, onChange }: Props) {
     },
   })
 
-  // Sync external value changes (e.g. when loading existing post)
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value, { emitUpdate: false })
     }
-    // Only sync when value prop changes, not on every editor update
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
 
@@ -69,6 +125,14 @@ export default function RichTextEditor({ value, onChange }: Props) {
     if (url) {
       editor.chain().focus().setImage({ src: url }).run()
     }
+  }, [editor])
+
+  const addVideo = useCallback(() => {
+    if (!editor) return
+    const url = window.prompt('YouTube, Vimeo, or direct video URL (.mp4 / .webm)')
+    if (!url?.trim()) return
+    const embed = getEmbedInfo(url)
+    ;(editor.chain().focus() as any).setVideoEmbed(embed).run()
   }, [editor])
 
   if (!editor) return null
@@ -140,9 +204,17 @@ export default function RichTextEditor({ value, onChange }: Props) {
             type="button"
             className={styles.toolBtn}
             onClick={addImage}
-            title="Insert image"
+            title="Insert image by URL"
           >
             Img
+          </button>
+          <button
+            type="button"
+            className={styles.toolBtn}
+            onClick={addVideo}
+            title="Embed YouTube / Vimeo / .mp4"
+          >
+            Vid
           </button>
         </div>
 
