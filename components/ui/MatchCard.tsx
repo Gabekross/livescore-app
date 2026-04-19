@@ -27,18 +27,20 @@ interface Team {
 }
 
 export interface MatchCardProps {
-  id:           string
-  status:       MatchStatus
-  match_date:   string
-  match_type?:  string
-  home_score:   number | null
-  away_score:   number | null
-  home_team:    Team
-  away_team:    Team
+  id:              string
+  status:          MatchStatus
+  match_date:      string
+  match_type?:     string
+  home_score:      number | null
+  away_score:      number | null
+  pen_home_score?: number | null
+  pen_away_score?: number | null
+  home_team:       Team
+  away_team:       Team
   /** Optional context label shown below the card (e.g., tournament + group name) */
-  context?:     string
+  context?:        string
   /** If provided the card is a clickable link */
-  href?:        string
+  href?:           string
 }
 
 export default function MatchCard({
@@ -47,6 +49,8 @@ export default function MatchCard({
   match_type,
   home_score,
   away_score,
+  pen_home_score,
+  pen_away_score,
   home_team,
   away_team,
   context,
@@ -56,6 +60,8 @@ export default function MatchCard({
   const isScheduled  = status === 'scheduled'
   const isFriendly   = match_type === 'friendly'
   const hasScore     = home_score !== null && away_score !== null
+  const hasPens      = pen_home_score !== null && pen_home_score !== undefined &&
+                       pen_away_score !== null && pen_away_score !== undefined
   const cardCls      = `${styles.card} ${isLive ? styles.cardLive : ''}`
 
   /* Time display for scheduled matches */
@@ -91,14 +97,21 @@ export default function MatchCard({
         </div>
 
         <div className={styles.scoreBox}>
-          {hasScore ? (
-            <>
-              <span>{home_score}</span>
-              <span className={styles.scoreDash}>&ndash;</span>
-              <span>{away_score}</span>
-            </>
-          ) : (
-            <span className={styles.vsLabel}>vs</span>
+          <div className={styles.scoreRow}>
+            {hasScore ? (
+              <>
+                <span>{home_score}</span>
+                <span className={styles.scoreDash}>&ndash;</span>
+                <span>{away_score}</span>
+              </>
+            ) : (
+              <span className={styles.vsLabel}>vs</span>
+            )}
+          </div>
+          {hasPens && (
+            <div className={styles.pensLabel}>
+              Pens: {pen_home_score} – {pen_away_score}
+            </div>
           )}
         </div>
 
@@ -134,6 +147,11 @@ export default function MatchCard({
         {!hasScore && (
           <div className={styles.mobileVs}>
             {timeLabel ? timeLabel : 'vs'}
+          </div>
+        )}
+        {hasPens && (
+          <div className={styles.pensLabel}>
+            Pens: {pen_home_score} – {pen_away_score}
           </div>
         )}
       </div>

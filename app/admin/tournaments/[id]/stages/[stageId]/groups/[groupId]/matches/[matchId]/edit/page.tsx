@@ -24,8 +24,10 @@ export default function EditMatchPage() {
 
   const [homeTeam, setHomeTeam] = useState<any>(null)
   const [awayTeam, setAwayTeam] = useState<any>(null)
-  const [homeScore, setHomeScore] = useState<number | null>(null)
-  const [awayScore, setAwayScore] = useState<number | null>(null)
+  const [homeScore,    setHomeScore]    = useState<number | null>(null)
+  const [awayScore,    setAwayScore]    = useState<number | null>(null)
+  const [penHomeScore, setPenHomeScore] = useState<number | null>(null)
+  const [penAwayScore, setPenAwayScore] = useState<number | null>(null)
   const [status, setStatus] = useState('scheduled')
   const [homeFormation, setHomeFormation] = useState('')
   const [awayFormation, setAwayFormation] = useState('')
@@ -46,7 +48,7 @@ export default function EditMatchPage() {
       const { data, error } = await supabase
         .from('matches')
         .select(`
-          id, home_score, away_score, status, home_formation, away_formation, home_coach, away_coach,
+          id, home_score, away_score, pen_home_score, pen_away_score, status, home_formation, away_formation, home_coach, away_coach,
           home_team:home_team_id(id, name, coach_name),
           away_team:away_team_id(id, name, coach_name)
         `)
@@ -61,6 +63,8 @@ export default function EditMatchPage() {
         setAwayTeam(away)
         setHomeScore(data.home_score ?? 0)
         setAwayScore(data.away_score ?? 0)
+        setPenHomeScore(data.pen_home_score ?? null)
+        setPenAwayScore(data.pen_away_score ?? null)
         setStatus(data.status ?? 'scheduled')
         setHomeFormation(data.home_formation || '')
         setAwayFormation(data.away_formation || '')
@@ -153,8 +157,10 @@ export default function EditMatchPage() {
     const { error: matchError } = await supabase
       .from('matches')
       .update({
-        home_score: homeScore,
-        away_score: awayScore,
+        home_score:     homeScore,
+        away_score:     awayScore,
+        pen_home_score: penHomeScore,
+        pen_away_score: penAwayScore,
         status,
         home_formation: homeFormation,
         away_formation: awayFormation,
@@ -278,6 +284,39 @@ export default function EditMatchPage() {
               <input type="number" value={awayScore ?? ''} onChange={e => setAwayScore(Number(e.target.value))} className={styles.input} />
             </div>
           </div>
+          {status === 'completed' && (
+            <div className={styles.fieldRow}>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>
+                  Pen Home Score
+                  <span style={{ fontWeight: 400, color: '#888', marginLeft: '0.4rem' }}>(optional)</span>
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  value={penHomeScore ?? ''}
+                  placeholder="–"
+                  onChange={e => setPenHomeScore(e.target.value === '' ? null : Number(e.target.value))}
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.fieldGroup}>
+                <label className={styles.label}>
+                  Pen Away Score
+                  <span style={{ fontWeight: 400, color: '#888', marginLeft: '0.4rem' }}>(optional)</span>
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  value={penAwayScore ?? ''}
+                  placeholder="–"
+                  onChange={e => setPenAwayScore(e.target.value === '' ? null : Number(e.target.value))}
+                  className={styles.input}
+                />
+              </div>
+            </div>
+          )}
+
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Match Status</label>
             <select value={status} onChange={e => setStatus(e.target.value)} className={styles.select}>

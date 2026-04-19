@@ -29,6 +29,8 @@ interface Match {
   match_type:      string
   home_score:      number | null
   away_score:      number | null
+  pen_home_score?: number | null
+  pen_away_score?: number | null
   home_formation?: string
   away_formation?: string
   home_coach?:     string | null
@@ -69,7 +71,7 @@ export default function MatchDetailPage() {
       .from('matches')
       .select(`
         id, match_date, venue, status, match_type,
-        home_score, away_score, home_formation, away_formation,
+        home_score, away_score, pen_home_score, pen_away_score, home_formation, away_formation,
         home_coach, away_coach,
         home_team:home_team_id(id, name, logo_url, coach_name),
         away_team:away_team_id(id, name, logo_url, coach_name)
@@ -211,6 +213,11 @@ export default function MatchDetailPage() {
                   <span className={styles.vsText}>vs</span>
                 )}
               </div>
+              {match.pen_home_score != null && match.pen_away_score != null && (
+                <div className={styles.pensDetail}>
+                  Penalties: {match.pen_home_score} – {match.pen_away_score}
+                </div>
+              )}
               {!active && <StatusBadge status={match.status} matchDate={match.match_date} />}
             </div>
 

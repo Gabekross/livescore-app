@@ -96,9 +96,10 @@
 
 .scoreBox {
   display:          flex;
+  flex-direction:   column;
   align-items:      center;
   justify-content:  center;
-  gap:              var(--sp-2, 0.5rem);
+  gap:              2px;
   background-color: var(--color-surface, #0f0f1e);
   border:           1px solid var(--color-border-subtle, #1c1c35);
   border-radius:    var(--radius-md, 8px);
@@ -109,6 +110,21 @@
   font-variant-numeric: tabular-nums;
   letter-spacing:   1px;
   flex-shrink:      0;
+}
+
+.scoreRow {
+  display:     flex;
+  align-items: center;
+  gap:         var(--sp-2, 0.5rem);
+}
+
+.pensLabel {
+  font-size:    0.6rem;
+  font-weight:  700;
+  letter-spacing: 0.04em;
+  color:        var(--color-accent-light, #3b82f6);
+  white-space:  nowrap;
+  line-height:  1.2;
 }
 
 .scoreDash {

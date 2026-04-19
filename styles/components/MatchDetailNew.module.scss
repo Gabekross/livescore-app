@@ -120,6 +120,14 @@
   font-size: 1.4rem;
 }
 
+.pensDetail {
+  font-size:      0.75rem;
+  font-weight:    700;
+  letter-spacing: 0.04em;
+  color:          var(--color-accent-light, #3b82f6);
+  margin-top:     var(--sp-1, 0.25rem);
+}
+
 .matchMeta {
   font-size:   0.82rem;
   color:       var(--color-text-muted, #7272a0);
