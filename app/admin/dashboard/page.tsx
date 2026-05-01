@@ -10,6 +10,8 @@ import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import UpgradePrompt           from '@/components/admin/UpgradePrompt'
 import PlanBadge               from '@/components/admin/PlanBadge'
 import WelcomeOnboarding       from '@/components/admin/WelcomeOnboarding'
+import OnboardingChecklist     from '@/components/help/OnboardingChecklist'
+import ContextualHelpBanner    from '@/components/help/ContextualHelpBanner'
 import styles                  from '@/styles/components/AdminDashboard.module.scss'
 
 function getPublicSiteUrl(slug: string | null): string | null {
@@ -37,6 +39,8 @@ export default function AdminDashboardPage() {
     <div className={styles.container}>
       <WelcomeOnboarding />
       <UpgradePrompt />
+      <OnboardingChecklist />
+      <ContextualHelpBanner />
       <div className={styles.header}>
         <h2 className={styles.heading}>
           {orgName || 'Admin Dashboard'} <PlanBadge />

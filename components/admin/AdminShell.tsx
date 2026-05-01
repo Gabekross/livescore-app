@@ -4,6 +4,7 @@
 // Org admin layout shell — nav bar with org name, role badge, sign out.
 // Only renders on /admin/* pages (not /platform, not /login).
 
+import { useState }      from 'react'
 import Link              from 'next/link'
 import { usePathname }   from 'next/navigation'
 import { useRouter }     from 'next/navigation'
@@ -11,11 +12,13 @@ import { useAdminOrg }   from '@/contexts/AdminOrgContext'
 import { supabase }      from '@/lib/supabase'
 import PlanBadge         from '@/components/admin/PlanBadge'
 import ExpiredTrialGuard from '@/components/admin/ExpiredTrialGuard'
+import HelpDrawer        from '@/components/help/HelpDrawer'
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router   = useRouter()
   const { orgName, role } = useAdminOrg()
+  const [helpOpen, setHelpOpen] = useState(false)
 
   // On the legacy login page (/admin), render nothing — middleware redirects to /login
   if (pathname === '/admin') {
@@ -113,6 +116,20 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           )}
 
           <button
+            onClick={() => setHelpOpen(true)}
+            style={{
+              padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600,
+              background: 'none', color: '#6b7280', border: '1px solid #e5e7eb',
+              borderRadius: '6px', cursor: 'pointer',
+              transition: 'border-color 0.15s ease, color 0.15s ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#93c5fd'; e.currentTarget.style.color = '#2563eb' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.color = '#6b7280' }}
+          >
+            Help
+          </button>
+
+          <button
             onClick={handleSignOut}
             style={{
               padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600,
@@ -124,6 +141,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </button>
         </div>
       </nav>
+
+      <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
 
       <main style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(0.75rem, 3vw, 1.5rem)' }}>
         {/* Settings page is exempt from expired guard (billing must stay accessible) */}

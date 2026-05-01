@@ -32,6 +32,7 @@ const ORG_NAV_LINKS = [
   { href: '/teams',       label: 'Teams' },
   { href: '/tournaments', label: 'Tournaments' },
   { href: '/news',        label: 'News' },
+  { href: '/help',        label: 'Help' },
   // { href: '/archive', label: 'Archive' }, // hidden until further notice
 ]
 
