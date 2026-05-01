@@ -17,6 +17,7 @@ import Image          from 'next/image'
 import Link            from 'next/link'
 import { usePathname } from 'next/navigation'
 import styles from '@/styles/components/PublicNav.module.scss'
+import PublicSearch from '@/components/ui/PublicSearch'
 
 interface Props {
   siteName:  string
@@ -56,7 +57,8 @@ const HIDE_ON = ['/admin', '/platform', '/login', '/signup', '/forgot-password',
 
 export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const [open,       setOpen]       = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
 
   // Don't render on admin, platform, or auth pages
   if (HIDE_ON.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'))) return null
@@ -109,6 +111,17 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
             </div>
           )}
 
+          {/* Search trigger — org site only */}
+          {isOrgSite && (
+            <button
+              onClick={() => setSearchOpen(true)}
+              className={styles.searchTrigger}
+              aria-label="Search"
+            >
+              Search
+            </button>
+          )}
+
           {/* Hamburger */}
           <button
             className={`${styles.hamburger} ${!isOrgSite ? styles.hamburgerPlatform : ''}`}
@@ -138,9 +151,21 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
         </nav>
       )}
 
+      {/* ── Search overlay ── */}
+      <PublicSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
+
       {/* ── Mobile hamburger drawer ── */}
       {open && (
         <div className={`${styles.mobileMenu} ${!isOrgSite ? styles.mobileMenuPlatform : ''}`} role="menu">
+          {isOrgSite && (
+            <button
+              className={`${styles.mobileLink} ${styles.mobileSearchItem}`}
+              onClick={() => { setOpen(false); setSearchOpen(true) }}
+              role="menuitem"
+            >
+              Search
+            </button>
+          )}
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}

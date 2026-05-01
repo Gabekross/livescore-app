@@ -426,6 +426,7 @@ export default function AdminSettingsPage() {
     } else {
       toast.success('Settings saved!')
       setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
     }
     setSaving(false)
   }

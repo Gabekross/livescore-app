@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/MatchEdit.module.scss'
+import shared from '@/styles/components/AdminShared.module.scss'
 import Link from 'next/link'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
@@ -28,7 +29,8 @@ export default function EditMatchPage() {
   const [awayScore,    setAwayScore]    = useState<number | null>(null)
   const [penHomeScore, setPenHomeScore] = useState<number | null>(null)
   const [penAwayScore, setPenAwayScore] = useState<number | null>(null)
-  const [status, setStatus] = useState('scheduled')
+  const [status,           setStatus]          = useState('scheduled')
+  const [pendingStatus,    setPendingStatus]   = useState<string | null>(null)
   const [homeFormation, setHomeFormation] = useState('')
   const [awayFormation, setAwayFormation] = useState('')
   const [homeCoach, setHomeCoach] = useState('')
@@ -319,12 +321,46 @@ export default function EditMatchPage() {
 
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Match Status</label>
-            <select value={status} onChange={e => setStatus(e.target.value)} className={styles.select}>
+            <select
+              value={status}
+              onChange={e => {
+                const next = e.target.value
+                // Require inline confirmation before completing a live/halftime match
+                if ((status === 'live' || status === 'halftime') && next === 'completed') {
+                  setPendingStatus(next)
+                } else {
+                  setStatus(next)
+                }
+              }}
+              className={styles.select}
+            >
               <option value="scheduled">Scheduled</option>
               <option value="live">Live</option>
               <option value="halftime">Halftime</option>
               <option value="completed">Completed</option>
             </select>
+
+            {pendingStatus === 'completed' && (
+              <div className={shared.statusConfirm}>
+                <span className={shared.statusConfirmText}>
+                  Complete this match? This finalises the score and updates standings.
+                </span>
+                <button
+                  type="button"
+                  className={shared.statusConfirmYes}
+                  onClick={() => { setStatus('completed'); setPendingStatus(null) }}
+                >
+                  Yes, complete
+                </button>
+                <button
+                  type="button"
+                  className={shared.statusConfirmNo}
+                  onClick={() => setPendingStatus(null)}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

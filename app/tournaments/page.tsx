@@ -9,6 +9,7 @@ import EmptyState                     from '@/components/ui/EmptyState'
 import TournamentsGrid                from '@/components/ui/TournamentsGrid'
 import type { TournamentItem }        from '@/components/ui/TournamentsGrid'
 import styles                         from '@/styles/components/TournamentsPage.module.scss'
+import BackToTop                       from '@/components/ui/BackToTop'
 
 export const revalidate = 60
 
@@ -56,6 +57,7 @@ export default async function TournamentsPage() {
           <TournamentsGrid tournaments={tournaments} />
         )}
       </div>
+      <BackToTop />
     </div>
   )
 }

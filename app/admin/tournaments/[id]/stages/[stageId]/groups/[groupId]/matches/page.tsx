@@ -8,6 +8,7 @@ import Link from 'next/link'
 import toast from 'react-hot-toast'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
+import TournamentProgress from '@/components/admin/TournamentProgress'
 
 interface Match {
   id: string
@@ -80,6 +81,8 @@ export default function MatchListPage() {
       <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
         &#8592; Back to Stages
       </Link>
+
+      <TournamentProgress tournamentId={String(id)} stageId={String(stageId)} groupId={String(groupId)} currentStep="matches" />
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>

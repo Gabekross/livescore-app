@@ -95,12 +95,28 @@ export default function AdminNewsPage() {
       {loading ? (
         <p style={{ color: '#6b7280' }}>Loading posts…</p>
       ) : posts.length === 0 ? (
-        <p style={{ color: '#6b7280' }}>
-          No posts yet.{' '}
-          <Link href="/admin/news/new" style={{ color: '#2563eb', fontWeight: 600 }}>
-            Create the first one →
+        <div style={{
+          padding: '3rem 2rem', textAlign: 'center',
+          background: '#f9fafb', borderRadius: '10px',
+          border: '1px dashed #e5e7eb',
+        }}>
+          <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#6b7280', marginBottom: '0.4rem' }}>
+            No articles yet
+          </p>
+          <p style={{ fontSize: '0.82rem', color: '#9ca3af', marginBottom: '1.25rem' }}>
+            Write your first article to keep your audience informed and engaged.
+          </p>
+          <Link
+            href="/admin/news/new"
+            style={{
+              display: 'inline-block', padding: '0.5rem 1.1rem',
+              background: '#2563eb', color: '#fff', borderRadius: '8px',
+              fontSize: '0.85rem', fontWeight: 600, textDecoration: 'none',
+            }}
+          >
+            Write First Article
           </Link>
-        </p>
+        </div>
       ) : (
         <div className={styles.tableWrapper}>
         <table className={styles.table}>

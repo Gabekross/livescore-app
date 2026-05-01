@@ -1,9 +1,5 @@
 'use client'
 
-// components/admin/AdminShell.tsx
-// Org admin layout shell — nav bar with org name, role badge, sign out.
-// Only renders on /admin/* pages (not /platform, not /login).
-
 import { useState }      from 'react'
 import Link              from 'next/link'
 import { usePathname }   from 'next/navigation'
@@ -13,6 +9,8 @@ import { supabase }      from '@/lib/supabase'
 import PlanBadge         from '@/components/admin/PlanBadge'
 import ExpiredTrialGuard from '@/components/admin/ExpiredTrialGuard'
 import HelpDrawer        from '@/components/help/HelpDrawer'
+import AdminBreadcrumb   from '@/components/admin/AdminBreadcrumb'
+import styles            from '@/styles/components/AdminShell.module.scss'
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
@@ -20,7 +18,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const { orgName, role } = useAdminOrg()
   const [helpOpen, setHelpOpen] = useState(false)
 
-  // On the legacy login page (/admin), render nothing — middleware redirects to /login
   if (pathname === '/admin') {
     return <>{children}</>
   }
@@ -31,121 +28,67 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f5f8' }}>
-      <nav style={{
-        padding:        '0.5rem 1.5rem',
-        minHeight:      '52px',
-        background:     '#fff',
-        display:        'flex',
-        alignItems:     'center',
-        justifyContent: 'space-between',
-        flexWrap:       'wrap',
-        borderBottom:   '1px solid #e5e7eb',
-        gap:            '0.5rem 1rem',
-      }}>
+    <div className={styles.shell}>
+      <nav className={styles.nav}>
         {/* Left: brand + org name + nav links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', flexWrap: 'wrap' }}>
+        <div className={styles.navLeft}>
           <Link
             href={role === 'match_operator' ? '/admin/operator' : '/admin/dashboard'}
-            style={{
-              color: '#1f2937', fontSize: '0.92rem', fontWeight: 800,
-              textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem',
-            }}
+            className={styles.brand}
           >
-            <span style={{ fontSize: '1rem' }}>&#9917;</span>
+            <span aria-hidden="true">&#9917;</span>
             {orgName || 'Admin'}
           </Link>
           <PlanBadge />
 
-          {/* Quick-access nav links for org admins */}
           {(role === 'org_admin' || role === 'power_admin') && (
             <>
-              <Link href="/admin/sponsors" style={{
-                fontSize: '0.78rem', fontWeight: 600, color: '#6b7280',
-                textDecoration: 'none', padding: '3px 0',
-                borderBottom: pathname?.startsWith('/admin/sponsors') ? '2px solid #2563eb' : '2px solid transparent',
-                transition: 'color 0.15s ease',
-              }}>
+              <Link
+                href="/admin/sponsors"
+                className={`${styles.navLink} ${pathname?.startsWith('/admin/sponsors') ? styles.navLinkActive : ''}`}
+              >
                 Sponsors
               </Link>
-              <Link href="/admin/settings" style={{
-                fontSize: '0.78rem', fontWeight: 600, color: '#6b7280',
-                textDecoration: 'none', padding: '3px 0',
-                borderBottom: pathname?.startsWith('/admin/settings') ? '2px solid #2563eb' : '2px solid transparent',
-                transition: 'color 0.15s ease',
-              }}>
+              <Link
+                href="/admin/settings"
+                className={`${styles.navLink} ${pathname?.startsWith('/admin/settings') ? styles.navLinkActive : ''}`}
+              >
                 Settings
               </Link>
             </>
           )}
         </div>
 
-        {/* Right: role badge + sign out */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+        {/* Right: role badge + help + sign out */}
+        <div className={styles.navRight}>
           {role === 'power_admin' && (
-            <Link
-              href="/platform"
-              style={{
-                fontSize: '0.72rem', fontWeight: 600, color: '#d97706',
-                background: 'rgba(245,158,11,0.08)', padding: '3px 8px',
-                borderRadius: '4px', textDecoration: 'none',
-              }}
-            >
+            <Link href="/platform" className={styles.badgePlatform}>
               Platform Admin
             </Link>
           )}
 
           {role === 'org_admin' && (
-            <span style={{
-              fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase',
-              letterSpacing: '0.04em', color: '#6366f1',
-              background: 'rgba(99,102,241,0.08)', padding: '3px 8px', borderRadius: '4px',
-            }}>
-              Admin
-            </span>
+            <span className={styles.badgeAdmin}>Admin</span>
           )}
 
           {role === 'match_operator' && (
-            <span style={{
-              fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase',
-              letterSpacing: '0.04em', color: '#059669',
-              background: 'rgba(5,150,105,0.08)', padding: '3px 8px', borderRadius: '4px',
-            }}>
-              Operator
-            </span>
+            <span className={styles.badgeOperator}>Operator</span>
           )}
 
-          <button
-            onClick={() => setHelpOpen(true)}
-            style={{
-              padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600,
-              background: 'none', color: '#6b7280', border: '1px solid #e5e7eb',
-              borderRadius: '6px', cursor: 'pointer',
-              transition: 'border-color 0.15s ease, color 0.15s ease',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#93c5fd'; e.currentTarget.style.color = '#2563eb' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.color = '#6b7280' }}
-          >
+          <button onClick={() => setHelpOpen(true)} className={styles.helpBtn}>
             Help
           </button>
 
-          <button
-            onClick={handleSignOut}
-            style={{
-              padding: '4px 10px', fontSize: '0.78rem', fontWeight: 600,
-              background: '#f3f4f6', color: '#6b7280', border: '1px solid #e5e7eb',
-              borderRadius: '6px', cursor: 'pointer',
-            }}
-          >
+          <button onClick={handleSignOut} className={styles.signOutBtn}>
             Sign Out
           </button>
         </div>
       </nav>
 
       <HelpDrawer open={helpOpen} onClose={() => setHelpOpen(false)} />
+      <AdminBreadcrumb />
 
-      <main style={{ maxWidth: '1100px', margin: '0 auto', padding: 'clamp(0.75rem, 3vw, 1.5rem)' }}>
-        {/* Settings page is exempt from expired guard (billing must stay accessible) */}
+      <main className={styles.main}>
         {pathname?.startsWith('/admin/settings') ? (
           children
         ) : (

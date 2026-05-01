@@ -20,6 +20,7 @@ import { MATCH_STATUS_OPTIONS } from '@/lib/utils/match'
 import Link                     from 'next/link'
 import toast                    from 'react-hot-toast'
 import styles                   from '@/styles/components/Form.module.scss'
+import shared                   from '@/styles/components/AdminShared.module.scss'
 
 interface Team {
   id:        string
@@ -41,6 +42,7 @@ export default function NewFriendlyMatchPage() {
   const [homeScore, setHomeScore] = useState<string>('')
   const [awayScore, setAwayScore] = useState<string>('')
   const [loading,   setLoading]   = useState(false)
+  const [errors,    setErrors]    = useState<Record<string, string>>({})
 
   useEffect(() => {
     if (!orgId) return
@@ -52,23 +54,22 @@ export default function NewFriendlyMatchPage() {
       .then(({ data }) => setTeams(data || []))
   }, [orgId])
 
+  const validate = (): boolean => {
+    const next: Record<string, string> = {}
+    if (!homeTeam)                           next.homeTeam  = 'Select a home team'
+    if (!awayTeam)                           next.awayTeam  = 'Select an away team'
+    if (homeTeam && awayTeam && homeTeam === awayTeam)
+                                             next.awayTeam  = 'Away team must differ from home team'
+    if (!matchDate)                          next.matchDate = 'Match date is required'
+    if (status !== 'scheduled' && homeScore === '') next.homeScore = 'Score required for non-scheduled matches'
+    if (status !== 'scheduled' && awayScore === '') next.awayScore = 'Score required for non-scheduled matches'
+    setErrors(next)
+    return Object.keys(next).length === 0
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    if (!homeTeam || !awayTeam || homeTeam === awayTeam) {
-      toast.error('Please select two different teams')
-      return
-    }
-    if (!matchDate) {
-      toast.error('Match date is required')
-      return
-    }
-
-    // Validate scores are provided when status is not scheduled
-    if (status !== 'scheduled' && (homeScore === '' || awayScore === '')) {
-      toast.error('Please enter scores for non-scheduled matches')
-      return
-    }
+    if (!validate()) return
 
     setLoading(true)
 
@@ -116,26 +117,32 @@ export default function NewFriendlyMatchPage() {
 
           <div className={styles.fieldRow}>
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>
-                Home Team *
-                <select value={homeTeam} onChange={(e) => setHomeTeam(e.target.value)} className={styles.input} required>
-                  <option value="">Select Home Team</option>
-                  {teams.map((t) => (
-                    <option key={t.id} value={t.id}>{t.name}</option>
-                  ))}
-                </select>
-              </label>
+              <label className={styles.label}>Home Team *</label>
+              <select
+                value={homeTeam}
+                onChange={(e) => { setHomeTeam(e.target.value); setErrors(p => ({ ...p, homeTeam: '' })) }}
+                className={`${styles.input} ${errors.homeTeam ? shared.inputInvalid : ''}`}
+              >
+                <option value="">Select Home Team</option>
+                {teams.map((t) => (
+                  <option key={t.id} value={t.id}>{t.name}</option>
+                ))}
+              </select>
+              {errors.homeTeam && <span className={shared.fieldError}>{errors.homeTeam}</span>}
             </div>
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>
-                Away Team *
-                <select value={awayTeam} onChange={(e) => setAwayTeam(e.target.value)} className={styles.input} required>
-                  <option value="">Select Away Team</option>
-                  {teams.map((t) => (
-                    <option key={t.id} value={t.id} disabled={t.id === homeTeam}>{t.name}</option>
-                  ))}
-                </select>
-              </label>
+              <label className={styles.label}>Away Team *</label>
+              <select
+                value={awayTeam}
+                onChange={(e) => { setAwayTeam(e.target.value); setErrors(p => ({ ...p, awayTeam: '' })) }}
+                className={`${styles.input} ${errors.awayTeam ? shared.inputInvalid : ''}`}
+              >
+                <option value="">Select Away Team</option>
+                {teams.map((t) => (
+                  <option key={t.id} value={t.id} disabled={t.id === homeTeam}>{t.name}</option>
+                ))}
+              </select>
+              {errors.awayTeam && <span className={shared.fieldError}>{errors.awayTeam}</span>}
             </div>
           </div>
         </div>
@@ -145,16 +152,14 @@ export default function NewFriendlyMatchPage() {
 
           <div className={styles.fieldRow}>
             <div className={styles.fieldGroup}>
-              <label className={styles.label}>
-                Match Date &amp; Time *
-                <input
-                  type="datetime-local"
-                  value={matchDate}
-                  onChange={(e) => setMatchDate(e.target.value)}
-                  className={styles.input}
-                  required
-                />
-              </label>
+              <label className={styles.label}>Match Date &amp; Time *</label>
+              <input
+                type="datetime-local"
+                value={matchDate}
+                onChange={(e) => { setMatchDate(e.target.value); setErrors(p => ({ ...p, matchDate: '' })) }}
+                className={`${styles.input} ${errors.matchDate ? shared.inputInvalid : ''}`}
+              />
+              {errors.matchDate && <span className={shared.fieldError}>{errors.matchDate}</span>}
             </div>
             <div className={styles.fieldGroup}>
               <label className={styles.label}>

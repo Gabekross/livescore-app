@@ -96,13 +96,29 @@ export default function AdminDashboardPage() {
       {/* ── Content & Site ───────────────────────────────────── */}
       <div className={styles.sectionLabel}>Content &amp; Site</div>
       <div className={styles.grid}>
-        <Link href="/admin/news" className={styles.card}>
-          News &amp; Articles {!plan?.canPublishNews && <span style={{ fontSize: '0.65rem', color: '#60a5fa', fontWeight: 700 }}>PRO</span>}
-          <span className={styles.hint}>Publish and manage posts</span>
+        <Link
+          href="/admin/news"
+          className={plan?.canPublishNews ? styles.card : styles.cardPro}
+        >
+          News &amp; Articles
+          {!plan?.canPublishNews && <span className={styles.proBadge}>PRO</span>}
+          <span className={styles.hint}>
+            {plan?.canPublishNews
+              ? 'Publish and manage posts'
+              : 'Publish articles to engage your audience'}
+          </span>
         </Link>
-        <Link href="/admin/media" className={styles.card}>
-          Media Library {!plan?.canManageMedia && <span style={{ fontSize: '0.65rem', color: '#60a5fa', fontWeight: 700 }}>PRO</span>}
-          <span className={styles.hint}>Images and videos</span>
+        <Link
+          href="/admin/media"
+          className={plan?.canManageMedia ? styles.card : styles.cardPro}
+        >
+          Media Library
+          {!plan?.canManageMedia && <span className={styles.proBadge}>PRO</span>}
+          <span className={styles.hint}>
+            {plan?.canManageMedia
+              ? 'Images and videos'
+              : 'Upload and manage photos and videos'}
+          </span>
         </Link>
         <Link href="/admin/settings" className={styles.card}>
           Site Settings
@@ -113,9 +129,17 @@ export default function AdminDashboardPage() {
       {/* ── People & Access ────────────────────────────────────── */}
       <div className={styles.sectionLabel}>People &amp; Access</div>
       <div className={styles.grid}>
-        <Link href="/admin/operators" className={styles.card}>
-          Match Operators {!plan?.canUseOperators && <span style={{ fontSize: '0.65rem', color: '#60a5fa', fontWeight: 700 }}>PRO</span>}
-          <span className={styles.hint}>Game-day score updaters</span>
+        <Link
+          href="/admin/operators"
+          className={plan?.canUseOperators ? styles.card : styles.cardPro}
+        >
+          Match Operators
+          {!plan?.canUseOperators && <span className={styles.proBadge}>PRO</span>}
+          <span className={styles.hint}>
+            {plan?.canUseOperators
+              ? 'Game-day score updaters'
+              : 'Let your team update live scores on match day'}
+          </span>
         </Link>
         <Link href="/admin/operator" className={styles.card}>
           Operator View

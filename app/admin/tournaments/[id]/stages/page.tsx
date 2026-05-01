@@ -8,6 +8,7 @@ import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/StageList.module.scss'
+import TournamentProgress from '@/components/admin/TournamentProgress'
 
 interface Stage {
   id: string
@@ -206,6 +207,8 @@ export default function TournamentStagesPage() {
       <Link href="/admin/tournaments" className={styles.backButton}>
         &#8592; Back to Tournaments
       </Link>
+
+      <TournamentProgress tournamentId={String(id)} currentStep="stages" />
 
       <div className={styles.headerRow}>
         <h1 className={styles.heading}>{tournament?.name ?? 'Tournament'}</h1>

@@ -7,6 +7,7 @@ import Link from 'next/link'
 import styles from '@/styles/components/StageList.module.scss'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
+import TournamentProgress from '@/components/admin/TournamentProgress'
 
 interface Group {
   id: string
@@ -41,6 +42,8 @@ export default function GroupListPage() {
       <Link href={`/admin/tournaments/${id}/stages`} className={styles.backButton}>
         &#8592; Back to Stages
       </Link>
+
+      <TournamentProgress tournamentId={String(id)} stageId={String(stageId)} currentStep="groups" />
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h1 className={styles.heading}>Groups in This Stage</h1>

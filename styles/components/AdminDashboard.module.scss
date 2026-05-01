@@ -72,6 +72,38 @@
   font-weight: 400;
 }
 
+/* ── Pro-locked card variant ────────────────────────────── */
+.cardPro {
+  @extend .card;
+  border-style:     dashed;
+  border-color:     #bfdbfe;
+  background:       #f8fbff;
+  opacity:          0.85;
+  cursor:           pointer;
+
+  &:hover {
+    opacity:      1;
+    border-color: #93c5fd;
+    background:   #eff6ff;
+    box-shadow:   0 2px 12px rgba(37, 99, 235, 0.1);
+  }
+}
+
+.proBadge {
+  display:        inline-flex;
+  align-items:    center;
+  padding:        1px 6px;
+  background:     rgba(37, 99, 235, 0.1);
+  border:         1px solid rgba(37, 99, 235, 0.25);
+  border-radius:  4px;
+  font-size:      0.62rem;
+  font-weight:    800;
+  color:          #2563eb;
+  letter-spacing: 0.04em;
+  margin-left:    0.35rem;
+  vertical-align: middle;
+}
+
 /* ── Power admin badge ──────────────────────────────────── */
 .platformSection {
   margin-top:    2.5rem;

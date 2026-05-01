@@ -10,6 +10,7 @@ import { useTeamLimit } from '@/hooks/useTeamLimit'
 import UpgradeModal  from '@/components/admin/UpgradeModal'
 import toast         from 'react-hot-toast'
 import styles        from '@/styles/components/TeamForm.module.scss'
+import shared        from '@/styles/components/AdminShared.module.scss'
 import { POSITIONS } from '@/lib/constants/positions'
 
 interface PlayerInput {
@@ -24,6 +25,7 @@ export default function CreateTeamPage() {
   const orgGate = useAdminOrgGate()
   const { canAddTeam, teamCount, teamLimit } = useTeamLimit()
 
+  const [nameError,          setNameError]          = useState('')
   const [name,               setName]               = useState('')
   const [coachName,          setCoachName]          = useState('')
   const [logoUrl,            setLogoUrl]            = useState('')
@@ -71,7 +73,7 @@ export default function CreateTeamPage() {
     e.preventDefault()
 
     if (!name.trim()) {
-      toast.error('Team name is required')
+      setNameError('Team name is required')
       return
     }
 
@@ -171,7 +173,15 @@ export default function CreateTeamPage() {
 
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Team Name *</label>
-            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className={styles.input} required placeholder="e.g. FC United" />
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => { setName(e.target.value); if (e.target.value.trim()) setNameError('') }}
+              onBlur={() => !name.trim() && setNameError('Team name is required')}
+              className={`${styles.input} ${nameError ? shared.inputInvalid : ''}`}
+              placeholder="e.g. FC United"
+            />
+            {nameError && <span className={shared.fieldError}>{nameError}</span>}
           </div>
 
           <div className={styles.fieldGroup}>

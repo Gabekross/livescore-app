@@ -10,6 +10,7 @@ import { getOrganizationIdServer }    from '@/lib/org-server'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import EmptyState                     from '@/components/ui/EmptyState'
 import styles                         from '@/styles/components/NewsPage.module.scss'
+import BackToTop                       from '@/components/ui/BackToTop'
 
 export const revalidate = 60
 
@@ -141,6 +142,7 @@ export default async function NewsPage() {
           </>
         )}
       </div>
+      <BackToTop />
     </div>
   )
 }

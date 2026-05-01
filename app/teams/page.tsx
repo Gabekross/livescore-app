@@ -6,6 +6,7 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
 import TeamsGrid                      from '@/components/ui/TeamsGrid'
 import styles                         from '@/styles/components/TeamsPage.module.scss'
+import BackToTop                       from '@/components/ui/BackToTop'
 
 export const revalidate = 60
 
@@ -44,6 +45,7 @@ export default async function TeamsPage() {
       <div className={styles.inner}>
         <TeamsGrid teams={teams} />
       </div>
+      <BackToTop />
     </div>
   )
 }
