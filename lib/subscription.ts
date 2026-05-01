@@ -40,7 +40,7 @@ export interface PlanAccess {
 
 /* ── Feature matrix ─────────────────────────────────────────── */
 
-const FREE_TEAM_LIMIT = 8
+const FREE_TEAM_LIMIT = 4
 
 function buildAccess(sub: Subscription | null): PlanAccess {
   const effective = computeEffectivePlan(sub)

@@ -8,7 +8,7 @@
 //   NEXT_PUBLIC_PRICE_PRO_MONTHLY=14.99
 //   NEXT_PUBLIC_PRICE_PRO_YEARLY=120
 //   NEXT_PUBLIC_TRIAL_DAYS=7
-//   NEXT_PUBLIC_FREE_TEAM_LIMIT=8
+//   NEXT_PUBLIC_FREE_TEAM_LIMIT=4
 //
 // Stripe price IDs (server-side):
 //   STRIPE_PRICE_PRO_WEEKLY=price_xxx
@@ -85,7 +85,7 @@ export const PRO_TIERS: PricingTier[] = [
 export const FREE_PLAN = {
   name:      'Basic',
   trialDays: envNum('NEXT_PUBLIC_TRIAL_DAYS', 7),
-  teamLimit: envNum('NEXT_PUBLIC_FREE_TEAM_LIMIT', 8),
+  teamLimit: envNum('NEXT_PUBLIC_FREE_TEAM_LIMIT', 4),
   tagline:   'Everything you need to get started',
   cta:       'Start Basic Trial',
 }
