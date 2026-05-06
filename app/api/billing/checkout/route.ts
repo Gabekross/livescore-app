@@ -37,19 +37,22 @@ export async function POST(request: Request) {
     const admin = createAdminSupabaseClient()
     const { data: sub } = await admin
       .from('subscriptions')
-      .select('stripe_customer_id, plan, status')
+      .select('stripe_customer_id, stripe_subscription_id, plan, status')
       .eq('organization_id', orgId)
       .single()
 
-    if (sub?.plan === 'pro' && sub?.status === 'active') {
-      return NextResponse.json({ error: 'Already on Pro plan' }, { status: 400 })
+    // If already on Pro with an active subscription, use /api/billing/switch for interval changes
+    if (sub?.plan === 'pro' && sub?.status === 'active' && sub?.stripe_subscription_id) {
+      return NextResponse.json(
+        { error: 'Already on Pro — use the switch endpoint to change billing interval', code: 'USE_SWITCH' },
+        { status: 400 }
+      )
     }
 
     const stripe = getStripe()
     let customerId = sub?.stripe_customer_id
 
     if (!customerId) {
-      // Get org name for the customer record
       const { data: org } = await admin
         .from('organizations')
         .select('name, slug')
@@ -58,17 +61,16 @@ export async function POST(request: Request) {
 
       const customer = await stripe.customers.create({
         email: user.email,
-        name: org?.name || undefined,
+        name:  org?.name || undefined,
         metadata: { organization_id: orgId, org_slug: org?.slug || '' },
       })
 
       customerId = customer.id
 
-      // Save Stripe customer ID
+      // Upsert so it's saved even if no subscription row exists yet
       await admin
         .from('subscriptions')
-        .update({ stripe_customer_id: customerId })
-        .eq('organization_id', orgId)
+        .upsert({ organization_id: orgId, stripe_customer_id: customerId }, { onConflict: 'organization_id' })
     }
 
     // 4. Parse billing interval preference (weekly, monthly, yearly)

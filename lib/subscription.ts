@@ -2,6 +2,8 @@
 // Shared subscription types and plan computation — safe for client AND server.
 // For server-side data fetching, use lib/subscription-server.ts instead.
 
+import { FREE_PLAN } from '@/config/pricing'
+
 /* ── Types ──────────────────────────────────────────────────── */
 
 export type PlanTier = 'free' | 'pro'
@@ -21,48 +23,57 @@ export interface Subscription {
   stripe_customer_id:     string | null
   stripe_subscription_id: string | null
   canceled_at:            string | null
+  // True when user cancelled via portal but access continues until period end
+  cancel_at_period_end:   boolean
   created_at:             string
   updated_at:             string
 }
 
 export interface PlanAccess {
-  effectivePlan:     EffectivePlan
-  subscription:      Subscription | null
-  isTrialing:        boolean
-  trialDaysLeft:     number
-  teamLimit:         number          // 8 for free, Infinity for pro
-  canPublishNews:    boolean
-  canManageMedia:    boolean
-  canUseOperators:   boolean
-  canCustomBrand:    boolean
-  needsUpgrade:      boolean         // true when expired or at limit
+  effectivePlan:        EffectivePlan
+  subscription:         Subscription | null
+  isTrialing:           boolean
+  trialDaysLeft:        number
+  teamLimit:            number
+  canPublishNews:       boolean
+  canManageMedia:       boolean
+  canUseOperators:      boolean
+  canCustomBrand:       boolean
+  needsUpgrade:         boolean   // true when expired or at limit
+  pendingCancel:        boolean   // true when cancel_at_period_end = true
 }
 
 /* ── Feature matrix ─────────────────────────────────────────── */
 
-const FREE_TEAM_LIMIT = 4
-
 function buildAccess(sub: Subscription | null): PlanAccess {
   const effective = computeEffectivePlan(sub)
+
+  // Trialing: trial is active (not expired)
   const isTrialing = sub?.status === 'trialing' && effective !== 'expired'
+
   const trialDaysLeft = isTrialing && sub
     ? Math.max(0, Math.ceil((new Date(sub.trial_ends_at).getTime() - Date.now()) / 86_400_000))
     : 0
 
-  const isPro = effective === 'pro'
+  // Pro access = active pro OR active trial OR past_due grace period
+  const isPro     = effective === 'pro'
   const isExpired = effective === 'expired'
 
+  // Team limit: single source of truth from config/pricing.ts env var
+  const teamLimit = isPro ? Infinity : FREE_PLAN.teamLimit
+
   return {
-    effectivePlan:  effective,
-    subscription:   sub,
+    effectivePlan:   effective,
+    subscription:    sub,
     isTrialing,
     trialDaysLeft,
-    teamLimit:      isPro ? Infinity : FREE_TEAM_LIMIT,
-    canPublishNews: isPro,
-    canManageMedia: isPro,
+    teamLimit,
+    canPublishNews:  isPro,
+    canManageMedia:  isPro,
     canUseOperators: isPro,
-    canCustomBrand: isPro,
-    needsUpgrade:   isExpired,
+    canCustomBrand:  isPro,
+    needsUpgrade:    isExpired,
+    pendingCancel:   sub?.cancel_at_period_end ?? false,
   }
 }
 
@@ -71,16 +82,19 @@ function buildAccess(sub: Subscription | null): PlanAccess {
 function computeEffectivePlan(sub: Subscription | null): EffectivePlan {
   if (!sub) return 'free'
 
-  // Active pro
+  // Active pro (including cancel_at_period_end — still active until period ends)
   if (sub.plan === 'pro' && sub.status === 'active') return 'pro'
 
-  // Trialing — check if trial still valid
+  // Past due: Stripe is retrying payment — keep Pro during grace period
+  if (sub.plan === 'pro' && sub.status === 'past_due') return 'pro'
+
+  // Trialing — give full Pro access during trial so users can evaluate features
   if (sub.status === 'trialing') {
-    return new Date(sub.trial_ends_at) >= new Date() ? 'free' : 'expired'
+    return new Date(sub.trial_ends_at) >= new Date() ? 'pro' : 'expired'
   }
 
-  // Past due, canceled, expired
-  if (['past_due', 'canceled', 'expired'].includes(sub.status)) return 'expired'
+  // Canceled / expired
+  if (['canceled', 'expired'].includes(sub.status)) return 'expired'
 
   return 'free'
 }
