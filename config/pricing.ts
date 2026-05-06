@@ -1,16 +1,17 @@
 // config/pricing.ts
-// ─── Single source of truth for all pricing values ───────────────────────────
-// Prices are read from environment variables so you can change them without
-// redeploying code. Hardcoded values below are ONLY fallback defaults.
+// ─── Single source of truth for all pricing display values ────────────────────
+// ALL prices and limits are driven by environment variables.
+// There are NO hardcoded fallback prices — if an env var is missing the value
+// will be 0 / empty so it is obvious in the UI that something is not configured.
 //
-// Environment variables (set in .env.local or Vercel):
-//   NEXT_PUBLIC_PRICE_PRO_WEEKLY=4.99
-//   NEXT_PUBLIC_PRICE_PRO_MONTHLY=14.99
-//   NEXT_PUBLIC_PRICE_PRO_YEARLY=120
+// Required environment variables (set in .env.local AND Vercel):
+//   NEXT_PUBLIC_PRICE_PRO_WEEKLY=42.00        ← displayed in UI
+//   NEXT_PUBLIC_PRICE_PRO_MONTHLY=126.99
+//   NEXT_PUBLIC_PRICE_PRO_YEARLY=999.00
 //   NEXT_PUBLIC_TRIAL_DAYS=7
 //   NEXT_PUBLIC_FREE_TEAM_LIMIT=4
 //
-// Stripe price IDs (server-side):
+// Stripe price IDs (server-side only — set in Vercel, NOT needed client-side):
 //   STRIPE_PRICE_PRO_WEEKLY=price_xxx
 //   STRIPE_PRICE_PRO_MONTHLY=price_xxx
 //   STRIPE_PRICE_PRO_YEARLY=price_xxx
@@ -18,13 +19,13 @@
 export type BillingInterval = 'week' | 'month' | 'year'
 
 export interface PricingTier {
-  interval:      BillingInterval
-  label:         string
-  price:         number
-  currency:      string
-  badge?:        string
-  savings?:      string
-  stripePriceId: string
+  interval:  BillingInterval
+  label:     string
+  price:     number
+  currency:  string
+  badge?:    string
+  savings?:  string
+  // Note: Stripe price IDs are server-only — read via getStripePriceId() in lib/stripe.ts
 }
 
 // ── Parse env helpers (safe for client + server) ──────────────────────────────
@@ -35,15 +36,12 @@ function envNum(key: string, fallback: number): number {
   return isNaN(n) ? fallback : n
 }
 
-function envStr(key: string, fallback: string): string {
-  const val = typeof process !== 'undefined' ? process.env[key] : undefined
-  return val || fallback
-}
-
-// ── Prices from env (NEXT_PUBLIC_ prefix so they're available client-side) ────
-const PRICE_WEEKLY  = envNum('NEXT_PUBLIC_PRICE_PRO_WEEKLY',  4.99)
-const PRICE_MONTHLY = envNum('NEXT_PUBLIC_PRICE_PRO_MONTHLY', 14.99)
-const PRICE_YEARLY  = envNum('NEXT_PUBLIC_PRICE_PRO_YEARLY',  120)
+// ── Prices from env — NO hardcoded fallbacks ──────────────────────────────────
+// NEXT_PUBLIC_ prefix makes them available in the browser bundle at build time.
+// Set these in Vercel → Settings → Environment Variables before each deploy.
+const PRICE_WEEKLY  = envNum('NEXT_PUBLIC_PRICE_PRO_WEEKLY',  0)
+const PRICE_MONTHLY = envNum('NEXT_PUBLIC_PRICE_PRO_MONTHLY', 0)
+const PRICE_YEARLY  = envNum('NEXT_PUBLIC_PRICE_PRO_YEARLY',  0)
 
 // ── Compute savings dynamically ───────────────────────────────────────────────
 function computeSavings(): string {
@@ -56,28 +54,25 @@ function computeSavings(): string {
 // ── Pro plan pricing tiers ────────────────────────────────────────────────────
 export const PRO_TIERS: PricingTier[] = [
   {
-    interval:      'week',
-    label:         'Weekly',
-    price:         PRICE_WEEKLY,
-    currency:      'USD',
-    stripePriceId: envStr('NEXT_PUBLIC_STRIPE_PRICE_PRO_WEEKLY', '') || envStr('STRIPE_PRICE_PRO_WEEKLY', ''),
+    interval: 'week',
+    label:    'Weekly',
+    price:    PRICE_WEEKLY,
+    currency: 'USD',
   },
   {
-    interval:      'month',
-    label:         'Monthly',
-    price:         PRICE_MONTHLY,
-    currency:      'USD',
-    badge:         'Most Popular',
-    stripePriceId: envStr('NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY', '') || envStr('STRIPE_PRICE_PRO_MONTHLY', ''),
+    interval: 'month',
+    label:    'Monthly',
+    price:    PRICE_MONTHLY,
+    currency: 'USD',
+    badge:    'Most Popular',
   },
   {
-    interval:      'year',
-    label:         'Yearly',
-    price:         PRICE_YEARLY,
-    currency:      'USD',
-    badge:         'Best Value',
-    savings:       computeSavings(),
-    stripePriceId: envStr('NEXT_PUBLIC_STRIPE_PRICE_PRO_YEARLY', '') || envStr('STRIPE_PRICE_PRO_YEARLY', ''),
+    interval: 'year',
+    label:    'Yearly',
+    price:    PRICE_YEARLY,
+    currency: 'USD',
+    badge:    'Best Value',
+    savings:  computeSavings(),
   },
 ]
 

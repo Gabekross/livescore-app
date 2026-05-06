@@ -3,7 +3,6 @@
 // Price IDs are sourced from config/pricing.ts (single source of truth).
 
 import Stripe from 'stripe'
-import { PRO_TIERS, getTierByInterval } from '@/config/pricing'
 import type { BillingInterval } from '@/config/pricing'
 
 let _stripe: Stripe | null = null
@@ -17,15 +16,14 @@ export function getStripe(): Stripe {
   return _stripe
 }
 
-// Legacy export for backwards compat — now delegates to config
-export const STRIPE_PRICES = {
-  pro_weekly:  PRO_TIERS[0]?.stripePriceId || '',
-  pro_monthly: PRO_TIERS[1]?.stripePriceId || '',
-  pro_yearly:  PRO_TIERS[2]?.stripePriceId || '',
-}
-
-// Get Stripe price ID by billing interval from centralized config
+// Read price IDs from env at call-time — never from a module-level cache.
+// This prevents stale values if the module was initialized before env vars
+// were injected (e.g. during Next.js build-time SSG passes).
 export function getStripePriceId(interval: BillingInterval): string {
-  const tier = getTierByInterval(interval)
-  return tier?.stripePriceId || ''
+  const map: Record<BillingInterval, string> = {
+    week:  process.env.STRIPE_PRICE_PRO_WEEKLY  || '',
+    month: process.env.STRIPE_PRICE_PRO_MONTHLY || '',
+    year:  process.env.STRIPE_PRICE_PRO_YEARLY  || '',
+  }
+  return map[interval] || ''
 }
