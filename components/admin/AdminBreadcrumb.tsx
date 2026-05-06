@@ -139,17 +139,8 @@ export default function AdminBreadcrumb() {
     return crumbs
   }, [pathname])
 
-  // Hide on dashboard — it's the root, no trail needed
-  if (
-    pathname === '/admin/dashboard' ||
-    pathname === '/admin' ||
-    pathname === '/platform'
-  ) return null
-
-  // Nothing interesting to show if only 1 crumb
-  if (rawCrumbs.length <= 1) return null
-
-  // Resolve UUID labels async
+  // Resolve UUID labels async — MUST run before any conditional return
+  // to satisfy React's Rules of Hooks (every render must call the same hooks)
   useEffect(() => {
     const segments = pathname.split('/').filter(Boolean)
     const toResolve = segments.filter(s => /^[0-9a-f-]{36}$/.test(s))
@@ -175,6 +166,18 @@ export default function AdminBreadcrumb() {
 
     return () => { cancelled = true }
   }, [pathname])
+
+  // ── Conditional renders AFTER all hooks ──────────────────────────────
+
+  // Hide on dashboard — it's the root, no trail needed
+  if (
+    pathname === '/admin/dashboard' ||
+    pathname === '/admin' ||
+    pathname === '/platform'
+  ) return null
+
+  // Nothing interesting to show if only 1 crumb
+  if (rawCrumbs.length <= 1) return null
 
   const crumbs = rawCrumbs.map(c => {
     const seg = c.href.split('/').pop() ?? ''
