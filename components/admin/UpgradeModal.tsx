@@ -77,7 +77,6 @@ export default function UpgradeModal({ open, onClose, headline, subtext }: Upgra
 
         {/* Headline */}
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🚀</div>
           <h2 style={{
             fontSize: '1.3rem', fontWeight: 900, color: '#0f172a',
             marginBottom: '0.4rem', lineHeight: 1.25,
@@ -137,7 +136,7 @@ export default function UpgradeModal({ open, onClose, headline, subtext }: Upgra
               display: 'flex', alignItems: 'flex-start', gap: '0.6rem',
               fontSize: '0.85rem', color: '#334155',
             }}>
-              <span style={{ flexShrink: 0 }}>{f.icon}</span>
+              <span style={{ flexShrink: 0, color: '#2563eb', fontWeight: 800 }}>+</span>
               <div>
                 <span style={{ fontWeight: 700 }}>{f.title}</span>
                 <span style={{ color: '#94a3b8' }}> — {f.text}</span>

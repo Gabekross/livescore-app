@@ -106,23 +106,23 @@ export interface PlanFeature {
 
 export const PLAN_FEATURES: PlanFeature[] = [
   { name: 'Teams',                        free: `Up to ${FREE_PLAN.teamLimit}`, pro: 'Unlimited' },
-  { name: 'Tournaments & Competitions',   free: '✓',     pro: '✓' },
-  { name: 'Live Scores & Fixtures',       free: '✓',     pro: '✓' },
-  { name: 'Standings & Tables',           free: '✓',     pro: '✓' },
-  { name: 'News & Article Publishing',    free: '—',     pro: '✓' },
-  { name: 'Media Library',                free: '—',     pro: '✓' },
-  { name: 'Match Operator Accounts',      free: '—',     pro: '✓' },
+  { name: 'Tournaments & Competitions',   free: 'Yes',   pro: 'Yes'  },
+  { name: 'Live Scores & Fixtures',       free: 'Yes',   pro: 'Yes'  },
+  { name: 'Standings & Tables',           free: 'Yes',   pro: 'Yes'  },
+  { name: 'News & Article Publishing',    free: 'No',    pro: 'Yes'  },
+  { name: 'Media Library',                free: 'No',    pro: 'Yes'  },
+  { name: 'Match Operator Accounts',      free: 'No',    pro: 'Yes'  },
   { name: 'Advanced Branding & Settings', free: 'Basic', pro: 'Full' },
-  { name: 'Priority Support',             free: '—',     pro: '✓' },
+  { name: 'Priority Support',             free: 'No',    pro: 'Yes'  },
 ]
 
 // ── Value-driven feature descriptions (for marketing) ─────────────────────────
 export const PRO_VALUE_FEATURES = [
-  { icon: '🏟️', title: 'Unlimited teams & tournaments',  text: 'Run leagues of any size without limits' },
-  { icon: '📰', title: 'News & media publishing',         text: 'Keep your audience engaged with articles, photos, and updates' },
-  { icon: '⚡', title: 'Real-time match operators',        text: 'Let your team manage live scores from any device on match day' },
-  { icon: '🎨', title: 'Advanced branding',                text: 'Fully customize your site to match your organization\'s identity' },
-  { icon: '🛡️', title: 'Priority support',                 text: 'Get help fast when you need it most' },
+  { title: 'Unlimited teams & tournaments',  text: 'Run leagues of any size without limits' },
+  { title: 'News & media publishing',         text: 'Keep your audience engaged with articles, photos, and updates' },
+  { title: 'Real-time match operators',        text: 'Let your team manage live scores from any device on match day' },
+  { title: 'Advanced branding',                text: 'Fully customize your site to match your organization\'s identity' },
+  { title: 'Priority support',                 text: 'Get help fast when you need it most' },
 ]
 
 // ── Helper: format price for display ──────────────────────────────────────────
