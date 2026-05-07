@@ -21,7 +21,7 @@ export default function NewPlayerPage() {
   const orgGate = useAdminOrgGate()
 
   const [teams,   setTeams]   = useState<Team[]>([])
-  const [form,    setForm]    = useState({ name: '', jersey_number: '', team_id: '', position: '' })
+  const [form,    setForm]    = useState({ first_name: '', last_name: '', phone_number: '', jersey_number: '', team_id: '', position: '' })
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -39,14 +39,19 @@ export default function NewPlayerPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.name.trim() || !form.team_id) {
-      toast.error('Player name and team are required')
+    if (!form.first_name.trim() || !form.team_id) {
+      toast.error('First name and team are required')
       return
     }
 
+    const fullName = [form.first_name.trim(), form.last_name.trim()].filter(Boolean).join(' ')
+
     setLoading(true)
     const { error } = await supabase.from('players').insert({
-      name:          form.name.trim(),
+      first_name:    form.first_name.trim(),
+      last_name:     form.last_name.trim() || null,
+      name:          fullName,
+      phone_number:  form.phone_number.trim() || null,
       jersey_number: form.jersey_number ? Number(form.jersey_number) : null,
       team_id:       form.team_id,
       position:      form.position || null,
@@ -80,14 +85,40 @@ export default function NewPlayerPage() {
 
           <div className={styles.fieldGroup}>
             <label className={styles.label}>
-              Player Name *
+              First Name *
               <input
                 type="text"
-                placeholder="e.g. John Smith"
-                value={form.name}
-                onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                placeholder="e.g. John"
+                value={form.first_name}
+                onChange={(e) => setForm((p) => ({ ...p, first_name: e.target.value }))}
                 className={styles.input}
                 required
+              />
+            </label>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Last Name <span className={styles.labelHint}>(optional)</span>
+              <input
+                type="text"
+                placeholder="e.g. Smith"
+                value={form.last_name}
+                onChange={(e) => setForm((p) => ({ ...p, last_name: e.target.value }))}
+                className={styles.input}
+              />
+            </label>
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Phone Number <span className={styles.labelHint}>(optional)</span>
+              <input
+                type="tel"
+                placeholder="e.g. +233 501 234 567"
+                value={form.phone_number}
+                onChange={(e) => setForm((p) => ({ ...p, phone_number: e.target.value }))}
+                className={styles.input}
               />
             </label>
           </div>

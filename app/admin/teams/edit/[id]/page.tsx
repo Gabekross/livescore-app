@@ -11,11 +11,65 @@ import styles from '@/styles/components/TeamForm.module.scss'
 import { POSITIONS } from '@/lib/constants/positions'
 
 interface PlayerInput {
-  id?:            string   // existing player UUID — undefined for new players
-  name:           string
+  id?:            string
+  first_name:     string
+  last_name?:     string
+  phone_number?:  string
   jersey_number?: number
   position?:      string
-  _deleted?:      boolean  // soft-mark for removal
+  _deleted?:      boolean
+}
+
+function buildName(p: PlayerInput): string {
+  return [p.first_name, p.last_name].filter(Boolean).join(' ').trim()
+}
+
+function normalizeHeader(h: string): string {
+  return h.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
+
+const HEADER_ALIASES: Record<string, string> = {
+  firstname: 'first_name', first: 'first_name', fname: 'first_name',
+  lastname: 'last_name', last: 'last_name', lname: 'last_name', surname: 'last_name',
+  jerseynumber: 'jersey_number', jersey: 'jersey_number', number: 'jersey_number', '#': 'jersey_number',
+  position: 'position', pos: 'position',
+  phonenumber: 'phone_number', phone: 'phone_number', mobile: 'phone_number', tel: 'phone_number',
+  name: 'name', playername: 'name',
+  dateofbirth: 'date_of_birth', dob: 'date_of_birth',
+  nationality: 'nationality', country: 'nationality',
+  photourl: 'photo_url', photo: 'photo_url',
+}
+
+function resolveColumn(raw: string): string | null {
+  const key = normalizeHeader(raw)
+  return HEADER_ALIASES[key] ?? null
+}
+
+function parseSpreadsheetRow(row: Record<string, unknown>): PlayerInput {
+  const mapped: Record<string, string> = {}
+  for (const [rawKey, val] of Object.entries(row)) {
+    const col = resolveColumn(rawKey)
+    if (col && val != null && String(val).trim()) mapped[col] = String(val).trim()
+  }
+
+  let firstName = mapped['first_name'] || ''
+  let lastName  = mapped['last_name']  || ''
+
+  if (!firstName && mapped['name']) {
+    const parts = mapped['name'].trim().split(/\s+/)
+    firstName = parts[0] || ''
+    lastName  = parts.slice(1).join(' ')
+  }
+
+  const jn = mapped['jersey_number'] ? Number(mapped['jersey_number']) : undefined
+
+  return {
+    first_name:    firstName,
+    last_name:     lastName || undefined,
+    phone_number:  mapped['phone_number'] || undefined,
+    jersey_number: jn && !isNaN(jn) ? jn : undefined,
+    position:      mapped['position'] || undefined,
+  }
 }
 
 export default function EditTeamPage() {
@@ -60,19 +114,30 @@ export default function EditTeamPage() {
 
   if (orgGate) return orgGate
 
+  const [importErrors, setImportErrors] = useState<string[]>([])
+  const [importStats,  setImportStats]  = useState<{ valid: number; invalid: number } | null>(null)
+
   const fetchPlayers = async (teamId: string) => {
     const { data, error } = await supabase
       .from('players')
-      .select('id, name, jersey_number, position')
+      .select('id, first_name, last_name, name, phone_number, jersey_number, position')
       .eq('team_id', teamId)
     if (!error && data) {
-      setPlayers(data)
-      setOriginalPlayerIds(new Set(data.map(p => p.id)))
+      const mapped = data.map((p: any) => ({
+        id:           p.id,
+        first_name:   p.first_name || p.name?.split(' ')[0] || '',
+        last_name:    p.last_name || (p.name?.split(' ').slice(1).join(' ')) || undefined,
+        phone_number: p.phone_number || undefined,
+        jersey_number: p.jersey_number ?? undefined,
+        position:     p.position || undefined,
+      }))
+      setPlayers(mapped)
+      setOriginalPlayerIds(new Set(data.map((p: any) => p.id)))
     }
   }
 
   const handleAddPlayer = () => {
-    setPlayers([...players, { name: '' }])
+    setPlayers([...players, { first_name: '' }])
   }
 
   const handleRemovePlayer = (index: number) => {
@@ -112,29 +177,47 @@ export default function EditTeamPage() {
       const bstr = evt.target?.result
       const wb = XLSX.read(bstr, { type: 'binary' })
       const sheet = wb.Sheets[wb.SheetNames[0]]
-      const data: any[] = XLSX.utils.sheet_to_json(sheet)
-      const parsedPlayers: PlayerInput[] = data.map((row) => ({
-        name: String(row.name || row.Name || ''),
-        jersey_number: Number(row.jersey_number || row.Number || 0) || undefined,
-        position: String(row.position || row.Position || ''),
-      }))
+      const data: Record<string, unknown>[] = XLSX.utils.sheet_to_json(sheet)
+      const errors: string[] = []
+      const parsedPlayers: PlayerInput[] = []
 
-      // Try to match imported players to existing ones by name to preserve IDs
+      data.forEach((row, i) => {
+        const p = parseSpreadsheetRow(row)
+        if (!p.first_name) {
+          errors.push(`Row ${i + 2}: Missing first name`)
+          return
+        }
+        parsedPlayers.push(p)
+      })
+
+      const seen = new Map<number, number>()
+      parsedPlayers.forEach((p, i) => {
+        if (p.jersey_number != null) {
+          if (seen.has(p.jersey_number)) {
+            errors.push(`Row ${i + 2}: Duplicate jersey #${p.jersey_number}`)
+          }
+          seen.set(p.jersey_number, i)
+        }
+      })
+
+      setImportErrors(errors)
+      setImportStats({ valid: parsedPlayers.length, invalid: data.length - parsedPlayers.length })
+
       const existingByName = new Map<string, PlayerInput>()
       players.filter(p => p.id && !p._deleted).forEach(p => {
-        existingByName.set(p.name.toLowerCase().trim(), p)
+        existingByName.set(buildName(p).toLowerCase(), p)
       })
 
       const merged = parsedPlayers.map(imported => {
-        const match = existingByName.get(imported.name.toLowerCase().trim())
+        const importedFullName = buildName(imported).toLowerCase()
+        const match = existingByName.get(importedFullName)
         if (match) {
-          existingByName.delete(imported.name.toLowerCase().trim())
+          existingByName.delete(importedFullName)
           return { ...match, ...imported, id: match.id }
         }
         return imported
       })
 
-      // Mark unmatched existing players as deleted
       const deletedExisting: PlayerInput[] = []
       for (const remaining of existingByName.values()) {
         deletedExisting.push({ ...remaining, _deleted: true })
@@ -143,6 +226,17 @@ export default function EditTeamPage() {
       setPlayers([...merged, ...deletedExisting])
     }
     reader.readAsBinaryString(file)
+  }
+
+  const downloadTemplate = () => {
+    const csv = 'first_name,last_name,phone_number,jersey_number,position\nJohn,Mensah,+233501234567,10,Forward\nDavid,Osei,,5,Defender\nKwame,Boateng,,1,Goalkeeper\n'
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    link.href  = URL.createObjectURL(blob)
+    link.setAttribute('download', 'player_import_template.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   const handleUpdate = async (e: React.FormEvent) => {
@@ -194,7 +288,7 @@ export default function EditTeamPage() {
     const toDelete: string[] = []
 
     for (const player of players) {
-      if (!player.name?.trim()) continue
+      if (!player.first_name?.trim()) continue
 
       if (player._deleted && player.id) {
         toDelete.push(player.id)
@@ -230,7 +324,10 @@ export default function EditTeamPage() {
       await supabase
         .from('players')
         .update({
-          name:          player.name.trim(),
+          first_name:    player.first_name.trim(),
+          last_name:     player.last_name?.trim() || null,
+          name:          buildName(player),
+          phone_number:  player.phone_number?.trim() || null,
           jersey_number: player.jersey_number ?? null,
           position:      player.position || null,
         })
@@ -241,7 +338,10 @@ export default function EditTeamPage() {
     if (toInsert.length) {
       const rows = toInsert.map(p => ({
         team_id:       id,
-        name:          p.name.trim(),
+        first_name:    p.first_name.trim(),
+        last_name:     p.last_name?.trim() || null,
+        name:          buildName(p),
+        phone_number:  p.phone_number?.trim() || null,
         jersey_number: p.jersey_number ?? null,
         position:      p.position || null,
       }))
@@ -333,26 +433,54 @@ export default function EditTeamPage() {
 
           <div className={styles.fieldGroup}>
             <label className={styles.label}>Import from Spreadsheet</label>
-            <input
-              type="file"
-              accept=".xlsx,.xls,.csv"
-              onChange={handleFileUpload}
-              className={styles.input}
-            />
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <input
+                type="file"
+                accept=".xlsx,.xls,.csv"
+                onChange={handleFileUpload}
+                className={styles.input}
+                style={{ flex: 1 }}
+              />
+              <button type="button" onClick={downloadTemplate} className={styles.secondaryButton} style={{ marginTop: 0, whiteSpace: 'nowrap' }}>
+                Download Template
+              </button>
+            </div>
+            {importStats && (
+              <p style={{ fontSize: '0.8rem', color: '#6b7280', margin: '0.5rem 0 0' }}>
+                {importStats.valid} valid row{importStats.valid !== 1 ? 's' : ''}{importStats.invalid > 0 && <>, <span style={{ color: '#ef4444' }}>{importStats.invalid} invalid</span></>}
+              </p>
+            )}
+            {importErrors.length > 0 && (
+              <div style={{ fontSize: '0.78rem', color: '#ef4444', marginTop: '0.4rem', maxHeight: '6rem', overflow: 'auto' }}>
+                {importErrors.map((err, i) => <div key={i}>{err}</div>)}
+              </div>
+            )}
           </div>
 
           <button type="button" onClick={handleAddPlayer} className={styles.secondaryButton}>+ Add Player</button>
 
           {visiblePlayers.map((player, idx) => {
-            // Map visible index back to actual array index
             const realIdx = players.indexOf(player)
             return (
               <div key={player.id || `new-${idx}`} className={styles.playerRow}>
                 <input
                   type="text"
-                  placeholder="Player Name"
-                  value={player.name}
-                  onChange={(e) => handlePlayerChange(realIdx, 'name', e.target.value)}
+                  placeholder="First Name *"
+                  value={player.first_name}
+                  onChange={(e) => handlePlayerChange(realIdx, 'first_name', e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  value={player.last_name || ''}
+                  onChange={(e) => handlePlayerChange(realIdx, 'last_name', e.target.value)}
+                />
+                <input
+                  type="tel"
+                  placeholder="Phone"
+                  value={player.phone_number || ''}
+                  onChange={(e) => handlePlayerChange(realIdx, 'phone_number', e.target.value)}
+                  style={{ maxWidth: '140px' }}
                 />
                 <input
                   type="number"

@@ -15,6 +15,7 @@ import styles                                from '@/styles/components/Formation
 interface Player {
   id:              string
   name:            string
+  first_name?:     string
   jersey_number?:  number
   position?:       string
   team_id:         string
@@ -75,7 +76,7 @@ export default function FormationEditorPage() {
     // 2. Lineups
     const { data: lineups } = await supabase
       .from('match_lineups')
-      .select('player_id, team_id, formation_slot, is_starting, players(id, name, jersey_number, position)')
+      .select('player_id, team_id, formation_slot, is_starting, players(id, name, first_name, jersey_number, position)')
       .eq('match_id', matchId)
       .eq('is_starting', true)
 
@@ -84,6 +85,7 @@ export default function FormationEditorPage() {
     const toPlayer = (row: any): Player => ({
       id:            row.players.id,
       name:          row.players.name,
+      first_name:    row.players.first_name,
       jersey_number: row.players.jersey_number,
       position:      row.players.position,
       team_id:       row.team_id,

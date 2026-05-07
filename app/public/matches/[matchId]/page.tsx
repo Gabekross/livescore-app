@@ -37,6 +37,7 @@ interface Match {
 interface Player {
   id:             string
   name:           string
+  first_name?:    string
   jersey_number?: number
   position?:      string
   team_id:        string
@@ -87,7 +88,7 @@ export default function MatchDetailPage() {
       .select(`
         player_id, team_id, is_starting, formation_slot,
         goals, assists, yellow_cards, red_cards,
-        players(id, name, jersey_number, position)
+        players(id, name, first_name, jersey_number, position)
       `)
       .eq('match_id', currentMatch.id)
 
@@ -98,6 +99,7 @@ export default function MatchDetailPage() {
       return {
         id:            player?.id as string,
         name:          player?.name as string,
+        first_name:    player?.first_name as string | undefined,
         jersey_number: player?.jersey_number as number | undefined,
         position:      player?.position as string | undefined,
         team_id:       p.team_id as string,

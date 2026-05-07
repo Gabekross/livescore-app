@@ -13,6 +13,7 @@ import styles from '@/styles/components/FormationField.module.scss'
 interface Player {
   id:             string
   name:           string
+  first_name?:    string
   jersey_number?: number
   position?:      string
   team_id:        string
@@ -75,7 +76,7 @@ function PlayerDot({
   isHome: boolean
 }) {
   const { x, y } = mapToHalf(slotX, slotY, isHome)
-  const firstName = player.name.split(' ')[0]
+  const firstName = player.first_name || player.name.split(' ')[0]
   const hasGoals   = (player.goals ?? 0) > 0
   const hasAssists = (player.assists ?? 0) > 0
   const hasYellow  = (player.yellow_cards ?? 0) > 0
