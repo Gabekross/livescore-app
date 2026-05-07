@@ -236,23 +236,36 @@ export default function EditMatchPage() {
   const renderPlayerRow = (player: any, selected: string[], isBench: boolean, team: 'home' | 'away') => {
     const isChecked = selected.includes(player.id)
     const stats = playerStats[player.id] || {}
+    const playerLabel = `#${player.jersey_number ?? '?'} ${player.name}`
 
     return (
       <div key={player.id} className={styles.playerRow}>
-        <label>
+        <label className={styles.playerCheckbox}>
           <input
             type="checkbox"
             checked={isChecked}
             onChange={() => togglePlayerSelection(player.id, team, isBench)}
           />
-          #{player.jersey_number} {player.name}
+          {playerLabel}
         </label>
         {isChecked && (
           <div className={styles.statInputs}>
-            <input type="number" placeholder="G" title="Goals" value={stats.goals || 0} onChange={(e) => handleStatChange(player.id, 'goals', Number(e.target.value))} />
-            <input type="number" placeholder="A" title="Assists" value={stats.assists || 0} onChange={(e) => handleStatChange(player.id, 'assists', Number(e.target.value))} />
-            <input type="number" placeholder="YC" title="Yellow Cards" value={stats.yellow_cards || 0} onChange={(e) => handleStatChange(player.id, 'yellow_cards', Number(e.target.value))} />
-            <input type="number" placeholder="RC" title="Red Cards" value={stats.red_cards || 0} onChange={(e) => handleStatChange(player.id, 'red_cards', Number(e.target.value))} />
+            <div className={styles.statField}>
+              <label className={styles.statLabel} htmlFor={`goals-${player.id}`}>Goals</label>
+              <input id={`goals-${player.id}`} type="number" min={0} aria-label={`Goals for ${playerLabel}`} value={stats.goals || 0} onChange={(e) => handleStatChange(player.id, 'goals', Number(e.target.value))} />
+            </div>
+            <div className={styles.statField}>
+              <label className={styles.statLabel} htmlFor={`assists-${player.id}`}>Assists</label>
+              <input id={`assists-${player.id}`} type="number" min={0} aria-label={`Assists for ${playerLabel}`} value={stats.assists || 0} onChange={(e) => handleStatChange(player.id, 'assists', Number(e.target.value))} />
+            </div>
+            <div className={styles.statField}>
+              <label className={styles.statLabel} htmlFor={`yc-${player.id}`}>YC</label>
+              <input id={`yc-${player.id}`} type="number" min={0} max={2} aria-label={`Yellow cards for ${playerLabel}`} value={stats.yellow_cards || 0} onChange={(e) => handleStatChange(player.id, 'yellow_cards', Number(e.target.value))} />
+            </div>
+            <div className={styles.statField}>
+              <label className={styles.statLabel} htmlFor={`rc-${player.id}`}>RC</label>
+              <input id={`rc-${player.id}`} type="number" min={0} max={1} aria-label={`Red cards for ${playerLabel}`} value={stats.red_cards || 0} onChange={(e) => handleStatChange(player.id, 'red_cards', Number(e.target.value))} />
+            </div>
           </div>
         )}
       </div>
