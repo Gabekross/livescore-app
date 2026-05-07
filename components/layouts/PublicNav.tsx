@@ -18,6 +18,7 @@ import Link            from 'next/link'
 import { usePathname } from 'next/navigation'
 import styles from '@/styles/components/PublicNav.module.scss'
 import PublicSearch from '@/components/ui/PublicSearch'
+import { useBillingVisibility } from '@/hooks/useDemoMode'
 
 interface Props {
   siteName:  string
@@ -57,13 +58,18 @@ const HIDE_ON = ['/admin', '/platform', '/login', '/signup', '/forgot-password',
 
 export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
   const pathname = usePathname()
+  const { hideBilling } = useBillingVisibility()
   const [open,       setOpen]       = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
 
   // Don't render on admin, platform, or auth pages
   if (HIDE_ON.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'))) return null
 
-  const navLinks = isOrgSite ? ORG_NAV_LINKS : PLATFORM_NAV_LINKS
+  const rawNavLinks = isOrgSite ? ORG_NAV_LINKS : PLATFORM_NAV_LINKS
+  // Demo mode strips pricing links from the public/marketing nav.
+  const navLinks = hideBilling
+    ? rawNavLinks.filter(l => !l.href.includes('pricing'))
+    : rawNavLinks
 
   const isActive = (href: string) => {
     if (href.startsWith('/#')) return false

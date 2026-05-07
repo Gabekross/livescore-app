@@ -10,6 +10,8 @@ import PublicNav            from '@/components/layouts/PublicNav'
 import PublicFooter         from '@/components/layouts/PublicFooter'
 import GlobalSponsorStrip   from '@/components/layouts/GlobalSponsorStrip'
 import { resolveMetadataBase, CANONICAL_ORIGIN } from '@/lib/seo'
+import { getPlatformSettings }   from '@/lib/platform-settings-server'
+import { PlatformSettingsProvider } from '@/contexts/PlatformSettingsContext'
 import type { SponsorItem } from '@/components/ui/SponsorStrip'
 import '@/app/globals.css'
 
@@ -158,28 +160,33 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const settings = await fetchSiteSettings()
+  const [settings, platformSettings] = await Promise.all([
+    fetchSiteSettings(),
+    getPlatformSettings(),
+  ])
 
   return (
     <html lang="en" data-theme={settings.active_theme}>
       <body>
-        <PublicNav
-          siteName={settings.site_name}
-          siteLogo={settings.logo_url}
-          isOrgSite={settings.isOrgSite}
-        />
+        <PlatformSettingsProvider initial={{ demoMode: platformSettings.demoMode }}>
+          <PublicNav
+            siteName={settings.site_name}
+            siteLogo={settings.logo_url}
+            isOrgSite={settings.isOrgSite}
+          />
 
-        {children}
+          {children}
 
-        <GlobalSponsorStrip sponsors={settings.sponsors} />
+          <GlobalSponsorStrip sponsors={settings.sponsors} />
 
-        <PublicFooter
-          siteName={settings.site_name}
-          footerText={settings.footer_text}
-          contactEmail={settings.contact_email}
-          logoUrl={settings.logo_url}
-          isOrgSite={settings.isOrgSite}
-        />
+          <PublicFooter
+            siteName={settings.site_name}
+            footerText={settings.footer_text}
+            contactEmail={settings.contact_email}
+            logoUrl={settings.logo_url}
+            isOrgSite={settings.isOrgSite}
+          />
+        </PlatformSettingsProvider>
 
         <Toaster
           position="top-right"

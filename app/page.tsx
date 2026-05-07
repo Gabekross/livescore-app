@@ -13,6 +13,7 @@ import Link                     from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
 import PlatformLanding                from '@/components/platform/PlatformLanding'
+import { getPlatformSettings }        from '@/lib/platform-settings-server'
 import LiveMatchesIsland              from '@/components/home/LiveMatchesIsland'
 import MatchCard                      from '@/components/ui/MatchCard'
 import SectionHeader                  from '@/components/ui/SectionHeader'
@@ -180,8 +181,10 @@ export default async function HomePage() {
     tournaments = (tournamentsRes.data || []) as Tournament[]
     newsPosts   = (newsRes.data        || []) as NewsPost[]
   } catch {
-    // No org resolved — render the platform marketing landing page instead
-    return <PlatformLanding />
+    // No org resolved — render the platform marketing landing page instead.
+    // Demo mode hides pricing/CTAs for white-label presentations.
+    const { demoMode } = await getPlatformSettings()
+    return <PlatformLanding demoMode={demoMode} />
   }
 
   // ── Org homepage ─────────────────────────────────────────────────────────────

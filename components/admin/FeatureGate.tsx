@@ -6,6 +6,7 @@
 
 import { useState }           from 'react'
 import { useAdminOrg }        from '@/contexts/AdminOrgContext'
+import { useDemoMode }        from '@/hooks/useDemoMode'
 import UpgradeModal           from '@/components/admin/UpgradeModal'
 import { PRO_PLAN }           from '@/config/pricing'
 import type { PlanAccess }    from '@/lib/subscription'
@@ -47,9 +48,15 @@ interface FeatureGateProps {
 
 export default function FeatureGate({ feature, label, softLock, children }: FeatureGateProps) {
   const { plan, loading } = useAdminOrg()
+  const { treatAsPro }    = useDemoMode()
   const [showModal, setShowModal] = useState(false)
 
   if (loading) return null
+
+  // In demo mode every premium feature is presented as available so the
+  // presentation can showcase Pro capabilities without paywall friction.
+  // RLS / server permissions are unaffected — this only controls the UI.
+  if (treatAsPro) return <>{children}</>
 
   const allowed = plan?.[feature] ?? false
   const info = FEATURE_INFO[feature]

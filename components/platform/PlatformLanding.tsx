@@ -21,7 +21,7 @@ function BrowserDots() {
 }
 
 // ── Section: Hero ─────────────────────────────────────────────────────────────
-function HeroSection() {
+function HeroSection({ demoMode }: { demoMode: boolean }) {
   return (
     <section className={styles.hero} aria-label="Hero">
       <div className={styles.heroInner}>
@@ -34,21 +34,25 @@ function HeroSection() {
             <span>professional website</span>
           </h1>
           <p className={styles.heroSub}>
-            Launch a live-updated sports site for your league, tournament, or
-            club — with fixtures, standings, team pages, and real-time match
-            management. Start free. Scale when you&apos;re ready.
+            {demoMode
+              ? 'Launch a live-updated sports site for your league, tournament, or club — with fixtures, standings, team pages, and real-time match management.'
+              : 'Launch a live-updated sports site for your league, tournament, or club — with fixtures, standings, team pages, and real-time match management. Start free. Scale when you’re ready.'}
           </p>
           <div className={styles.heroCtas}>
             <Link href="/signup" className={styles.ctaPrimary}>
-              Start Your Free Trial
+              {demoMode ? 'Get Started' : 'Start Your Free Trial'}
             </Link>
-            <a href="#pricing" className={styles.ctaSecondary}>
-              See Pricing
-            </a>
+            {!demoMode && (
+              <a href="#pricing" className={styles.ctaSecondary}>
+                See Pricing
+              </a>
+            )}
           </div>
-          <p className={styles.heroNote}>
-            {FREE_PLAN.trialDays}-day free trial &middot; No credit card required &middot; Set up in minutes
-          </p>
+          {!demoMode && (
+            <p className={styles.heroNote}>
+              {FREE_PLAN.trialDays}-day free trial &middot; No credit card required &middot; Set up in minutes
+            </p>
+          )}
         </div>
 
         {/* Browser mockup — mini preview of the product */}
@@ -683,7 +687,7 @@ function FaqSection() {
 }
 
 // ── Section: Final CTA ────────────────────────────────────────────────────────
-function FinalCtaSection() {
+function FinalCtaSection({ demoMode }: { demoMode: boolean }) {
   return (
     <section className={styles.finalCta} aria-label="Get started">
       <div className={styles.finalCtaInner}>
@@ -696,25 +700,34 @@ function FinalCtaSection() {
         </p>
         <div className={styles.finalCtaBtns}>
           <Link href="/signup" className={styles.finalCtaBtnPrimary}>
-            Start Your Free Trial
+            {demoMode ? 'Get Started' : 'Start Your Free Trial'}
           </Link>
-          <a href="#pricing" className={styles.finalCtaBtnSecondary}>
-            See Plans
-          </a>
+          {!demoMode && (
+            <a href="#pricing" className={styles.finalCtaBtnSecondary}>
+              See Plans
+            </a>
+          )}
         </div>
-        <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.75rem' }}>
-          {FREE_PLAN.trialDays}-day Basic trial &middot; No credit card required
-        </p>
+        {!demoMode && (
+          <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.75rem' }}>
+            {FREE_PLAN.trialDays}-day Basic trial &middot; No credit card required
+          </p>
+        )}
       </div>
     </section>
   )
 }
 
 // ── Main export ───────────────────────────────────────────────────────────────
-export default function PlatformLanding() {
+interface PlatformLandingProps {
+  /** When true, hides the pricing section and replaces trial-themed CTAs. */
+  demoMode?: boolean
+}
+
+export default function PlatformLanding({ demoMode = false }: PlatformLandingProps) {
   return (
     <div className={styles.page}>
-      <HeroSection />
+      <HeroSection demoMode={demoMode} />
       <TrustBar />
       <ShowcaseSection />
       <WhoSection />
@@ -722,9 +735,9 @@ export default function PlatformLanding() {
       <IncludesSection />
       <MatchDaySection />
       <FeaturesSection />
-      <PricingSection />
+      {!demoMode && <PricingSection />}
       <FaqSection />
-      <FinalCtaSection />
+      <FinalCtaSection demoMode={demoMode} />
     </div>
   )
 }

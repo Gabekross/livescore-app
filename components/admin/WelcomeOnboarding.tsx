@@ -7,13 +7,18 @@
 import { useState, useEffect } from 'react'
 import Link                    from 'next/link'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import { useDemoMode }         from '@/hooks/useDemoMode'
 import { FREE_PLAN }           from '@/config/pricing'
 
 export default function WelcomeOnboarding() {
   const { orgName, plan } = useAdminOrg()
-  const [show, setShow] = useState(false)
+  const { demoMode }      = useDemoMode()
+  const [show, setShow]   = useState(false)
 
   useEffect(() => {
+    // Suppress the trial-themed welcome modal in demo mode — it would
+    // surface "free trial" copy that doesn't fit the white-label demo.
+    if (demoMode) return
     // Only show once per browser session, on first dashboard load
     const key = 'kolu_onboarded'
     if (typeof window !== 'undefined' && !sessionStorage.getItem(key)) {
@@ -23,7 +28,7 @@ export default function WelcomeOnboarding() {
         sessionStorage.setItem(key, '1')
       }
     }
-  }, [plan])
+  }, [plan, demoMode])
 
   if (!show) return null
 

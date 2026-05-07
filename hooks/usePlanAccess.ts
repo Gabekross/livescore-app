@@ -10,6 +10,7 @@
 
 import { useAdminOrg }    from '@/contexts/AdminOrgContext'
 import { useTeamLimit }   from '@/hooks/useTeamLimit'
+import { useDemoMode }    from '@/hooks/useDemoMode'
 import type { PlanAccess } from '@/lib/subscription'
 
 type FeatureKey = 'canPublishNews' | 'canManageMedia' | 'canUseOperators' | 'canCustomBrand'
@@ -52,12 +53,13 @@ interface PlanAccessHook {
 export function usePlanAccess(): PlanAccessHook {
   const { plan, loading: orgLoading } = useAdminOrg()
   const { canAddTeam, teamCount, teamLimit, loading: teamLoading } = useTeamLimit()
+  const { treatAsPro }                = useDemoMode()
 
   const effectivePlan = plan?.effectivePlan ?? 'free'
-  const isPro = effectivePlan === 'pro'
-  const isExpired = effectivePlan === 'expired'
-  const isFree = effectivePlan === 'free'
-  const isTrialActive = plan?.isTrialing ?? false
+  const isPro     = treatAsPro || effectivePlan === 'pro'
+  const isExpired = !treatAsPro && effectivePlan === 'expired'
+  const isFree    = !treatAsPro && effectivePlan === 'free'
+  const isTrialActive = !treatAsPro && (plan?.isTrialing ?? false)
 
   return {
     isTrialActive,
@@ -65,22 +67,24 @@ export function usePlanAccess(): PlanAccessHook {
     isExpired,
     isFree,
 
-    trialDaysLeft:  plan?.trialDaysLeft ?? 0,
-    needsUpgrade:   plan?.needsUpgrade ?? false,
+    trialDaysLeft:  treatAsPro ? 0 : (plan?.trialDaysLeft ?? 0),
+    needsUpgrade:   treatAsPro ? false : (plan?.needsUpgrade ?? false),
 
-    canCreateTeam:  canAddTeam,
+    // In demo mode the team limit is removed for the UI so Free vs Pro
+    // never surfaces. Server-side RLS is unchanged.
+    canCreateTeam:  treatAsPro ? true : canAddTeam,
     teamCount,
-    teamLimit,
+    teamLimit:      treatAsPro ? Infinity : teamLimit,
 
-    canUseFeature:  (feature: FeatureKey) => plan?.[feature] ?? false,
+    canUseFeature:  (feature: FeatureKey) => treatAsPro ? true : (plan?.[feature] ?? false),
 
-    canPublishNews:  plan?.canPublishNews ?? false,
-    canManageMedia:  plan?.canManageMedia ?? false,
-    canUseOperators: plan?.canUseOperators ?? false,
-    canCustomBrand:  plan?.canCustomBrand ?? false,
+    canPublishNews:  treatAsPro ? true : (plan?.canPublishNews ?? false),
+    canManageMedia:  treatAsPro ? true : (plan?.canManageMedia ?? false),
+    canUseOperators: treatAsPro ? true : (plan?.canUseOperators ?? false),
+    canCustomBrand:  treatAsPro ? true : (plan?.canCustomBrand ?? false),
 
-    // Expired trials can view but not edit
-    canEdit: !isExpired,
+    // Expired trials can view but not edit (skipped in demo mode)
+    canEdit: treatAsPro ? true : !isExpired,
 
     loading: orgLoading || teamLoading,
     plan,

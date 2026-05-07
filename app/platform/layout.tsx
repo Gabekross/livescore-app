@@ -9,9 +9,10 @@ import { usePathname } from 'next/navigation'
 import { logoutAdmin } from '@/lib/auth-actions'
 
 const NAV_ITEMS = [
-  { href: '/platform',              label: 'Overview' },
+  { href: '/platform',               label: 'Overview' },
   { href: '/platform/organizations', label: 'Organizations' },
   { href: '/platform/admins',        label: 'Admin Users' },
+  { href: '/platform/settings',      label: 'Settings' },
 ]
 
 export default function PlatformLayout({ children }: { children: React.ReactNode }) {

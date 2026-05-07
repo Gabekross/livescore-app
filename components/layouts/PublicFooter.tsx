@@ -9,6 +9,7 @@
 import Link            from 'next/link'
 import { usePathname } from 'next/navigation'
 import styles          from '@/styles/components/PublicFooter.module.scss'
+import { useBillingVisibility } from '@/hooks/useDemoMode'
 
 interface Props {
   siteName:      string
@@ -44,13 +45,18 @@ const LEGAL_LINKS = [
 
 export default function PublicFooter({ siteName, footerText, contactEmail, logoUrl, isOrgSite }: Props) {
   const pathname = usePathname()
+  const { hideBilling } = useBillingVisibility()
 
   // Hide on admin, platform, and auth pages
   const hideOn = ['/admin', '/platform', '/login', '/signup', '/forgot-password', '/reset-password']
   if (hideOn.some((p) => pathname === p || pathname.startsWith(p + '/'))) return null
 
   const year = new Date().getFullYear()
-  const footerLinks = isOrgSite ? ORG_FOOTER_LINKS : PLATFORM_FOOTER_LINKS
+  const rawFooterLinks = isOrgSite ? ORG_FOOTER_LINKS : PLATFORM_FOOTER_LINKS
+  // Demo mode strips pricing links from the marketing footer.
+  const footerLinks = hideBilling
+    ? rawFooterLinks.filter(l => !l.href.includes('pricing'))
+    : rawFooterLinks
   const footerClass = `${styles.footer} ${!isOrgSite ? styles.footerPlatform : ''}`
 
   return (

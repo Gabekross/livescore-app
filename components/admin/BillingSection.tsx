@@ -7,6 +7,7 @@
 import { useState }                          from 'react'
 import { useAdminOrg }                       from '@/contexts/AdminOrgContext'
 import { useTeamLimit }                      from '@/hooks/useTeamLimit'
+import { useBillingVisibility }              from '@/hooks/useDemoMode'
 import PlanBadge                             from '@/components/admin/PlanBadge'
 import UpgradeModal                          from '@/components/admin/UpgradeModal'
 import { PLAN_FEATURES, PRO_PLAN, FREE_PLAN, PRO_TIERS, formatPrice } from '@/config/pricing'
@@ -17,12 +18,26 @@ import styles                                from '@/styles/components/AdminSett
 export default function BillingSection() {
   const { orgId, plan } = useAdminOrg()
   const { teamCount, teamLimit } = useTeamLimit()
+  const { hideBilling }          = useBillingVisibility()
 
   const [showUpgrade,    setShowUpgrade]    = useState(false)
   const [portalLoading,  setPortalLoading]  = useState(false)
   const [cancelLoading,  setCancelLoading]  = useState(false)
   const [switchLoading,  setSwitchLoading]  = useState(false)
   const [confirmCancel,  setConfirmCancel]  = useState(false)
+
+  // In demo mode the entire billing section is replaced with a neutral
+  // placeholder — no plan info, no Stripe links, no Pro/Free comparison.
+  if (hideBilling) {
+    return (
+      <div className={styles.section}>
+        <div className={styles.sectionTitle}>Plan &amp; Billing</div>
+        <p style={{ fontSize: '0.85rem', color: '#64748b', margin: 0 }}>
+          Billing controls are not available in this view.
+        </p>
+      </div>
+    )
+  }
 
   if (!plan || !orgId) return null
 

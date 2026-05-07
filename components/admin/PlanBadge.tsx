@@ -4,6 +4,7 @@
 // Small inline badge showing current plan status.
 
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
+import { useBillingVisibility } from '@/hooks/useDemoMode'
 
 const BADGE_STYLES: Record<string, React.CSSProperties> = {
   pro: {
@@ -33,6 +34,10 @@ const BASE: React.CSSProperties = {
 
 export default function PlanBadge() {
   const { plan } = useAdminOrg()
+  const { hideBilling } = useBillingVisibility()
+
+  // Hide subscription status badges when demo mode is on.
+  if (hideBilling) return null
   if (!plan) return null
 
   const { effectivePlan, isTrialing, trialDaysLeft } = plan

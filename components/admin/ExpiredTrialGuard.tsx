@@ -7,6 +7,7 @@
 
 import { useState }        from 'react'
 import { useAdminOrg }     from '@/contexts/AdminOrgContext'
+import { useDemoMode }     from '@/hooks/useDemoMode'
 import UpgradeModal        from '@/components/admin/UpgradeModal'
 import { PRO_PLAN }        from '@/config/pricing'
 
@@ -15,10 +16,15 @@ interface ExpiredTrialGuardProps {
 }
 
 export default function ExpiredTrialGuard({ children }: ExpiredTrialGuardProps) {
-  const { plan, loading } = useAdminOrg()
+  const { plan, loading }    = useAdminOrg()
+  const { demoMode }         = useDemoMode()
   const [showModal, setShowModal] = useState(false)
 
   if (loading) return null
+
+  // In demo mode the entire trial-expired overlay is bypassed so
+  // presentations never see paywall messaging.
+  if (demoMode) return <>{children}</>
 
   const isExpired = plan?.needsUpgrade ?? false
 

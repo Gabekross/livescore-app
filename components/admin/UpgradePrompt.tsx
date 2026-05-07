@@ -4,8 +4,9 @@
 // Dynamic trial/upgrade banner — changes messaging based on trial lifecycle.
 // 5 states: early trial, mid trial, final days, last day, expired.
 
-import { useAdminOrg } from '@/contexts/AdminOrgContext'
-import { PRO_PLAN }    from '@/config/pricing'
+import { useAdminOrg }         from '@/contexts/AdminOrgContext'
+import { useBillingVisibility } from '@/hooks/useDemoMode'
+import { PRO_PLAN }             from '@/config/pricing'
 
 interface UpgradePromptProps {
   message?: string
@@ -13,6 +14,10 @@ interface UpgradePromptProps {
 
 export default function UpgradePrompt({ message }: UpgradePromptProps) {
   const { plan } = useAdminOrg()
+  const { hideBilling } = useBillingVisibility()
+
+  // Suppress every trial/upgrade banner when demo mode is on.
+  if (hideBilling) return null
   if (!plan) return null
 
   const { effectivePlan, isTrialing, trialDaysLeft, needsUpgrade } = plan
