@@ -410,6 +410,9 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
             >
               + Add Image
             </button>
+            <p style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)', marginTop: '0.4rem', lineHeight: 1.5 }}>
+              Recommended: 1600×900px (16:9), JPG or WebP
+            </p>
           </div>
 
           <MediaPicker

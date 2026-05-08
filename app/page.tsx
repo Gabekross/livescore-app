@@ -288,7 +288,7 @@ export default async function HomePage() {
               {tournaments.map((t) => (
                 <Link key={t.id} href={`/tournaments/${t.slug}`} className={styles.tournamentCard}>
                   {t.cover_image_url ? (
-                    <div style={{ position: 'relative', width: '100%', height: 90 }}>
+                    <div className={styles.tournamentCoverWrap}>
                       <Image src={t.cover_image_url} alt={t.name} fill style={{ objectFit: 'cover', borderRadius: 'var(--radius-md, 8px)' }} sizes="(max-width:600px) 100vw, 320px" />
                     </div>
                   ) : (
@@ -325,7 +325,7 @@ export default async function HomePage() {
                 {newsPosts.map((post) => (
                   <Link key={post.id} href={`/news/${post.slug}`} className={styles.tournamentCard}>
                     {post.cover_image_url ? (
-                      <div style={{ position: 'relative', width: '100%', height: 90 }}>
+                      <div className={styles.tournamentCoverWrap}>
                         <Image src={post.cover_image_url} alt={post.title} fill style={{ objectFit: 'cover', borderRadius: 'var(--radius-md, 8px)' }} sizes="(max-width:600px) 100vw, 320px" />
                       </div>
                     ) : (

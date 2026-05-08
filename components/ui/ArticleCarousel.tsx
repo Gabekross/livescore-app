@@ -6,6 +6,7 @@
 // The cover image (selected by admin) is shown first; all others follow.
 
 import { useState } from 'react'
+import Image        from 'next/image'
 import styles       from '@/styles/components/ArticlePage.module.scss'
 
 interface Props {
@@ -19,11 +20,17 @@ export default function ArticleCarousel({ images, title }: Props) {
 
   if (images.length === 0) return null
 
-  // Single image — no carousel controls needed
   if (images.length === 1) {
     return (
       <div className={styles.hero}>
-        <img src={images[0]} alt={title} className={styles.heroImage} />
+        <Image
+          src={images[0]}
+          alt={title}
+          fill
+          priority
+          className={styles.heroImage}
+          sizes="100vw"
+        />
         <div className={styles.heroOverlay} />
       </div>
     )
@@ -35,11 +42,14 @@ export default function ArticleCarousel({ images, title }: Props) {
   return (
     <div className={styles.hero}>
       {/* Slide */}
-      <img
+      <Image
         key={index}
         src={images[index]}
         alt={`${title} — image ${index + 1}`}
+        fill
+        priority={index === 0}
         className={`${styles.heroImage} ${styles.heroImageFade}`}
+        sizes="100vw"
       />
       <div className={styles.heroOverlay} />
 

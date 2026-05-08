@@ -4,6 +4,7 @@
 // Includes JSON-LD structured data, OG metadata, related articles.
 
 import type { Metadata }              from 'next'
+import Image                          from 'next/image'
 import Link                           from 'next/link'
 import { notFound }                   from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
@@ -249,7 +250,9 @@ export default async function ArticlePage({ params }: Props) {
               {related.map((r) => (
                 <Link key={r.id} href={`/news/${r.slug}`} className={styles.relatedCard}>
                   {r.cover_image_url ? (
-                    <img src={r.cover_image_url} alt={r.title} className={styles.relatedThumb} loading="lazy" />
+                    <div style={{ position: 'relative', flexShrink: 0 }} className={styles.relatedThumbWrap}>
+                      <Image src={r.cover_image_url} alt={r.title} fill style={{ objectFit: 'cover', borderRadius: 'var(--radius-md, 8px)' }} sizes="72px" />
+                    </div>
                   ) : (
                     <div className={styles.relatedThumbPlaceholder} aria-hidden="true" />
                   )}

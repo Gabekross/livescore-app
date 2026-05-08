@@ -70,7 +70,7 @@ function TournamentCard({ t }: { t: TournamentItem }) {
   return (
     <div className={styles.card}>
       {t.cover_image_url ? (
-        <div style={{ position: 'relative', width: '100%', height: 140 }}>
+        <div className={styles.coverWrap}>
           <Image src={t.cover_image_url} alt={t.name} fill style={{ objectFit: 'cover' }} sizes="(max-width:600px) 100vw, 320px" />
         </div>
       ) : (

@@ -83,9 +83,9 @@ export default async function NewsPage() {
           <>
             {/* Featured post */}
             <Link href={`/news/${featured.slug}`} className={styles.featuredCard}>
-              <div>
+              <div className={styles.featuredImageWrap}>
                 {featured.cover_image_url ? (
-                  <div style={{ position: 'relative', width: '100%', minHeight: 240 }}>
+                  <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                     <Image src={featured.cover_image_url} alt={featured.title} fill priority style={{ objectFit: 'cover' }} sizes="(max-width:900px) 100vw, 900px" />
                   </div>
                 ) : (
@@ -115,7 +115,7 @@ export default async function NewsPage() {
                 {rest.map((post) => (
                   <Link key={post.id} href={`/news/${post.slug}`} className={styles.card}>
                     {post.cover_image_url ? (
-                      <div style={{ position: 'relative', width: '100%', height: 160 }}>
+                      <div className={styles.cardCoverWrap}>
                         <Image src={post.cover_image_url} alt={post.title} fill style={{ objectFit: 'cover' }} sizes="(max-width:600px) 100vw, 320px" />
                       </div>
                     ) : (
