@@ -38,6 +38,7 @@ export default function PlayerStatsPage() {
   const [teamFilter, setTeamFilter] = useState('')
   const [chartType,  setChartType]  = useState<'goals' | 'assists'>('goals')
   const [teams,      setTeams]      = useState<string[]>([])
+  const [noLineups,  setNoLineups]  = useState(false)
 
   useEffect(() => {
     if (!orgId) return
@@ -60,6 +61,15 @@ export default function PlayerStatsPage() {
       const rows = (data || []) as PlayerStat[]
       setStats(rows)
       setTeams(Array.from(new Set(rows.map((r) => r.team_name))).sort())
+
+      if (rows.length === 0) {
+        const { count } = await supabase
+          .from('match_lineups')
+          .select('match_id', { count: 'exact', head: true })
+          .limit(1)
+        setNoLineups((count ?? 0) === 0)
+      }
+
       setLoading(false)
     }
 
@@ -146,7 +156,17 @@ export default function PlayerStatsPage() {
         <div className={styles.emptyState}>Loading stats…</div>
       ) : filteredStats.length === 0 ? (
         <div className={styles.emptyState}>
-          No stats available yet. Player statistics will appear here once matches have been played.
+          {noLineups ? (
+            <>
+              No lineups have been created yet.
+              <br />
+              <span style={{ fontSize: '0.82rem' }}>
+                Add player lineups from the match editor first, then use the operator view to record goals, assists, and cards.
+              </span>
+            </>
+          ) : (
+            'No stats available yet. Player statistics will appear here once matches have been played.'
+          )}
         </div>
       ) : (
         <div className={styles.tableWrapper}>
