@@ -189,6 +189,119 @@
   &:hover { color: #2563eb; }
 }
 
+/* ── Stats toggle button ──────────────────────────────── */
+.statsToggle {
+  padding:          0.35rem 0.75rem;
+  background-color: #f3f4f6;
+  color:            #374151;
+  border:           1px solid #d1d5db;
+  border-radius:    6px;
+  font-weight:      600;
+  font-size:        0.78rem;
+  cursor:           pointer;
+  transition:       background-color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background-color: #e5e7eb;
+    border-color:     #9ca3af;
+  }
+}
+
+/* ── Expandable stats panel ───────────────────────────── */
+.statsPanel {
+  margin-top:    0.75rem;
+  padding-top:   0.75rem;
+  border-top:    1px solid #e5e7eb;
+}
+
+.statsTeamSection {
+  margin-bottom: 1rem;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.statsTeamName {
+  font-size:      0.78rem;
+  font-weight:    700;
+  color:          #1f2937;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom:  0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom:  1px solid #f3f4f6;
+}
+
+.statsGroupLabel {
+  font-size:   0.7rem;
+  font-weight: 600;
+  color:       #6b7280;
+  margin:      0.4rem 0 0.25rem;
+}
+
+.statPlayerRow {
+  display:       flex;
+  align-items:   center;
+  gap:           0.75rem;
+  padding:       0.4rem 0;
+  border-bottom: 1px solid #f9fafb;
+
+  &:last-child { border-bottom: none; }
+}
+
+.statPlayerName {
+  min-width:   120px;
+  font-size:   0.82rem;
+  font-weight: 500;
+  color:       #374151;
+}
+
+.statFields {
+  display:     flex;
+  gap:         0.5rem;
+  flex-wrap:   wrap;
+  align-items: flex-end;
+}
+
+.statField {
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            0.15rem;
+
+  input {
+    width:         48px;
+    padding:       0.3rem 0.2rem;
+    text-align:    center;
+    border:        1px solid #d1d5db;
+    border-radius: 5px;
+    font-size:     0.82rem;
+    font-weight:   500;
+    color:         #374151;
+    background:    #fff;
+
+    &:focus {
+      outline:      none;
+      border-color: #2563eb;
+      box-shadow:   0 0 0 2px rgba(37, 99, 235, 0.12);
+    }
+  }
+}
+
+.statLabel {
+  font-size:      0.62rem;
+  font-weight:    600;
+  color:          #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space:    nowrap;
+}
+
+.statsEmpty {
+  font-size: 0.82rem;
+  color:     #9ca3af;
+  padding:   0.5rem 0;
+}
+
 /* ── Mobile ────────────────────────────────────────────── */
 @media (max-width: 600px) {
   .scoreRow {
@@ -207,5 +320,36 @@
   .detailLink {
     margin-left: 0;
     text-align:  center;
+  }
+
+  .statPlayerRow {
+    flex-direction: column;
+    align-items:    stretch;
+    gap:            0.35rem;
+  }
+
+  .statPlayerName {
+    min-width:  0;
+    font-size:  0.78rem;
+  }
+
+  .statFields {
+    display:               grid;
+    grid-template-columns: 1fr 1fr;
+    gap:                   0.4rem;
+  }
+
+  .statField {
+    flex-direction: row;
+    align-items:    center;
+    gap:            0.4rem;
+
+    input { width: 100%; flex: 1; }
+  }
+
+  .statLabel {
+    min-width:  36px;
+    text-align: left;
+    font-size:  0.6rem;
   }
 }

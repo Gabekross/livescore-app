@@ -126,6 +126,26 @@ export default function OperatorPage() {
   )
 }
 
+// ── Types for player stats ──────────────────────────────────────────────────
+
+interface LineupPlayer {
+  player_id:    string
+  team_id:      string
+  is_starting:  boolean
+  goals:        number
+  assists:      number
+  yellow_cards: number
+  red_cards:    number
+  players: {
+    id:             string
+    name:           string
+    first_name?:    string
+    jersey_number?: number
+  }
+}
+
+type StatKey = 'goals' | 'assists' | 'yellow_cards' | 'red_cards'
+
 // ── Individual match row with inline update controls ─────────────────────────
 
 function MatchOperatorRow({
@@ -140,12 +160,58 @@ function MatchOperatorRow({
   const [status,    setStatus]    = useState(match.status)
   const [saving,    setSaving]    = useState(false)
 
+  const [statsOpen,    setStatsOpen]    = useState(false)
+  const [lineups,      setLineups]      = useState<LineupPlayer[]>([])
+  const [statsLoading, setStatsLoading] = useState(false)
+  const [localStats,   setLocalStats]   = useState<Record<string, Record<StatKey, number>>>({})
+
   const homeName = match.home_team?.name ?? 'Home'
   const awayName = match.away_team?.name ?? 'Away'
+  const homeId   = match.home_team?.id
+  const awayId   = match.away_team?.id
+
+  const fetchLineups = async () => {
+    if (lineups.length > 0) return
+    setStatsLoading(true)
+
+    const { data, error } = await supabase
+      .from('match_lineups')
+      .select('player_id, team_id, is_starting, goals, assists, yellow_cards, red_cards, players(id, name, first_name, jersey_number)')
+      .eq('match_id', match.id)
+
+    if (!error && data) {
+      const rows = (data as unknown as LineupPlayer[]).filter(r => r.players)
+      setLineups(rows)
+      const stats: Record<string, Record<StatKey, number>> = {}
+      rows.forEach(r => {
+        stats[r.player_id] = {
+          goals:        r.goals ?? 0,
+          assists:      r.assists ?? 0,
+          yellow_cards: r.yellow_cards ?? 0,
+          red_cards:    r.red_cards ?? 0,
+        }
+      })
+      setLocalStats(stats)
+    }
+    setStatsLoading(false)
+  }
+
+  const toggleStats = () => {
+    if (!statsOpen) fetchLineups()
+    setStatsOpen(!statsOpen)
+  }
+
+  const handleStatChange = (playerId: string, key: StatKey, value: number) => {
+    setLocalStats(prev => ({
+      ...prev,
+      [playerId]: { ...(prev[playerId] || { goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 }), [key]: value },
+    }))
+  }
 
   const handleSave = async () => {
     setSaving(true)
-    const { error } = await supabase
+
+    const { error: matchError } = await supabase
       .from('matches')
       .update({
         home_score: status === 'scheduled' ? null : homeScore,
@@ -154,13 +220,105 @@ function MatchOperatorRow({
       })
       .eq('id', match.id)
 
-    if (error) {
-      toast.error(`Update failed: ${error.message}`)
-    } else {
-      toast.success('Match updated')
-      onUpdate()
+    if (matchError) {
+      toast.error(`Update failed: ${matchError.message}`)
+      setSaving(false)
+      return
     }
+
+    if (Object.keys(localStats).length > 0) {
+      for (const [playerId, stats] of Object.entries(localStats)) {
+        const { error: statError } = await supabase
+          .from('match_lineups')
+          .update({
+            goals:        stats.goals ?? 0,
+            assists:      stats.assists ?? 0,
+            yellow_cards: stats.yellow_cards ?? 0,
+            red_cards:    stats.red_cards ?? 0,
+          })
+          .eq('match_id', match.id)
+          .eq('player_id', playerId)
+
+        if (statError) {
+          toast.error(`Stats failed for a player`)
+          break
+        }
+      }
+    }
+
+    toast.success('Match updated')
+    onUpdate()
     setSaving(false)
+  }
+
+  const renderTeamStats = (teamId: string | undefined, teamName: string) => {
+    if (!teamId) return null
+    const teamLineups = lineups.filter(l => l.team_id === teamId)
+    const starters    = teamLineups.filter(l => l.is_starting)
+    const bench       = teamLineups.filter(l => !l.is_starting)
+
+    if (teamLineups.length === 0) {
+      return (
+        <div className={styles.statsTeamSection}>
+          <div className={styles.statsTeamName}>{teamName}</div>
+          <p className={styles.statsEmpty}>No lineup set for this team.</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className={styles.statsTeamSection}>
+        <div className={styles.statsTeamName}>{teamName}</div>
+
+        {starters.length > 0 && (
+          <>
+            <div className={styles.statsGroupLabel}>Starters</div>
+            {starters.map(p => renderStatRow(p))}
+          </>
+        )}
+
+        {bench.length > 0 && (
+          <>
+            <div className={styles.statsGroupLabel}>Bench</div>
+            {bench.map(p => renderStatRow(p))}
+          </>
+        )}
+      </div>
+    )
+  }
+
+  const renderStatRow = (lineup: LineupPlayer) => {
+    const p = lineup.players
+    const playerLabel = `#${p.jersey_number ?? '?'} ${p.first_name || p.name}`
+    const stats = localStats[lineup.player_id] || { goals: 0, assists: 0, yellow_cards: 0, red_cards: 0 }
+
+    return (
+      <div key={lineup.player_id} className={styles.statPlayerRow}>
+        <div className={styles.statPlayerName}>{playerLabel}</div>
+        <div className={styles.statFields}>
+          <div className={styles.statField}>
+            <label className={styles.statLabel} htmlFor={`g-${lineup.player_id}`}>Goals</label>
+            <input id={`g-${lineup.player_id}`} type="number" min={0} aria-label={`Goals for ${playerLabel}`}
+              value={stats.goals} onChange={e => handleStatChange(lineup.player_id, 'goals', Number(e.target.value))} />
+          </div>
+          <div className={styles.statField}>
+            <label className={styles.statLabel} htmlFor={`a-${lineup.player_id}`}>Assists</label>
+            <input id={`a-${lineup.player_id}`} type="number" min={0} aria-label={`Assists for ${playerLabel}`}
+              value={stats.assists} onChange={e => handleStatChange(lineup.player_id, 'assists', Number(e.target.value))} />
+          </div>
+          <div className={styles.statField}>
+            <label className={styles.statLabel} htmlFor={`yc-${lineup.player_id}`}>YC</label>
+            <input id={`yc-${lineup.player_id}`} type="number" min={0} max={2} aria-label={`Yellow cards for ${playerLabel}`}
+              value={stats.yellow_cards} onChange={e => handleStatChange(lineup.player_id, 'yellow_cards', Number(e.target.value))} />
+          </div>
+          <div className={styles.statField}>
+            <label className={styles.statLabel} htmlFor={`rc-${lineup.player_id}`}>RC</label>
+            <input id={`rc-${lineup.player_id}`} type="number" min={0} max={1} aria-label={`Red cards for ${playerLabel}`}
+              value={stats.red_cards} onChange={e => handleStatChange(lineup.player_id, 'red_cards', Number(e.target.value))} />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -218,7 +376,7 @@ function MatchOperatorRow({
         <span className={styles.teamName}>{awayName}</span>
       </div>
 
-      {/* Status + save */}
+      {/* Status + save + stats toggle */}
       <div className={styles.controlsRow}>
         <select
           value={status}
@@ -230,6 +388,10 @@ function MatchOperatorRow({
           <option value="halftime">Half Time</option>
           <option value="completed">Full Time</option>
         </select>
+
+        <button onClick={toggleStats} type="button" className={styles.statsToggle}>
+          {statsOpen ? 'Hide Stats' : 'Player Stats'}
+        </button>
 
         <button
           onClick={handleSave}
@@ -243,6 +405,22 @@ function MatchOperatorRow({
           Full details ›
         </Link>
       </div>
+
+      {/* Player stats panel */}
+      {statsOpen && (
+        <div className={styles.statsPanel}>
+          {statsLoading ? (
+            <p className={styles.statsEmpty}>Loading lineups...</p>
+          ) : lineups.length === 0 ? (
+            <p className={styles.statsEmpty}>No lineups set for this match. Add lineups from the full match editor first.</p>
+          ) : (
+            <>
+              {renderTeamStats(homeId, homeName)}
+              {renderTeamStats(awayId, awayName)}
+            </>
+          )}
+        </div>
+      )}
     </div>
   )
 }
