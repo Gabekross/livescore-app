@@ -16,14 +16,16 @@ import dynamic from 'next/dynamic'
 const StatsChart = dynamic(() => import('@/components/admin/StatsChart'), { ssr: false })
 
 interface PlayerStat {
-  player_id:     string
-  player_name:   string
-  team_name:     string
+  player_id:      string
+  player_name:    string
+  first_name:     string | null
+  last_name:      string | null
+  team_name:      string
   matches_played: number
-  goals:         number
-  assists:       number
-  yellow_cards:  number
-  red_cards:     number
+  goals:          number
+  assists:        number
+  yellow_cards:   number
+  red_cards:      number
 }
 
 export default function PlayerStatsPage() {
@@ -45,11 +47,12 @@ export default function PlayerStatsPage() {
 
       const { data, error } = await supabase
         .from('player_stats_summary')
-        .select('player_id, player_name, team_name, matches_played, goals, assists, yellow_cards, red_cards')
+        .select('player_id, player_name, first_name, last_name, team_name, matches_played, goals, assists, yellow_cards, red_cards')
         .eq('organization_id', orgId)
         .order('goals', { ascending: false })
 
       if (error) {
+        console.error('Stats fetch error:', error.message)
         setLoading(false)
         return
       }
@@ -65,15 +68,23 @@ export default function PlayerStatsPage() {
 
   if (orgGate) return orgGate
 
-  const filteredStats = stats.filter((p) =>
-    p.player_name.toLowerCase().includes(search.toLowerCase()) &&
-    (teamFilter === '' || p.team_name === teamFilter)
-  )
+  const displayName = (p: PlayerStat) => {
+    if (p.first_name) {
+      return p.last_name ? `${p.first_name} ${p.last_name}` : p.first_name
+    }
+    return p.player_name
+  }
+
+  const filteredStats = stats.filter((p) => {
+    const name = displayName(p).toLowerCase()
+    return name.includes(search.toLowerCase()) &&
+      (teamFilter === '' || p.team_name === teamFilter)
+  })
 
   const downloadCSV = () => {
     const headers = ['Player', 'Team', 'MP', 'Goals', 'Assists', 'Yellow Cards', 'Red Cards']
     const rows = filteredStats.map((p) => [
-      p.player_name, p.team_name, p.matches_played, p.goals, p.assists, p.yellow_cards, p.red_cards,
+      `"${displayName(p)}"`, p.team_name, p.matches_played, p.goals, p.assists, p.yellow_cards, p.red_cards,
     ])
     const csv  = [headers, ...rows].map((r) => r.join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
@@ -88,6 +99,7 @@ export default function PlayerStatsPage() {
   const topPlayers = [...filteredStats]
     .sort((a, b) => (chartType === 'goals' ? b.goals - a.goals : b.assists - a.assists))
     .slice(0, 5)
+    .map(p => ({ ...p, player_name: displayName(p) }))
 
   return (
     <div className={styles.statsContainer}>
@@ -153,7 +165,7 @@ export default function PlayerStatsPage() {
           <tbody>
             {filteredStats.map((p) => (
               <tr key={p.player_id}>
-                <td>{p.player_name}</td>
+                <td>{displayName(p)}</td>
                 <td>{p.team_name}</td>
                 <td>{p.matches_played}</td>
                 <td>{p.goals}</td>
