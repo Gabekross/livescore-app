@@ -172,7 +172,7 @@ export default function MatchCard({
 
   if (href) {
     return (
-      <Link href={href} className={cardCls} style={{ display: 'flex' }}>
+      <Link href={href} className={cardCls}>
         {inner}
       </Link>
     )

@@ -83,11 +83,13 @@
   font-size:   clamp(0.8rem, 1.8vw, 0.9rem);
   font-weight: 600;
   min-width:   0;
+  overflow:    hidden;
 
   span {
     overflow:      hidden;
     text-overflow: ellipsis;
     white-space:   nowrap;
+    min-width:     0;
   }
 }
 
@@ -192,15 +194,17 @@
   flex-direction: column;
   align-items:    flex-end;
   gap:            var(--sp-1, 0.25rem);
-  flex-shrink:    0;
+  flex:           0 0 auto;
+  max-width:      72px;
 }
 
 .friendlyLabel {
-  font-size:      0.65rem;
+  font-size:      0.6rem;
   font-weight:    700;
   letter-spacing: 0.05em;
   color:          var(--color-friendly, #f59e0b);
   text-transform: uppercase;
+  white-space:    nowrap;
 }
 
 /* ── Team logo ──────────────────────────────────────────── */
@@ -235,9 +239,11 @@
 
 /* Tablet / narrow desktop */
 @media (max-width: 700px) {
-  .statusCol { flex: 0 0 60px; }
-  .team      { font-size: 0.85rem; }
-  .scoreBox  { min-width: 50px; font-size: 1rem; padding: 3px 10px; }
+  .statusCol { flex: 0 0 56px; }
+  .team      { font-size: 0.82rem; }
+  .scoreBox  { min-width: 48px; font-size: 1rem; padding: 3px 8px; }
+  .badgeCol  { max-width: 56px; }
+  .friendlyLabel { font-size: 0.55rem; }
 }
 
 /* ── Mobile: stacked layout ─────────────────────────────── */
