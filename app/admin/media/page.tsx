@@ -212,7 +212,10 @@ export default function AdminMediaPage() {
                   loading="lazy"
                 />
               ) : (
-                <div className={styles.mediaVideoThumb}>Video</div>
+                <div className={styles.mediaVideoThumb}>
+                  <video src={item.public_url} muted playsInline preload="metadata" />
+                  <span>Video</span>
+                </div>
               )}
               <div className={styles.mediaInfo}>
                 <div className={styles.mediaName} title={item.alt_text || item.storage_path}>

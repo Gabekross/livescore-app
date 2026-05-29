@@ -2,7 +2,7 @@
 
 // components/admin/MediaPicker.tsx
 // Reusable modal that shows the org's media library and lets the user
-// pick an image (or upload one on-the-fly). Returns the selected public URL.
+// pick media (or upload on-the-fly). Returns the selected public URL.
 //
 // Usage:
 //   <MediaPicker
@@ -31,7 +31,7 @@ interface MediaItem {
 interface Props {
   open:     boolean
   onClose:  () => void
-  onSelect: (url: string) => void
+  onSelect: (url: string, mediaType?: MediaItem['media_type']) => void
   /** Restrict to images only (default true) */
   imagesOnly?: boolean
 }
@@ -44,6 +44,7 @@ export default function MediaPicker({ open, onClose, onSelect, imagesOnly = true
   const [uploading, setUploading] = useState(false)
   const [dragging, setDragging] = useState(false)
   const fileInput = useRef<HTMLInputElement>(null)
+  const selectedItem = items.find((item) => item.public_url === selected)
 
   const fetchItems = useCallback(async () => {
     if (!orgId) return
@@ -114,7 +115,7 @@ export default function MediaPicker({ open, onClose, onSelect, imagesOnly = true
       toast.error(`DB record failed: ${dbError.message}`)
     } else {
       toast.success(`${file.name} uploaded`)
-      // Auto-select the newly uploaded image
+      // Auto-select the newly uploaded media item
       setSelected(publicUrl)
       await fetchItems()
     }
@@ -129,7 +130,7 @@ export default function MediaPicker({ open, onClose, onSelect, imagesOnly = true
   }
 
   const handleConfirm = () => {
-    if (selected) onSelect(selected)
+    if (selected) onSelect(selected, selectedItem?.media_type)
   }
 
   if (!open) return null
@@ -139,7 +140,7 @@ export default function MediaPicker({ open, onClose, onSelect, imagesOnly = true
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.header}>
-          <div className={styles.title}>Select Image</div>
+          <div className={styles.title}>Select {imagesOnly ? 'Image' : 'Media'}</div>
           <button className={styles.closeBtn} onClick={onClose}>
             &times;
           </button>
@@ -165,7 +166,7 @@ export default function MediaPicker({ open, onClose, onSelect, imagesOnly = true
           <input
             ref={fileInput}
             type="file"
-            accept="image/*"
+            accept={imagesOnly ? 'image/*' : 'image/*,video/mp4,video/webm'}
             className={styles.hiddenInput}
             onChange={(e) => handleFiles(e.target.files)}
           />
@@ -193,7 +194,10 @@ export default function MediaPicker({ open, onClose, onSelect, imagesOnly = true
                       loading="lazy"
                     />
                   ) : (
-                    <div className={styles.videoThumb}>Video</div>
+                    <div className={styles.videoThumb}>
+                      <video src={item.public_url} muted playsInline preload="metadata" />
+                      <span>Video</span>
+                    </div>
                   )}
                   <div className={styles.itemLabel}>
                     {item.alt_text || item.storage_path.split('/').pop()}
@@ -214,7 +218,7 @@ export default function MediaPicker({ open, onClose, onSelect, imagesOnly = true
             onClick={handleConfirm}
             disabled={!selected}
           >
-            Use Selected Image
+            Use Selected {imagesOnly ? 'Image' : 'Media'}
           </button>
         </div>
       </div>

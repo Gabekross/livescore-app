@@ -11,7 +11,8 @@ import StarterKit                   from '@tiptap/starter-kit'
 import Link                         from '@tiptap/extension-link'
 import Image                        from '@tiptap/extension-image'
 import Placeholder                  from '@tiptap/extension-placeholder'
-import { useCallback, useEffect }   from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import MediaPicker                  from '@/components/admin/MediaPicker'
 import styles                       from '@/styles/components/RichTextEditor.module.scss'
 
 interface Props {
@@ -50,7 +51,17 @@ const VideoEmbed = Node.create({
   },
 
   parseHTML() {
-    return [{ tag: 'div[data-video-embed]' }]
+    return [{
+      tag: 'div[data-video-embed]',
+      getAttrs: (element) => {
+        const el = element as HTMLElement
+        const media = el.querySelector('video, iframe') as HTMLVideoElement | HTMLIFrameElement | null
+        return {
+          src: media?.getAttribute('src') || el.getAttribute('data-src') || null,
+          isVideo: media?.tagName.toLowerCase() === 'video',
+        }
+      },
+    }]
   },
 
   renderHTML({ HTMLAttributes }) {
@@ -61,7 +72,7 @@ const VideoEmbed = Node.create({
           allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share',
           style: 'position:absolute;top:0;left:0;width:100%;height:100%;border:0' }
     const mediaTag = isVideo ? 'video' : 'iframe'
-    return ['div', mergeAttributes({ 'data-video-embed': '', class: 'video-embed' }), [mediaTag, mediaAttrs]]
+    return ['div', mergeAttributes({ 'data-video-embed': '', 'data-src': src, class: 'video-embed' }), [mediaTag, mediaAttrs]]
   },
 
   addCommands() {
@@ -76,6 +87,7 @@ const VideoEmbed = Node.create({
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function RichTextEditor({ value, onChange }: Props) {
+  const [showMediaPicker, setShowMediaPicker] = useState(false)
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -133,6 +145,21 @@ export default function RichTextEditor({ value, onChange }: Props) {
     if (!url?.trim()) return
     const embed = getEmbedInfo(url)
     ;(editor.chain().focus() as any).setVideoEmbed(embed).run()
+  }, [editor])
+
+  const insertMedia = useCallback((url: string, mediaType?: 'image' | 'video') => {
+    if (!editor) return
+    if (mediaType === 'video') {
+      ;(editor.chain().focus() as any).setVideoEmbed({ src: url, isVideo: true }).run()
+      return
+    }
+
+    const embed = getEmbedInfo(url)
+    if (embed.isVideo) {
+      ;(editor.chain().focus() as any).setVideoEmbed(embed).run()
+    } else {
+      editor.chain().focus().setImage({ src: url }).run()
+    }
   }, [editor])
 
   if (!editor) return null
@@ -216,6 +243,14 @@ export default function RichTextEditor({ value, onChange }: Props) {
           >
             Vid
           </button>
+          <button
+            type="button"
+            className={styles.toolBtn}
+            onClick={() => setShowMediaPicker(true)}
+            title="Insert from media library"
+          >
+            Media
+          </button>
         </div>
 
         <div className={styles.toolSep} />
@@ -286,6 +321,16 @@ export default function RichTextEditor({ value, onChange }: Props) {
 
       {/* ── Editor Content ── */}
       <EditorContent editor={editor} className={styles.editorContent} />
+
+      <MediaPicker
+        open={showMediaPicker}
+        imagesOnly={false}
+        onClose={() => setShowMediaPicker(false)}
+        onSelect={(url, mediaType) => {
+          insertMedia(url, mediaType)
+          setShowMediaPicker(false)
+        }}
+      />
     </div>
   )
 }

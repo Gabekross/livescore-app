@@ -3,12 +3,12 @@
 // First post rendered as a featured hero card; rest in a responsive grid.
 
 import type { Metadata }              from 'next'
-import Image                          from 'next/image'
 import Link                           from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getOrganizationIdServer }    from '@/lib/org-server'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import EmptyState                     from '@/components/ui/EmptyState'
+import NewsImage                      from '@/components/ui/NewsImage'
 import styles                         from '@/styles/components/NewsPage.module.scss'
 import BackToTop                       from '@/components/ui/BackToTop'
 
@@ -74,11 +74,13 @@ export default async function NewsPage() {
         />
 
         {posts.length === 0 ? (
-          <EmptyState
-            icon=""
-            title="No news yet"
-            description="Check back soon for the latest updates."
-          />
+          <div className={styles.emptyNewsPanel}>
+            <EmptyState
+              icon=""
+              title="No news yet"
+              description="Latest match reports, media, and tournament updates will appear here."
+            />
+          </div>
         ) : (
           <>
             {/* Featured post */}
@@ -86,7 +88,14 @@ export default async function NewsPage() {
               <div className={styles.featuredImageWrap}>
                 {featured.cover_image_url ? (
                   <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-                    <Image src={featured.cover_image_url} alt={featured.title} fill priority style={{ objectFit: 'cover' }} sizes="(max-width:900px) 100vw, 900px" />
+                    <NewsImage
+                      src={featured.cover_image_url}
+                      alt={featured.title}
+                      fill
+                      priority
+                      className={styles.featuredImage}
+                      sizes="(max-width:900px) 100vw, 58vw"
+                    />
                   </div>
                 ) : (
                   <div className={styles.featuredImagePlaceholder} aria-hidden="true" />
@@ -116,7 +125,13 @@ export default async function NewsPage() {
                   <Link key={post.id} href={`/news/${post.slug}`} className={styles.card}>
                     {post.cover_image_url ? (
                       <div className={styles.cardCoverWrap}>
-                        <Image src={post.cover_image_url} alt={post.title} fill style={{ objectFit: 'cover' }} sizes="(max-width:600px) 100vw, 320px" />
+                        <NewsImage
+                          src={post.cover_image_url}
+                          alt={post.title}
+                          fill
+                          className={styles.cardCover}
+                          sizes="(max-width:600px) 100vw, 360px"
+                        />
                       </div>
                     ) : (
                       <div className={styles.cardCoverPlaceholder} aria-hidden="true" />

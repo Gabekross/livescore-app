@@ -221,6 +221,13 @@ const THEMES: Array<{
               live: '#dc2626', scheduled: '#2563eb' },
   },
   {
+    id: 'graphite-pulse', name: 'Graphite Pulse', category: 'Premium Dark',
+    swatch: ['#080C10', '#14B8A6', '#151D26'],
+    tokens: { bg: '#080C10', nav: '#080C10', card: '#151D26', border: '#1C2733',
+              accent: '#14B8A6', text: '#F5F8FB', textMuted: '#9AA8B5',
+              live: '#F43F5E', scheduled: '#38BDF8' },
+  },
+  {
     id: 'luxury-dark', name: 'Luxury Dark', category: 'Luxury',
     swatch: ['#091A22', '#FF8C42', '#11222A'],
     tokens: { bg: '#091A22', nav: '#0B1D26', card: '#102229', border: 'rgba(255,255,255,0.08)',

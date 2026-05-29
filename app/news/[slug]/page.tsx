@@ -4,7 +4,6 @@
 // Includes JSON-LD structured data, OG metadata, related articles.
 
 import type { Metadata }              from 'next'
-import Image                          from 'next/image'
 import Link                           from 'next/link'
 import { notFound }                   from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
@@ -12,6 +11,7 @@ import { getOrganizationIdServer }    from '@/lib/org-server'
 import SectionHeader                  from '@/components/ui/SectionHeader'
 import ShareButton                    from '@/components/ui/ShareButton'
 import ArticleCarousel                from '@/components/ui/ArticleCarousel'
+import NewsImage                      from '@/components/ui/NewsImage'
 import styles                         from '@/styles/components/ArticlePage.module.scss'
 
 interface Props { params: { slug: string } }
@@ -251,7 +251,13 @@ export default async function ArticlePage({ params }: Props) {
                 <Link key={r.id} href={`/news/${r.slug}`} className={styles.relatedCard}>
                   {r.cover_image_url ? (
                     <div style={{ position: 'relative', flexShrink: 0 }} className={styles.relatedThumbWrap}>
-                      <Image src={r.cover_image_url} alt={r.title} fill style={{ objectFit: 'cover', borderRadius: 'var(--radius-md, 8px)' }} sizes="72px" />
+                      <NewsImage
+                        src={r.cover_image_url}
+                        alt={r.title}
+                        fill
+                        className={styles.relatedThumb}
+                        sizes="96px"
+                      />
                     </div>
                   ) : (
                     <div className={styles.relatedThumbPlaceholder} aria-hidden="true" />

@@ -6,7 +6,7 @@
 // The cover image (selected by admin) is shown first; all others follow.
 
 import { useState } from 'react'
-import Image        from 'next/image'
+import NewsImage    from '@/components/ui/NewsImage'
 import styles       from '@/styles/components/ArticlePage.module.scss'
 
 interface Props {
@@ -23,7 +23,7 @@ export default function ArticleCarousel({ images, title }: Props) {
   if (images.length === 1) {
     return (
       <div className={styles.hero}>
-        <Image
+        <NewsImage
           src={images[0]}
           alt={title}
           fill
@@ -42,7 +42,7 @@ export default function ArticleCarousel({ images, title }: Props) {
   return (
     <div className={styles.hero}>
       {/* Slide */}
-      <Image
+      <NewsImage
         key={index}
         src={images[index]}
         alt={`${title} — image ${index + 1}`}

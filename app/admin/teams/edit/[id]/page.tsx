@@ -229,11 +229,9 @@ export default function EditTeamPage() {
   }
 
   const downloadTemplate = () => {
-    const csv = 'first_name,last_name,phone_number,jersey_number,position\nJohn,Mensah,+233501234567,10,Forward\nDavid,Osei,,5,Defender\nKwame,Boateng,,1,Goalkeeper\n'
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const link = document.createElement('a')
-    link.href  = URL.createObjectURL(blob)
-    link.setAttribute('download', 'player_import_template.csv')
+    link.href = '/templates/player_import_template.xlsx'
+    link.setAttribute('download', 'player_import_template.xlsx')
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -428,7 +426,7 @@ export default function EditTeamPage() {
         <div className={styles.section}>
           <h3 className={styles.subheading}>Players</h3>
           <p style={{ fontSize: '0.82rem', color: '#6b7280', marginBottom: '1rem' }}>
-            Edit players or import a new roster from a spreadsheet.
+            Edit players or import a new roster from a spreadsheet. Use the template columns: first_name, last_name, phone_number, jersey_number, position.
           </p>
 
           <div className={styles.fieldGroup}>

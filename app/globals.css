@@ -219,6 +219,56 @@
   --color-friendly-border:  rgba(217, 119,   6, 0.22);
 }
 
+/* ── Theme: Graphite Pulse (modern premium dark) ─────────── */
+/* Neutral graphite surfaces, teal action colour, rose live   */
+/* states, and crisp blue scheduled states. Built to feel     */
+/* current without becoming a one-colour interface.           */
+[data-theme="graphite-pulse"] {
+  --color-bg:             #080C10;
+  --color-surface:        #0F151C;
+  --color-card:           #151D26;
+  --color-card-hover:     #1B2632;
+  --color-nav:            rgba(8, 12, 16, 0.94);
+  --color-card-solid:     #151D26;
+
+  --color-border:         #263342;
+  --color-border-subtle:  #1C2733;
+
+  --color-text:           #F5F8FB;
+  --color-text-muted:     #9AA8B5;
+  --color-text-dim:       #637181;
+
+  --color-accent:         #14B8A6;
+  --color-accent-light:   #5EEAD4;
+  --color-accent-dim:     rgba(20, 184, 166, 0.14);
+  --color-accent-glow:    rgba(20, 184, 166, 0.26);
+
+  --shadow-sm:            0 1px 4px rgba(0, 0, 0, 0.36);
+  --shadow-md:            0 8px 28px rgba(0, 0, 0, 0.42);
+  --shadow-lg:            0 18px 52px rgba(0, 0, 0, 0.52);
+  --shadow-accent:        0 0 24px rgba(20, 184, 166, 0.24);
+  --shadow-live:          0 0 16px rgba(244, 63, 94, 0.30);
+
+  --color-live:             #F43F5E;
+  --color-live-bg:          rgba(244,  63,  94, 0.12);
+  --color-live-glow:        rgba(244,  63,  94, 0.30);
+  --color-live-border:      rgba(244,  63,  94, 0.30);
+  --color-halftime:         #A78BFA;
+  --color-halftime-bg:      rgba(167, 139, 250, 0.12);
+  --color-halftime-border:  rgba(167, 139, 250, 0.30);
+  --color-scheduled:        #38BDF8;
+  --color-scheduled-bg:     rgba(56,  189, 248, 0.12);
+  --color-scheduled-border: rgba(56,  189, 248, 0.28);
+  --color-completed:        #64748B;
+  --color-completed-bg:     rgba(100, 116, 139, 0.14);
+  --color-completed-border: rgba(100, 116, 139, 0.24);
+  --color-success:          #22C55E;
+  --color-warning:          #F59E0B;
+  --color-friendly:         #F59E0B;
+  --color-friendly-bg:      rgba(245, 158,  11, 0.11);
+  --color-friendly-border:  rgba(245, 158,  11, 0.28);
+}
+
 /* ── Theme: Luxury Dark (deep ocean · orange accent) ────── */
 /* Inspired by premium mobile sports apps — screenshot ref.  */
 /* Rich teal-navy backgrounds, warm orange labels, glass     */
