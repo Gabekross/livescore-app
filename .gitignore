@@ -78,3 +78,7 @@ CLAUDE.md
 .agents/
 .claude/
 skills-lock.json
+
+# Local Codex browser automation profiles
+.codex-browser-profile/
+.codex-browser-profile-*/
