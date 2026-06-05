@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JCL26 Admin – Match Created</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1440px;min-height:900px;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:#f8fafc;color:#1e293b;display:flex}
+
+.sidebar{width:240px;min-height:900px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;flex-shrink:0}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:1.25rem 1.5rem;border-bottom:1px solid #e2e8f0;font-size:1rem;font-weight:800;color:#1e293b}
+.sb-logo{width:28px;height:28px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;color:#fff}
+.sb-section{padding:.75rem 1rem .25rem;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94a3b8}
+.sb-link{display:flex;align-items:center;gap:.65rem;padding:.55rem 1rem;border-radius:8px;margin:1px .5rem;font-size:.875rem;font-weight:500;color:#64748b;text-decoration:none}
+.sb-link.active{background:#eff6ff;color:#2563eb;font-weight:600}
+.sb-icon{width:18px;text-align:center;font-size:.85rem}
+
+.main{flex:1;padding:2rem;overflow:hidden;position:relative}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.page-title{font-size:1.4rem;font-weight:800;color:#1e293b;letter-spacing:-.02em}
+.breadcrumb{font-size:.82rem;color:#94a3b8;display:flex;align-items:center;gap:.4rem}
+.user-info{display:flex;align-items:center;gap:.75rem}
+.user-avatar{width:34px;height:34px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff}
+.user-name{font-size:.85rem;font-weight:600;color:#64748b}
+
+/* TOAST */
+.toast{position:absolute;top:1.5rem;right:2rem;display:flex;align-items:center;gap:.75rem;background:#fff;border:1px solid #e2e8f0;border-left:4px solid #22c55e;border-radius:10px;padding:.85rem 1.25rem;box-shadow:0 8px 32px rgba(0,0,0,.1);z-index:10;animation:toastIn .3s ease}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.toast-icon{font-size:1.1rem}
+.toast-text{font-size:.875rem;font-weight:600;color:#1e293b}
+.toast-sub{font-size:.78rem;color:#64748b;margin-top:.1rem}
+
+/* ACTIONS BAR */
+.actions-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.btn-new{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;background:#2563eb;color:#fff;border-radius:8px;font-size:.875rem;font-weight:600;cursor:pointer;border:none}
+.filter-row{display:flex;gap:.5rem}
+.filter-btn{padding:.5rem 1rem;border:1px solid #e2e8f0;border-radius:7px;font-size:.8rem;font-weight:500;color:#64748b;background:#fff;cursor:pointer}
+.filter-btn.active{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+
+/* TABLE */
+.table-card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.table-head{display:grid;grid-template-columns:2fr 2fr 1.5fr 1fr 1fr 1fr 80px;gap:.5rem;padding:.75rem 1.25rem;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8}
+.table-row{display:grid;grid-template-columns:2fr 2fr 1.5fr 1fr 1fr 1fr 80px;gap:.5rem;padding:.85rem 1.25rem;border-bottom:1px solid #f1f5f9;align-items:center;transition:background .15s}
+.table-row:last-child{border-bottom:none}
+.table-row:hover{background:#fafbfc}
+.table-row.new{background:#f0fdf4;border-left:3px solid #22c55e;padding-left:calc(1.25rem - 3px)}
+.cell{font-size:.875rem;color:#1e293b;font-weight:500}
+.cell-dim{font-size:.82rem;color:#64748b}
+.badge{display:inline-flex;padding:2px 9px;border-radius:9999px;font-size:.68rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.b-sched{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.b-live{background:#fef2f2;color:#ef4444;border:1px solid #fecaca}
+.b-ft{background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0}
+.b-tour{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+.b-new{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;font-size:.65rem}
+.actions-cell{display:flex;gap:.4rem}
+.act-btn{padding:3px 9px;border-radius:6px;font-size:.72rem;font-weight:600;border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;cursor:pointer}
+.act-btn.danger{color:#ef4444;border-color:#fecaca;background:#fef2f2}
+.team-cell{display:flex;align-items:center;gap:.5rem}
+.tlogo{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:900;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sb-brand"><div class="sb-logo">J</div>JCL26 Admin</div>
+  <div style="padding:.5rem 0">
+    <div class="sb-section">Overview</div>
+    <a class="sb-link" href="#"><div class="sb-icon">🏠</div>Dashboard</a>
+    <div class="sb-section">Content</div>
+    <a class="sb-link active" href="#"><div class="sb-icon">⚽</div>Matches</a>
+    <a class="sb-link" href="#"><div class="sb-icon">🏆</div>Tournaments</a>
+    <a class="sb-link" href="#"><div class="sb-icon">🛡️</div>Teams</a>
+    <a class="sb-link" href="#"><div class="sb-icon">👤</div>Players</a>
+    <a class="sb-link" href="#"><div class="sb-icon">📰</div>News</a>
+    <a class="sb-link" href="#"><div class="sb-icon">🖼️</div>Media</a>
+    <div class="sb-section">System</div>
+    <a class="sb-link" href="#"><div class="sb-icon">⚙️</div>Settings</a>
+  </div>
+</div>
+
+<div class="main">
+  <!-- TOAST -->
+  <div class="toast">
+    <div class="toast-icon">✅</div>
+    <div>
+      <div class="toast-text">Match created successfully!</div>
+      <div class="toast-sub">Harbour View vs Waterhouse · Apr 20, 15:00</div>
+    </div>
+  </div>
+
+  <div class="top-bar">
+    <div>
+      <div class="breadcrumb">Matches</div>
+      <div class="page-title">All Matches</div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar">G</div>
+      <span class="user-name">Gabriel · Admin</span>
+    </div>
+  </div>
+
+  <div class="actions-bar">
+    <div class="filter-row">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Scheduled</button>
+      <button class="filter-btn">Live</button>
+      <button class="filter-btn">Completed</button>
+    </div>
+    <button class="btn-new">+ New Match</button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-head">
+      <span>Home Team</span>
+      <span>Away Team</span>
+      <span>Date &amp; Time</span>
+      <span>Tournament</span>
+      <span>Status</span>
+      <span>Score</span>
+      <span>Actions</span>
+    </div>
+
+    <!-- NEW ROW (just created) -->
+    <div class="table-row new">
+      <div class="team-cell">
+        <div class="tlogo" style="background:rgba(37,99,235,.15);color:#2563eb">HV</div>
+        <div>
+          <div class="cell">Harbour View FC</div>
+          <div class="b-new badge" style="margin-top:3px">New</div>
+        </div>
+      </div>
+      <div class="team-cell"><div class="tlogo" style="background:rgba(168,85,247,.15);color:#a855f7">WH</div><span class="cell">Waterhouse FC</span></div>
+      <div><div class="cell">Apr 20, 2026</div><div class="cell-dim">15:00</div></div>
+      <div><span class="badge b-tour">JCL Prem.</span></div>
+      <div><span class="badge b-sched">Scheduled</span></div>
+      <div class="cell-dim">—</div>
+      <div class="actions-cell"><button class="act-btn">Edit</button><button class="act-btn danger">Del</button></div>
+    </div>
+
+    <div class="table-row">
+      <div class="team-cell"><div class="tlogo" style="background:rgba(34,197,94,.15);color:#16a34a">CA</div><span class="cell">Cavalier FC</span></div>
+      <div class="team-cell"><div class="tlogo" style="background:rgba(245,158,11,.15);color:#d97706">PO</div><span class="cell">Portmore United</span></div>
+      <div><div class="cell">Apr 16, 2026</div><div class="cell-dim">18:00</div></div>
+      <div><span class="badge b-tour">JCL Prem.</span></div>
+      <div><span class="badge b-live">Live</span></div>
+      <div class="cell" style="font-weight:700">0 – 0</div>
+      <div class="actions-cell"><button class="act-btn">Edit</button><button class="act-btn danger">Del</button></div>
+    </div>
+
+    <div class="table-row">
+      <div class="team-cell"><div class="tlogo" style="background:rgba(37,99,235,.15);color:#2563eb">HV</div><span class="cell">Harbour View FC</span></div>
+      <div class="team-cell"><div class="tlogo" style="background:rgba(168,85,247,.15);color:#a855f7">WH</div><span class="cell">Waterhouse FC</span></div>
+      <div><div class="cell">Apr 16, 2026</div><div class="cell-dim">16:00</div></div>
+      <div><span class="badge b-tour">JCL Prem.</span></div>
+      <div><span class="badge b-live">Live</span></div>
+      <div class="cell" style="font-weight:700">2 – 0</div>
+      <div class="actions-cell"><button class="act-btn">Edit</button><button class="act-btn danger">Del</button></div>
+    </div>
+
+    <div class="table-row">
+      <div class="team-cell"><div class="tlogo" style="background:rgba(239,68,68,.15);color:#dc2626">TG</div><span class="cell">Tivoli Gardens</span></div>
+      <div class="team-cell"><div class="tlogo" style="background:rgba(251,191,36,.15);color:#d97706">BT</div><span class="cell">Boys' Town FC</span></div>
+      <div><div class="cell">Apr 14, 2026</div><div class="cell-dim">15:00</div></div>
+      <div><span class="badge b-tour">JCL Prem.</span></div>
+      <div><span class="badge b-ft">FT</span></div>
+      <div class="cell">3 – 1</div>
+      <div class="actions-cell"><button class="act-btn">Edit</button><button class="act-btn danger">Del</button></div>
+    </div>
+
+    <div class="table-row">
+      <div class="team-cell"><div class="tlogo" style="background:rgba(245,158,11,.15);color:#d97706">PO</div><span class="cell">Portmore United</span></div>
+      <div class="team-cell"><div class="tlogo" style="background:rgba(239,68,68,.15);color:#dc2626">TG</div><span class="cell">Tivoli Gardens</span></div>
+      <div><div class="cell">Apr 13, 2026</div><div class="cell-dim">19:30</div></div>
+      <div><span class="badge b-tour">JCL Prem.</span></div>
+      <div><span class="badge b-ft">FT</span></div>
+      <div class="cell">2 – 2</div>
+      <div class="actions-cell"><button class="act-btn">Edit</button><button class="act-btn danger">Del</button></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

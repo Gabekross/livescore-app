@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JCL26 Admin – New Match (Empty)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1440px;min-height:900px;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:#f8fafc;color:#1e293b;display:flex}
+
+/* SIDEBAR */
+.sidebar{width:240px;min-height:900px;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;flex-shrink:0}
+.sb-brand{display:flex;align-items:center;gap:10px;padding:1.25rem 1.5rem;border-bottom:1px solid #e2e8f0;font-size:1rem;font-weight:800;color:#1e293b;letter-spacing:-.01em}
+.sb-logo{width:28px;height:28px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:900;color:#fff}
+.sb-section{padding:.75rem 1rem .25rem;font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94a3b8}
+.sb-link{display:flex;align-items:center;gap:.65rem;padding:.55rem 1rem;border-radius:8px;margin:1px .5rem;font-size:.875rem;font-weight:500;color:#64748b;text-decoration:none;cursor:pointer}
+.sb-link:hover{background:#f1f5f9;color:#1e293b}
+.sb-link.active{background:#eff6ff;color:#2563eb;font-weight:600}
+.sb-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:.85rem;opacity:.8}
+
+/* MAIN */
+.main{flex:1;padding:2rem;overflow:hidden}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem}
+.page-title{font-size:1.4rem;font-weight:800;color:#1e293b;letter-spacing:-.02em}
+.breadcrumb{font-size:.82rem;color:#94a3b8;display:flex;align-items:center;gap:.4rem}
+.breadcrumb a{color:#94a3b8;text-decoration:none}
+.breadcrumb span{color:#cbd5e1}
+.user-info{display:flex;align-items:center;gap:.75rem}
+.user-avatar{width:34px;height:34px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff}
+.user-name{font-size:.85rem;font-weight:600;color:#64748b}
+
+/* FORM CARD */
+.form-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:2rem;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.form-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.75rem;padding-bottom:1.25rem;border-bottom:1px solid #f1f5f9}
+.form-title{font-size:1rem;font-weight:700;color:#1e293b}
+.form-sub{font-size:.82rem;color:#94a3b8;margin-top:.1rem}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.form-full{grid-column:1/-1}
+.fg{display:flex;flex-direction:column;gap:.4rem}
+.label{font-size:.78rem;font-weight:600;color:#374151}
+.label span{color:#ef4444}
+.inp{padding:.65rem .9rem;border:1px solid #e2e8f0;border-radius:8px;font-size:.9rem;color:#1e293b;background:#fff;width:100%;font-family:'Inter',sans-serif;color:#94a3b8}
+.inp:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.inp.placeholder-style{color:#94a3b8}
+select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:2rem;cursor:pointer}
+.row-btns{display:flex;gap:.75rem;margin-top:1.5rem;justify-content:flex-end}
+.btn-cancel{padding:.65rem 1.4rem;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-size:.875rem;font-weight:600;cursor:pointer}
+.btn-save{padding:.65rem 1.6rem;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:.875rem;font-weight:700;cursor:pointer;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-brand"><div class="sb-logo">J</div>JCL26 Admin</div>
+  <div style="padding:.5rem 0">
+    <div class="sb-section">Overview</div>
+    <a class="sb-link" href="#"><div class="sb-icon">🏠</div>Dashboard</a>
+    <div class="sb-section">Content</div>
+    <a class="sb-link active" href="#"><div class="sb-icon">⚽</div>Matches</a>
+    <a class="sb-link" href="#"><div class="sb-icon">🏆</div>Tournaments</a>
+    <a class="sb-link" href="#"><div class="sb-icon">🛡️</div>Teams</a>
+    <a class="sb-link" href="#"><div class="sb-icon">👤</div>Players</a>
+    <a class="sb-link" href="#"><div class="sb-icon">📰</div>News</a>
+    <a class="sb-link" href="#"><div class="sb-icon">🖼️</div>Media</a>
+    <div class="sb-section">System</div>
+    <a class="sb-link" href="#"><div class="sb-icon">⚙️</div>Settings</a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="top-bar">
+    <div>
+      <div class="breadcrumb"><a href="#">Matches</a><span>›</span>New Match</div>
+      <div class="page-title">New Match</div>
+    </div>
+    <div class="user-info">
+      <div class="user-avatar">G</div>
+      <span class="user-name">Gabriel · Admin</span>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <div class="form-header">
+      <div>
+        <div class="form-title">Match Details</div>
+        <div class="form-sub">Fill in the match information below</div>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="fg">
+        <label class="label">Home Team <span>*</span></label>
+        <select class="inp"><option value="" disabled selected>Select home team…</option><option>Harbour View FC</option><option>Waterhouse FC</option><option>Cavalier FC</option><option>Portmore United</option><option>Tivoli Gardens</option></select>
+      </div>
+      <div class="fg">
+        <label class="label">Away Team <span>*</span></label>
+        <select class="inp"><option value="" disabled selected>Select away team…</option><option>Harbour View FC</option><option>Waterhouse FC</option><option>Cavalier FC</option><option>Portmore United</option><option>Tivoli Gardens</option></select>
+      </div>
+      <div class="fg">
+        <label class="label">Match Date <span>*</span></label>
+        <input type="text" class="inp placeholder-style" placeholder="DD / MM / YYYY" readonly>
+      </div>
+      <div class="fg">
+        <label class="label">Kick-off Time <span>*</span></label>
+        <input type="text" class="inp placeholder-style" placeholder="HH : MM" readonly>
+      </div>
+      <div class="fg">
+        <label class="label">Tournament</label>
+        <select class="inp"><option value="">None (Friendly)</option><option>JCL Premier League</option><option>JCL Cup 2026</option><option>Super Cup 2026</option></select>
+      </div>
+      <div class="fg">
+        <label class="label">Stage / Group</label>
+        <select class="inp" disabled><option>Select tournament first…</option></select>
+      </div>
+      <div class="fg form-full">
+        <label class="label">Venue</label>
+        <input type="text" class="inp placeholder-style" placeholder="e.g. National Stadium, Kingston" readonly>
+      </div>
+      <div class="fg">
+        <label class="label">Match Type</label>
+        <select class="inp"><option>Tournament</option><option>Friendly</option></select>
+      </div>
+      <div class="fg">
+        <label class="label">Status</label>
+        <select class="inp"><option>Scheduled</option><option>Live</option><option>Half Time</option><option>Completed</option></select>
+      </div>
+    </div>
+
+    <div class="row-btns">
+      <button class="btn-cancel">Cancel</button>
+      <button class="btn-save">Create Match</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

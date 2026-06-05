@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JCL26 – Theme: Light</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1440px;min-height:900px;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:#f0f4ff;color:#0f172a}
+
+nav{position:fixed;top:0;left:0;width:1440px;height:60px;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1px solid #e2e8f0;display:flex;align-items:center;padding:0 2rem;z-index:100;gap:2rem;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.brand{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:800;color:#0f172a;letter-spacing:-.02em;text-decoration:none}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff}
+.nav-links{display:flex;align-items:center;gap:2px;margin:0 auto}
+.nav-links a{padding:6px 14px;border-radius:6px;font-size:.875rem;font-weight:500;color:#64748b;text-decoration:none}
+.nav-links a.active{background:#eff6ff;color:#2563eb;font-weight:600}
+.nav-cta a{padding:8px 20px;background:#2563eb;color:#fff;border-radius:8px;font-size:.875rem;font-weight:600;text-decoration:none;box-shadow:0 2px 10px rgba(37,99,235,.25)}
+
+/* THEME LABEL */
+.theme-chip{position:absolute;top:80px;right:2.5rem;display:flex;align-items:center;gap:.5rem;background:#fff;border:1px solid #e2e8f0;border-radius:9999px;padding:6px 14px;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.theme-dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#60a5fa)}
+.theme-name{font-size:.72rem;font-weight:700;color:#64748b;letter-spacing:.06em;text-transform:uppercase}
+
+.hero{padding-top:60px;min-height:400px;background:linear-gradient(180deg,#e8f0ff 0%,#f0f4ff 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% -10%,rgba(37,99,235,.12) 0%,transparent 65%);pointer-events:none}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#2563eb;margin-bottom:1.4rem;display:flex;align-items:center;gap:.6rem;position:relative;z-index:1}
+.edot{width:5px;height:5px;background:#2563eb;border-radius:50%}
+.hero-title{font-size:3.6rem;font-weight:900;letter-spacing:-.04em;line-height:1.04;color:#0f172a;margin-bottom:1.4rem;max-width:680px;position:relative;z-index:1}
+.hero-title em{font-style:normal;color:#2563eb}
+.hero-sub{font-size:1.1rem;color:#64748b;max-width:500px;line-height:1.65;margin-bottom:2.8rem;position:relative;z-index:1}
+.hero-btns{display:flex;gap:1rem;position:relative;z-index:1}
+.btn-p{padding:.85rem 2.2rem;background:#2563eb;color:#fff;border-radius:10px;font-size:.95rem;font-weight:700;text-decoration:none;box-shadow:0 4px 20px rgba(37,99,235,.3)}
+.btn-s{padding:.85rem 2.2rem;background:#fff;color:#2563eb;border:1px solid #bfdbfe;border-radius:10px;font-size:.95rem;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.live-strip{padding:1.75rem 3rem 0;background:#f0f4ff}
+.strip-header{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.pulse-dot{width:8px;height:8px;background:#ef4444;border-radius:50%;box-shadow:0 0 8px rgba(239,68,68,.6);animation:pulse 1.5s ease infinite}
+.strip-label{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ef4444}
+.cards-row{display:flex;gap:1rem}
+.mc{flex:1;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:1.1rem 1.3rem;display:flex;align-items:center;gap:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.mc.live-c{border-color:rgba(239,68,68,.3);box-shadow:0 2px 16px rgba(239,68,68,.1)}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:9999px;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0}
+.b-live{background:#fef2f2;color:#ef4444;border:1px solid #fecaca}
+.b-sched{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
+.bdot{width:5px;height:5px;background:#ef4444;border-radius:50%;animation:pulse 1.5s ease infinite}
+.teams{flex:1;display:flex;flex-direction:column;gap:.32rem}
+.team{display:flex;align-items:center;gap:.55rem}
+.tlogo{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:900;flex-shrink:0}
+.tname{font-size:.9rem;font-weight:600;color:#0f172a}
+.tname.d{color:#94a3b8}
+.score-col{display:flex;flex-direction:column;align-items:center;gap:.25rem}
+.score{font-size:1.35rem;font-weight:900;color:#0f172a;letter-spacing:-.02em}
+.min{font-size:.68rem;font-weight:700;color:#ef4444}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#"><div class="logo-mark">J</div>JCL26</a>
+  <div class="nav-links">
+    <a href="#" class="active">Home</a>
+    <a href="#">Matches</a>
+    <a href="#">Table</a>
+    <a href="#">Teams</a>
+    <a href="#">Tournaments</a>
+    <a href="#">News</a>
+    <a href="#">Archive</a>
+  </div>
+  <div class="nav-cta"><a href="#">Admin Panel</a></div>
+</nav>
+
+<div class="theme-chip">
+  <div class="theme-dot"></div>
+  <span class="theme-name">Light Theme</span>
+</div>
+
+<section class="hero">
+  <p class="eyebrow"><span class="edot"></span>Jamaica Club League · 2026 Season</p>
+  <h1 class="hero-title">The <em>Ultimate Football</em><br>Experience</h1>
+  <p class="hero-sub">Live scores, fixtures, standings, and in-depth coverage of every match in the JCL26 season.</p>
+  <div class="hero-btns">
+    <a href="#" class="btn-p">Fixtures &amp; Results</a>
+    <a href="#" class="btn-s">View Standings</a>
+  </div>
+</section>
+
+<div class="live-strip">
+  <div class="strip-header">
+    <div class="pulse-dot"></div>
+    <span class="strip-label">2 Matches Live Now</span>
+  </div>
+  <div class="cards-row">
+    <div class="mc live-c">
+      <span class="badge b-live"><span class="bdot"></span>LIVE</span>
+      <div class="teams">
+        <div class="team"><div class="tlogo" style="background:#eff6ff;color:#2563eb">HV</div><span class="tname">Harbour View FC</span></div>
+        <div class="team"><div class="tlogo" style="background:#f5f3ff;color:#7c3aed">WH</div><span class="tname d">Waterhouse FC</span></div>
+      </div>
+      <div class="score-col"><span class="score">2 – 0</span><span class="min">67'</span></div>
+    </div>
+    <div class="mc live-c">
+      <span class="badge b-live"><span class="bdot"></span>LIVE</span>
+      <div class="teams">
+        <div class="team"><div class="tlogo" style="background:#f0fdf4;color:#16a34a">CA</div><span class="tname">Cavalier FC</span></div>
+        <div class="team"><div class="tlogo" style="background:#fffbeb;color:#d97706">PO</div><span class="tname d">Portmore United</span></div>
+      </div>
+      <div class="score-col"><span class="score">1 – 0</span><span class="min">74'</span></div>
+    </div>
+    <div class="mc">
+      <span class="badge b-sched">19:30</span>
+      <div class="teams">
+        <div class="team"><div class="tlogo" style="background:#fef2f2;color:#dc2626">TG</div><span class="tname">Tivoli Gardens</span></div>
+        <div class="team"><div class="tlogo" style="background:#fefce8;color:#ca8a04">BT</div><span class="tname d">Boys' Town FC</span></div>
+      </div>
+      <div class="score-col"><span class="score" style="font-size:1rem;color:#cbd5e1">vs</span></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

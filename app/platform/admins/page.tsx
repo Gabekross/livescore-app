@@ -101,6 +101,21 @@ export default function PlatformAdminsPage() {
         Manage admin roles and organization assignments. New admins are created when they sign up and create an organization.
       </p>
 
+      <section style={{ ...cardStyle, marginBottom: '1rem' }}>
+        <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.65rem' }}>
+          Role Guide
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '0.65rem' }}>
+          <RoleHelp title="Platform Admin" tone="#fbbf24" text="Full platform access. Can manage every organization, admin user, and platform setting." />
+          <RoleHelp title="Org Admin" tone="#818cf8" text="Manages one assigned organization and follows that organization's subscription limits." />
+          <RoleHelp title="Billing Exempt Admin" tone="#34d399" text="Manages one assigned organization with paid feature gates bypassed. Does not get platform access." />
+          <RoleHelp title="Match Operator" tone="#f97316" text="Limited game-day role for updating matches from the operator screen only." />
+        </div>
+        <p style={{ fontSize: '0.76rem', color: '#777799', lineHeight: 1.5, margin: '0.8rem 0 0' }}>
+          Org-scoped roles must have an organization assigned before the role can be saved.
+        </p>
+      </section>
+
       {loading ? (
         <p style={{ color: '#8888aa' }}>Loading...</p>
       ) : admins.length === 0 ? (
@@ -156,6 +171,18 @@ export default function PlatformAdminsPage() {
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+function RoleHelp({ title, tone, text }: { title: string; tone: string; text: string }) {
+  return (
+    <div style={{ background: '#0f0f19', border: '1px solid #24243a', borderRadius: 8, padding: '0.75rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.3rem' }}>
+        <span style={{ width: 8, height: 8, borderRadius: 999, background: tone, flexShrink: 0 }} />
+        <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#f0f0ff' }}>{title}</span>
+      </div>
+      <div style={{ fontSize: '0.76rem', color: '#8f8fb0', lineHeight: 1.45 }}>{text}</div>
     </div>
   )
 }

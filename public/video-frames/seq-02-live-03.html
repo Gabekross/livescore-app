@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JCL26 – Goal Event Timeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1440px;min-height:900px;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:#070710;color:#e8e8f4}
+
+nav{position:fixed;top:0;left:0;width:1440px;height:60px;background:rgba(9,9,26,0.96);backdrop-filter:blur(12px);border-bottom:1px solid #1c1c35;display:flex;align-items:center;padding:0 2rem;z-index:100;gap:2rem}
+.brand{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:800;color:#e8e8f4;letter-spacing:-.02em;text-decoration:none}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff}
+.nav-links{display:flex;align-items:center;gap:2px;margin:0 auto}
+.nav-links a{padding:6px 14px;border-radius:6px;font-size:.875rem;font-weight:500;color:#7272a0;text-decoration:none}
+.nav-links a.active{background:rgba(37,99,235,.15);color:#3b82f6;font-weight:600}
+.nav-cta a{padding:8px 20px;background:#2563eb;color:#fff;border-radius:8px;font-size:.875rem;font-weight:600;text-decoration:none}
+
+.page{padding:80px 3rem 0;display:grid;grid-template-columns:1fr 400px;gap:2rem}
+
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* LEFT — MATCH DETAIL */
+.match-detail{background:linear-gradient(180deg,#0e1428 0%,#13132a 100%);border:1px solid rgba(239,68,68,.3);border-radius:18px;padding:2rem 2.5rem;box-shadow:0 0 30px rgba(239,68,68,.08)}
+.md-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.md-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:9999px;font-size:.7rem;font-weight:700;color:#ef4444;letter-spacing:.08em;text-transform:uppercase}
+.bdot{width:5px;height:5px;background:#ef4444;border-radius:50%;animation:pulse 1.5s ease infinite}
+.md-tournament{font-size:.78rem;color:#7272a0}
+
+.md-scoreboard{display:flex;align-items:center;justify-content:center;gap:2.5rem;margin-bottom:2rem}
+.md-team{display:flex;flex-direction:column;align-items:center;gap:.6rem;width:160px}
+.md-logo{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:900}
+.md-name{font-size:.95rem;font-weight:700;color:#e8e8f4;text-align:center}
+.md-score{text-align:center}
+.md-numbers{font-size:4rem;font-weight:900;color:#e8e8f4;letter-spacing:-.04em;line-height:1}
+.md-min{font-size:.82rem;font-weight:700;color:#ef4444;margin-top:.35rem;letter-spacing:.08em}
+
+/* PROGRESS BAR */
+.progress-bar{height:4px;background:#1c1c35;border-radius:2px;margin:0 0 1.5rem;position:relative;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#2563eb,#3b82f6);border-radius:2px;width:74%}
+.progress-labels{display:flex;justify-content:space-between;font-size:.68rem;color:#48487a;margin-top:.3rem}
+
+/* EVENTS */
+.events-title{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#48487a;margin-bottom:.75rem}
+.event{display:flex;align-items:center;gap:.85rem;padding:.7rem 0;border-bottom:1px solid #1c1c35}
+.event:last-child{border-bottom:none}
+.event.goal{background:rgba(34,197,94,.04);border-radius:8px;padding:.7rem .75rem;margin:0 -.75rem;border-bottom:none;margin-bottom:1px}
+.ev-min{font-size:.78rem;font-weight:700;color:#48487a;width:32px;text-align:right;flex-shrink:0}
+.ev-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.ev-icon.goal-icon{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3)}
+.ev-icon.yellow-icon{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3)}
+.ev-text{flex:1}
+.ev-player{font-size:.88rem;font-weight:700;color:#e8e8f4}
+.ev-player.goal-player{color:#22c55e}
+.ev-team{font-size:.72rem;color:#7272a0;margin-top:.1rem}
+.ev-side{font-size:.72rem;color:#48487a;margin-left:auto;white-space:nowrap}
+
+/* RIGHT — STATS */
+.match-stats{background:#13132a;border:1px solid #1c1c35;border-radius:18px;padding:1.5rem}
+.stats-title{font-size:.78rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#48487a;margin-bottom:1.25rem}
+.stat-row{margin-bottom:1.1rem}
+.stat-label{display:flex;justify-content:space-between;font-size:.78rem;color:#7272a0;margin-bottom:.35rem}
+.stat-name{color:#7272a0;font-weight:500}
+.stat-vals{display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;color:#e8e8f4;margin-bottom:.3rem}
+.stat-bar{height:4px;background:#1c1c35;border-radius:2px;display:flex;overflow:hidden}
+.stat-bar-home{height:100%;background:#3b82f6;border-radius:2px 0 0 2px}
+.stat-bar-away{height:100%;background:#a855f7;border-radius:0 2px 2px 0;margin-left:auto}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#"><div class="logo-mark">J</div>JCL26</a>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#" class="active">Matches</a>
+    <a href="#">Table</a>
+    <a href="#">Teams</a>
+    <a href="#">Tournaments</a>
+    <a href="#">News</a>
+  </div>
+  <div class="nav-cta"><a href="#">Admin Panel</a></div>
+</nav>
+
+<div class="page">
+
+  <!-- LEFT: MATCH DETAIL -->
+  <div class="match-detail">
+    <div class="md-header">
+      <div class="md-badge"><span class="bdot"></span>LIVE</div>
+      <span class="md-tournament">JCL Premier League · Group A · Matchday 12</span>
+    </div>
+
+    <div class="md-scoreboard">
+      <div class="md-team">
+        <div class="md-logo" style="background:rgba(37,99,235,.2);color:#3b82f6">HV</div>
+        <div class="md-name">Harbour View FC</div>
+      </div>
+      <div class="md-score">
+        <div class="md-numbers">2 – 0</div>
+        <div class="md-min">74' · 2nd Half</div>
+      </div>
+      <div class="md-team">
+        <div class="md-logo" style="background:rgba(168,85,247,.2);color:#a855f7">WH</div>
+        <div class="md-name">Waterhouse FC</div>
+      </div>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+    <div class="progress-labels">
+      <span>KO</span><span>HT</span><span>74'</span><span>90'</span>
+    </div>
+
+    <div class="events-title">Match Events</div>
+
+    <div class="event goal">
+      <span class="ev-min" style="color:#22c55e;font-weight:800">67'</span>
+      <div class="ev-icon goal-icon">⚽</div>
+      <div class="ev-text">
+        <div class="ev-player goal-player">D. Morrison</div>
+        <div class="ev-team">Harbour View FC · Low drive from edge of box</div>
+      </div>
+      <span class="ev-side" style="color:#22c55e;font-size:.7rem;font-weight:700">GOAL</span>
+    </div>
+
+    <div class="event">
+      <span class="ev-min">45'</span>
+      <div class="ev-icon" style="background:rgba(96,165,250,.1);border:1px solid rgba(96,165,250,.25);font-size:.75rem;color:#60a5fa;font-weight:700">HT</div>
+      <div class="ev-text">
+        <div class="ev-player" style="color:#7272a0">Half Time</div>
+        <div class="ev-team">Harbour View 1 – 0 Waterhouse</div>
+      </div>
+    </div>
+
+    <div class="event">
+      <span class="ev-min">38'</span>
+      <div class="ev-icon yellow-icon">🟨</div>
+      <div class="ev-text">
+        <div class="ev-player">K. Campbell</div>
+        <div class="ev-team">Waterhouse FC · Reckless challenge</div>
+      </div>
+    </div>
+
+    <div class="event goal">
+      <span class="ev-min" style="color:#22c55e;font-weight:800">28'</span>
+      <div class="ev-icon goal-icon">⚽</div>
+      <div class="ev-text">
+        <div class="ev-player goal-player">O. Thompson</div>
+        <div class="ev-team">Harbour View FC · Headed from corner</div>
+      </div>
+      <span class="ev-side" style="color:#22c55e;font-size:.7rem;font-weight:700">GOAL</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: MATCH STATS -->
+  <div class="match-stats">
+    <div class="stats-title">Match Statistics</div>
+
+    <div class="stat-row">
+      <div class="stat-vals"><span>62%</span><span style="color:#7272a0">Possession</span><span>38%</span></div>
+      <div class="stat-bar"><div class="stat-bar-home" style="width:62%"></div><div class="stat-bar-away" style="width:38%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-vals"><span>7</span><span style="color:#7272a0">Shots</span><span>4</span></div>
+      <div class="stat-bar"><div class="stat-bar-home" style="width:64%"></div><div class="stat-bar-away" style="width:36%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-vals"><span>4</span><span style="color:#7272a0">On Target</span><span>1</span></div>
+      <div class="stat-bar"><div class="stat-bar-home" style="width:80%"></div><div class="stat-bar-away" style="width:20%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-vals"><span>5</span><span style="color:#7272a0">Corners</span><span>2</span></div>
+      <div class="stat-bar"><div class="stat-bar-home" style="width:71%"></div><div class="stat-bar-away" style="width:29%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-vals"><span>1</span><span style="color:#7272a0">Yellow Cards</span><span>2</span></div>
+      <div class="stat-bar"><div class="stat-bar-home" style="width:33%"></div><div class="stat-bar-away" style="width:67%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-vals"><span>312</span><span style="color:#7272a0">Passes</span><span>198</span></div>
+      <div class="stat-bar"><div class="stat-bar-home" style="width:61%"></div><div class="stat-bar-away" style="width:39%"></div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-vals"><span>88%</span><span style="color:#7272a0">Pass Acc.</span><span>76%</span></div>
+      <div class="stat-bar"><div class="stat-bar-home" style="width:88%"></div><div class="stat-bar-away" style="width:76%"></div></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

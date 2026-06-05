@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JCL26 – Live Match 2-0 Goal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1440px;min-height:900px;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:#070710;color:#e8e8f4}
+
+nav{position:fixed;top:0;left:0;width:1440px;height:60px;background:rgba(9,9,26,0.96);backdrop-filter:blur(12px);border-bottom:1px solid #1c1c35;display:flex;align-items:center;padding:0 2rem;z-index:100;gap:2rem}
+.brand{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:800;color:#e8e8f4;letter-spacing:-.02em;text-decoration:none}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff}
+.nav-links{display:flex;align-items:center;gap:2px;margin:0 auto}
+.nav-links a{padding:6px 14px;border-radius:6px;font-size:.875rem;font-weight:500;color:#7272a0;text-decoration:none}
+.nav-links a.active{background:rgba(37,99,235,.15);color:#3b82f6;font-weight:600}
+.nav-cta a{padding:8px 20px;background:#2563eb;color:#fff;border-radius:8px;font-size:.875rem;font-weight:600;text-decoration:none}
+
+.page{padding:80px 3rem 0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+@keyframes goalFlash{0%{box-shadow:0 0 0px rgba(34,197,94,0);border-color:rgba(34,197,94,.3)}50%{box-shadow:0 0 60px rgba(34,197,94,.35);border-color:rgba(34,197,94,.7)}100%{box-shadow:0 0 30px rgba(34,197,94,.2);border-color:rgba(34,197,94,.5)}}
+@keyframes scorePop{0%{transform:scale(.7);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.page-title{font-size:1.6rem;font-weight:900;color:#e8e8f4;letter-spacing:-.02em}
+.live-indicator{display:flex;align-items:center;gap:.5rem;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:9999px;padding:6px 16px}
+.pulse{width:8px;height:8px;background:#ef4444;border-radius:50%;box-shadow:0 0 10px rgba(239,68,68,.8);animation:pulse 1.5s ease infinite}
+
+/* GOAL BANNER */
+.goal-banner{background:linear-gradient(135deg,rgba(34,197,94,.12) 0%,rgba(34,197,94,.06) 100%);border:1px solid rgba(34,197,94,.3);border-radius:12px;padding:.85rem 1.5rem;display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;animation:goalBannerIn .3s ease}
+@keyframes goalBannerIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.goal-icon{font-size:1.5rem}
+.goal-text{flex:1}
+.goal-headline{font-size:.9rem;font-weight:800;color:#22c55e;letter-spacing:.04em;text-transform:uppercase}
+.goal-detail{font-size:.82rem;color:#7272a0;margin-top:.15rem}
+.goal-time{font-size:.78rem;font-weight:700;color:#22c55e;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:6px;padding:2px 8px;white-space:nowrap}
+
+/* FEATURED */
+.featured{background:linear-gradient(135deg,#0a1f12 0%,#0d1f10 50%,#13132a 100%);border:2px solid rgba(34,197,94,.5);border-radius:18px;padding:2.5rem 3rem;margin-bottom:1.5rem;box-shadow:0 0 50px rgba(34,197,94,.15);position:relative;overflow:hidden;animation:goalFlash 0.8s ease forwards}
+.featured::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:700px;height:350px;background:radial-gradient(ellipse,rgba(34,197,94,.1) 0%,transparent 70%);pointer-events:none}
+.f-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);border-radius:9999px;font-size:.72rem;font-weight:700;color:#ef4444;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.5rem}
+.bdot{width:5px;height:5px;background:#ef4444;border-radius:50%;animation:pulse 1.5s ease infinite}
+.f-content{display:flex;align-items:center;justify-content:center;gap:3rem}
+.f-team{display:flex;flex-direction:column;align-items:center;gap:.75rem;min-width:180px}
+.f-logo{width:64px;height:64px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900}
+.f-name{font-size:1.05rem;font-weight:700;color:#e8e8f4;text-align:center}
+.f-score{display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.f-numbers{font-size:4.5rem;font-weight:900;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:#22c55e;animation:scorePop .4s ease}
+.f-minute{font-size:.9rem;font-weight:700;color:#ef4444;letter-spacing:.1em;text-transform:uppercase}
+.f-context{text-align:center;margin-top:1.25rem;font-size:.82rem;color:#48487a}
+
+.matches-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.mc{background:#13132a;border:1px solid #1c1c35;border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;cursor:pointer}
+.mc.live-c{border-color:rgba(239,68,68,.3);box-shadow:0 0 14px rgba(239,68,68,.08)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:9999px;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.b-live{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.b-ft{background:rgba(107,114,128,.12);color:#9ca3af;border:1px solid rgba(107,114,128,.25)}
+.b-sched{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.3)}
+.teams{flex:1}.team{display:flex;align-items:center;gap:.5rem;margin-bottom:.28rem}
+.tlogo{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:900;flex-shrink:0}
+.tname{font-size:.88rem;font-weight:600;color:#e8e8f4}.tname.d{color:#7272a0}
+.score-col{display:flex;flex-direction:column;align-items:center;gap:.2rem}
+.score{font-size:1.2rem;font-weight:900;color:#e8e8f4}
+.min{font-size:.65rem;font-weight:700;color:#ef4444}
+.ctx{font-size:.7rem;color:#48487a;margin-left:auto}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#"><div class="logo-mark">J</div>JCL26</a>
+  <div class="nav-links">
+    <a href="#">Home</a>
+    <a href="#" class="active">Matches</a>
+    <a href="#">Table</a>
+    <a href="#">Teams</a>
+    <a href="#">Tournaments</a>
+    <a href="#">News</a>
+  </div>
+  <div class="nav-cta"><a href="#">Admin Panel</a></div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <h1 class="page-title">Matches</h1>
+    <div class="live-indicator">
+      <div class="pulse"></div>
+      <span style="font-size:.78rem;font-weight:700;color:#ef4444;letter-spacing:.1em;text-transform:uppercase">2 Live</span>
+    </div>
+  </div>
+
+  <!-- GOAL NOTIFICATION BANNER -->
+  <div class="goal-banner">
+    <div class="goal-icon">⚽</div>
+    <div class="goal-text">
+      <div class="goal-headline">Goal — Harbour View FC</div>
+      <div class="goal-detail">67' · D. Morrison scores from inside the box — National Stadium</div>
+    </div>
+    <span class="goal-time">67'</span>
+  </div>
+
+  <!-- FEATURED — SCORE UPDATED TO 2-0 -->
+  <div class="featured">
+    <div class="f-badge"><span class="bdot"></span>LIVE · JCL PREMIER LEAGUE</div>
+    <div class="f-content">
+      <div class="f-team">
+        <div class="f-logo" style="background:rgba(37,99,235,.2);color:#3b82f6">HV</div>
+        <span class="f-name">Harbour View FC</span>
+      </div>
+      <div class="f-score">
+        <div class="f-numbers">2 – 0</div>
+        <div class="f-minute">67'</div>
+      </div>
+      <div class="f-team">
+        <div class="f-logo" style="background:rgba(168,85,247,.2);color:#a855f7">WH</div>
+        <span class="f-name">Waterhouse FC</span>
+      </div>
+    </div>
+    <div class="f-context">⚽ 28' O. Thompson · ⚽ 67' D. Morrison · National Stadium, Kingston</div>
+  </div>
+
+  <div class="matches-grid">
+    <div class="mc live-c">
+      <span class="badge b-live"><span class="bdot"></span>LIVE</span>
+      <div class="teams">
+        <div class="team"><div class="tlogo" style="background:rgba(34,197,94,.2);color:#22c55e">CA</div><span class="tname">Cavalier FC</span></div>
+        <div class="team"><div class="tlogo" style="background:rgba(245,158,11,.2);color:#f59e0b">PO</div><span class="tname d">Portmore United</span></div>
+      </div>
+      <div class="score-col"><span class="score">1 – 0</span><span class="min">74'</span></div>
+      <span class="ctx">Group B</span>
+    </div>
+    <div class="mc">
+      <span class="badge b-sched">19:30</span>
+      <div class="teams">
+        <div class="team"><div class="tlogo" style="background:rgba(239,68,68,.2);color:#ef4444">TG</div><span class="tname">Tivoli Gardens</span></div>
+        <div class="team"><div class="tlogo" style="background:rgba(251,191,36,.2);color:#fbbf24">BT</div><span class="tname d">Boys' Town FC</span></div>
+      </div>
+      <div class="score-col"><span class="score" style="font-size:.9rem;color:#48487a;font-weight:600">vs</span></div>
+      <span class="ctx">Group C</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

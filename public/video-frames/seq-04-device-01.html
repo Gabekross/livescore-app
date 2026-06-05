@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JCL26 – Multi-Device Sync (1-0)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1440px;height:900px;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:linear-gradient(135deg,#05050f 0%,#090920 50%,#05050f 100%);color:#e8e8f4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem}
+
+/* Background glow */
+body::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:900px;height:500px;background:radial-gradient(ellipse,rgba(37,99,235,.12) 0%,transparent 65%);pointer-events:none}
+
+.scene-label{font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#48487a;position:relative;z-index:1}
+
+.devices{display:flex;align-items:flex-end;justify-content:center;gap:3rem;position:relative;z-index:1}
+
+/* PHONE */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem}
+.phone{width:200px;height:380px;background:#0f0f1e;border-radius:28px;border:2px solid #2a2a48;box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.05);overflow:hidden;position:relative}
+.phone::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60px;height:18px;background:#0a0a1a;border-radius:0 0 10px 10px;z-index:10}
+.phone-screen{width:100%;height:100%;overflow:hidden}
+.device-label{font-size:.72rem;font-weight:600;color:#48487a;letter-spacing:.06em}
+
+/* TABLET */
+.tablet-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem}
+.tablet{width:320px;height:440px;background:#0f0f1e;border-radius:20px;border:2px solid #2a2a48;box-shadow:0 20px 60px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.05);overflow:hidden}
+.tablet-screen{width:100%;height:100%;overflow:hidden}
+
+/* DESKTOP */
+.desktop-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem}
+.monitor{display:flex;flex-direction:column;align-items:center}
+.monitor-screen{width:520px;height:320px;background:#0f0f1e;border-radius:12px 12px 0 0;border:2px solid #2a2a48;border-bottom:none;box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.04);overflow:hidden}
+.monitor-base{width:120px;height:16px;background:#1a1a36;border-radius:0 0 4px 4px;border:1px solid #2a2a48;border-top:none}
+.monitor-foot{width:200px;height:8px;background:#13132a;border-radius:4px;border:1px solid #1c1c35;margin-top:2px}
+
+/* MINI SCREENS */
+.mini-nav{height:28px;background:#09091a;border-bottom:1px solid #1c1c35;display:flex;align-items:center;padding:0 .75rem;gap:.4rem;flex-shrink:0}
+.mini-logo{width:16px;height:16px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.45rem;font-weight:900;color:#fff}
+.mini-brand{font-size:.55rem;font-weight:800;color:#e8e8f4}
+.mini-links{display:flex;gap:.2rem;margin-left:.5rem}
+.mini-link{font-size:.45rem;color:#7272a0;padding:2px 5px;border-radius:3px}
+.mini-link.active{background:rgba(37,99,235,.15);color:#3b82f6}
+
+.mini-body{flex:1;background:#070710;padding:.5rem .6rem;overflow:hidden}
+.mini-hero{background:linear-gradient(180deg,#0a0a1f,#070710);padding:.6rem .6rem .4rem;border-bottom:1px solid #1c1c35;margin:-.5rem -.6rem .5rem;text-align:center}
+.mini-hero-title{font-size:.7rem;font-weight:900;color:#e8e8f4;letter-spacing:-.02em;margin-bottom:.2rem}
+.mini-hero-title em{color:#3b82f6;font-style:normal}
+.mini-hero-sub{font-size:.5rem;color:#7272a0}
+
+.mini-section{margin-bottom:.5rem}
+.mini-section-title{font-size:.5rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#48487a;margin-bottom:.3rem;display:flex;align-items:center;gap:.3rem}
+.mini-pulse{width:5px;height:5px;background:#ef4444;border-radius:50%;box-shadow:0 0 6px rgba(239,68,68,.8);animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+.mini-card{background:#13132a;border:1px solid #1c1c35;border-radius:6px;padding:.4rem .6rem;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.mini-card.live-c{border-color:rgba(239,68,68,.35);box-shadow:0 0 8px rgba(239,68,68,.1)}
+.mini-badge{padding:1px 5px;border-radius:9999px;font-size:.42rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;flex-shrink:0}
+.mb-live{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.mb-sched{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.3)}
+.mb-ft{background:rgba(107,114,128,.12);color:#9ca3af;border:1px solid rgba(107,114,128,.25)}
+.mini-teams{flex:1}
+.mini-team-row{font-size:.48rem;font-weight:600;color:#e8e8f4;display:flex;align-items:center;gap:.25rem}
+.mini-team-row.dim{color:#7272a0}
+.mini-tlogo{width:10px;height:10px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:.3rem;font-weight:900;flex-shrink:0}
+.mini-score{font-size:.75rem;font-weight:900;color:#e8e8f4;letter-spacing:-.02em}
+.mini-min{font-size:.42rem;font-weight:700;color:#ef4444;text-align:center}
+
+/* SYNC BADGE */
+.sync-badge{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:#7272a0;font-weight:500}
+.sync-dot{width:6px;height:6px;background:#48487a;border-radius:50%}
+</style>
+</head>
+<body>
+
+<div class="scene-label">Real-time sync across all devices</div>
+
+<div class="devices">
+
+  <!-- PHONE -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="phone-screen" style="display:flex;flex-direction:column">
+        <div class="mini-nav">
+          <div class="mini-logo">J</div>
+          <span class="mini-brand">JCL26</span>
+        </div>
+        <div class="mini-body">
+          <div class="mini-hero">
+            <div class="mini-hero-title">Jamaica Club <em>League</em></div>
+            <div class="mini-hero-sub">2026 Season · Live Now</div>
+          </div>
+          <div class="mini-section">
+            <div class="mini-section-title"><div class="mini-pulse"></div>Live</div>
+            <div class="mini-card live-c">
+              <span class="mini-badge mb-live">LIVE</span>
+              <div class="mini-teams">
+                <div class="mini-team-row"><div class="mini-tlogo" style="background:rgba(37,99,235,.2);color:#3b82f6">H</div>Harbour View</div>
+                <div class="mini-team-row dim"><div class="mini-tlogo" style="background:rgba(168,85,247,.2);color:#a855f7">W</div>Waterhouse FC</div>
+              </div>
+              <div>
+                <div class="mini-score">1–0</div>
+                <div class="mini-min">35'</div>
+              </div>
+            </div>
+          </div>
+          <div class="mini-section">
+            <div class="mini-section-title">Upcoming</div>
+            <div class="mini-card">
+              <span class="mini-badge mb-sched">19:30</span>
+              <div class="mini-teams">
+                <div class="mini-team-row">Tivoli Gardens</div>
+                <div class="mini-team-row dim">Boys' Town FC</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="device-label">Mobile</span>
+  </div>
+
+  <!-- TABLET -->
+  <div class="tablet-wrap">
+    <div class="tablet">
+      <div class="tablet-screen" style="display:flex;flex-direction:column">
+        <div class="mini-nav" style="height:32px">
+          <div class="mini-logo">J</div>
+          <span class="mini-brand" style="font-size:.6rem">JCL26</span>
+          <div class="mini-links" style="margin-left:auto">
+            <span class="mini-link active">Home</span>
+            <span class="mini-link">Matches</span>
+            <span class="mini-link">Table</span>
+          </div>
+        </div>
+        <div class="mini-body">
+          <div class="mini-section">
+            <div class="mini-section-title"><div class="mini-pulse"></div>Live Now · 2 Matches</div>
+            <div class="mini-card live-c" style="margin-bottom:.35rem">
+              <span class="mini-badge mb-live">LIVE</span>
+              <div class="mini-teams">
+                <div class="mini-team-row"><div class="mini-tlogo" style="background:rgba(37,99,235,.2);color:#3b82f6">HV</div>Harbour View FC</div>
+                <div class="mini-team-row dim"><div class="mini-tlogo" style="background:rgba(168,85,247,.2);color:#a855f7">WH</div>Waterhouse FC</div>
+              </div>
+              <div>
+                <div class="mini-score">1–0</div>
+                <div class="mini-min">35'</div>
+              </div>
+            </div>
+            <div class="mini-card live-c">
+              <span class="mini-badge mb-live">LIVE</span>
+              <div class="mini-teams">
+                <div class="mini-team-row"><div class="mini-tlogo" style="background:rgba(34,197,94,.2);color:#22c55e">CA</div>Cavalier FC</div>
+                <div class="mini-team-row dim"><div class="mini-tlogo" style="background:rgba(245,158,11,.2);color:#f59e0b">PO</div>Portmore Utd</div>
+              </div>
+              <div>
+                <div class="mini-score">0–0</div>
+                <div class="mini-min">62'</div>
+              </div>
+            </div>
+          </div>
+          <div class="mini-section">
+            <div class="mini-section-title">Latest Results</div>
+            <div class="mini-card"><span class="mini-badge mb-ft">FT</span><div class="mini-teams"><div class="mini-team-row">Cavalier FC</div><div class="mini-team-row dim">Arnett Gardens</div></div><div class="mini-score" style="font-size:.65rem">3–1</div></div>
+            <div class="mini-card"><span class="mini-badge mb-ft">FT</span><div class="mini-teams"><div class="mini-team-row">Portmore Utd</div><div class="mini-team-row dim">Tivoli Gardens</div></div><div class="mini-score" style="font-size:.65rem">2–2</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="device-label">Tablet</span>
+  </div>
+
+  <!-- DESKTOP MONITOR -->
+  <div class="desktop-wrap">
+    <div class="monitor">
+      <div class="monitor-screen" style="display:flex;flex-direction:column">
+        <div class="mini-nav" style="height:32px;padding:0 1rem">
+          <div class="mini-logo">J</div>
+          <span class="mini-brand" style="font-size:.65rem">JCL26</span>
+          <div class="mini-links" style="margin:0 auto">
+            <span class="mini-link active">Home</span>
+            <span class="mini-link">Matches</span>
+            <span class="mini-link">Table</span>
+            <span class="mini-link">Teams</span>
+            <span class="mini-link">News</span>
+          </div>
+        </div>
+        <div class="mini-body" style="padding:.75rem 1rem">
+          <div style="display:flex;gap:1rem">
+            <div style="flex:1">
+              <div class="mini-section-title" style="margin-bottom:.4rem"><div class="mini-pulse"></div><span style="font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#48487a">Live Matches</span></div>
+              <div class="mini-card live-c" style="padding:.5rem .75rem">
+                <span class="mini-badge mb-live">LIVE</span>
+                <div class="mini-teams" style="flex:1">
+                  <div class="mini-team-row" style="font-size:.6rem"><div class="mini-tlogo" style="background:rgba(37,99,235,.2);color:#3b82f6">HV</div>Harbour View FC</div>
+                  <div class="mini-team-row dim" style="font-size:.6rem"><div class="mini-tlogo" style="background:rgba(168,85,247,.2);color:#a855f7">WH</div>Waterhouse FC</div>
+                </div>
+                <div style="text-align:center">
+                  <div class="mini-score" style="font-size:1rem">1–0</div>
+                  <div class="mini-min">35'</div>
+                </div>
+              </div>
+              <div class="mini-card live-c" style="padding:.5rem .75rem;margin-top:.3rem">
+                <span class="mini-badge mb-live">LIVE</span>
+                <div class="mini-teams" style="flex:1">
+                  <div class="mini-team-row" style="font-size:.6rem"><div class="mini-tlogo" style="background:rgba(34,197,94,.2);color:#22c55e">CA</div>Cavalier FC</div>
+                  <div class="mini-team-row dim" style="font-size:.6rem"><div class="mini-tlogo" style="background:rgba(245,158,11,.2);color:#f59e0b">PO</div>Portmore United</div>
+                </div>
+                <div style="text-align:center">
+                  <div class="mini-score" style="font-size:1rem">0–0</div>
+                  <div class="mini-min">62'</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1">
+              <div class="mini-section-title" style="margin-bottom:.4rem;font-size:.55rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#48487a">Upcoming</div>
+              <div class="mini-card" style="padding:.5rem .75rem"><span class="mini-badge mb-sched">19:30</span><div class="mini-teams"><div class="mini-team-row" style="font-size:.6rem">Tivoli Gardens</div><div class="mini-team-row dim" style="font-size:.6rem">Boys' Town FC</div></div></div>
+              <div class="mini-card" style="padding:.5rem .75rem;margin-top:.3rem"><span class="mini-badge mb-sched">Thu</span><div class="mini-teams"><div class="mini-team-row" style="font-size:.6rem">Village United</div><div class="mini-team-row dim" style="font-size:.6rem">Arnett Gardens</div></div></div>
+              <div class="mini-card" style="padding:.5rem .75rem;margin-top:.3rem"><span class="mini-badge mb-sched">Sat</span><div class="mini-teams"><div class="mini-team-row" style="font-size:.6rem">Harbour View FC</div><div class="mini-team-row dim" style="font-size:.6rem">Portmore United</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="monitor-base"></div>
+      <div class="monitor-foot"></div>
+    </div>
+    <span class="device-label">Desktop</span>
+  </div>
+
+</div>
+
+<div class="sync-badge"><div class="sync-dot"></div>Real-time Supabase sync · Last updated just now</div>
+
+</body>
+</html>

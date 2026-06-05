@@ -52,6 +52,26 @@ export default function PlatformOverviewPage() {
         Manage all organizations, admin users, and platform-wide settings.
       </p>
 
+      <section style={{
+        background: '#12121d',
+        border: '1px solid #24243a',
+        borderRadius: 10,
+        padding: '1rem 1.15rem',
+        marginBottom: '1.5rem',
+      }}>
+        <div style={{ fontSize: '0.74rem', fontWeight: 800, color: '#a5b4fc', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.55rem' }}>
+          Platform Admin Help
+        </div>
+        <p style={{ fontSize: '0.84rem', color: '#c7c7dd', lineHeight: 1.55, margin: '0 0 0.75rem' }}>
+          Use this area for platform-wide work: create organizations, review all admin accounts, assign roles, and manage global settings like demo mode.
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.65rem' }}>
+          <HelpItem title="Organizations" text="Create tenant sites and review each organization subscription status." />
+          <HelpItem title="Admin Users" text="Assign platform, organization, billing-exempt, or match-operator access." />
+          <HelpItem title="Settings" text="Control global platform behavior that affects every organization." />
+        </div>
+      </section>
+
       {/* Stats grid */}
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
@@ -92,6 +112,15 @@ export default function PlatformOverviewPage() {
           Manage Admins
         </Link>
       </div>
+    </div>
+  )
+}
+
+function HelpItem({ title, text }: { title: string; text: string }) {
+  return (
+    <div style={{ background: '#171728', border: '1px solid #24243a', borderRadius: 8, padding: '0.75rem' }}>
+      <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#f0f0ff', marginBottom: '0.25rem' }}>{title}</div>
+      <div style={{ fontSize: '0.76rem', color: '#8f8fb0', lineHeight: 1.45 }}>{text}</div>
     </div>
   )
 }

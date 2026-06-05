@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JCL26 – Homepage Mid</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1440px;min-height:900px;overflow:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:#070710;color:#e8e8f4}
+
+nav{position:fixed;top:0;left:0;width:1440px;height:60px;background:rgba(9,9,26,0.96);backdrop-filter:blur(12px);border-bottom:1px solid #1c1c35;display:flex;align-items:center;padding:0 2rem;z-index:100;gap:2rem}
+.brand{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:800;color:#e8e8f4;letter-spacing:-.02em;text-decoration:none}
+.logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#2563eb,#60a5fa);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:900;color:#fff;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:2px;margin:0 auto}
+.nav-links a{padding:6px 14px;border-radius:6px;font-size:.875rem;font-weight:500;color:#7272a0;text-decoration:none}
+.nav-links a.active{background:rgba(37,99,235,.15);color:#3b82f6;font-weight:600}
+.nav-cta a{padding:8px 20px;background:#2563eb;color:#fff;border-radius:8px;font-size:.875rem;font-weight:600;text-decoration:none}
+
+.page{padding-top:80px;padding:80px 3rem 0}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:1.5rem}
+
+/* SECTION HEADER */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem}
+.sh-left{display:flex;align-items:center;gap:.75rem}
+.sh-bar{width:3px;height:1.5rem;background:#2563eb;border-radius:2px}
+.sh-title{font-size:1rem;font-weight:800;color:#e8e8f4;letter-spacing:-.01em}
+.sh-sub{font-size:.78rem;color:#7272a0;margin-left:.25rem}
+.sh-cta{font-size:.82rem;font-weight:600;color:#3b82f6;text-decoration:none;display:flex;align-items:center;gap:.3rem}
+.sh-cta::after{content:'→'}
+
+/* MATCH CARD */
+.mc{background:#13132a;border:1px solid #1c1c35;border-radius:12px;padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;margin-bottom:.6rem;cursor:pointer;transition:all .2s}
+.mc:hover{background:#1a1a36;border-color:#2a2a48;transform:translateY(-1px)}
+.mc.live-c{border-color:rgba(239,68,68,.3);box-shadow:0 0 16px rgba(239,68,68,.08)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:9999px;font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.b-live{background:rgba(239,68,68,.12);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+.b-ft{background:rgba(107,114,128,.12);color:#9ca3af;border:1px solid rgba(107,114,128,.25)}
+.b-sched{background:rgba(96,165,250,.12);color:#60a5fa;border:1px solid rgba(96,165,250,.3)}
+.bdot{width:5px;height:5px;background:#ef4444;border-radius:50%;animation:pulse 1.5s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+.teams{flex:1}
+.team{display:flex;align-items:center;gap:.5rem;margin-bottom:.28rem}
+.team:last-child{margin-bottom:0}
+.tlogo{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:900;flex-shrink:0}
+.tname{font-size:.88rem;font-weight:600;color:#e8e8f4}
+.tname.d{color:#7272a0}
+.score-col{display:flex;flex-direction:column;align-items:center;gap:.2rem}
+.score{font-size:1.25rem;font-weight:900;color:#e8e8f4;letter-spacing:-.02em}
+.min{font-size:.65rem;font-weight:700;color:#ef4444}
+.ctx{font-size:.7rem;color:#48487a;margin-left:auto;white-space:nowrap}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#"><div class="logo-mark">J</div>JCL26</a>
+  <div class="nav-links">
+    <a href="#" class="active">Home</a>
+    <a href="#">Matches</a>
+    <a href="#">Table</a>
+    <a href="#">Teams</a>
+    <a href="#">Tournaments</a>
+    <a href="#">News</a>
+    <a href="#">Archive</a>
+  </div>
+  <div class="nav-cta"><a href="#">Admin Panel</a></div>
+</nav>
+
+<div class="page">
+  <div class="two-col">
+
+    <!-- UPCOMING FIXTURES -->
+    <div>
+      <div class="sh">
+        <div class="sh-left">
+          <div class="sh-bar"></div>
+          <span class="sh-title">Upcoming Fixtures</span>
+          <span class="sh-sub">Next 7 days</span>
+        </div>
+        <a href="#" class="sh-cta">All fixtures</a>
+      </div>
+
+      <div class="mc">
+        <span class="badge b-sched">Wed 19:30</span>
+        <div class="teams">
+          <div class="team"><div class="tlogo" style="background:rgba(239,68,68,.2);color:#ef4444">TG</div><span class="tname">Tivoli Gardens</span></div>
+          <div class="team"><div class="tlogo" style="background:rgba(251,191,36,.2);color:#fbbf24">BT</div><span class="tname d">Boys' Town FC</span></div>
+        </div>
+        <div class="score-col"><span class="score" style="font-size:.95rem;color:#48487a;font-weight:600">vs</span></div>
+        <span class="ctx">Group C</span>
+      </div>
+
+      <div class="mc">
+        <span class="badge b-sched">Thu 15:00</span>
+        <div class="teams">
+          <div class="team"><div class="tlogo" style="background:rgba(34,197,94,.2);color:#22c55e">VG</div><span class="tname">Village United</span></div>
+          <div class="team"><div class="tlogo" style="background:rgba(96,165,250,.2);color:#60a5fa">AK</div><span class="tname d">Arnett Gardens</span></div>
+        </div>
+        <div class="score-col"><span class="score" style="font-size:.95rem;color:#48487a;font-weight:600">vs</span></div>
+        <span class="ctx">Group A</span>
+      </div>
+
+      <div class="mc">
+        <span class="badge b-sched">Sat 16:00</span>
+        <div class="teams">
+          <div class="team"><div class="tlogo" style="background:rgba(37,99,235,.2);color:#3b82f6">HV</div><span class="tname">Harbour View FC</span></div>
+          <div class="team"><div class="tlogo" style="background:rgba(245,158,11,.2);color:#f59e0b">PO</div><span class="tname d">Portmore United</span></div>
+        </div>
+        <div class="score-col"><span class="score" style="font-size:.95rem;color:#48487a;font-weight:600">vs</span></div>
+        <span class="ctx">Group A</span>
+      </div>
+
+      <div class="mc">
+        <span class="badge b-sched">Sat 19:30</span>
+        <div class="teams">
+          <div class="team"><div class="tlogo" style="background:rgba(168,85,247,.2);color:#a855f7">WH</div><span class="tname">Waterhouse FC</span></div>
+          <div class="team"><div class="tlogo" style="background:rgba(239,68,68,.2);color:#ef4444">TG</div><span class="tname d">Tivoli Gardens</span></div>
+        </div>
+        <div class="score-col"><span class="score" style="font-size:.95rem;color:#48487a;font-weight:600">vs</span></div>
+        <span class="ctx">Group B</span>
+      </div>
+    </div>
+
+    <!-- LATEST RESULTS -->
+    <div>
+      <div class="sh">
+        <div class="sh-left">
+          <div class="sh-bar" style="background:#22c55e"></div>
+          <span class="sh-title">Latest Results</span>
+        </div>
+        <a href="#" class="sh-cta">All results</a>
+      </div>
+
+      <div class="mc">
+        <span class="badge b-ft">FT</span>
+        <div class="teams">
+          <div class="team"><div class="tlogo" style="background:rgba(34,197,94,.2);color:#22c55e">CA</div><span class="tname">Cavalier FC</span></div>
+          <div class="team"><div class="tlogo" style="background:rgba(96,165,250,.2);color:#60a5fa">AK</div><span class="tname d">Arnett Gardens</span></div>
+        </div>
+        <div class="score-col"><span class="score">3 – 1</span></div>
+        <span class="ctx">Group B · Apr 14</span>
+      </div>
+
+      <div class="mc">
+        <span class="badge b-ft">FT</span>
+        <div class="teams">
+          <div class="team"><div class="tlogo" style="background:rgba(245,158,11,.2);color:#f59e0b">PO</div><span class="tname">Portmore United</span></div>
+          <div class="team"><div class="tlogo" style="background:rgba(239,68,68,.2);color:#ef4444">TG</div><span class="tname d">Tivoli Gardens</span></div>
+        </div>
+        <div class="score-col"><span class="score">2 – 2</span></div>
+        <span class="ctx">Group B · Apr 13</span>
+      </div>
+
+      <div class="mc">
+        <span class="badge b-ft">FT</span>
+        <div class="teams">
+          <div class="team"><div class="tlogo" style="background:rgba(37,99,235,.2);color:#3b82f6">HV</div><span class="tname">Harbour View FC</span></div>
+          <div class="team"><div class="tlogo" style="background:rgba(251,191,36,.2);color:#fbbf24">BT</div><span class="tname d">Boys' Town FC</span></div>
+        </div>
+        <div class="score-col"><span class="score">1 – 0</span></div>
+        <span class="ctx">Group A · Apr 12</span>
+      </div>
+
+      <div class="mc">
+        <span class="badge b-ft">FT</span>
+        <div class="teams">
+          <div class="team"><div class="tlogo" style="background:rgba(168,85,247,.2);color:#a855f7">WH</div><span class="tname">Waterhouse FC</span></div>
+          <div class="team"><div class="tlogo" style="background:rgba(34,197,94,.2);color:#22c55e">VG</div><span class="tname d">Village United</span></div>
+        </div>
+        <div class="score-col"><span class="score">0 – 1</span></div>
+        <span class="ctx">Group B · Apr 11</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
