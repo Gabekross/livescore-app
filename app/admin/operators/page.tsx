@@ -53,8 +53,8 @@ export default function ManageOperatorsPage() {
 
   if (orgGate) return orgGate
 
-  // Only org_admin and power_admin can manage operators
-  if (role !== 'org_admin' && role !== 'power_admin') {
+  // Only organization-level admins and power admins can manage operators
+  if (role !== 'org_admin' && role !== 'billing_exempt_admin' && role !== 'power_admin') {
     return (
       <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#6b7280' }}>
         <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1f2937', marginBottom: '0.5rem' }}>

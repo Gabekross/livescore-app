@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No organization found' }, { status: 400 })
     }
 
-    if (!['org_admin', 'power_admin'].includes(profile.role)) {
+    if (!['org_admin', 'billing_exempt_admin', 'power_admin'].includes(profile.role)) {
       return NextResponse.json({ error: 'Only org admins can manage billing' }, { status: 403 })
     }
 

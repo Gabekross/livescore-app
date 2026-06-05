@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       .eq('id', user.id)
       .single()
 
-    if (!profile?.organization_id || !['org_admin', 'power_admin'].includes(profile.role)) {
+    if (!profile?.organization_id || !['org_admin', 'billing_exempt_admin', 'power_admin'].includes(profile.role)) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 })
     }
 

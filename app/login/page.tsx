@@ -41,7 +41,7 @@ export default function LoginPage() {
       router.replace('/platform')
     } else if (profile?.role === 'match_operator') {
       router.replace('/admin/operator')
-    } else if (profile?.role === 'org_admin') {
+    } else if (profile?.role === 'org_admin' || profile?.role === 'billing_exempt_admin') {
       router.replace('/admin/dashboard')
     } else {
       setChecking(false)

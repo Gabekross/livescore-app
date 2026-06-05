@@ -6,9 +6,9 @@
 // Resolution strategy (3 strategies, tried in order):
 //   1. Primary: resolve via NEXT_PUBLIC_ORGANIZATION_SLUG env var
 //   2. Fallback B: resolve from admin_profiles.organization_id (org_admin)
-//   3. Fallback C: power_admin picks first organization alphabetically
+//   3. Fallback C: platform/admin roles pick first organization alphabetically
 //
-// Also fetches admin role (power_admin | org_admin) for role-aware UX.
+// Also fetches admin role for role-aware UX.
 //
 // Usage:
 //   const { orgId, role, loading, error, retry } = useAdminOrg()
@@ -16,10 +16,10 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { getOrgSlugFromHostname } from '@/lib/subdomain'
-import { computePlanAccess } from '@/lib/subscription'
+import { applyBillingExemption, computePlanAccess } from '@/lib/subscription'
 import type { PlanAccess, Subscription } from '@/lib/subscription'
 
-type AdminRole = 'power_admin' | 'org_admin' | 'match_operator' | null
+type AdminRole = 'power_admin' | 'org_admin' | 'billing_exempt_admin' | 'match_operator' | null
 
 interface AdminOrgContextValue {
   orgId:   string | null
@@ -175,9 +175,15 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
           .single()
 
         planAccess = computePlanAccess((subData as Subscription) ?? null)
+        if (role === 'billing_exempt_admin') {
+          planAccess = applyBillingExemption(planAccess)
+        }
       } catch {
         // If subscriptions table doesn't exist yet, default to free
         planAccess = computePlanAccess(null)
+        if (role === 'billing_exempt_admin') {
+          planAccess = applyBillingExemption(planAccess)
+        }
       }
     }
 

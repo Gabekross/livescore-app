@@ -1,17 +1,18 @@
 // app/api/admin/operators/route.ts
-// Server-side API for org_admins to manage match_operator users.
+// Server-side API for organization admins to manage match_operator users.
 //
 // GET  → list match_operators for the caller's org
 // POST → create a new match_operator (auth user + admin_profiles row)
 // DELETE → remove a match_operator profile (and optionally the auth user)
 //
-// Security: caller must be org_admin or power_admin with a resolved org.
+// Security: caller must be org_admin, billing_exempt_admin, or power_admin
+// with a resolved org.
 
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { createAdminSupabaseClient }  from '@/lib/supabase-admin'
 import { NextRequest, NextResponse }  from 'next/server'
 
-/** Verify the caller is org_admin/power_admin and return their org_id.
+/** Verify the caller is org-level admin/power_admin and return their org_id.
  *  Uses the session client only for auth identity, then the admin (service role)
  *  client for the profile lookup to avoid RLS/grant issues on admin_profiles. */
 async function authorizeOrgAdmin(): Promise<
@@ -33,7 +34,7 @@ async function authorizeOrgAdmin(): Promise<
     .eq('id', user.id)
     .single()
 
-  if (!profile || !['org_admin', 'power_admin'].includes(profile.role)) {
+  if (!profile || !['org_admin', 'billing_exempt_admin', 'power_admin'].includes(profile.role)) {
     return NextResponse.json(
       { error: `Only org admins can manage operators [debug: user=${user.id}, profile=${JSON.stringify(profile)}, err=${profileError?.message || 'none'}]` },
       { status: 403 }
@@ -41,7 +42,7 @@ async function authorizeOrgAdmin(): Promise<
   }
 
   const orgId = profile.organization_id
-  if (!orgId && profile.role === 'org_admin') {
+  if (!orgId && ['org_admin', 'billing_exempt_admin'].includes(profile.role)) {
     return NextResponse.json(
       { error: 'Your admin profile has no organization assigned' },
       { status: 400 }

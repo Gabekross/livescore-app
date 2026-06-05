@@ -41,7 +41,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </Link>
           <PlanBadge />
 
-          {(role === 'org_admin' || role === 'power_admin') && (
+          {(role === 'org_admin' || role === 'billing_exempt_admin' || role === 'power_admin') && (
             <>
               <Link
                 href="/admin/sponsors"
@@ -69,6 +69,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
           {role === 'org_admin' && (
             <span className={styles.badgeAdmin}>Admin</span>
+          )}
+
+          {role === 'billing_exempt_admin' && (
+            <span className={styles.badgeAdmin}>Billing Exempt</span>
           )}
 
           {role === 'match_operator' && (

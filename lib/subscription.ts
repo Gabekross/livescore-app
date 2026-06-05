@@ -41,6 +41,7 @@ export interface PlanAccess {
   canCustomBrand:       boolean
   needsUpgrade:         boolean   // true when expired or at limit
   pendingCancel:        boolean   // true when cancel_at_period_end = true
+  billingExempt?:       boolean   // true when role bypasses subscription gates
 }
 
 /* ── Feature matrix ─────────────────────────────────────────── */
@@ -103,4 +104,22 @@ function computeEffectivePlan(sub: Subscription | null): EffectivePlan {
 
 export function computePlanAccess(sub: Subscription | null): PlanAccess {
   return buildAccess(sub)
+}
+
+export function applyBillingExemption(access: PlanAccess | null): PlanAccess {
+  const base = access ?? buildAccess(null)
+
+  return {
+    ...base,
+    effectivePlan:   'pro',
+    isTrialing:      false,
+    trialDaysLeft:   0,
+    teamLimit:       Infinity,
+    canPublishNews:  true,
+    canManageMedia:  true,
+    canUseOperators: true,
+    canCustomBrand:  true,
+    needsUpgrade:    false,
+    billingExempt:   true,
+  }
 }

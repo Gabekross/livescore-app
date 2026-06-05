@@ -23,6 +23,10 @@ const BADGE_STYLES: Record<string, React.CSSProperties> = {
     background: 'rgba(251,191,36,0.12)', color: '#fbbf24',
     border: '1px solid rgba(251,191,36,0.25)',
   },
+  billingExempt: {
+    background: 'rgba(16,185,129,0.14)', color: '#34d399',
+    border: '1px solid rgba(16,185,129,0.3)',
+  },
 }
 
 const BASE: React.CSSProperties = {
@@ -40,12 +44,15 @@ export default function PlanBadge() {
   if (hideBilling) return null
   if (!plan) return null
 
-  const { effectivePlan, isTrialing, trialDaysLeft } = plan
+  const { effectivePlan, isTrialing, trialDaysLeft, billingExempt } = plan
 
   let label: string
   let variant: string
 
-  if (effectivePlan === 'pro') {
+  if (billingExempt) {
+    label = 'Billing Exempt'
+    variant = 'billingExempt'
+  } else if (effectivePlan === 'pro') {
     label = 'Pro'
     variant = 'pro'
   } else if (isTrialing) {

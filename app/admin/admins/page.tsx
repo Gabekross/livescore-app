@@ -24,6 +24,8 @@ interface Organization {
   name: string
 }
 
+const ORG_SCOPED_ROLES = new Set(['org_admin', 'billing_exempt_admin', 'match_operator'])
+
 export default function AdminUsersPage() {
   const { role: myRole } = useAdminOrg()
   const orgGate = useAdminOrgGate()
@@ -67,6 +69,11 @@ export default function AdminUsersPage() {
   }
 
   const handleRoleChange = async (profileId: string, newRole: string, orgId: string | null) => {
+    if (ORG_SCOPED_ROLES.has(newRole) && !orgId) {
+      toast.error('Assign an organization before using an org-scoped role.')
+      return
+    }
+
     const payload: Record<string, unknown> = {
       role: newRole,
       organization_id: newRole === 'power_admin' ? null : orgId,
@@ -132,14 +139,15 @@ export default function AdminUsersPage() {
                 style={{
                   padding: '0.4rem 0.6rem', border: '1px solid #d1d5db', borderRadius: '6px',
                   fontSize: '0.82rem', fontWeight: 600,
-                  color: admin.role === 'power_admin' ? '#d97706' : '#2563eb',
+                  color: admin.role === 'power_admin' ? '#d97706' : admin.role === 'billing_exempt_admin' ? '#059669' : '#2563eb',
                 }}
               >
                 <option value="power_admin">Platform Admin</option>
                 <option value="org_admin">Org Admin</option>
+                <option value="billing_exempt_admin">Billing Exempt Admin</option>
               </select>
 
-              {admin.role === 'org_admin' && (
+              {(admin.role === 'org_admin' || admin.role === 'billing_exempt_admin') && (
                 <select
                   value={admin.organization_id || ''}
                   onChange={(e) => handleOrgChange(admin.id, e.target.value)}
@@ -155,7 +163,7 @@ export default function AdminUsersPage() {
                 </select>
               )}
 
-              {admin.role === 'org_admin' && admin.organization && (
+              {(admin.role === 'org_admin' || admin.role === 'billing_exempt_admin') && admin.organization && (
                 <span style={{ fontSize: '0.78rem', color: '#6b7280' }}>
                   {admin.organization.name}
                 </span>

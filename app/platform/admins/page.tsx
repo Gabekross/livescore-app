@@ -21,6 +21,8 @@ interface Organization {
   name: string
 }
 
+const ORG_SCOPED_ROLES = new Set(['org_admin', 'billing_exempt_admin', 'match_operator'])
+
 export default function PlatformAdminsPage() {
   const [admins, setAdmins]   = useState<AdminProfile[]>([])
   const [orgs, setOrgs]       = useState<Organization[]>([])
@@ -48,6 +50,11 @@ export default function PlatformAdminsPage() {
   useEffect(() => { fetchData() }, [fetchData])
 
   const handleRoleChange = async (profileId: string, newRole: string, orgId: string | null) => {
+    if (ORG_SCOPED_ROLES.has(newRole) && !orgId) {
+      toast.error('Assign an organization before using an org-scoped role.')
+      return
+    }
+
     const payload: Record<string, unknown> = {
       role: newRole,
       organization_id: newRole === 'power_admin' ? null : orgId,
@@ -121,14 +128,15 @@ export default function PlatformAdminsPage() {
                 onChange={(e) => handleRoleChange(admin.id, e.target.value, admin.organization_id)}
                 style={{
                   ...selectStyle,
-                  color: admin.role === 'power_admin' ? '#fbbf24' : '#818cf8',
+                  color: admin.role === 'power_admin' ? '#fbbf24' : admin.role === 'billing_exempt_admin' ? '#34d399' : '#818cf8',
                 }}
               >
                 <option value="power_admin">Platform Admin</option>
                 <option value="org_admin">Org Admin</option>
+                <option value="billing_exempt_admin">Billing Exempt Admin</option>
               </select>
 
-              {admin.role === 'org_admin' && (
+              {(admin.role === 'org_admin' || admin.role === 'billing_exempt_admin') && (
                 <select
                   value={admin.organization_id || ''}
                   onChange={(e) => handleOrgChange(admin.id, e.target.value)}
