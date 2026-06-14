@@ -7,6 +7,7 @@ import { supabase }  from '@/lib/supabase'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import { useTeamLimit } from '@/hooks/useTeamLimit'
+import { uploadTeamLogo } from '@/lib/team-logo-upload-client'
 import UpgradeModal  from '@/components/admin/UpgradeModal'
 import toast         from 'react-hot-toast'
 import styles        from '@/styles/components/TeamForm.module.scss'
@@ -167,20 +168,17 @@ export default function CreateTeamPage() {
     let uploadedLogoUrl = logoUrl
 
     if (logoFile) {
-      const fileExt  = logoFile.name.split('.').pop()
-      const filePath = `${crypto.randomUUID()}.${fileExt}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('team-logos')
-        .upload(filePath, logoFile, { cacheControl: '3600', upsert: true, contentType: logoFile.type || 'image/png' })
-
-      if (uploadError) {
-        toast.error('Failed to upload logo')
+      try {
+        const uploaded = await uploadTeamLogo(logoFile, orgId)
+        uploadedLogoUrl = uploaded.publicUrl || ''
+        if (uploaded.fallback) {
+          toast('Logo uploaded, but background cleanup was skipped.', { duration: 3500 })
+        }
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Failed to upload logo')
         setLoading(false)
         return
       }
-
-      uploadedLogoUrl = supabase.storage.from('team-logos').getPublicUrl(filePath).data.publicUrl
     }
 
     const { data: teamData, error } = await supabase
@@ -278,7 +276,7 @@ export default function CreateTeamPage() {
             </label>
             <input
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
               onChange={(e) => { if (e.target.files?.[0]) setLogoFile(e.target.files[0]) }}
               className={styles.input}
             />

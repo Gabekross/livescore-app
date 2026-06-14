@@ -78,8 +78,10 @@
   height:        36px;
   border-radius: 8px;
   object-fit:    contain;
+  padding:       4px;
   background:    #f9fafb;
   border:        1px solid #e5e7eb;
+  box-sizing:    border-box;
   flex-shrink:   0;
 }
 

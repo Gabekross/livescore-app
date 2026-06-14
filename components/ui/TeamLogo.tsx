@@ -16,7 +16,11 @@ export default function TeamLogo({ src, alt, size = 24, className }: Props) {
     width:        size,
     height:       size,
     borderRadius: 4,
-    objectFit:    'cover',
+    objectFit:    'contain',
+    background:   'rgba(255, 255, 255, 0.06)',
+    border:       '1px solid var(--color-border-subtle, rgba(148, 163, 184, 0.18))',
+    padding:      Math.max(2, Math.round(size * 0.08)),
+    boxSizing:    'border-box',
     flexShrink:   0,
   }
 
@@ -34,8 +38,8 @@ export default function TeamLogo({ src, alt, size = 24, className }: Props) {
           fontSize:        Math.round(size * 0.55),
           color:           'var(--color-text-dim, #48487a)',
           fontWeight:      700,
-          className,
         } as React.CSSProperties}
+        className={className}
       >
         {alt.charAt(0).toUpperCase()}
       </span>

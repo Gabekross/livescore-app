@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { useAdminOrg }     from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
+import { uploadTeamLogo } from '@/lib/team-logo-upload-client'
 import toast from 'react-hot-toast'
 import styles from '@/styles/components/TeamForm.module.scss'
 import { POSITIONS } from '@/lib/constants/positions'
@@ -249,24 +250,17 @@ export default function EditTeamPage() {
     let uploadedLogoUrl = logoUrl
 
     if (logoFile) {
-      const fileExt = logoFile.name.split('.').pop()
-      const fileName = `${crypto.randomUUID()}.${fileExt}`
-
-      const { error: uploadError } = await supabase.storage
-        .from('team-logos')
-        .upload(fileName, logoFile)
-
-      if (uploadError) {
-        toast.error('Failed to upload logo')
+      try {
+        const uploaded = await uploadTeamLogo(logoFile, orgId)
+        uploadedLogoUrl = uploaded.publicUrl || ''
+        if (uploaded.fallback) {
+          toast('Logo uploaded, but background cleanup was skipped.', { duration: 3500 })
+        }
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Failed to upload logo')
         setLoading(false)
         return
       }
-
-      const { data } = supabase.storage
-        .from('team-logos')
-        .getPublicUrl(fileName)
-
-      uploadedLogoUrl = data.publicUrl
     }
 
     // 1. Update team info
@@ -384,7 +378,7 @@ export default function EditTeamPage() {
             </label>
             <input
               type="file"
-              accept="image/*"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
               onChange={(e) => {
                 if (e.target.files && e.target.files[0]) {
                   setLogoFile(e.target.files[0])
@@ -392,6 +386,12 @@ export default function EditTeamPage() {
               }}
               className={styles.input}
             />
+            {logoUrl && !logoFile && (
+              <div className={styles.logoPreviewRow}>
+                <img src={logoUrl} alt={`${name} logo`} className={styles.logoPreview} />
+                <span>Current logo</span>
+              </div>
+            )}
           </div>
 
           <div className={styles.fieldGroup}>

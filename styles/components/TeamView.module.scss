@@ -30,8 +30,10 @@
   height:        72px;
   border-radius: 10px;
   object-fit:    contain;
+  padding:       8px;
   background:    #f9fafb;
   border:        1px solid #e5e7eb;
+  box-sizing:    border-box;
   flex-shrink:   0;
 }
 
