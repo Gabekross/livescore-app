@@ -75,6 +75,29 @@
   }
 }
 
+.teamLink {
+  display:         inline-flex;
+  align-items:     center;
+  gap:             var(--sp-2, 0.5rem);
+  max-width:       min(260px, 38vw);
+  min-width:       0;
+  color:           inherit;
+  font-weight:     600;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-accent-light, #3b82f6);
+  }
+}
+
+.teamLinkText {
+  display:       block;
+  min-width:     0;
+  overflow:      hidden;
+  text-overflow: ellipsis;
+  white-space:   nowrap;
+}
+
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   .standingsContainer {
@@ -82,8 +105,12 @@
   }
 
   .table {
-    min-width: 580px;   /* ensure table is wide enough to need scroll */
+    min-width: 620px;   /* ensure table is wide enough to need scroll */
     font-size: 0.82rem;
+  }
+
+  .teamLink {
+    max-width: 180px;
   }
 
   .heading {

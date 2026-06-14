@@ -7,12 +7,14 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
+import TeamLogo from '@/components/ui/TeamLogo'
 import styles from '@/styles/components/StandingsTable.module.scss'
 import { formatTeamName } from '@/lib/formatters'
 
 interface StandingRow {
   team_id: string
   team_name: string
+  team_logo_url: string | null
   played: number
   wins: number
   draws: number
@@ -90,7 +92,14 @@ export default function GroupStandings({ groupId }: { groupId: string }) {
           {standings.map((team, idx) => (
             <tr key={team.team_id}>
               <td>{idx + 1}</td>
-              <td><Link href={`/teams/${team.team_id}`} style={{ color: 'inherit', textDecoration: 'none', fontWeight: 600 }}>{formatTeamName(team.team_name)}</Link></td>
+              <td>
+                <Link href={`/teams/${team.team_id}`} className={styles.teamLink}>
+                  <TeamLogo src={team.team_logo_url} alt={team.team_name} size={24} />
+                  <span className={styles.teamLinkText}>
+                    {formatTeamName(team.team_name)}
+                  </span>
+                </Link>
+              </td>
               <td>{team.played}</td>
               <td>{team.wins}</td>
               <td>{team.draws}</td>

@@ -12,20 +12,22 @@
 import { useEffect, useState } from 'react'
 import Link                    from 'next/link'
 import { supabase }            from '@/lib/supabase'
+import TeamLogo                from '@/components/ui/TeamLogo'
 import styles                  from '@/styles/components/TournamentStandings.module.scss'
 import { formatTeamName }      from '@/lib/formatters'
 
 interface Standing {
-  team_id:  string
-  team_name: string
-  mp:  number
-  w:   number
-  d:   number
-  l:   number
-  gf:  number
-  ga:  number
-  gd:  number
-  pts: number
+  team_id:       string
+  team_name:     string
+  team_logo_url: string | null
+  mp:            number
+  w:             number
+  d:             number
+  l:             number
+  gf:            number
+  ga:            number
+  gd:            number
+  pts:           number
 }
 
 export default function TournamentStandings({
@@ -65,19 +67,31 @@ export default function TournamentStandings({
     // team appears with 0s even before any matches have been played.
     const { data: groupTeamRows } = await supabase
       .from('group_teams')
-      .select('team_id, teams!inner(id, name)')
+      .select('team_id, teams!inner(id, name, logo_url)')
       .in('group_id', groupIds)
 
-    const teamMap: Record<string, string> = {}
+    const teamMap: Record<string, { name: string; logo_url: string | null }> = {}
     groupTeamRows?.forEach((row) => {
       const t = Array.isArray(row.teams) ? row.teams[0] : row.teams
-      if (t) teamMap[t.id] = t.name
+      if (t) teamMap[t.id] = { name: t.name, logo_url: t.logo_url ?? null }
     })
 
     // Seed the standings map with every assigned team at zero
     const temp: Record<string, Standing> = {}
-    Object.entries(teamMap).forEach(([teamId, teamName]) => {
-      temp[teamId] = { team_id: teamId, team_name: teamName, mp: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, gd: 0, pts: 0 }
+    Object.entries(teamMap).forEach(([teamId, team]) => {
+      temp[teamId] = {
+        team_id:       teamId,
+        team_name:     team.name,
+        team_logo_url: team.logo_url,
+        mp:            0,
+        w:             0,
+        d:             0,
+        l:             0,
+        gf:            0,
+        ga:            0,
+        gd:            0,
+        pts:           0,
+      }
     })
 
     matches?.forEach((m) => {
@@ -150,7 +164,14 @@ export default function TournamentStandings({
           {standings.map((team, idx) => (
             <tr key={team.team_id}>
               <td>{idx + 1}</td>
-              <td><Link href={`/teams/${team.team_id}`} style={{ color: 'inherit', textDecoration: 'none', fontWeight: 600 }}>{formatTeamName(team.team_name)}</Link></td>
+              <td>
+                <Link href={`/teams/${team.team_id}`} className={styles.teamLink}>
+                  <TeamLogo src={team.team_logo_url} alt={team.team_name} size={24} />
+                  <span className={styles.teamLinkText}>
+                    {formatTeamName(team.team_name)}
+                  </span>
+                </Link>
+              </td>
               <td>{team.mp}</td><td>{team.w}</td><td>{team.d}</td><td>{team.l}</td>
               <td>{team.gf}</td><td>{team.ga}</td><td>{team.gd}</td><td>{team.pts}</td>
             </tr>

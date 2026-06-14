@@ -9,6 +9,7 @@ import { supabase }                          from '@/lib/supabase'
 import Link                                  from 'next/link'
 import SectionHeader                         from '@/components/ui/SectionHeader'
 import EmptyState                            from '@/components/ui/EmptyState'
+import TeamLogo                              from '@/components/ui/TeamLogo'
 import { formatTeamName }                    from '@/lib/formatters'
 import styles                               from '@/styles/components/TablePage.module.scss'
 
@@ -20,6 +21,7 @@ interface Group      { id: string; name: string }
 interface StandingRow {
   team_id:         string
   team_name:       string
+  team_logo_url:   string | null
   played:          number
   wins:            number
   draws:           number
@@ -210,7 +212,10 @@ function GroupTable({ groupId, groupName, rows, tournamentSlug }: {
                   <td>
                     <div className={styles.tdTeam}>
                       <Link href={`/teams/${row.team_id}`} className={styles.teamLink}>
-                        {formatTeamName(row.team_name)}
+                        <TeamLogo src={row.team_logo_url} alt={row.team_name} size={24} />
+                        <span className={styles.teamLinkText}>
+                          {formatTeamName(row.team_name)}
+                        </span>
                       </Link>
                     </div>
                   </td>
