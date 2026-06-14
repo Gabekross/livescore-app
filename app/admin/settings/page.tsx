@@ -509,14 +509,14 @@ export default function AdminSettingsPage() {
 
         <div className={styles.fieldGroup}>
           <label className={styles.label}>
-            Tagline <span className={styles.labelHint}>(shown on homepage hero)</span>
+            Homepage Subtitle <span className={styles.labelHint}>(shown under the main site name)</span>
           </label>
           <input
             type="text"
             className={styles.input}
             value={settings.site_tagline}
             onChange={(e) => set('site_tagline', e.target.value)}
-            placeholder="Official League Platform"
+            placeholder="Fixtures, results, standings and tournament updates."
           />
         </div>
 

@@ -32,7 +32,7 @@ insert into public.site_settings (
 values (
   '00000000-0000-0000-0000-000000000001',
   'JCL 2026',
-  'Official League Platform',
+  'Fixtures, results, standings and tournament updates.',
   'theme-uefa-dark',
   '© JCL 2026. All rights reserved.'
 )

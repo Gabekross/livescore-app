@@ -21,6 +21,8 @@ import EmptyState                     from '@/components/ui/EmptyState'
 import styles                         from '@/styles/components/Homepage.module.scss'
 import type { MatchStatus }           from '@/lib/utils/match'
 
+const DEFAULT_HERO_TAGLINE = 'Fixtures, results, standings and tournament updates.'
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface MatchRow {
   id:            string
@@ -91,7 +93,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
     return {
       title:       data?.site_name ?? 'KoluSports',
-      description: data?.site_tagline ?? 'Live scores, fixtures, standings, and more.',
+      description: data?.site_tagline || DEFAULT_HERO_TAGLINE,
       openGraph: {
         images: data?.og_image_url ? [data.og_image_url] : [],
       },
@@ -99,7 +101,7 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch {
     return {
       title:       'KoluSports — The all-in-one sports platform',
-      description: 'Launch your league or tournament website with live scores, fixtures, standings, and more.',
+      description: 'Launch your league or tournament website with fixtures, results, standings, and tournament updates.',
     }
   }
 }
@@ -109,7 +111,7 @@ export default async function HomePage() {
   // Try to resolve an organization. If this throws, render the platform landing page.
   let orgId       = ''
   let siteName    = 'KoluSports'
-  let siteTagline: string | null = null
+  let siteTagline: string | null = DEFAULT_HERO_TAGLINE
   let fixtures:    MatchRow[] = []
   let results:     MatchRow[] = []
   let tournaments: Tournament[] = []
@@ -167,7 +169,7 @@ export default async function HomePage() {
 
     if (settingsRes.data) {
       siteName    = settingsRes.data.site_name    || siteName
-      siteTagline = settingsRes.data.site_tagline || null
+      siteTagline = settingsRes.data.site_tagline || DEFAULT_HERO_TAGLINE
     }
 
     const normalise = (m: MatchRow): MatchRow => ({
@@ -191,10 +193,9 @@ export default async function HomePage() {
   return (
     <>
       {/* Hero */}
-      <section className={styles.hero} aria-label="Welcome">
+      <section className={styles.hero} aria-label="Homepage hero">
         <div className={styles.heroInner}>
           <h1 className={styles.heroTitle}>
-            Welcome to{' '}
             <span className={styles.heroTitleAccent}>{siteName}</span>
           </h1>
           {siteTagline && (

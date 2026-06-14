@@ -70,7 +70,7 @@ begin
   values (
     v_org_id,
     trim(p_org_name),
-    'Live football scores, fixtures and standings.',
+    'Fixtures, results, standings and tournament updates.',
     'theme-uefa-dark'
   );
 
