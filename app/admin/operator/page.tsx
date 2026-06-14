@@ -12,6 +12,7 @@ import { useRouter }           from 'next/navigation'
 import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
+import { formatLocalDateTime } from '@/lib/utils/dateTime'
 import toast                   from 'react-hot-toast'
 import styles                  from '@/styles/components/Operator.module.scss'
 
@@ -330,9 +331,7 @@ function MatchOperatorRow({
       <div className={styles.matchHeader}>
         <div className={styles.matchMeta}>
           {match.tournament?.name && <span>{match.tournament.name} · </span>}
-          {new Date(match.match_date).toLocaleString('en-GB', {
-            day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
-          })}
+          {formatLocalDateTime(match.match_date, 'shortDateTime')}
         </div>
         <span
           className={styles.statusBadge}

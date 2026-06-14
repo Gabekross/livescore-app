@@ -8,6 +8,7 @@ import { getOrganizationId }   from '@/lib/org'
 import styles                  from '@/styles/components/PublicMatches.module.scss'
 import TournamentQuickLink     from '@/components/TournamentQuickLink'
 import { formatTeamName }      from '@/lib/formatters'
+import { formatLocalDateTime, localDateKey } from '@/lib/utils/dateTime'
 
 interface Match {
   id:           string
@@ -33,9 +34,7 @@ function statusLabel(match: Match): string {
     case 'live':      return 'LIVE'
     case 'halftime':  return 'HT'
     default:
-      return new Date(match.match_date).toLocaleDateString('en-GB', {
-        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false,
-      }).replace(',', '')
+      return formatLocalDateTime(match.match_date, 'shortDateTime')
   }
 }
 
@@ -82,14 +81,14 @@ export default function PublicMatchesPage() {
 
   const filterMatches = () => {
     const now   = new Date()
-    const today = now.toISOString().split('T')[0]
+    const today = localDateKey(now)
     let filtered = [...matches]
 
     if (selectedTournament) {
       filtered = filtered.filter((m) => m.tournament_id === selectedTournament)
     }
     if (selectedTab === 'today') {
-      filtered = filtered.filter((m) => m.match_date.startsWith(today))
+      filtered = filtered.filter((m) => localDateKey(m.match_date) === today)
     } else if (selectedTab === 'upcoming') {
       filtered = filtered.filter(
         (m) => new Date(m.match_date) > now && m.status === 'scheduled'

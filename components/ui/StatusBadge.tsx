@@ -4,6 +4,7 @@
 
 import type { MatchStatus } from '@/lib/utils/match'
 import { matchStatusLabel } from '@/lib/utils/match'
+import LocalMatchTime from './LocalMatchTime'
 import styles from '@/styles/components/StatusBadge.module.scss'
 
 interface Props {
@@ -22,7 +23,9 @@ const STATUS_CLASS: Record<MatchStatus, string> = {
 }
 
 export default function StatusBadge({ status, matchDate, isFriendly, className }: Props) {
-  const label      = matchStatusLabel(status, matchDate)
+  const label      = status === 'scheduled' && matchDate
+    ? <LocalMatchTime iso={matchDate} variant="shortDateTime" />
+    : matchStatusLabel(status, matchDate)
   const statusCls  = STATUS_CLASS[status] ?? styles.scheduled
 
   return (

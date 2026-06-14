@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
 import TournamentProgress from '@/components/admin/TournamentProgress'
+import { formatLocalDateTime } from '@/lib/utils/dateTime'
 
 interface Match {
   id: string
@@ -130,9 +131,7 @@ export default function MatchListPage() {
                   </span>
                 </div>
                 <div className={styles.details}>
-                  {new Date(match.match_date).toLocaleString('en-GB', {
-                    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
-                  })}
+                  {formatLocalDateTime(match.match_date, 'mediumDateTime')}
                   {match.venue && ` · ${match.venue}`}
                 </div>
                 <div className={styles.actions}>

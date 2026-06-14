@@ -16,8 +16,10 @@
 import Link        from 'next/link'
 import TeamLogo    from './TeamLogo'
 import StatusBadge from './StatusBadge'
+import LocalMatchTime from './LocalMatchTime'
 import type { MatchStatus }       from '@/lib/utils/match'
-import { formatTeamName }         from '@/lib/formatters'
+import { formatLocalDateTime } from '@/lib/utils/dateTime'
+import { formatTeamName }      from '@/lib/formatters'
 import styles from '@/styles/components/MatchCardShared.module.scss'
 
 interface Team {
@@ -66,7 +68,7 @@ export default function MatchCard({
 
   /* Time display for scheduled matches */
   const timeLabel = isScheduled
-    ? new Date(match_date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+    ? formatLocalDateTime(match_date, 'time')
     : null
 
   const inner = (
@@ -76,9 +78,11 @@ export default function MatchCard({
         {isScheduled && timeLabel ? (
           <>
             <div className={styles.statusDate}>
-              {new Date(match_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+              <LocalMatchTime iso={match_date} variant="shortDate" />
             </div>
-            <div className={styles.statusTime}>{timeLabel}</div>
+            <div className={styles.statusTime}>
+              <LocalMatchTime iso={match_date} variant="time" />
+            </div>
           </>
         ) : (
           <StatusBadge status={status} matchDate={match_date} />
@@ -146,7 +150,7 @@ export default function MatchCard({
         {/* vs label for scheduled */}
         {!hasScore && (
           <div className={styles.mobileVs}>
-            {timeLabel ? timeLabel : 'vs'}
+            {timeLabel ? <LocalMatchTime iso={match_date} variant="time" /> : 'vs'}
           </div>
         )}
         {hasPens && (

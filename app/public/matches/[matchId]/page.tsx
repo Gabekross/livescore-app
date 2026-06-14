@@ -10,6 +10,7 @@ import Link                                 from 'next/link'
 import { supabase }                         from '@/lib/supabase'
 import { YellowCard, RedCard }              from '@/components/ui/CardIcon'
 import CombinedFormationField               from '@/components/match/FormationField'
+import LocalMatchTime                       from '@/components/ui/LocalMatchTime'
 import StatusBadge                          from '@/components/ui/StatusBadge'
 import TeamLogo                             from '@/components/ui/TeamLogo'
 import { positionShort, positionGroupColor } from '@/lib/constants/positions'
@@ -212,13 +213,9 @@ export default function MatchDetailPage() {
           </div>
 
           <div className={styles.matchMeta}>
-            {new Date(match.match_date).toLocaleDateString('en-GB', {
-              weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-            })}
+            <LocalMatchTime iso={match.match_date} variant="longDate" />
             {' · '}
-            {new Date(match.match_date).toLocaleTimeString('en-GB', {
-              hour: '2-digit', minute: '2-digit',
-            })}
+            <LocalMatchTime iso={match.match_date} variant="time" />
             {match.venue && <> · {match.venue}</>}
           </div>
         </div>

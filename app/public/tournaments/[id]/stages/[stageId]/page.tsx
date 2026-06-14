@@ -8,6 +8,7 @@ import styles                   from '@/styles/components/PublicStageDetail.modu
 import GroupStandings           from '@/components/GroupStandings'
 import TournamentStandings      from '@/components/TournamentStandings'
 import { formatTeamName }       from '@/lib/formatters'
+import { formatLocalDateTime, localDateKey } from '@/lib/utils/dateTime'
 
 interface Group {
   id:       string
@@ -33,9 +34,7 @@ function matchStatusLabel(match: Match): string {
     case 'live':      return 'LIVE'
     case 'halftime':  return 'HT'
     default:
-      return new Date(match.match_date).toLocaleString('en-GB', {
-        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false,
-      }).replace(',', '')
+      return formatLocalDateTime(match.match_date, 'shortDateTime')
   }
 }
 
@@ -117,10 +116,10 @@ export default function PublicStageDetailPage() {
     return () => { supabase.removeChannel(subscription) }
   }, [id, stageId])
 
-  const today = new Date().toISOString().split('T')[0]
+  const today = localDateKey(new Date())
 
   const todaysMatches = Object.values(matchesByGroup).flat()
-    .filter((m) => m.match_date.startsWith(today))
+    .filter((m) => localDateKey(m.match_date) === today)
 
   const upcomingMatches = Object.values(matchesByGroup).flat()
     .filter((m) => new Date(m.match_date) > new Date() && m.status === 'scheduled')

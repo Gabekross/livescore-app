@@ -3,6 +3,8 @@
 // Centralises all status-string logic so there is one place to update
 // if status values ever change.
 
+import { formatLocalDateTime } from '@/lib/utils/dateTime'
+
 export type MatchStatus = 'scheduled' | 'live' | 'halftime' | 'completed'
 export type MatchType   = 'tournament' | 'friendly'
 
@@ -22,13 +24,7 @@ export function matchStatusLabel(
     case 'halftime':  return 'HT'
     default:
       if (matchDate) {
-        return new Date(matchDate).toLocaleString('en-GB', {
-          day:    '2-digit',
-          month:  'short',
-          hour:   '2-digit',
-          minute: '2-digit',
-          hour12: false,
-        }).replace(',', '')
+        return formatLocalDateTime(matchDate, 'shortDateTime')
       }
       return 'Scheduled'
   }
