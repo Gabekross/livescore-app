@@ -283,7 +283,8 @@
   width:         100%;
   aspect-ratio:  16 / 9;
   border-radius: 8px;
-  object-fit:    cover;
+  object-fit:    contain;
+  background:    #111827;
   border:        1px solid #e5e7eb;
 }
 
