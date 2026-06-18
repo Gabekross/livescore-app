@@ -1,32 +1,23 @@
 // app/api/admin/operators/route.ts
-// Server-side API for organization admins to manage match_operator users.
-//
-// GET  → list match_operators for the caller's org
-// POST → create a new match_operator (auth user + admin_profiles row)
-// DELETE → remove a match_operator profile (and optionally the auth user)
-//
-// Security: caller must be org_admin, billing_exempt_admin, or power_admin
-// with a resolved org.
+// Server-side API for organization admins to manage match_operator users and
+// their per-match assignments.
 
 import { createServerSupabaseClient } from '@/lib/supabase-server'
-import { createAdminSupabaseClient }  from '@/lib/supabase-admin'
-import { NextRequest, NextResponse }  from 'next/server'
+import { createAdminSupabaseClient } from '@/lib/supabase-admin'
+import { NextRequest, NextResponse } from 'next/server'
 
-/** Verify the caller is org-level admin/power_admin and return their org_id.
- *  Uses the session client only for auth identity, then the admin (service role)
- *  client for the profile lookup to avoid RLS/grant issues on admin_profiles. */
-async function authorizeOrgAdmin(): Promise<
-  { orgId: string; userId: string } | NextResponse
-> {
-  // Verify identity via session JWT
+async function authorizeOrgAdmin(
+  request: NextRequest
+): Promise<{ orgId: string; userId: string } | NextResponse> {
   const supabase = createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
   }
 
-  // Use admin client for the profile query (bypasses RLS)
   const adminClient = createAdminSupabaseClient()
   const { data: profile, error: profileError } = await adminClient
     .from('admin_profiles')
@@ -41,28 +32,27 @@ async function authorizeOrgAdmin(): Promise<
     )
   }
 
-  const orgId = profile.organization_id
-  if (!orgId && ['org_admin', 'billing_exempt_admin'].includes(profile.role)) {
+  const requestedOrgId = new URL(request.url).searchParams.get('organization_id')
+  const orgId = profile.role === 'power_admin' ? requestedOrgId : profile.organization_id
+
+  if (!orgId) {
     return NextResponse.json(
-      { error: 'Your admin profile has no organization assigned' },
+      { error: profile.role === 'power_admin' ? 'organization_id query parameter required' : 'Your admin profile has no organization assigned' },
       { status: 400 }
     )
   }
 
-  return { orgId: orgId!, userId: user.id }
+  return { orgId, userId: user.id }
 }
 
-// ── GET: List match_operators for the org ────────────────────────────────────
-
-export async function GET() {
-  const auth = await authorizeOrgAdmin()
+export async function GET(request: NextRequest) {
+  const auth = await authorizeOrgAdmin(request)
   if (auth instanceof NextResponse) return auth
   const { orgId } = auth
 
-  // Use admin client (service role) to list operators — the caller was already
-  // authorized above. The user-session client can't read other users' profiles.
   const adminClient = createAdminSupabaseClient()
-  const { data, error } = await adminClient
+
+  const { data: profiles, error } = await adminClient
     .from('admin_profiles')
     .select('id, full_name, role, created_at')
     .eq('role', 'match_operator')
@@ -72,34 +62,67 @@ export async function GET() {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
-  const profilesWithEmail = await Promise.all(
-    (data || []).map(async (p) => {
-      const { data: authUser } = await adminClient.auth.admin.getUserById(p.id)
+
+  const [{ data: assignments, error: assignmentError }, { data: matches, error: matchError }] = await Promise.all([
+    adminClient
+      .from('match_operator_assignments')
+      .select('operator_id, match_id')
+      .eq('organization_id', orgId),
+    adminClient
+      .from('matches')
+      .select(`
+        id, match_date, status,
+        home_team:home_team_id(name),
+        away_team:away_team_id(name),
+        tournament:tournament_id(name)
+      `)
+      .eq('organization_id', orgId)
+      .order('match_date', { ascending: false }),
+  ])
+
+  if (assignmentError) {
+    return NextResponse.json({ error: assignmentError.message }, { status: 500 })
+  }
+
+  if (matchError) {
+    return NextResponse.json({ error: matchError.message }, { status: 500 })
+  }
+
+  const assignmentMap = new Map<string, string[]>()
+  ;(profiles || []).forEach((profile) => assignmentMap.set(profile.id, []))
+  ;(assignments || []).forEach((assignment) => {
+    const current = assignmentMap.get(assignment.operator_id) || []
+    current.push(assignment.match_id)
+    assignmentMap.set(assignment.operator_id, current)
+  })
+
+  const operators = await Promise.all(
+    (profiles || []).map(async (profile) => {
+      const { data: authUser } = await adminClient.auth.admin.getUserById(profile.id)
       return {
-        ...p,
+        ...profile,
         email: authUser?.user?.email ?? null,
+        assigned_match_ids: assignmentMap.get(profile.id) || [],
       }
     })
   )
 
-  return NextResponse.json({ operators: profilesWithEmail })
+  return NextResponse.json({ operators, matches: matches || [] })
 }
 
-// ── POST: Create a new match_operator ────────────────────────────────────────
-
 export async function POST(request: NextRequest) {
-  const auth = await authorizeOrgAdmin()
+  const auth = await authorizeOrgAdmin(request)
   if (auth instanceof NextResponse) return auth
-  const { orgId } = auth
+  const { orgId, userId } = auth
 
-  let body: { email?: string; full_name?: string; password?: string }
+  let body: { email?: string; full_name?: string; password?: string; match_ids?: string[] }
   try {
     body = await request.json()
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { email, full_name, password } = body
+  const { email, full_name, password, match_ids = [] } = body
   if (!email || !full_name || !password) {
     return NextResponse.json(
       { error: 'email, full_name, and password are required' },
@@ -115,35 +138,46 @@ export async function POST(request: NextRequest) {
   }
 
   const adminClient = createAdminSupabaseClient()
+  const uniqueMatchIds = Array.from(new Set(match_ids))
 
-  // 1. Create the auth user (no email confirmation — admin-created users are pre-verified)
-  const { data: newUser, error: authError } =
-    await adminClient.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true, // Mark email as confirmed
-      user_metadata: { full_name },
-    })
+  const { data: newUser, error: authError } = await adminClient.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { full_name },
+  })
 
   if (authError) {
-    // Common: "A user with this email address has already been registered"
     return NextResponse.json({ error: authError.message }, { status: 400 })
   }
 
-  // 2. Insert admin_profiles row with match_operator role
-  const { error: profileError } = await adminClient
-    .from('admin_profiles')
-    .insert({
-      id: newUser.user.id,
-      role: 'match_operator',
-      organization_id: orgId,
-      full_name,
-    })
+  const { error: profileError } = await adminClient.from('admin_profiles').insert({
+    id: newUser.user.id,
+    role: 'match_operator',
+    organization_id: orgId,
+    full_name,
+  })
 
   if (profileError) {
-    // Roll back: delete the auth user we just created
     await adminClient.auth.admin.deleteUser(newUser.user.id)
     return NextResponse.json({ error: profileError.message }, { status: 500 })
+  }
+
+  if (uniqueMatchIds.length > 0) {
+    const { error: assignmentError } = await adminClient
+      .from('match_operator_assignments')
+      .insert(uniqueMatchIds.map((matchId) => ({
+        operator_id: newUser.user.id,
+        match_id: matchId,
+        organization_id: orgId,
+        assigned_by: userId,
+      })))
+
+    if (assignmentError) {
+      await adminClient.from('admin_profiles').delete().eq('id', newUser.user.id)
+      await adminClient.auth.admin.deleteUser(newUser.user.id)
+      return NextResponse.json({ error: assignmentError.message }, { status: 500 })
+    }
   }
 
   return NextResponse.json({
@@ -153,14 +187,91 @@ export async function POST(request: NextRequest) {
       email,
       full_name,
       role: 'match_operator',
+      assigned_match_ids: uniqueMatchIds,
     },
   })
 }
 
-// ── DELETE: Remove a match_operator ──────────────────────────────────────────
+export async function PATCH(request: NextRequest) {
+  const auth = await authorizeOrgAdmin(request)
+  if (auth instanceof NextResponse) return auth
+  const { orgId, userId } = auth
+
+  let body: { operator_id?: string; match_ids?: string[] }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
+  }
+
+  const operatorId = body.operator_id
+  const matchIds = Array.isArray(body.match_ids) ? Array.from(new Set(body.match_ids)) : []
+
+  if (!operatorId) {
+    return NextResponse.json({ error: 'operator_id is required' }, { status: 400 })
+  }
+
+  const adminClient = createAdminSupabaseClient()
+
+  const { data: profile } = await adminClient
+    .from('admin_profiles')
+    .select('role, organization_id')
+    .eq('id', operatorId)
+    .single()
+
+  if (!profile || profile.role !== 'match_operator' || profile.organization_id !== orgId) {
+    return NextResponse.json({ error: 'Operator not found in your organization' }, { status: 404 })
+  }
+
+  if (matchIds.length > 0) {
+    const { data: validMatches, error: matchError } = await adminClient
+      .from('matches')
+      .select('id')
+      .eq('organization_id', orgId)
+      .in('id', matchIds)
+
+    if (matchError) {
+      return NextResponse.json({ error: matchError.message }, { status: 500 })
+    }
+
+    if ((validMatches || []).length !== matchIds.length) {
+      return NextResponse.json(
+        { error: 'One or more selected matches do not belong to your organization' },
+        { status: 400 }
+      )
+    }
+  }
+
+  const { error: deleteError } = await adminClient
+    .from('match_operator_assignments')
+    .delete()
+    .eq('operator_id', operatorId)
+    .eq('organization_id', orgId)
+
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 })
+  }
+
+  if (matchIds.length > 0) {
+    const { error: insertError } = await adminClient
+      .from('match_operator_assignments')
+      .insert(matchIds.map((matchId) => ({
+        operator_id: operatorId,
+        match_id: matchId,
+        organization_id: orgId,
+        assigned_by: userId,
+      })))
+
+    if (insertError) {
+      return NextResponse.json({ error: insertError.message }, { status: 500 })
+    }
+  }
+
+  return NextResponse.json({ success: true, assigned_match_ids: matchIds })
+}
 
 export async function DELETE(request: NextRequest) {
-  const auth = await authorizeOrgAdmin()
+  const auth = await authorizeOrgAdmin(request)
   if (auth instanceof NextResponse) return auth
   const { orgId } = auth
 
@@ -173,25 +284,19 @@ export async function DELETE(request: NextRequest) {
 
   const adminClient = createAdminSupabaseClient()
 
-  // Verify this operator actually belongs to this org and is a match_operator
   const { data: profile } = await adminClient
     .from('admin_profiles')
     .select('role, organization_id')
     .eq('id', operatorId)
     .single()
 
-  if (
-    !profile ||
-    profile.role !== 'match_operator' ||
-    profile.organization_id !== orgId
-  ) {
+  if (!profile || profile.role !== 'match_operator' || profile.organization_id !== orgId) {
     return NextResponse.json(
       { error: 'Operator not found in your organization' },
       { status: 404 }
     )
   }
 
-  // Delete the admin_profiles row
   const { error: deleteError } = await adminClient
     .from('admin_profiles')
     .delete()
@@ -201,7 +306,6 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: deleteError.message }, { status: 500 })
   }
 
-  // Also delete the auth user so they can't log in at all
   await adminClient.auth.admin.deleteUser(operatorId)
 
   return NextResponse.json({ success: true })

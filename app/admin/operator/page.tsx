@@ -52,7 +52,7 @@ export default function OperatorPage() {
   useEffect(() => {
     if (!orgId) return
     fetchMatches()
-  }, [orgId])
+  }, [orgId, role])
 
   const fetchMatches = async () => {
     if (!orgId) return
@@ -63,7 +63,40 @@ export default function OperatorPage() {
     const to = new Date(from)
     to.setDate(to.getDate() + 7)
 
-    const { data, error } = await supabase
+    let assignedMatchIds: string[] | null = null
+
+    if (role === 'match_operator') {
+      const { data: userData } = await supabase.auth.getUser()
+      const userId = userData.user?.id
+
+      if (!userId) {
+        toast.error('Not authenticated')
+        setLoading(false)
+        return
+      }
+
+      const { data: assignments, error: assignmentError } = await supabase
+        .from('match_operator_assignments')
+        .select('match_id')
+        .eq('operator_id', userId)
+        .eq('organization_id', orgId)
+
+      if (assignmentError) {
+        toast.error('Failed to load match assignments')
+        setLoading(false)
+        return
+      }
+
+      assignedMatchIds = (assignments || []).map((assignment) => assignment.match_id)
+
+      if (assignedMatchIds.length === 0) {
+        setMatches([])
+        setLoading(false)
+        return
+      }
+    }
+
+    let query = supabase
       .from('matches')
       .select(`
         id, match_date, status, home_score, away_score,
@@ -74,6 +107,12 @@ export default function OperatorPage() {
       .eq('organization_id', orgId)
       .or(`status.in.(live,halftime),and(match_date.gte.${from.toISOString()},match_date.lte.${to.toISOString()})`)
       .order('match_date')
+
+    if (assignedMatchIds) {
+      query = query.in('id', assignedMatchIds)
+    }
+
+    const { data, error } = await query
 
     if (error) {
       toast.error('Failed to load matches')
@@ -95,7 +134,9 @@ export default function OperatorPage() {
       <div className={styles.header}>
         <h1 className={styles.heading}>Game Day — {orgName}</h1>
         <p className={styles.subheading}>
-          Manage live match scores and status. Showing today and next 7 days.
+          {role === 'match_operator'
+            ? 'Manage live scores and stats for your assigned matches.'
+            : 'Manage live match scores and status. Showing today and next 7 days.'}
         </p>
       </div>
 
@@ -103,7 +144,9 @@ export default function OperatorPage() {
         <div className={styles.loadingState}>Loading matches...</div>
       ) : matches.length === 0 ? (
         <div className={styles.emptyState}>
-          No upcoming matches in the next 7 days.
+          {role === 'match_operator'
+            ? 'No matches have been assigned to you yet.'
+            : 'No upcoming matches in the next 7 days.'}
         </div>
       ) : (
         <div className={styles.matchList}>

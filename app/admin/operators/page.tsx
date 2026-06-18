@@ -1,59 +1,73 @@
 'use client'
 
 // app/admin/operators/page.tsx
-// Org admin page to manage match_operator accounts.
-// Operators are restricted game-day users who can only update match scores/status.
+// Org admin page to manage match_operator accounts and assigned matches.
 
 import { useEffect, useState, useCallback } from 'react'
-import { useAdminOrg }     from '@/contexts/AdminOrgContext'
+import { useAdminOrg } from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate } from '@/components/admin/AdminOrgGate'
-import FeatureGate         from '@/components/admin/FeatureGate'
-import toast               from 'react-hot-toast'
+import FeatureGate from '@/components/admin/FeatureGate'
+import { formatLocalDateTime } from '@/lib/utils/dateTime'
+import toast from 'react-hot-toast'
 
 interface Operator {
-  id:         string
-  email:      string | null
-  full_name:  string | null
-  role:       string
+  id: string
+  email: string | null
+  full_name: string | null
+  role: string
   created_at: string
+  assigned_match_ids: string[]
+}
+
+interface AssignableMatch {
+  id: string
+  match_date: string
+  status: string
+  home_team: { name: string } | { name: string }[] | null
+  away_team: { name: string } | { name: string }[] | null
+  tournament: { name: string } | { name: string }[] | null
 }
 
 export default function ManageOperatorsPage() {
-  const { role } = useAdminOrg()
+  const { orgId, role } = useAdminOrg()
   const orgGate = useAdminOrgGate()
 
   const [operators, setOperators] = useState<Operator[]>([])
-  const [loading, setLoading]     = useState(true)
-  const [saving, setSaving]       = useState(false)
+  const [matches, setMatches] = useState<AssignableMatch[]>([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [assignmentSavingId, setAssignmentSavingId] = useState<string | null>(null)
 
-  // Form state for creating a new operator
-  const [email, setEmail]       = useState('')
+  const [email, setEmail] = useState('')
   const [fullName, setFullName] = useState('')
   const [password, setPassword] = useState('')
+  const [selectedMatchIds, setSelectedMatchIds] = useState<string[]>([])
   const [showForm, setShowForm] = useState(false)
 
-  // Confirm-delete state
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [editingOperatorId, setEditingOperatorId] = useState<string | null>(null)
+  const [draftAssignments, setDraftAssignments] = useState<Record<string, string[]>>({})
 
   const fetchOperators = useCallback(async () => {
+    if (!orgId) return
     try {
-      const res = await fetch('/api/admin/operators')
+      const res = await fetch(`/api/admin/operators?organization_id=${encodeURIComponent(orgId)}`)
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to load operators')
       setOperators(data.operators || [])
+      setMatches(data.matches || [])
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to load operators'
       toast.error(msg)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [orgId])
 
   useEffect(() => { fetchOperators() }, [fetchOperators])
 
   if (orgGate) return orgGate
 
-  // Only organization-level admins and power admins can manage operators
   if (role !== 'org_admin' && role !== 'billing_exempt_admin' && role !== 'power_admin') {
     return (
       <div style={{ padding: '3rem 2rem', textAlign: 'center', color: '#6b7280' }}>
@@ -67,12 +81,13 @@ export default function ManageOperatorsPage() {
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!orgId) return
     setSaving(true)
     try {
-      const res = await fetch('/api/admin/operators', {
+      const res = await fetch(`/api/admin/operators?organization_id=${encodeURIComponent(orgId)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, full_name: fullName, password }),
+        body: JSON.stringify({ email, full_name: fullName, password, match_ids: selectedMatchIds }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to create operator')
@@ -80,6 +95,7 @@ export default function ManageOperatorsPage() {
       setEmail('')
       setFullName('')
       setPassword('')
+      setSelectedMatchIds([])
       setShowForm(false)
       fetchOperators()
     } catch (err: unknown) {
@@ -91,8 +107,9 @@ export default function ManageOperatorsPage() {
   }
 
   const handleDelete = async (id: string) => {
+    if (!orgId) return
     try {
-      const res = await fetch(`/api/admin/operators?id=${id}`, { method: 'DELETE' })
+      const res = await fetch(`/api/admin/operators?id=${id}&organization_id=${encodeURIComponent(orgId)}`, { method: 'DELETE' })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to remove operator')
       toast.success('Operator removed')
@@ -104,210 +121,338 @@ export default function ManageOperatorsPage() {
     }
   }
 
+  const toggleMatch = (matchId: string, checked: boolean, operatorId?: string) => {
+    if (!operatorId) {
+      setSelectedMatchIds((prev) => checked ? [...prev, matchId] : prev.filter((id) => id !== matchId))
+      return
+    }
+
+    setDraftAssignments((prev) => {
+      const current = prev[operatorId] || []
+      return {
+        ...prev,
+        [operatorId]: checked ? [...current, matchId] : current.filter((id) => id !== matchId),
+      }
+    })
+  }
+
+  const openAssignmentEditor = (operator: Operator) => {
+    setEditingOperatorId(operator.id)
+    setDraftAssignments((prev) => ({
+      ...prev,
+      [operator.id]: operator.assigned_match_ids || [],
+    }))
+  }
+
+  const saveAssignments = async (operatorId: string) => {
+    if (!orgId) return
+    setAssignmentSavingId(operatorId)
+    try {
+      const res = await fetch(`/api/admin/operators?organization_id=${encodeURIComponent(orgId)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operator_id: operatorId, match_ids: draftAssignments[operatorId] || [] }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to update assignments')
+      toast.success('Match assignments updated')
+      setEditingOperatorId(null)
+      fetchOperators()
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to update assignments'
+      toast.error(msg)
+    } finally {
+      setAssignmentSavingId(null)
+    }
+  }
+
   return (
     <FeatureGate feature="canUseOperators" label="Match Operators">
-    <div style={{ maxWidth: '720px', margin: '0 auto', padding: '1.5rem' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-        <div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1a1a2e', margin: 0 }}>
-            Match Operators
-          </h1>
-          <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: '0.25rem 0 0' }}>
-            Game-day users who can update match scores and status — nothing else.
-          </p>
+      <div style={{ maxWidth: '920px', margin: '0 auto', padding: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1a1a2e', margin: 0 }}>
+              Match Operators
+            </h1>
+            <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: '0.25rem 0 0' }}>
+              Game-day users who can update only the matches assigned to them.
+            </p>
+          </div>
+          {!showForm && (
+            <button onClick={() => setShowForm(true)} style={primaryButtonStyle}>
+              + Add Operator
+            </button>
+          )}
         </div>
-        {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            style={{
-              padding: '0.5rem 1rem', fontSize: '0.82rem', fontWeight: 600,
-              background: '#059669', color: '#fff', border: 'none',
-              borderRadius: '8px', cursor: 'pointer', whiteSpace: 'nowrap',
-            }}
-          >
-            + Add Operator
-          </button>
+
+        {showForm && (
+          <form onSubmit={handleCreate} style={createFormStyle}>
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#065f46', margin: 0 }}>
+              New Match Operator
+            </h3>
+            <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: 0, lineHeight: 1.5 }}>
+              This creates a login account for the operator. They will only see and update the matches selected below.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
+              <label style={fieldStyle}>
+                <span style={labelStyle}>Full Name</span>
+                <input type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. John Smith" style={inputStyle} />
+              </label>
+              <label style={fieldStyle}>
+                <span style={labelStyle}>Email</span>
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="operator@example.com" style={inputStyle} />
+              </label>
+            </div>
+
+            <label style={fieldStyle}>
+              <span style={labelStyle}>Temporary Password</span>
+              <input type="text" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" style={{ ...inputStyle, maxWidth: '280px' }} />
+            </label>
+
+            <MatchAssignmentPicker
+              matches={matches}
+              selectedIds={selectedMatchIds}
+              onToggle={(matchId, checked) => toggleMatch(matchId, checked)}
+            />
+
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
+              <button type="submit" disabled={saving} style={{ ...primaryButtonStyle, opacity: saving ? 0.6 : 1 }}>
+                {saving ? 'Creating...' : 'Create Operator'}
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowForm(false); setEmail(''); setFullName(''); setPassword(''); setSelectedMatchIds([]) }}
+                style={secondaryButtonStyle}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
+
+        {loading ? (
+          <p style={{ color: '#6b7280', marginTop: '2rem' }}>Loading operators...</p>
+        ) : operators.length === 0 ? (
+          <div style={emptyStateStyle}>
+            <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#6b7280' }}>No match operators yet</p>
+            <p style={{ fontSize: '0.82rem', marginTop: '0.25rem' }}>
+              Add an operator to let someone update assigned match scores without full admin access.
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1.5rem' }}>
+            {operators.map((op) => (
+              <div key={op.id} style={operatorCardStyle}>
+                <div style={{ flex: 1, minWidth: '180px' }}>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1f2937' }}>
+                    {op.full_name || 'Unnamed'}
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#9ca3af' }}>
+                    {op.email || op.id}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                    {op.assigned_match_ids?.length || 0} assigned match{(op.assigned_match_ids?.length || 0) === 1 ? '' : 'es'}
+                  </div>
+                </div>
+
+                <span style={badgeStyle}>Operator</span>
+
+                <button
+                  onClick={() => editingOperatorId === op.id ? setEditingOperatorId(null) : openAssignmentEditor(op)}
+                  style={manageButtonStyle}
+                >
+                  {editingOperatorId === op.id ? 'Close' : 'Manage Matches'}
+                </button>
+
+                {deleteId === op.id ? (
+                  <div style={{ display: 'flex', gap: '0.35rem' }}>
+                    <button onClick={() => handleDelete(op.id)} style={dangerButtonStyle}>Confirm</button>
+                    <button onClick={() => setDeleteId(null)} style={smallSecondaryButtonStyle}>Cancel</button>
+                  </div>
+                ) : (
+                  <button onClick={() => setDeleteId(op.id)} style={removeButtonStyle}>Remove</button>
+                )}
+
+                {editingOperatorId === op.id && (
+                  <div style={{ flexBasis: '100%', borderTop: '1px solid #e5e7eb', paddingTop: '0.85rem' }}>
+                    <MatchAssignmentPicker
+                      matches={matches}
+                      selectedIds={draftAssignments[op.id] || []}
+                      onToggle={(matchId, checked) => toggleMatch(matchId, checked, op.id)}
+                    />
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.75rem' }}>
+                      <button
+                        onClick={() => saveAssignments(op.id)}
+                        disabled={assignmentSavingId === op.id}
+                        style={{ ...saveAssignmentsButtonStyle, opacity: assignmentSavingId === op.id ? 0.65 : 1 }}
+                      >
+                        {assignmentSavingId === op.id ? 'Saving...' : 'Save Assignments'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
-
-      {/* ── Create form ──────────────────────────────────────── */}
-      {showForm && (
-        <form
-          onSubmit={handleCreate}
-          style={{
-            margin: '1.5rem 0', padding: '1.25rem', background: '#f0fdf4',
-            border: '1px solid #bbf7d0', borderRadius: '10px',
-            display: 'flex', flexDirection: 'column', gap: '0.75rem',
-          }}
-        >
-          <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#065f46', margin: 0 }}>
-            New Match Operator
-          </h3>
-          <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: 0, lineHeight: 1.5 }}>
-            This creates a login account for the operator. Share the email and password with them.
-            They will only be able to access the game-day match operator screen.
-          </p>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span style={labelStyle}>Full Name</span>
-              <input
-                type="text"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                placeholder="e.g. John Smith"
-                style={inputStyle}
-              />
-            </label>
-            <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <span style={labelStyle}>Email</span>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="operator@example.com"
-                style={inputStyle}
-              />
-            </label>
-          </div>
-
-          <label style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-            <span style={labelStyle}>Temporary Password</span>
-            <input
-              type="text"
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
-              style={{ ...inputStyle, maxWidth: '280px' }}
-            />
-          </label>
-
-          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
-            <button
-              type="submit"
-              disabled={saving}
-              style={{
-                padding: '0.5rem 1.2rem', fontSize: '0.82rem', fontWeight: 600,
-                background: '#059669', color: '#fff', border: 'none',
-                borderRadius: '8px', cursor: saving ? 'not-allowed' : 'pointer',
-                opacity: saving ? 0.6 : 1,
-              }}
-            >
-              {saving ? 'Creating...' : 'Create Operator'}
-            </button>
-            <button
-              type="button"
-              onClick={() => { setShowForm(false); setEmail(''); setFullName(''); setPassword('') }}
-              style={{
-                padding: '0.5rem 1rem', fontSize: '0.82rem', fontWeight: 600,
-                background: '#f3f4f6', color: '#6b7280', border: '1px solid #e5e7eb',
-                borderRadius: '8px', cursor: 'pointer',
-              }}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* ── Operators list ────────────────────────────────────── */}
-      {loading ? (
-        <p style={{ color: '#6b7280', marginTop: '2rem' }}>Loading operators...</p>
-      ) : operators.length === 0 ? (
-        <div style={{
-          marginTop: '2rem', padding: '2rem', background: '#f9fafb',
-          borderRadius: '10px', textAlign: 'center', color: '#9ca3af',
-          border: '1px dashed #e5e7eb',
-        }}>
-          <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#6b7280' }}>
-            No match operators yet
-          </p>
-          <p style={{ fontSize: '0.82rem', marginTop: '0.25rem' }}>
-            Add an operator to let someone update match scores on game day without giving them full admin access.
-          </p>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '1.5rem' }}>
-          {operators.map((op) => (
-            <div
-              key={op.id}
-              style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '0.85rem 1rem', background: '#fff', border: '1px solid #e5e7eb',
-                borderRadius: '10px', gap: '0.75rem', flexWrap: 'wrap',
-              }}
-            >
-              <div style={{ flex: 1, minWidth: '180px' }}>
-                <div style={{ fontSize: '0.88rem', fontWeight: 600, color: '#1f2937' }}>
-                  {op.full_name || 'Unnamed'}
-                </div>
-                <div style={{ fontSize: '0.78rem', color: '#9ca3af' }}>
-                  {op.email || op.id}
-                </div>
-              </div>
-
-              <span style={{
-                fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase',
-                letterSpacing: '0.04em', color: '#059669',
-                background: 'rgba(5,150,105,0.08)', padding: '3px 8px', borderRadius: '4px',
-              }}>
-                Operator
-              </span>
-
-              {deleteId === op.id ? (
-                <div style={{ display: 'flex', gap: '0.35rem' }}>
-                  <button
-                    onClick={() => handleDelete(op.id)}
-                    style={{
-                      padding: '4px 10px', fontSize: '0.75rem', fontWeight: 600,
-                      background: '#ef4444', color: '#fff', border: 'none',
-                      borderRadius: '6px', cursor: 'pointer',
-                    }}
-                  >
-                    Confirm
-                  </button>
-                  <button
-                    onClick={() => setDeleteId(null)}
-                    style={{
-                      padding: '4px 10px', fontSize: '0.75rem', fontWeight: 600,
-                      background: '#f3f4f6', color: '#6b7280', border: '1px solid #e5e7eb',
-                      borderRadius: '6px', cursor: 'pointer',
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setDeleteId(op.id)}
-                  style={{
-                    padding: '4px 10px', fontSize: '0.75rem', fontWeight: 600,
-                    background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca',
-                    borderRadius: '6px', cursor: 'pointer',
-                  }}
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
     </FeatureGate>
   )
 }
 
-// ── Shared inline styles ──────────────────────────────────────────────────────
+function MatchAssignmentPicker({
+  matches,
+  selectedIds,
+  onToggle,
+}: {
+  matches: AssignableMatch[]
+  selectedIds: string[]
+  onToggle: (matchId: string, checked: boolean) => void
+}) {
+  const selected = new Set(selectedIds)
+
+  if (matches.length === 0) {
+    return (
+      <div style={noMatchesStyle}>
+        No matches available to assign yet.
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+      <div style={{ ...labelStyle, display: 'flex', justifyContent: 'space-between', gap: '1rem' }}>
+        <span>Assigned Matches</span>
+        <span style={{ color: '#6b7280', fontWeight: 500 }}>{selected.size} selected</span>
+      </div>
+      <div style={matchPickerStyle}>
+        {matches.map((match) => {
+          const homeTeam = Array.isArray(match.home_team) ? match.home_team[0] : match.home_team
+          const awayTeam = Array.isArray(match.away_team) ? match.away_team[0] : match.away_team
+          const tournament = Array.isArray(match.tournament) ? match.tournament[0] : match.tournament
+
+          return (
+            <label key={match.id} style={matchRowStyle}>
+              <input
+                type="checkbox"
+                checked={selected.has(match.id)}
+                onChange={(e) => onToggle(match.id, e.target.checked)}
+              />
+              <span>
+                <span style={{ display: 'block', fontSize: '0.84rem', fontWeight: 600, color: '#1f2937' }}>
+                  {homeTeam?.name || 'Home'} vs {awayTeam?.name || 'Away'}
+                </span>
+                <span style={{ display: 'block', fontSize: '0.74rem', color: '#6b7280', marginTop: '0.15rem' }}>
+                  {tournament?.name ? `${tournament.name} - ` : ''}{formatLocalDateTime(match.match_date, 'shortDateTime')}
+                </span>
+              </span>
+              <span style={statusStyle}>{match.status}</span>
+            </label>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 const labelStyle: React.CSSProperties = {
   fontSize: '0.78rem', fontWeight: 600, color: '#374151',
+}
+
+const fieldStyle: React.CSSProperties = {
+  display: 'flex', flexDirection: 'column', gap: '0.25rem',
 }
 
 const inputStyle: React.CSSProperties = {
   padding: '0.5rem 0.65rem', fontSize: '0.85rem', border: '1px solid #d1d5db',
   borderRadius: '8px', background: '#fff', color: '#1f2937',
+}
+
+const primaryButtonStyle: React.CSSProperties = {
+  padding: '0.5rem 1rem', fontSize: '0.82rem', fontWeight: 600,
+  background: '#059669', color: '#fff', border: 'none',
+  borderRadius: '8px', cursor: 'pointer', whiteSpace: 'nowrap',
+}
+
+const secondaryButtonStyle: React.CSSProperties = {
+  padding: '0.5rem 1rem', fontSize: '0.82rem', fontWeight: 600,
+  background: '#f3f4f6', color: '#6b7280', border: '1px solid #e5e7eb',
+  borderRadius: '8px', cursor: 'pointer',
+}
+
+const createFormStyle: React.CSSProperties = {
+  margin: '1.5rem 0', padding: '1.25rem', background: '#f0fdf4',
+  border: '1px solid #bbf7d0', borderRadius: '10px',
+  display: 'flex', flexDirection: 'column', gap: '0.75rem',
+}
+
+const emptyStateStyle: React.CSSProperties = {
+  marginTop: '2rem', padding: '2rem', background: '#f9fafb',
+  borderRadius: '10px', textAlign: 'center', color: '#9ca3af',
+  border: '1px dashed #e5e7eb',
+}
+
+const operatorCardStyle: React.CSSProperties = {
+  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+  padding: '0.85rem 1rem', background: '#fff', border: '1px solid #e5e7eb',
+  borderRadius: '10px', gap: '0.75rem', flexWrap: 'wrap',
+}
+
+const badgeStyle: React.CSSProperties = {
+  fontSize: '0.68rem', fontWeight: 600, textTransform: 'uppercase',
+  letterSpacing: '0.04em', color: '#059669',
+  background: 'rgba(5,150,105,0.08)', padding: '3px 8px', borderRadius: '4px',
+}
+
+const manageButtonStyle: React.CSSProperties = {
+  padding: '4px 10px', fontSize: '0.75rem', fontWeight: 600,
+  background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe',
+  borderRadius: '6px', cursor: 'pointer',
+}
+
+const dangerButtonStyle: React.CSSProperties = {
+  padding: '4px 10px', fontSize: '0.75rem', fontWeight: 600,
+  background: '#ef4444', color: '#fff', border: 'none',
+  borderRadius: '6px', cursor: 'pointer',
+}
+
+const smallSecondaryButtonStyle: React.CSSProperties = {
+  padding: '4px 10px', fontSize: '0.75rem', fontWeight: 600,
+  background: '#f3f4f6', color: '#6b7280', border: '1px solid #e5e7eb',
+  borderRadius: '6px', cursor: 'pointer',
+}
+
+const removeButtonStyle: React.CSSProperties = {
+  padding: '4px 10px', fontSize: '0.75rem', fontWeight: 600,
+  background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca',
+  borderRadius: '6px', cursor: 'pointer',
+}
+
+const saveAssignmentsButtonStyle: React.CSSProperties = {
+  padding: '0.45rem 0.9rem', fontSize: '0.78rem', fontWeight: 600,
+  background: '#2563eb', color: '#fff', border: 'none',
+  borderRadius: '6px', cursor: 'pointer',
+}
+
+const noMatchesStyle: React.CSSProperties = {
+  padding: '0.85rem', border: '1px dashed #d1d5db', borderRadius: '8px',
+  color: '#6b7280', fontSize: '0.82rem', background: '#fff',
+}
+
+const matchPickerStyle: React.CSSProperties = {
+  maxHeight: '260px', overflowY: 'auto', border: '1px solid #e5e7eb',
+  borderRadius: '8px', background: '#fff',
+}
+
+const matchRowStyle: React.CSSProperties = {
+  display: 'grid', gridTemplateColumns: '20px 1fr auto',
+  gap: '0.65rem', alignItems: 'center', padding: '0.65rem 0.75rem',
+  borderBottom: '1px solid #f3f4f6', cursor: 'pointer',
+}
+
+const statusStyle: React.CSSProperties = {
+  fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase',
+  color: '#4b5563', background: '#f3f4f6', borderRadius: '4px',
+  padding: '2px 6px',
 }
