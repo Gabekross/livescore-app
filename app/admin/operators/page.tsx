@@ -13,6 +13,8 @@ import toast from 'react-hot-toast'
 interface Operator {
   id: string
   email: string | null
+  contact_email: string | null
+  operator_login_id: string | null
   full_name: string | null
   role: string
   created_at: string
@@ -39,6 +41,7 @@ export default function ManageOperatorsPage() {
   const [assignmentSavingId, setAssignmentSavingId] = useState<string | null>(null)
 
   const [email, setEmail] = useState('')
+  const [loginId, setLoginId] = useState('')
   const [fullName, setFullName] = useState('')
   const [password, setPassword] = useState('')
   const [selectedMatchIds, setSelectedMatchIds] = useState<string[]>([])
@@ -87,12 +90,13 @@ export default function ManageOperatorsPage() {
       const res = await fetch(`/api/admin/operators?organization_id=${encodeURIComponent(orgId)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, full_name: fullName, password, match_ids: selectedMatchIds }),
+        body: JSON.stringify({ email, login_id: loginId, full_name: fullName, password, match_ids: selectedMatchIds }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Failed to create operator')
       toast.success(`Operator "${fullName}" created`)
       setEmail('')
+      setLoginId('')
       setFullName('')
       setPassword('')
       setSelectedMatchIds([])
@@ -191,7 +195,7 @@ export default function ManageOperatorsPage() {
               New Match Operator
             </h3>
             <p style={{ fontSize: '0.78rem', color: '#6b7280', margin: 0, lineHeight: 1.5 }}>
-              This creates a login account for the operator. They will only see and update the matches selected below.
+              Give the operator their Login ID and temporary password. A real email address is optional.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem' }}>
@@ -200,10 +204,24 @@ export default function ManageOperatorsPage() {
                 <input type="text" required value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. John Smith" style={inputStyle} />
               </label>
               <label style={fieldStyle}>
-                <span style={labelStyle}>Email</span>
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="operator@example.com" style={inputStyle} />
+                <span style={labelStyle}>Login ID</span>
+                <input
+                  type="text"
+                  required
+                  minLength={3}
+                  value={loginId}
+                  onChange={(e) => setLoginId(e.target.value)}
+                  placeholder="e.g. johnsmith"
+                  autoCapitalize="none"
+                  style={inputStyle}
+                />
               </label>
             </div>
+
+            <label style={fieldStyle}>
+              <span style={labelStyle}>Contact Email <span style={{ color: '#9ca3af', fontWeight: 500 }}>(optional)</span></span>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="operator@example.com" style={{ ...inputStyle, maxWidth: '360px' }} />
+            </label>
 
             <label style={fieldStyle}>
               <span style={labelStyle}>Temporary Password</span>
@@ -222,7 +240,7 @@ export default function ManageOperatorsPage() {
               </button>
               <button
                 type="button"
-                onClick={() => { setShowForm(false); setEmail(''); setFullName(''); setPassword(''); setSelectedMatchIds([]) }}
+                onClick={() => { setShowForm(false); setEmail(''); setLoginId(''); setFullName(''); setPassword(''); setSelectedMatchIds([]) }}
                 style={secondaryButtonStyle}
               >
                 Cancel
@@ -249,8 +267,18 @@ export default function ManageOperatorsPage() {
                     {op.full_name || 'Unnamed'}
                   </div>
                   <div style={{ fontSize: '0.78rem', color: '#9ca3af' }}>
-                    {op.email || op.id}
+                    Login ID: {op.operator_login_id || op.email || op.id}
                   </div>
+                  {op.contact_email && (
+                    <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.15rem' }}>
+                      Contact: {op.contact_email}
+                    </div>
+                  )}
+                  {!op.operator_login_id && (
+                    <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.15rem' }}>
+                      Legacy operator: signs in with email
+                    </div>
+                  )}
                   <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.25rem' }}>
                     {op.assigned_match_ids?.length || 0} assigned match{(op.assigned_match_ids?.length || 0) === 1 ? '' : 'es'}
                   </div>

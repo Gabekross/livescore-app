@@ -6,6 +6,14 @@ import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
 import { NextRequest, NextResponse } from 'next/server'
 
+function normalizeOperatorLoginId(value: string): string {
+  return value.trim().toLowerCase().replace(/[^a-z0-9._-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+}
+
+function generatedOperatorEmail(loginId: string): string {
+  return `operator-${loginId}@operators.kolusports.com`
+}
+
 async function authorizeOrgAdmin(
   request: NextRequest
 ): Promise<{ orgId: string; userId: string } | NextResponse> {
@@ -54,7 +62,7 @@ export async function GET(request: NextRequest) {
 
   const { data: profiles, error } = await adminClient
     .from('admin_profiles')
-    .select('id, full_name, role, created_at')
+    .select('id, full_name, role, created_at, operator_login_id, contact_email')
     .eq('role', 'match_operator')
     .eq('organization_id', orgId)
     .order('created_at', { ascending: false })
@@ -115,7 +123,7 @@ export async function POST(request: NextRequest) {
   if (auth instanceof NextResponse) return auth
   const { orgId, userId } = auth
 
-  let body: { email?: string; full_name?: string; password?: string; match_ids?: string[] }
+  let body: { email?: string; full_name?: string; password?: string; match_ids?: string[]; login_id?: string }
   try {
     body = await request.json()
   } catch {
@@ -123,9 +131,19 @@ export async function POST(request: NextRequest) {
   }
 
   const { email, full_name, password, match_ids = [] } = body
-  if (!email || !full_name || !password) {
+  const loginId = normalizeOperatorLoginId(body.login_id || '')
+  const contactEmail = email?.trim() || null
+
+  if (!loginId || !full_name || !password) {
     return NextResponse.json(
-      { error: 'email, full_name, and password are required' },
+      { error: 'login_id, full_name, and password are required' },
+      { status: 400 }
+    )
+  }
+
+  if (loginId.length < 3) {
+    return NextResponse.json(
+      { error: 'Login ID must be at least 3 characters' },
       { status: 400 }
     )
   }
@@ -139,12 +157,13 @@ export async function POST(request: NextRequest) {
 
   const adminClient = createAdminSupabaseClient()
   const uniqueMatchIds = Array.from(new Set(match_ids))
+  const authEmail = generatedOperatorEmail(loginId)
 
   const { data: newUser, error: authError } = await adminClient.auth.admin.createUser({
-    email,
+    email: authEmail,
     password,
     email_confirm: true,
-    user_metadata: { full_name },
+    user_metadata: { full_name, operator_login_id: loginId },
   })
 
   if (authError) {
@@ -156,6 +175,8 @@ export async function POST(request: NextRequest) {
     role: 'match_operator',
     organization_id: orgId,
     full_name,
+    operator_login_id: loginId,
+    contact_email: contactEmail,
   })
 
   if (profileError) {
@@ -184,7 +205,9 @@ export async function POST(request: NextRequest) {
     success: true,
     operator: {
       id: newUser.user.id,
-      email,
+      email: authEmail,
+      contact_email: contactEmail,
+      operator_login_id: loginId,
       full_name,
       role: 'match_operator',
       assigned_match_ids: uniqueMatchIds,

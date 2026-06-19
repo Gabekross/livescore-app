@@ -16,7 +16,7 @@ import styles                  from '@/styles/components/Auth.module.scss'
 export default function LoginPage() {
   const router = useRouter()
 
-  const [email,    setEmail]    = useState('')
+  const [login,    setLogin]    = useState('')
   const [password, setPassword] = useState('')
   const [loading,  setLoading]  = useState(false)
   const [checking, setChecking] = useState(true)
@@ -53,13 +53,26 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
+    const resolveRes = await fetch('/api/auth/resolve-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ login }),
+    })
+    const resolveData = await resolveRes.json()
+
+    if (!resolveRes.ok || !resolveData.email) {
+      setError('Invalid login or password.')
+      setLoading(false)
+      return
+    }
+
     const { error: authErr } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
+      email: resolveData.email,
       password,
     })
 
     if (authErr) {
-      setError('Invalid email or password.')
+      setError('Invalid login or password.')
       setLoading(false)
       return
     }
@@ -145,15 +158,15 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.fieldGroup}>
-            <label className={styles.label}>Email</label>
+            <label className={styles.label}>Email or Operator Login ID</label>
             <input
-              type="email"
+              type="text"
               className={styles.input}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+              value={login}
+              onChange={(e) => setLogin(e.target.value)}
+              placeholder="you@example.com or johnsmith"
               required
-              autoComplete="email"
+              autoComplete="username"
               autoFocus
             />
           </div>
