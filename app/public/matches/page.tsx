@@ -7,8 +7,9 @@ import { supabase }            from '@/lib/supabase'
 import { getOrganizationId }   from '@/lib/org'
 import styles                  from '@/styles/components/PublicMatches.module.scss'
 import TournamentQuickLink     from '@/components/TournamentQuickLink'
+import LocalMatchTime          from '@/components/ui/LocalMatchTime'
 import { formatTeamName }      from '@/lib/formatters'
-import { formatLocalDateTime, localDateKey } from '@/lib/utils/dateTime'
+import { localDateKey }        from '@/lib/utils/dateTime'
 
 interface Match {
   id:           string
@@ -28,13 +29,13 @@ interface Tournament {
   name: string
 }
 
-function statusLabel(match: Match): string {
+function statusLabel(match: Match) {
   switch (match.status) {
     case 'completed': return 'FT'
     case 'live':      return 'LIVE'
     case 'halftime':  return 'HT'
     default:
-      return formatLocalDateTime(match.match_date, 'shortDateTime')
+      return <LocalMatchTime iso={match.match_date} variant="shortDateTime" />
   }
 }
 

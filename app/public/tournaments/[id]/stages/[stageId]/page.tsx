@@ -7,8 +7,9 @@ import { getOrganizationId }    from '@/lib/org'
 import styles                   from '@/styles/components/PublicStageDetail.module.scss'
 import GroupStandings           from '@/components/GroupStandings'
 import TournamentStandings      from '@/components/TournamentStandings'
+import LocalMatchTime           from '@/components/ui/LocalMatchTime'
 import { formatTeamName }       from '@/lib/formatters'
-import { formatLocalDateTime, localDateKey } from '@/lib/utils/dateTime'
+import { localDateKey }         from '@/lib/utils/dateTime'
 
 interface Group {
   id:       string
@@ -28,13 +29,13 @@ interface Match {
   away_team:  { id: string; name: string; logo_url?: string }
 }
 
-function matchStatusLabel(match: Match): string {
+function matchStatusLabel(match: Match) {
   switch (match.status) {
     case 'completed': return 'FT'
     case 'live':      return 'LIVE'
     case 'halftime':  return 'HT'
     default:
-      return formatLocalDateTime(match.match_date, 'shortDateTime')
+      return <LocalMatchTime iso={match.match_date} variant="shortDateTime" />
   }
 }
 
