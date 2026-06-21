@@ -5,7 +5,7 @@
 //
 // Changes from original:
 //   - show_standings prop replaces the hardcoded 'selectedStageName === Preliminary' check
-//   - status filter updated: 'completed' (was 'finished') and excludes 'scheduled'
+//   - live table: counts live/halftime/completed matches and excludes scheduled
 //   - only includes matches where affects_standings = true (excludes friendlies)
 //   - org scoping added via organization_id filter on matches
 
@@ -60,7 +60,7 @@ export default function TournamentStandings({
       .from('matches')
       .select('id, group_id, status, home_team_id, away_team_id, home_score, away_score')
       .in('group_id', groupIds)
-      .eq('status', 'completed')         // was: .neq('status', 'scheduled')
+      .in('status', ['live', 'halftime', 'completed'])
       .eq('affects_standings', true)     // excludes friendly matches
 
     // Fetch all teams assigned to these groups — used as the base so every

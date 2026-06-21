@@ -59,9 +59,9 @@ export default function StandingsView({
   const stagesForTourn = stages.filter((s) => s.tournament_id === tournId)
 
   // ── Fetch groups for selected stage ───────────────────────────────────
-  const fetchGroups = useCallback(async (sid: string) => {
+  const fetchGroups = useCallback(async (sid: string, showLoading = true) => {
     if (!sid) return
-    setLoading(true)
+    if (showLoading) setLoading(true)
 
     const { data: groupData } = await supabase
       .from('groups')
@@ -84,10 +84,34 @@ export default function StandingsView({
       map[group.id] = (results[i].data || []) as StandingRow[]
     })
     setStandings(map)
-    setLoading(false)
+    if (showLoading) setLoading(false)
   }, [])
 
   useEffect(() => { fetchGroups(stageId) }, [stageId, fetchGroups])
+
+  useEffect(() => {
+    if (!orgId || !stageId) return
+
+    const channel = supabase
+      .channel(`standings-view-${orgId}-${stageId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'matches',
+          filter: `organization_id=eq.${orgId}`,
+        },
+        () => {
+          fetchGroups(stageId, false)
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [orgId, stageId, fetchGroups])
 
   const handleTournChange = (tid: string) => {
     setTournId(tid)
