@@ -56,6 +56,28 @@ export function formatLocalDateTime(
   return variant === 'shortDateTime' ? `${shortDate} ${time}` : shortDate
 }
 
+/**
+ * Human heading for a local date key ("YYYY-MM-DD"):
+ * "Today", "Yesterday", or e.g. "Saturday, July 12, 2026".
+ */
+export function formatDateHeading(dateKey: string, now: Date = new Date()) {
+  const [year, month, day] = dateKey.split('-').map(Number)
+  if (!year || !month || !day) return ''
+
+  if (dateKey === localDateKey(now)) return 'Today'
+
+  const yesterday = new Date(now)
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (dateKey === localDateKey(yesterday)) return 'Yesterday'
+
+  return new Intl.DateTimeFormat('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date(year, month - 1, day))
+}
+
 export function localDateKey(isoOrDate: string | Date) {
   const date = typeof isoOrDate === 'string' ? getDate(isoOrDate) : isoOrDate
   if (!date || Number.isNaN(date.getTime())) return ''

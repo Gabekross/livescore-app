@@ -3,6 +3,7 @@
 
 import type { MatchStatus } from './match'
 import { sortByRelevance } from './matchSort'
+import { localDateKey } from './dateTime'
 
 export interface StageRef {
   id?:           string
@@ -92,4 +93,36 @@ export function groupByStageAndGroup<T extends GroupableMatch>(
     .sort((a, b) => a.orderNumber - b.orderNumber || a.stageName.localeCompare(b.stageName))
 
   return { stages, orphanMatches: sortByRelevance(orphans, now) }
+}
+
+export interface DateBucket<T extends { match_date: string }> {
+  /** Local date key "YYYY-MM-DD" — pass to formatDateHeading for display. */
+  dateKey: string
+  matches: T[]
+}
+
+/**
+ * Groups matches by local calendar day, newest day first.
+ * Within a day, matches are ordered by kickoff time.
+ * Used for results views where "when was this played" matters.
+ */
+export function groupByLocalDate<T extends { match_date: string }>(
+  matches: T[],
+): DateBucket<T>[] {
+  const buckets = new Map<string, T[]>()
+
+  for (const m of matches) {
+    const key = localDateKey(m.match_date)
+    const bucket = buckets.get(key)
+    if (bucket) { bucket.push(m) } else { buckets.set(key, [m]) }
+  }
+
+  return Array.from(buckets.entries())
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .map(([dateKey, ms]) => ({
+      dateKey,
+      matches: [...ms].sort(
+        (a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime(),
+      ),
+    }))
 }

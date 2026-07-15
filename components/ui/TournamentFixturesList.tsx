@@ -9,7 +9,8 @@ import { useMemo, useState } from 'react'
 import MatchCard             from '@/components/ui/MatchCard'
 import EmptyState            from '@/components/ui/EmptyState'
 import type { MatchStatus }  from '@/lib/utils/match'
-import { groupByStageAndGroup } from '@/lib/utils/matchGrouping'
+import { groupByStageAndGroup, groupByLocalDate } from '@/lib/utils/matchGrouping'
+import { formatDateHeading }    from '@/lib/utils/dateTime'
 import { sortByRelevance }      from '@/lib/utils/matchSort'
 import styles                from '@/styles/components/TournamentsPage.module.scss'
 
@@ -67,6 +68,17 @@ export default function TournamentFixturesList({ matches }: Props) {
   const grouped  = useMemo(() => groupByStageAndGroup(filtered), [filtered])
   const orphanSorted = useMemo(() => sortByRelevance(grouped.orphanMatches), [grouped.orphanMatches])
 
+  // Results tab: day buckets (newest first) instead of stage/group sections
+  const dateGrouped = useMemo(
+    () => (tab === 'results' ? groupByLocalDate(filtered) : []),
+    [filtered, tab],
+  )
+
+  const resultContext = (m: NormalizedMatch) => {
+    const parts = [m.stage?.stage_name, m.group?.name].filter(Boolean)
+    return parts.length ? parts.join(' · ') : undefined
+  }
+
   return (
     <>
       <div className={styles.controls}>
@@ -99,6 +111,22 @@ export default function TournamentFixturesList({ matches }: Props) {
           }
           description="Check back later or try a different filter."
         />
+      ) : tab === 'results' ? (
+        <>
+          {dateGrouped.map((day) => (
+            <section key={day.dateKey} className={styles.stageSection}>
+              <div className={styles.stageHeader}>
+                <span className={styles.stageHeaderAccent} aria-hidden="true" />
+                {formatDateHeading(day.dateKey)}
+              </div>
+              <div className={styles.matchStack}>
+                {day.matches.map((m) => (
+                  <MatchCard key={m.id} {...m} href={`/matches/${m.id}`} context={resultContext(m)} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </>
       ) : (
         <>
           {grouped.stages.map((stage) => (

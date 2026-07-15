@@ -14,7 +14,8 @@ import MatchCard             from '@/components/ui/MatchCard'
 import EmptyState            from '@/components/ui/EmptyState'
 import type { MatchStatus }  from '@/lib/utils/match'
 import { sortByRelevance }   from '@/lib/utils/matchSort'
-import { groupByStageAndGroup } from '@/lib/utils/matchGrouping'
+import { groupByStageAndGroup, groupByLocalDate } from '@/lib/utils/matchGrouping'
+import { formatDateHeading } from '@/lib/utils/dateTime'
 import styles                from '@/styles/components/MatchesPage.module.scss'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -174,6 +175,28 @@ export default function MatchesPage() {
     [filtered, tournaments],
   )
 
+  // Results tab: day buckets (newest first) instead of tournament/stage grouping
+  const dateGroups = useMemo(
+    () => (tab === 'results' ? groupByLocalDate(filtered) : []),
+    [filtered, tab],
+  )
+
+  const tournamentNameById = useMemo(
+    () => new Map(tournaments.map((t) => [t.id, t.name])),
+    [tournaments],
+  )
+
+  // Context line under a card in the date-grouped view, where the usual
+  // tournament/stage headers are absent (tournament omitted when filtered).
+  const resultContext = (m: Match) => {
+    const parts = [
+      !tourney && m.tournament_id ? tournamentNameById.get(m.tournament_id) : null,
+      m.stage?.stage_name,
+      m.group?.name,
+    ].filter(Boolean)
+    return parts.length ? parts.join(' · ') : undefined
+  }
+
   // ── URL helpers ────────────────────────────────────────────────────────
   const setTab = (t: Tab) => {
     const p = new URLSearchParams(searchParams.toString())
@@ -248,6 +271,20 @@ export default function MatchesPage() {
             title={tab === 'live' ? 'No live matches right now' : 'No matches found'}
             description="Check back later or try a different filter."
           />
+        ) : tab === 'results' ? (
+          dateGroups.map((day) => (
+            <div key={day.dateKey} className={styles.stageSection}>
+              <div className={styles.stageHeader}>
+                <span className={styles.stageHeaderAccent} aria-hidden="true" />
+                {formatDateHeading(day.dateKey)}
+              </div>
+              <div className={styles.matchList}>
+                {day.matches.map((m) => (
+                  <MatchCard key={m.id} {...m} href={`/matches/${m.id}`} context={resultContext(m)} />
+                ))}
+              </div>
+            </div>
+          ))
         ) : (
           tournamentGroups.map((tGroup) => {
             const stageGrouped = groupByStageAndGroup(tGroup.matches)
