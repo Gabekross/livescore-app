@@ -74,11 +74,6 @@ export default function TournamentFixturesList({ matches }: Props) {
     [filtered, tab],
   )
 
-  const resultContext = (m: NormalizedMatch) => {
-    const parts = [m.stage?.stage_name, m.group?.name].filter(Boolean)
-    return parts.length ? parts.join(' · ') : undefined
-  }
-
   return (
     <>
       <div className={styles.controls}>
@@ -121,7 +116,7 @@ export default function TournamentFixturesList({ matches }: Props) {
               </div>
               <div className={styles.matchStack}>
                 {day.matches.map((m) => (
-                  <MatchCard key={m.id} {...m} href={`/matches/${m.id}`} context={resultContext(m)} />
+                  <MatchCard key={m.id} {...m} href={`/matches/${m.id}`} />
                 ))}
               </div>
             </section>
