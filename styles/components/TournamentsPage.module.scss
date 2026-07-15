@@ -352,6 +352,11 @@
   flex-shrink:   0;
 }
 
+.stageHeaderMeta {
+  font-weight: 600;
+  color:       var(--color-text-muted, #7272a0);
+}
+
 .groupSection {
   margin: var(--sp-4, 1rem) 0 var(--sp-4, 1rem) var(--sp-3, 0.75rem);
   padding-left: var(--sp-3, 0.75rem);

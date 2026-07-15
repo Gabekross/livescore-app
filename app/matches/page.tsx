@@ -14,7 +14,7 @@ import MatchCard             from '@/components/ui/MatchCard'
 import EmptyState            from '@/components/ui/EmptyState'
 import type { MatchStatus }  from '@/lib/utils/match'
 import { sortByRelevance }   from '@/lib/utils/matchSort'
-import { groupByStageAndGroup, groupByLocalDate } from '@/lib/utils/matchGrouping'
+import { groupByStageAndGroup, groupByLocalDateAndStage } from '@/lib/utils/matchGrouping'
 import { formatDateHeading } from '@/lib/utils/dateTime'
 import styles                from '@/styles/components/MatchesPage.module.scss'
 
@@ -175,9 +175,9 @@ export default function MatchesPage() {
     [filtered, tournaments],
   )
 
-  // Results tab: day buckets (newest first) instead of tournament/stage grouping
+  // Results tab: date · stage buckets (newest day first) instead of tournament/stage grouping
   const dateGroups = useMemo(
-    () => (tab === 'results' ? groupByLocalDate(filtered) : []),
+    () => (tab === 'results' ? groupByLocalDateAndStage(filtered) : []),
     [filtered, tab],
   )
 
@@ -257,10 +257,13 @@ export default function MatchesPage() {
           />
         ) : tab === 'results' ? (
           dateGroups.map((day) => (
-            <div key={day.dateKey} className={styles.stageSection}>
+            <div key={`${day.dateKey}-${day.stageName ?? 'none'}`} className={styles.stageSection}>
               <div className={styles.stageHeader}>
                 <span className={styles.stageHeaderAccent} aria-hidden="true" />
                 {formatDateHeading(day.dateKey)}
+                {day.stageName && (
+                  <span className={styles.stageHeaderMeta}>· {day.stageName}</span>
+                )}
               </div>
               <div className={styles.matchList}>
                 {day.matches.map((m) => (
