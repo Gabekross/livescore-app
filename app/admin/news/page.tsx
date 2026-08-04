@@ -22,12 +22,17 @@ interface Post {
   created_at:   string
   views:        number
   readers:      number
+  likes:        number
 }
 
 interface AnalyticsRow {
   post_id:    string | null
   visitor_id: string
   view_count: number
+}
+
+interface LikeRow {
+  post_id: string
 }
 
 function formatDate(iso: string | null) {
@@ -49,23 +54,36 @@ export default function AdminNewsPage() {
       .eq('organization_id', orgId)
       .order('created_at', { ascending: false })
 
-    const postRows = (data || []) as Omit<Post, 'views' | 'readers'>[]
+    const postRows = (data || []) as Omit<Post, 'views' | 'readers' | 'likes'>[]
     const analyticsByPost = new Map<string, { views: number; readers: Set<string> }>()
+    const likesByPost = new Map<string, number>()
 
     if (postRows.length > 0) {
-      const { data: analytics } = await supabase
-        .from('analytics_daily_events')
-        .select('post_id, visitor_id, view_count')
-        .eq('organization_id', orgId)
-        .eq('event_type', 'news_article_view')
-        .in('post_id', postRows.map((post) => post.id))
+      const postIds = postRows.map((post) => post.id)
+      const [analyticsRes, likesRes] = await Promise.all([
+        supabase
+          .from('analytics_daily_events')
+          .select('post_id, visitor_id, view_count')
+          .eq('organization_id', orgId)
+          .eq('event_type', 'news_article_view')
+          .in('post_id', postIds),
+        supabase
+          .from('article_likes')
+          .select('post_id')
+          .eq('organization_id', orgId)
+          .in('post_id', postIds),
+      ])
 
-      for (const row of ((analytics || []) as AnalyticsRow[])) {
+      for (const row of ((analyticsRes.data || []) as AnalyticsRow[])) {
         if (!row.post_id) continue
         const bucket = analyticsByPost.get(row.post_id) || { views: 0, readers: new Set<string>() }
         bucket.views += row.view_count || 0
         bucket.readers.add(row.visitor_id)
         analyticsByPost.set(row.post_id, bucket)
+      }
+
+      for (const row of ((likesRes.data || []) as LikeRow[])) {
+        likesByPost.set(row.post_id, (likesByPost.get(row.post_id) || 0) + 1)
       }
     }
 
@@ -75,6 +93,7 @@ export default function AdminNewsPage() {
         ...post,
         views: analytics?.views || 0,
         readers: analytics?.readers.size || 0,
+        likes: likesByPost.get(post.id) || 0,
       }
     }))
     setLoading(false)
@@ -185,6 +204,9 @@ export default function AdminNewsPage() {
                   <div style={{ fontWeight: 700, color: '#111827' }}>{post.views}</div>
                   <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
                     {post.readers} readers
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                    {post.likes} likes
                   </div>
                 </td>
                 <td className={`${styles.td} ${styles.date}`}>

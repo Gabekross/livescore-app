@@ -13,6 +13,7 @@ import ShareButton                    from '@/components/ui/ShareButton'
 import ArticleCarousel                from '@/components/ui/ArticleCarousel'
 import NewsImage                      from '@/components/ui/NewsImage'
 import AnalyticsTracker               from '@/components/analytics/AnalyticsTracker'
+import ArticleLikeButton              from '@/components/news/ArticleLikeButton'
 import styles                         from '@/styles/components/ArticlePage.module.scss'
 
 interface Props { params: { slug: string } }
@@ -239,6 +240,7 @@ export default async function ArticlePage({ params }: Props) {
 
           {/* Share strip */}
           <div className={styles.shareStrip}>
+            <ArticleLikeButton organizationId={orgId} postId={article.id} />
             <span className={styles.shareLabel}>Share</span>
             <ShareButton title={article.title} />
           </div>

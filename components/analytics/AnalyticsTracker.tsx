@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { getAnonymousVisitorId } from '@/components/analytics/anonymousVisitor'
 
 type AnalyticsEventType = 'site_visit' | 'news_article_view'
 
@@ -9,27 +10,6 @@ interface Props {
   organizationId: string
   eventType: AnalyticsEventType
   postId?: string
-}
-
-const VISITOR_KEY = 'kolusports_visitor_id'
-
-function createVisitorId() {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
-    return `anon_${crypto.randomUUID()}`
-  }
-  return `anon_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 12)}`
-}
-
-function getVisitorId() {
-  try {
-    const existing = window.localStorage.getItem(VISITOR_KEY)
-    if (existing) return existing
-    const next = createVisitorId()
-    window.localStorage.setItem(VISITOR_KEY, next)
-    return next
-  } catch {
-    return createVisitorId()
-  }
 }
 
 export default function AnalyticsTracker({ organizationId, eventType, postId }: Props) {
@@ -53,7 +33,7 @@ export default function AnalyticsTracker({ organizationId, eventType, postId }: 
     const payload = JSON.stringify({
       organization_id: organizationId,
       event_type: eventType,
-      visitor_id: getVisitorId(),
+      visitor_id: getAnonymousVisitorId(),
       post_id: postId,
       path,
     })
