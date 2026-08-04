@@ -5,6 +5,8 @@
 // Power admin platform controls have moved to /platform.
 
 import Link                    from 'next/link'
+import { useEffect, useState } from 'react'
+import { supabase }            from '@/lib/supabase'
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
 import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import UpgradePrompt           from '@/components/admin/UpgradePrompt'
@@ -29,9 +31,41 @@ function getPublicSiteUrl(slug: string | null): string | null {
   return `${protocol}//${slug}.${root}${port ? `:${port}` : ''}`
 }
 
+interface SiteAnalyticsSummary {
+  views: number
+  visitors: number
+}
+
+interface AnalyticsRow {
+  visitor_id: string
+  view_count: number
+}
+
 export default function AdminDashboardPage() {
-  const { role, orgName, orgSlug, plan } = useAdminOrg()
+  const { role, orgId, orgName, orgSlug, plan } = useAdminOrg()
   const orgGate = useAdminOrgGate()
+  const [siteAnalytics, setSiteAnalytics] = useState<SiteAnalyticsSummary>({ views: 0, visitors: 0 })
+
+  useEffect(() => {
+    if (!orgId) return
+
+    const since = new Date()
+    since.setDate(since.getDate() - 29)
+
+    supabase
+      .from('analytics_daily_events')
+      .select('visitor_id, view_count')
+      .eq('organization_id', orgId)
+      .eq('event_type', 'site_visit')
+      .gte('event_date', since.toISOString().slice(0, 10))
+      .then(({ data }) => {
+        const rows = (data || []) as AnalyticsRow[]
+        setSiteAnalytics({
+          views: rows.reduce((sum, row) => sum + (row.view_count || 0), 0),
+          visitors: new Set(rows.map((row) => row.visitor_id)).size,
+        })
+      })
+  }, [orgId])
 
   if (orgGate) return orgGate
 
@@ -69,6 +103,24 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* ── Operations ────────────────────────────────────────── */}
+      <div className={styles.sectionLabel}>Analytics</div>
+      <div className={styles.grid}>
+        <div className={styles.metricCard}>
+          Public site views
+          <strong>{siteAnalytics.views}</strong>
+          <span className={styles.hint}>Last 30 days</span>
+        </div>
+        <div className={styles.metricCard}>
+          Anonymous visitors
+          <strong>{siteAnalytics.visitors}</strong>
+          <span className={styles.hint}>Last 30 days</span>
+        </div>
+        <Link href="/admin/news" className={styles.card}>
+          Article Analytics
+          <span className={styles.hint}>Views and readers per post</span>
+        </Link>
+      </div>
+
       <div className={styles.sectionLabel}>Operations</div>
       <div className={styles.grid}>
         <Link href="/admin/tournaments" className={styles.card}>

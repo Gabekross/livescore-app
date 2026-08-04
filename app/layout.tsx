@@ -9,6 +9,7 @@ import { Toaster }          from 'react-hot-toast'
 import PublicNav            from '@/components/layouts/PublicNav'
 import PublicFooter         from '@/components/layouts/PublicFooter'
 import GlobalSponsorStrip   from '@/components/layouts/GlobalSponsorStrip'
+import AnalyticsTracker     from '@/components/analytics/AnalyticsTracker'
 import { resolveMetadataBase, CANONICAL_ORIGIN } from '@/lib/seo'
 import { getPlatformSettings }   from '@/lib/platform-settings-server'
 import { PlatformSettingsProvider } from '@/contexts/PlatformSettingsContext'
@@ -25,6 +26,7 @@ interface SiteSettings {
   active_theme: string
   /** True when we successfully resolved an organization for this request. */
   isOrgSite:    boolean
+  organization_id: string | null
   /** Org-wide active sponsors — passed to GlobalSponsorStrip. */
   sponsors:     SponsorItem[]
 }
@@ -38,6 +40,7 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     contact_email: null,
     active_theme:  'theme-uefa-dark',
     isOrgSite:     false,   // no org resolved → show platform marketing nav
+    organization_id: null,
     sponsors:      [],
   }
 
@@ -73,8 +76,8 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     const sponsors = (sponsorsRes.data || []) as SponsorItem[]
 
     return settingsRes.data
-      ? { ...defaults, ...settingsRes.data, isOrgSite: true, sponsors }
-      : { ...defaults, isOrgSite: true, sponsors }
+      ? { ...defaults, ...settingsRes.data, isOrgSite: true, organization_id: orgId, sponsors }
+      : { ...defaults, isOrgSite: true, organization_id: orgId, sponsors }
   } catch {
     // Dev mode / DB not yet seeded / no org in context — show platform defaults
     return defaults
@@ -174,6 +177,13 @@ export default async function RootLayout({
             siteLogo={settings.logo_url}
             isOrgSite={settings.isOrgSite}
           />
+
+          {settings.isOrgSite && settings.organization_id && (
+            <AnalyticsTracker
+              organizationId={settings.organization_id}
+              eventType="site_visit"
+            />
+          )}
 
           {children}
 

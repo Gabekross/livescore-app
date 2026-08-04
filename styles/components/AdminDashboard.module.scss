@@ -66,6 +66,24 @@
   transform:    translateY(-1px);
 }
 
+.metricCard {
+  @extend .card;
+  cursor: default;
+
+  strong {
+    display:     block;
+    font-size:   1.6rem;
+    line-height: 1.1;
+    color:       #111827;
+  }
+
+  &:hover {
+    border-color: #e5e7eb;
+    box-shadow:   none;
+    transform:    none;
+  }
+}
+
 .hint {
   font-size:   0.78rem;
   color:       #9ca3af;

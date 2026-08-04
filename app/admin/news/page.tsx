@@ -20,6 +20,14 @@ interface Post {
   status:       string
   published_at: string | null
   created_at:   string
+  views:        number
+  readers:      number
+}
+
+interface AnalyticsRow {
+  post_id:    string | null
+  visitor_id: string
+  view_count: number
 }
 
 function formatDate(iso: string | null) {
@@ -41,7 +49,34 @@ export default function AdminNewsPage() {
       .eq('organization_id', orgId)
       .order('created_at', { ascending: false })
 
-    setPosts((data || []) as Post[])
+    const postRows = (data || []) as Omit<Post, 'views' | 'readers'>[]
+    const analyticsByPost = new Map<string, { views: number; readers: Set<string> }>()
+
+    if (postRows.length > 0) {
+      const { data: analytics } = await supabase
+        .from('analytics_daily_events')
+        .select('post_id, visitor_id, view_count')
+        .eq('organization_id', orgId)
+        .eq('event_type', 'news_article_view')
+        .in('post_id', postRows.map((post) => post.id))
+
+      for (const row of ((analytics || []) as AnalyticsRow[])) {
+        if (!row.post_id) continue
+        const bucket = analyticsByPost.get(row.post_id) || { views: 0, readers: new Set<string>() }
+        bucket.views += row.view_count || 0
+        bucket.readers.add(row.visitor_id)
+        analyticsByPost.set(row.post_id, bucket)
+      }
+    }
+
+    setPosts(postRows.map((post) => {
+      const analytics = analyticsByPost.get(post.id)
+      return {
+        ...post,
+        views: analytics?.views || 0,
+        readers: analytics?.readers.size || 0,
+      }
+    }))
     setLoading(false)
   }, [orgId])
 
@@ -124,6 +159,7 @@ export default function AdminNewsPage() {
             <tr>
               <th className={styles.th}>Title</th>
               <th className={styles.th}>Status</th>
+              <th className={styles.th}>Analytics</th>
               <th className={styles.th}>Published</th>
               <th className={styles.th}>Actions</th>
             </tr>
@@ -144,6 +180,12 @@ export default function AdminNewsPage() {
                   <span className={`${styles.statusPill} ${post.status === 'published' ? styles.statusPublished : styles.statusDraft}`}>
                     {post.status}
                   </span>
+                </td>
+                <td className={styles.td}>
+                  <div style={{ fontWeight: 700, color: '#111827' }}>{post.views}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                    {post.readers} readers
+                  </div>
                 </td>
                 <td className={`${styles.td} ${styles.date}`}>
                   {formatDate(post.published_at || post.created_at)}

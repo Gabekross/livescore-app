@@ -12,6 +12,7 @@ import SectionHeader                  from '@/components/ui/SectionHeader'
 import ShareButton                    from '@/components/ui/ShareButton'
 import ArticleCarousel                from '@/components/ui/ArticleCarousel'
 import NewsImage                      from '@/components/ui/NewsImage'
+import AnalyticsTracker               from '@/components/analytics/AnalyticsTracker'
 import styles                         from '@/styles/components/ArticlePage.module.scss'
 
 interface Props { params: { slug: string } }
@@ -143,6 +144,11 @@ export default async function ArticlePage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <AnalyticsTracker
+        organizationId={orgId}
+        eventType="news_article_view"
+        postId={article.id}
       />
 
       <article className={styles.page}>
