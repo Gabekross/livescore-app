@@ -118,6 +118,16 @@
   gap:         0.3em;
 }
 
+.authorLink {
+  color:           var(--color-accent-light, #3b82f6);
+  font-weight:     700;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 /* ── Article divider ─────────────────────────────────────── */
 .divider {
   border:     none;

@@ -24,6 +24,7 @@ interface Tournament { id: string; name: string }
 export interface PostFormValues {
   title:           string
   author_name:     string
+  author_url:      string
   slug:            string
   excerpt:         string
   body:            string
@@ -46,6 +47,7 @@ interface Props {
 const EMPTY: PostFormValues = {
   title:           '',
   author_name:     '',
+  author_url:      '',
   slug:            '',
   excerpt:         '',
   body:            '',
@@ -131,6 +133,10 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
   const handleSave = async (publishNow = false) => {
     if (!values.title.trim()) { toast.error('Title is required'); return }
     if (!isValidSlug(values.slug)) { toast.error('Slug must contain only lowercase letters, numbers, and hyphens'); return }
+    if (values.author_url.trim() && !/^https?:\/\/.+\..+/.test(values.author_url.trim())) {
+      toast.error('Author link must start with http:// or https://')
+      return
+    }
 
     if (!orgId) return
     setSaving(true)
@@ -142,6 +148,7 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
       organization_id: orgId,
       title:           values.title.trim(),
       author_name:     values.author_name.trim() || null,
+      author_url:      values.author_url.trim() || null,
       slug:            values.slug.trim(),
       excerpt:         values.excerpt.trim() || null,
       body:            values.body.trim() || null,
@@ -231,6 +238,20 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
               onChange={(e) => set('author_name', e.target.value)}
               placeholder="e.g. Gabe Kross"
               maxLength={120}
+            />
+          </div>
+
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Author Link{' '}
+              <span className={styles.labelHint}>(optional profile, website, or social link)</span>
+            </label>
+            <input
+              type="url"
+              className={styles.input}
+              value={values.author_url}
+              onChange={(e) => set('author_url', e.target.value)}
+              placeholder="https://example.com/author"
             />
           </div>
 

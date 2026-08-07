@@ -22,6 +22,7 @@ interface Post {
   id:              string
   title:           string
   author_name:     string | null
+  author_url:      string | null
   slug:            string
   body:            string | null
   excerpt:         string | null
@@ -94,7 +95,7 @@ export default async function ArticlePage({ params }: Props) {
   const { data: post } = await supabase
     .from('posts')
     .select(`
-      id, title, author_name, slug, body, excerpt, cover_image_url, cover_images, og_image_url,
+      id, title, author_name, author_url, slug, body, excerpt, cover_image_url, cover_images, og_image_url,
       seo_title, seo_description, published_at, updated_at, tournament_id,
       tournament:tournament_id(id, name, slug)
     `)
@@ -206,7 +207,19 @@ export default async function ArticlePage({ params }: Props) {
             <div className={styles.meta}>
               {article.author_name && (
                 <span className={styles.metaItem}>
-                  By {article.author_name}
+                  By{' '}
+                  {article.author_url ? (
+                    <a
+                      href={article.author_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.authorLink}
+                    >
+                      {article.author_name}
+                    </a>
+                  ) : (
+                    article.author_name
+                  )}
                 </span>
               )}
               {article.published_at && (
