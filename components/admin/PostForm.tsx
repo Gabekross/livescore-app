@@ -23,6 +23,7 @@ interface Tournament { id: string; name: string }
 
 export interface PostFormValues {
   title:           string
+  author_name:     string
   slug:            string
   excerpt:         string
   body:            string
@@ -44,6 +45,7 @@ interface Props {
 
 const EMPTY: PostFormValues = {
   title:           '',
+  author_name:     '',
   slug:            '',
   excerpt:         '',
   body:            '',
@@ -139,6 +141,7 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
     const payload = {
       organization_id: orgId,
       title:           values.title.trim(),
+      author_name:     values.author_name.trim() || null,
       slug:            values.slug.trim(),
       excerpt:         values.excerpt.trim() || null,
       body:            values.body.trim() || null,
@@ -213,6 +216,22 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
               placeholder="match-report-city-vs-united"
             />
             <div className={styles.slugPreview}>/news/{values.slug || '…'}</div>
+          </div>
+
+          {/* Author */}
+          <div className={styles.fieldGroup}>
+            <label className={styles.label}>
+              Author Credit{' '}
+              <span className={styles.labelHint}>(optional byline shown on the article)</span>
+            </label>
+            <input
+              type="text"
+              className={styles.input}
+              value={values.author_name}
+              onChange={(e) => set('author_name', e.target.value)}
+              placeholder="e.g. Gabe Kross"
+              maxLength={120}
+            />
           </div>
 
           {/* Excerpt */}

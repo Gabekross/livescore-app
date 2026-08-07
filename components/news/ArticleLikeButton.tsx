@@ -80,7 +80,7 @@ export default function ArticleLikeButton({ organizationId, postId }: Props) {
       aria-pressed={state.liked}
       aria-label={state.liked ? 'Unlike this article' : 'Like this article'}
     >
-      <span aria-hidden="true">{state.liked ? '♥' : '♡'}</span>
+      <span aria-hidden="true">👍</span>
       <span>{state.count}</span>
     </button>
   )

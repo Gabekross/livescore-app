@@ -188,9 +188,9 @@
 }
 
 .likeBtnActive {
-  background:   rgba(239, 68, 68, 0.1);
-  border-color: rgba(239, 68, 68, 0.35);
-  color:        #ef4444;
+  background:   rgba(37, 99, 235, 0.14);
+  border-color: rgba(37, 99, 235, 0.45);
+  color:        var(--color-accent-light, #3b82f6);
 }
 
 .shareBtn {

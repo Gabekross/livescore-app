@@ -11,6 +11,7 @@ import PostForm, { PostFormValues } from '@/components/admin/PostForm'
 interface RawPost {
   id:              string
   title:           string
+  author_name:     string | null
   slug:            string
   excerpt:         string | null
   body:            string | null
@@ -32,7 +33,7 @@ export default function EditPostPage() {
     if (!id) return
     supabase
       .from('posts')
-      .select('id, title, slug, excerpt, body, cover_image_url, cover_images, og_image_url, seo_title, seo_description, status, tournament_id')
+      .select('id, title, author_name, slug, excerpt, body, cover_image_url, cover_images, og_image_url, seo_title, seo_description, status, tournament_id')
       .eq('id', id)
       .single()
       .then(({ data, error: e }) => {
@@ -55,6 +56,7 @@ export default function EditPostPage() {
 
   const initial: Partial<PostFormValues> = {
     title:           post.title,
+    author_name:     post.author_name     ?? '',
     slug:            post.slug,
     excerpt:         post.excerpt         ?? '',
     body:            post.body            ?? '',
