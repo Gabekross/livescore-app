@@ -75,6 +75,7 @@ function parseSpreadsheetRow(row: Record<string, unknown>): PlayerInput {
 
 export default function EditTeamPage() {
   const { id } = useParams()
+  const teamId = typeof id === 'string' ? id : Array.isArray(id) ? id[0] : ''
   const router = useRouter()
   const { orgId } = useAdminOrg()
   const orgGate = useAdminOrgGate()
@@ -90,12 +91,12 @@ export default function EditTeamPage() {
 
   useEffect(() => {
     const fetchTeam = async () => {
-      if (!id || typeof id !== 'string' || !orgId) return
+      if (!teamId || !orgId) return
 
       const { data, error } = await supabase
         .from('teams')
         .select('*')
-        .eq('id', id)
+        .eq('id', teamId)
         .eq('organization_id', orgId)
         .single()
       if (error) {
@@ -111,7 +112,7 @@ export default function EditTeamPage() {
     }
 
     fetchTeam()
-  }, [id, orgId])
+  }, [teamId, orgId])
 
   if (orgGate) return orgGate
 
@@ -246,6 +247,11 @@ export default function EditTeamPage() {
       return
     }
 
+    if (!teamId || !orgId) {
+      toast.error('Team or organization is still loading')
+      return
+    }
+
     setLoading(true)
     let uploadedLogoUrl = logoUrl
 
@@ -266,10 +272,13 @@ export default function EditTeamPage() {
     // 1. Update team info
     const { error: updateError } = await supabase.from('teams')
       .update({ name, logo_url: uploadedLogoUrl || null, coach_name: coachName.trim() || null, show_on_public_teams_page: showOnPublicPage })
-      .eq('id', id)
+      .eq('id', teamId)
+      .eq('organization_id', orgId)
+      .select('id')
+      .single()
 
     if (updateError) {
-      toast.error('Update failed')
+      toast.error(`Update failed: ${updateError.message}`)
       setLoading(false)
       return
     }
@@ -329,7 +338,7 @@ export default function EditTeamPage() {
     // Insert new players
     if (toInsert.length) {
       const rows = toInsert.map(p => ({
-        team_id:       id,
+        team_id:       teamId,
         first_name:    p.first_name.trim(),
         last_name:     p.last_name?.trim() || null,
         name:          buildName(p),
