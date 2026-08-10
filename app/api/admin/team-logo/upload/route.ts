@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { createAdminSupabaseClient } from '@/lib/supabase-admin'
-import { cleanupTeamLogo } from '@/lib/team-logo-cleanup'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 const BUCKET = 'team-logos'
 const MAX_FILE_BYTES = 2 * 1024 * 1024
@@ -101,6 +101,7 @@ export async function POST(request: NextRequest) {
     let fallback = false
 
     try {
+      const { cleanupTeamLogo } = await import('@/lib/team-logo-cleanup')
       const result = await cleanupTeamLogo(originalBuffer)
       uploadBuffer = result.buffer
       uploadContentType = result.contentType

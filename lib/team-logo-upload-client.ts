@@ -31,7 +31,11 @@ export async function uploadTeamLogo(file: File, orgId?: string | null) {
   try {
     payload = raw ? JSON.parse(raw) as TeamLogoUploadResponse : {}
   } catch {
-    payload = { error: raw }
+    payload = {
+      error: raw.trim().startsWith('<!DOCTYPE html>')
+        ? `Server returned ${response.status} while uploading the logo. Please try again, or use a PNG/JPG/WebP under 2 MB.`
+        : raw,
+    }
   }
 
   if (!response.ok || !payload.publicUrl) {
