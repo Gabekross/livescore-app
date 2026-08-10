@@ -8,6 +8,11 @@ export const runtime = 'nodejs'
 const BUCKET = 'team-logos'
 const MAX_FILE_BYTES = 2 * 1024 * 1024
 const ALLOWED_TYPES = new Set(['image/png', 'image/jpeg', 'image/jpg', 'image/webp'])
+const STORAGE_BUCKET_CONFIG = {
+  public: true,
+  fileSizeLimit: MAX_FILE_BYTES,
+  allowedMimeTypes: Array.from(ALLOWED_TYPES),
+}
 
 async function authorizeUpload(requestedOrgId: string | null) {
   const supabase = createServerSupabaseClient()
@@ -49,6 +54,23 @@ function extensionForContentType(contentType: string) {
   return 'jpg'
 }
 
+async function ensureTeamLogoBucket(admin: ReturnType<typeof createAdminSupabaseClient>) {
+  const { data: buckets, error: listError } = await admin.storage.listBuckets()
+  if (listError) throw new Error(`Could not inspect storage buckets: ${listError.message}`)
+
+  const exists = buckets?.some((bucket) => bucket.id === BUCKET || bucket.name === BUCKET)
+  if (!exists) {
+    const { error: createError } = await admin.storage.createBucket(BUCKET, STORAGE_BUCKET_CONFIG)
+    if (createError) throw new Error(`Could not create team logo bucket: ${createError.message}`)
+    return
+  }
+
+  const { error: updateError } = await admin.storage.updateBucket(BUCKET, STORAGE_BUCKET_CONFIG)
+  if (updateError) {
+    console.warn('Could not update team logo bucket settings:', updateError.message)
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
@@ -70,6 +92,7 @@ export async function POST(request: NextRequest) {
 
     const auth = await authorizeUpload(typeof requestedOrgId === 'string' ? requestedOrgId : null)
     if (auth.error) return auth.error
+    await ensureTeamLogoBucket(auth.admin)
 
     const originalBuffer = Buffer.from(await file.arrayBuffer())
     let uploadBuffer: Buffer<ArrayBufferLike> = originalBuffer
@@ -101,7 +124,7 @@ export async function POST(request: NextRequest) {
       })
 
     if (uploadError) {
-      return NextResponse.json({ error: uploadError.message }, { status: 500 })
+      return NextResponse.json({ error: `Storage upload failed: ${uploadError.message}` }, { status: 500 })
     }
 
     const { data } = auth.admin.storage.from(BUCKET).getPublicUrl(path)
@@ -114,6 +137,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (err) {
     console.error('Team logo upload failed:', err)
-    return NextResponse.json({ error: 'Failed to upload logo' }, { status: 500 })
+    const message = err instanceof Error ? err.message : 'Failed to upload logo'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
