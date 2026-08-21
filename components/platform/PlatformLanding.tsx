@@ -198,70 +198,6 @@ function HowSection() {
   )
 }
 
-// ── Section: Built for Match Day ──────────────────────────────────────────────
-const MATCH_DAY_CARDS: {
-  title:   string
-  text:    string
-  image:   string
-  alt:     string
-  variant: 'photo' | 'device'
-}[] = [
-  {
-    title:   'Live score updates',
-    text:    'Update scorelines in real time from any device. Your audience sees changes the moment you save.',
-    image:   '/images/match-day/live-updates.png',
-    alt:     'Live match score and formation view on mobile',
-    variant: 'device',
-  },
-  {
-    title:   'Match operator role',
-    text:    'Give game-day staff a restricted login — they can only update scores and match status, nothing else.',
-    image:   '/images/match-day/match-operator.png',
-    alt:     'Match operator managing game day scores on tablet and phone',
-    variant: 'photo',
-  },
-  {
-    title:   'Mobile-first design',
-    text:    'The admin panel and public site are both built for phones. No laptop required on match day.',
-    image:   '/images/match-day/mobile-first.png',
-    alt:     'Matches list with live filters on a mobile device',
-    variant: 'device',
-  },
-]
-
-function MatchDaySection() {
-  return (
-    <section className={styles.matchDaySection} aria-label="Match day features">
-      <div className={styles.container}>
-        <div className={styles.sectionHeader}>
-          <div className={styles.sectionTag}>Match Day</div>
-          <h2 className={styles.sectionTitle}>Powerful on the pitch. Effortless in the admin.</h2>
-          <p className={styles.sectionSub}>
-            Designed for real match-day operations — fast, mobile-ready, and built
-            for the pressure of live competition management.
-          </p>
-        </div>
-        <div className={styles.matchDayGrid}>
-          {MATCH_DAY_CARDS.map((card) => (
-            <div key={card.title} className={styles.matchDayCard}>
-              <div className={`${styles.matchDayImageWrap} ${card.variant === 'photo' ? styles.matchDayImageWrapPhoto : styles.matchDayImageWrapDevice}`}>
-                <img
-                  src={card.image}
-                  alt={card.alt}
-                  className={`${styles.matchDayImage} ${card.variant === 'photo' ? styles.matchDayImagePhoto : styles.matchDayImageDevice}`}
-                  loading="lazy"
-                />
-              </div>
-              <h3 className={styles.matchDayCardTitle}>{card.title}</h3>
-              <p className={styles.matchDayCardText}>{card.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 // ── Section: Pricing ──────────────────────────────────────────────────────────
 function PricingSection() {
   const monthlyTier = PRO_TIERS.find(t => t.interval === 'month')!
@@ -454,7 +390,6 @@ export default function PlatformLanding({ demoMode = false }: PlatformLandingPro
       <HeroSection demoMode={demoMode} />
       <WhoSection />
       <HowSection />
-      <MatchDaySection />
       {!demoMode && <PricingSection />}
       <FaqSection />
       <FinalCtaSection demoMode={demoMode} />
