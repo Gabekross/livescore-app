@@ -121,22 +121,6 @@ function HeroSection({ demoMode }: { demoMode: boolean }) {
   )
 }
 
-// ── Section: Trust bar ────────────────────────────────────────────────────────
-function TrustBar() {
-  return (
-    <div className={styles.trustBar}>
-      <div className={styles.trustBarInner}>
-        <span className={styles.trustLabel}>Built for organizations like</span>
-        <div className={styles.trustNames}>
-          {['Community Tournaments', 'Local Academies', 'Church Leagues', 'Amateur Clubs', 'Regional Federations'].map((name) => (
-            <span key={name}>{name}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ── Section: Product Showcase ─────────────────────────────────────────────────
 function ShowcaseSection() {
   return (
@@ -334,42 +318,6 @@ function HowSection() {
   )
 }
 
-// ── Section: What Your Site Includes ─────────────────────────────────────────
-const INCLUDES_ITEMS = [
-  { num: '01', title: 'Homepage',           text: 'Branded landing page with live matches, upcoming fixtures, and latest results.' },
-  { num: '02', title: 'Fixtures & Results', text: 'Full match calendar with real-time status updates and final scores.' },
-  { num: '03', title: 'Standings Tables',   text: 'Automatic group standings updated instantly when matches are completed.' },
-  { num: '04', title: 'Team Pages',         text: 'Club profiles with squad rosters, player stats, and logos.' },
-  { num: '05', title: 'Match Centre',       text: 'Live match detail with lineups, scorers, cards, and substitutions.' },
-  { num: '06', title: 'News & Media',       text: 'Publish articles, post updates, and manage your media library.' },
-]
-
-function IncludesSection() {
-  return (
-    <section className={styles.includesSection}>
-      <div className={styles.container}>
-        <div className={styles.sectionHeaderCenter}>
-          <div className={styles.sectionTag}>What You Get</div>
-          <h2 className={styles.sectionTitle}>Everything your site needs</h2>
-          <p className={styles.sectionSub}>
-            Your organization site comes with a complete suite of competition
-            features — ready to go live from day one.
-          </p>
-        </div>
-        <div className={styles.includesGrid}>
-          {INCLUDES_ITEMS.map((item) => (
-            <div key={item.title} className={styles.includesCard}>
-              <span className={styles.includesNum}>{item.num}</span>
-              <h3 className={styles.includesTitle}>{item.title}</h3>
-              <p className={styles.includesText}>{item.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 // ── Section: Built for Match Day ──────────────────────────────────────────────
 const MATCH_DAY_CARDS: {
   title:   string
@@ -426,106 +374,6 @@ function MatchDaySection() {
               </div>
               <h3 className={styles.matchDayCardTitle}>{card.title}</h3>
               <p className={styles.matchDayCardText}>{card.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ── Section: Demo Device Mockups ──────────────────────────────────────────────
-function DemoSection() {
-  return (
-    <section className={styles.demoSection} aria-label="Product demo">
-      <div className={styles.container}>
-
-        {/* Demo 1: Mobile — Live match view */}
-        <div className={styles.demoDevices} style={{ marginBottom: '5rem' }}>
-          <div className={styles.phoneMockup}>
-            <div className={styles.phoneFrame}>
-              <div className={styles.phoneNotch} />
-              <div className={styles.phoneScreen}>
-                {/* Image placeholder — swap with: /placeholders/mobile-live-score-preview.webp */}
-                <div className={styles.imagePlaceholder}>
-                  <div className={styles.imagePlaceholderIcon}>&#128241;</div>
-                  <span className={styles.imagePlaceholderLabel}>Mobile live score view</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className={styles.demoTextBlock}>
-            <div className={styles.demoTextTag}>Mobile Experience</div>
-            <h3 className={styles.demoTextTitle}>Live scores, anywhere</h3>
-            <p className={styles.demoTextBody}>
-              Fans follow matches in real time on any device. The public site
-              is optimized for mobile — fast, clean, and always up to date.
-              No app download required.
-            </p>
-          </div>
-        </div>
-
-        {/* Demo 2: Desktop — Admin dashboard */}
-        <div className={styles.demoDevicesReversed}>
-          <div className={styles.demoTextBlock}>
-            <div className={styles.demoTextTag}>Admin Dashboard</div>
-            <h3 className={styles.demoTextTitle}>Manage your whole league from one place</h3>
-            <p className={styles.demoTextBody}>
-              Tournaments, teams, matches, news, and site settings — all
-              accessible from a clean, fast admin panel. No technical
-              knowledge required.
-            </p>
-          </div>
-          <div className={styles.demoBrowserMockup} role="presentation" aria-hidden="true">
-            <div className={styles.browserBar}>
-              <BrowserDots />
-              <div className={styles.browserUrl}>app.kolusports.com</div>
-            </div>
-            <div className={styles.demoBrowserContent}>
-              {/* Image placeholder — swap with: /placeholders/admin-dashboard-preview.webp */}
-              <div className={styles.imagePlaceholder}>
-                <div className={styles.imagePlaceholderIcon}>&#9881;</div>
-                <span className={styles.imagePlaceholderLabel}>Admin dashboard</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-  )
-}
-
-// ── Section: Feature Highlights ───────────────────────────────────────────────
-const FEATURES = [
-  { title: 'Live Scores',          text: 'Real-time score updates during matches with automatic standings recalculation.',     image: '/images/features/live-scores.webp',         alt: 'Live football scoreboard and match update interface' },
-  { title: 'Fixtures & Standings', text: 'Full match calendar and auto-computed group tables after each completed match.',      image: '/images/features/fixtures-standings.webp',  alt: 'Fixtures calendar and league standings table' },
-  { title: 'Teams & Players',     text: 'Manage club rosters, player profiles, and squad assignments per tournament.',         image: '/images/features/teams-players.webp',       alt: 'Team lineup and player roster management' },
-  { title: 'News & Media',        text: 'Publish articles and updates to your audience with a built-in rich text editor.',     image: '/images/features/news-media.webp',          alt: 'Sports photographer and media content creation' },
-  { title: 'Admin Dashboard',     text: 'A clean, role-based admin panel for you and your staff — no coding needed.',          image: '/images/features/admin-dashboard.webp',     alt: 'Admin dashboard with analytics and controls' },
-  { title: 'PWA / Mobile Ready',  text: 'Installable as a progressive web app. Fast, offline-aware, and mobile-optimized.',   image: '/images/features/pwa-mobile.webp',          alt: 'Mobile phone showing live sports app' },
-]
-
-function FeaturesSection() {
-  return (
-    <section className={styles.featuresSection} aria-label="Feature highlights">
-      <div className={styles.container}>
-        <div className={styles.sectionHeaderCenter}>
-          <div className={styles.sectionTag}>Features</div>
-          <h2 className={styles.sectionTitle}>Everything in one platform</h2>
-          <p className={styles.sectionSub}>
-            No third-party tools needed. No spreadsheets. No manual score
-            announcements. Everything you need runs on your own branded site.
-          </p>
-        </div>
-        <div className={styles.featuresGrid}>
-          {FEATURES.map((f) => (
-            <div key={f.title} className={styles.featureCard}>
-              <div className={styles.featureCardImageWrap}>
-                <img src={f.image} alt={f.alt} className={styles.featureCardImage} loading="lazy" />
-              </div>
-              <h3 className={styles.featureCardTitle}>{f.title}</h3>
-              <p className={styles.featureCardText}>{f.text}</p>
             </div>
           ))}
         </div>
@@ -660,10 +508,6 @@ function FaqSection() {
       q: 'How do live scores work?',
       a: 'You (or a match operator you assign) update the score from any phone during the match. Your public site reflects every change in real time.',
     },
-    {
-      q: 'What happens to my data if I cancel?',
-      a: 'Your data is stored securely and belongs to you. All match history, team data, and content remains accessible. You just lose access to Pro features.',
-    },
   ]
 
   return (
@@ -728,13 +572,10 @@ export default function PlatformLanding({ demoMode = false }: PlatformLandingPro
   return (
     <div className={styles.page}>
       <HeroSection demoMode={demoMode} />
-      <TrustBar />
       <ShowcaseSection />
       <WhoSection />
       <HowSection />
-      <IncludesSection />
       <MatchDaySection />
-      <FeaturesSection />
       {!demoMode && <PricingSection />}
       <FaqSection />
       <FinalCtaSection demoMode={demoMode} />
