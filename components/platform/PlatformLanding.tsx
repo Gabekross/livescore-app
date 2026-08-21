@@ -121,126 +121,6 @@ function HeroSection({ demoMode }: { demoMode: boolean }) {
   )
 }
 
-// ── Section: Product Showcase ─────────────────────────────────────────────────
-function ShowcaseSection() {
-  return (
-    <section id="features" className={styles.showcaseSection}>
-      <div className={styles.container}>
-        <div className={styles.sectionHeaderCenter}>
-          <div className={styles.sectionTag}>Product Preview</div>
-          <h2 className={styles.sectionTitle}>See what your site looks like</h2>
-          <p className={styles.sectionSub}>
-            A professional, live-updated sports website — built and published
-            from your admin dashboard.
-          </p>
-        </div>
-
-        <div className={styles.showcaseGrid}>
-          {/* Demo: Live Match */}
-          <div className={styles.showcaseCard}>
-            <div className={styles.showcaseCardHeader}>
-              <span className={styles.showcaseCardLabel}>Match Centre</span>
-              <div className={styles.demoLive}>Live</div>
-            </div>
-            <div className={styles.demoMatchBody}>
-              <div className={styles.demoMatchMeta}>
-                <span>Spring Cup 2026 &middot; Semi Final</span>
-                <span>73&apos;</span>
-              </div>
-              <div className={styles.demoMatchScoreRow}>
-                <span className={styles.demoTeamName}>FC United</span>
-                <div className={styles.demoScoreBox}>
-                  <span>2</span><span>&ndash;</span><span>1</span>
-                </div>
-                <span className={`${styles.demoTeamName} ${styles.demoTeamNameR}`}>City FC</span>
-              </div>
-              <div className={styles.demoMatchEvents}>
-                <div>
-                  <div>&#9917; 24&apos; Harris</div>
-                  <div>&#9917; 55&apos; Torres</div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div>&#9917; 67&apos; Mills</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Demo: Group Standings */}
-          <div className={styles.showcaseCard}>
-            <div className={styles.showcaseCardHeader}>
-              <span className={styles.showcaseCardLabel}>Group Standings</span>
-            </div>
-            <div className={styles.demoStandingsBody}>
-              <table className={styles.demoTable}>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Team</th>
-                    <th>P</th>
-                    <th>W</th>
-                    <th>D</th>
-                    <th>L</th>
-                    <th>Pts</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { pos: 1, name: 'FC United',  p: 4, w: 3, d: 1, l: 0, pts: 10 },
-                    { pos: 2, name: 'City FC',    p: 4, w: 2, d: 1, l: 1, pts:  7 },
-                    { pos: 3, name: 'Athletic',   p: 4, w: 1, d: 0, l: 3, pts:  3 },
-                    { pos: 4, name: 'Town SC',    p: 4, w: 0, d: 0, l: 4, pts:  0 },
-                  ].map((row) => (
-                    <tr key={row.pos}>
-                      <td className={styles.demoPos}>{row.pos}</td>
-                      <td>{row.name}</td>
-                      <td>{row.p}</td>
-                      <td>{row.w}</td>
-                      <td>{row.d}</td>
-                      <td>{row.l}</td>
-                      <td className={styles.demoPts}>{row.pts}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Demo: Team Card */}
-          <div className={styles.showcaseCard}>
-            <div className={styles.showcaseCardHeader}>
-              <span className={styles.showcaseCardLabel}>Team Page</span>
-            </div>
-            <div className={styles.demoTeamBody}>
-              <div className={styles.demoTeamHeader}>
-                <div className={styles.demoTeamAvatar}>FC</div>
-                <div className={styles.demoTeamInfo}>
-                  <h4>FC United</h4>
-                  <span>Spring Cup 2026 &middot; Group A</span>
-                </div>
-              </div>
-              <div className={styles.demoTeamStats}>
-                <div className={styles.demoStatBox}>
-                  <span className={styles.demoStatNum}>14</span>
-                  <span className={styles.demoStatLabel}>Players</span>
-                </div>
-                <div className={styles.demoStatBox}>
-                  <span className={styles.demoStatNum}>3W 1D</span>
-                  <span className={styles.demoStatLabel}>Form</span>
-                </div>
-                <div className={styles.demoStatBox}>
-                  <span className={styles.demoStatNum}>10</span>
-                  <span className={styles.demoStatLabel}>Points</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 // ── Section: Who It's For ─────────────────────────────────────────────────────
 const USE_CASES = [
   { title: 'Community Tournaments', image: '/images/use-cases/community-tournaments.webp', alt: 'Community football tournament match in action' },
@@ -572,7 +452,6 @@ export default function PlatformLanding({ demoMode = false }: PlatformLandingPro
   return (
     <div className={styles.page}>
       <HeroSection demoMode={demoMode} />
-      <ShowcaseSection />
       <WhoSection />
       <HowSection />
       <MatchDaySection />

@@ -48,7 +48,6 @@ const MOBILE_PRIMARY_LINKS = [
 ]
 
 const PLATFORM_NAV_LINKS = [
-  { href: '/#features',     label: 'Features' },
   { href: '/#how-it-works', label: 'How it Works' },
   { href: '/#pricing',      label: 'Pricing' },
 ]
