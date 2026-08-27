@@ -15,12 +15,14 @@ interface OrgSubscription {
 }
 
 interface Organization {
-  id:            string
-  name:          string
-  slug:          string
-  created_at:    string
-  _adminCount?:  number
-  _sub?:         OrgSubscription | null
+  id:                         string
+  name:                       string
+  slug:                       string
+  created_at:                 string
+  public_site_enabled:        boolean
+  public_site_paused_reason?: string | null
+  _adminCount?:               number
+  _sub?:                      OrgSubscription | null
 }
 
 export default function PlatformOrganizationsPage() {
@@ -29,11 +31,12 @@ export default function PlatformOrganizationsPage() {
   const [name, setName]       = useState('')
   const [slug, setSlug]       = useState('')
   const [saving, setSaving]   = useState(false)
+  const [updatingOrgId, setUpdatingOrgId] = useState<string | null>(null)
 
   const fetchOrgs = useCallback(async () => {
     const { data } = await supabase
       .from('organizations')
-      .select('id, name, slug, created_at')
+      .select('id, name, slug, created_at, public_site_enabled, public_site_paused_reason')
       .order('name')
 
     const orgList = (data || []) as Organization[]
@@ -96,6 +99,37 @@ export default function PlatformOrganizationsPage() {
     setSlug('')
     fetchOrgs()
     setSaving(false)
+  }
+
+  const handlePublicSiteToggle = async (org: Organization) => {
+    const nextEnabled = !org.public_site_enabled
+    let reason: string | null = null
+
+    if (!nextEnabled) {
+      const input = window.prompt(
+        'Admin-only reason for pausing this public site. This will not be shown to visitors.',
+        org.public_site_paused_reason || 'Trial ended / renewal required'
+      )
+      if (input === null) return
+      reason = input.trim() || 'Manually paused by platform admin'
+    }
+
+    setUpdatingOrgId(org.id)
+    const { error } = await supabase
+      .from('organizations')
+      .update({
+        public_site_enabled: nextEnabled,
+        public_site_paused_reason: nextEnabled ? null : reason,
+      })
+      .eq('id', org.id)
+
+    if (error) {
+      toast.error(nextEnabled ? 'Could not reactivate public site' : 'Could not pause public site')
+    } else {
+      toast.success(nextEnabled ? 'Public site reactivated' : 'Public site paused')
+      fetchOrgs()
+    }
+    setUpdatingOrgId(null)
   }
 
   const cardStyle: React.CSSProperties = {
@@ -170,11 +204,46 @@ export default function PlatformOrganizationsPage() {
                 <div style={{ fontSize: '0.75rem', color: '#666688', fontFamily: 'monospace' }}>{org.slug}</div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <SiteStatusBadge org={org} />
                 <SubBadge sub={org._sub || null} />
                 <span style={{ fontSize: '0.72rem', color: '#666688' }}>
                   {new Date(org.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                 </span>
+                <button
+                  type="button"
+                  onClick={() => handlePublicSiteToggle(org)}
+                  disabled={updatingOrgId === org.id}
+                  style={{
+                    padding: '4px 10px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    borderRadius: 6,
+                    cursor: updatingOrgId === org.id ? 'not-allowed' : 'pointer',
+                    opacity: updatingOrgId === org.id ? 0.6 : 1,
+                    background: org.public_site_enabled ? 'rgba(245,158,11,0.12)' : 'rgba(34,197,94,0.12)',
+                    border: org.public_site_enabled ? '1px solid rgba(245,158,11,0.3)' : '1px solid rgba(34,197,94,0.3)',
+                    color: org.public_site_enabled ? '#fbbf24' : '#86efac',
+                  }}
+                  title={
+                    org.public_site_enabled
+                      ? 'Show a neutral unavailable page to public visitors'
+                      : 'Restore the public website'
+                  }
+                >
+                  {org.public_site_enabled ? 'Pause Site' : 'Turn On'}
+                </button>
               </div>
+              {!org.public_site_enabled && org.public_site_paused_reason && (
+                <div style={{
+                  flexBasis: '100%',
+                  fontSize: '0.74rem',
+                  color: '#a1a1aa',
+                  borderTop: '1px solid #1e1e2e',
+                  paddingTop: '0.65rem',
+                }}>
+                  Admin reason: {org.public_site_paused_reason}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -184,6 +253,14 @@ export default function PlatformOrganizationsPage() {
 }
 
 /* ── Sub-components ──────────────────────────────────────────── */
+
+function SiteStatusBadge({ org }: { org: Organization }) {
+  if (org.public_site_enabled) {
+    return <span style={{ ...badgeBase, background: 'rgba(34,197,94,0.12)', color: '#86efac' }}>Site On</span>
+  }
+
+  return <span style={{ ...badgeBase, background: 'rgba(245,158,11,0.12)', color: '#fbbf24' }}>Site Paused</span>
+}
 
 function SubBadge({ sub }: { sub: OrgSubscription | null }) {
   if (!sub) {

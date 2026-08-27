@@ -27,6 +27,8 @@ interface SiteSettings {
   /** True when we successfully resolved an organization for this request. */
   isOrgSite:    boolean
   organization_id: string | null
+  public_site_enabled: boolean
+  public_site_paused_reason: string | null
   /** Org-wide active sponsors — passed to GlobalSponsorStrip. */
   sponsors:     SponsorItem[]
 }
@@ -41,6 +43,8 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     active_theme:  'theme-uefa-dark',
     isOrgSite:     false,   // no org resolved → show platform marketing nav
     organization_id: null,
+    public_site_enabled: true,
+    public_site_paused_reason: null,
     sponsors:      [],
   }
 
@@ -55,7 +59,13 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     const orgId    = await getOrganizationIdServer()
     const supabase = createServerSupabaseClient()
 
-    const [settingsRes, sponsorsRes] = await Promise.all([
+    const [orgRes, settingsRes, sponsorsRes] = await Promise.all([
+      supabase
+        .from('organizations')
+        .select('public_site_enabled, public_site_paused_reason')
+        .eq('id', orgId)
+        .single(),
+
       supabase
         .from('site_settings')
         .select('site_name, site_tagline, logo_url, footer_text, contact_email, active_theme')
@@ -74,10 +84,14 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     ])
 
     const sponsors = (sponsorsRes.data || []) as SponsorItem[]
+    const orgStatus = {
+      public_site_enabled: orgRes.data?.public_site_enabled ?? true,
+      public_site_paused_reason: orgRes.data?.public_site_paused_reason ?? null,
+    }
 
     return settingsRes.data
-      ? { ...defaults, ...settingsRes.data, isOrgSite: true, organization_id: orgId, sponsors }
-      : { ...defaults, isOrgSite: true, organization_id: orgId, sponsors }
+      ? { ...defaults, ...settingsRes.data, ...orgStatus, isOrgSite: true, organization_id: orgId, sponsors }
+      : { ...defaults, ...orgStatus, isOrgSite: true, organization_id: orgId, sponsors }
   } catch {
     // Dev mode / DB not yet seeded / no org in context — show platform defaults
     return defaults
@@ -157,6 +171,83 @@ function isNonCanonicalHost(host: string | null): boolean {
   return false
 }
 
+function PublicSiteUnavailable({ siteName, logoUrl }: { siteName: string; logoUrl: string | null }) {
+  return (
+    <main style={{
+      minHeight: '100vh',
+      display: 'grid',
+      placeItems: 'center',
+      padding: 'clamp(1.25rem, 4vw, 3rem)',
+      background: 'linear-gradient(180deg, rgba(255,255,255,0.04), transparent 42%), var(--color-bg)',
+      color: 'var(--color-text)',
+    }}>
+      <section style={{
+        width: '100%',
+        maxWidth: 560,
+        textAlign: 'center',
+        padding: 'clamp(2rem, 6vw, 3.5rem) clamp(1.25rem, 5vw, 2.5rem)',
+      }}>
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt={siteName}
+            style={{
+              width: 72,
+              height: 72,
+              objectFit: 'contain',
+              margin: '0 auto 1.25rem',
+              display: 'block',
+            }}
+          />
+        ) : (
+          <div style={{
+            width: 72,
+            height: 72,
+            borderRadius: 18,
+            display: 'grid',
+            placeItems: 'center',
+            margin: '0 auto 1.25rem',
+            background: 'var(--color-card)',
+            border: '1px solid var(--color-border)',
+            fontSize: '1.6rem',
+            fontWeight: 800,
+          }}>
+            {siteName.charAt(0).toUpperCase()}
+          </div>
+        )}
+        <p style={{
+          margin: '0 0 0.5rem',
+          fontSize: '0.78rem',
+          fontWeight: 800,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: 'var(--color-text-dim)',
+        }}>
+          {siteName}
+        </p>
+        <h1 style={{
+          margin: '0 0 0.85rem',
+          fontSize: 'clamp(2rem, 6vw, 3.25rem)',
+          lineHeight: 1.05,
+          letterSpacing: 0,
+        }}>
+          We&apos;ll Be Back Soon
+        </h1>
+        <p style={{
+          margin: '0 auto',
+          maxWidth: 440,
+          fontSize: 'clamp(1rem, 2.4vw, 1.12rem)',
+          lineHeight: 1.65,
+          color: 'var(--color-text-muted)',
+        }}>
+          This website is temporarily unavailable while the organization updates its site.
+          Please check back later.
+        </p>
+      </section>
+    </main>
+  )
+}
+
 // ── Root layout ───────────────────────────────────────────────────────────────
 export default async function RootLayout({
   children,
@@ -172,6 +263,13 @@ export default async function RootLayout({
     <html lang="en" data-theme={settings.active_theme}>
       <body>
         <PlatformSettingsProvider initial={{ demoMode: platformSettings.demoMode }}>
+          {settings.isOrgSite && !settings.public_site_enabled ? (
+            <PublicSiteUnavailable
+              siteName={settings.site_name}
+              logoUrl={settings.logo_url}
+            />
+          ) : (
+            <>
           <PublicNav
             siteName={settings.site_name}
             siteLogo={settings.logo_url}
@@ -196,6 +294,8 @@ export default async function RootLayout({
             logoUrl={settings.logo_url}
             isOrgSite={settings.isOrgSite}
           />
+            </>
+          )}
         </PlatformSettingsProvider>
 
         <Toaster

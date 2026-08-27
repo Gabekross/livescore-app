@@ -10,10 +10,12 @@ import { useAdminOrgGate }     from '@/components/admin/AdminOrgGate'
 import toast                   from 'react-hot-toast'
 
 interface Organization {
-  id:         string
-  name:       string
-  slug:       string
-  created_at: string
+  id:                         string
+  name:                       string
+  slug:                       string
+  created_at:                 string
+  public_site_enabled:        boolean
+  public_site_paused_reason?: string | null
 }
 
 export default function OrganizationsPage() {
@@ -25,11 +27,12 @@ export default function OrganizationsPage() {
   const [name, setName]       = useState('')
   const [slug, setSlug]       = useState('')
   const [saving, setSaving]   = useState(false)
+  const [updatingOrgId, setUpdatingOrgId] = useState<string | null>(null)
 
   const fetchOrgs = useCallback(async () => {
     const { data } = await supabase
       .from('organizations')
-      .select('id, name, slug, created_at')
+      .select('id, name, slug, created_at, public_site_enabled, public_site_paused_reason')
       .order('name')
     setOrgs((data || []) as Organization[])
     setLoading(false)
@@ -70,6 +73,37 @@ export default function OrganizationsPage() {
       fetchOrgs()
     }
     setSaving(false)
+  }
+
+  const handlePublicSiteToggle = async (org: Organization) => {
+    const nextEnabled = !org.public_site_enabled
+    let reason: string | null = null
+
+    if (!nextEnabled) {
+      const input = window.prompt(
+        'Admin-only reason for pausing this public site. This will not be shown to visitors.',
+        org.public_site_paused_reason || 'Trial ended / renewal required'
+      )
+      if (input === null) return
+      reason = input.trim() || 'Manually paused by platform admin'
+    }
+
+    setUpdatingOrgId(org.id)
+    const { error } = await supabase
+      .from('organizations')
+      .update({
+        public_site_enabled: nextEnabled,
+        public_site_paused_reason: nextEnabled ? null : reason,
+      })
+      .eq('id', org.id)
+
+    if (error) {
+      toast.error(nextEnabled ? 'Could not reactivate public site' : 'Could not pause public site')
+    } else {
+      toast.success(nextEnabled ? 'Public site reactivated' : 'Public site paused')
+      fetchOrgs()
+    }
+    setUpdatingOrgId(null)
   }
 
   return (
@@ -145,16 +179,59 @@ export default function OrganizationsPage() {
               style={{
                 background: '#fff', padding: '0.85rem 1.25rem', borderRadius: '10px',
                 border: '1px solid #e5e7eb', display: 'flex', alignItems: 'center',
-                justifyContent: 'space-between', gap: '1rem',
+                justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap',
               }}
             >
               <div>
                 <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.9rem' }}>{org.name}</div>
                 <div style={{ fontSize: '0.75rem', color: '#9ca3af', fontFamily: 'monospace' }}>{org.slug}</div>
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
-                {new Date(org.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <span style={{
+                  display: 'inline-block',
+                  padding: '2px 8px',
+                  borderRadius: 9999,
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  background: org.public_site_enabled ? 'rgba(34,197,94,0.12)' : 'rgba(245,158,11,0.12)',
+                  color: org.public_site_enabled ? '#15803d' : '#b45309',
+                }}>
+                  {org.public_site_enabled ? 'Site On' : 'Site Paused'}
+                </span>
+                <span style={{ fontSize: '0.72rem', color: '#9ca3af' }}>
+                  {new Date(org.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handlePublicSiteToggle(org)}
+                  disabled={updatingOrgId === org.id}
+                  style={{
+                    padding: '4px 10px',
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    borderRadius: 6,
+                    cursor: updatingOrgId === org.id ? 'not-allowed' : 'pointer',
+                    opacity: updatingOrgId === org.id ? 0.6 : 1,
+                    background: org.public_site_enabled ? '#fffbeb' : '#f0fdf4',
+                    border: org.public_site_enabled ? '1px solid #fde68a' : '1px solid #bbf7d0',
+                    color: org.public_site_enabled ? '#b45309' : '#15803d',
+                  }}
+                >
+                  {org.public_site_enabled ? 'Pause Site' : 'Turn On'}
+                </button>
               </div>
+              {!org.public_site_enabled && org.public_site_paused_reason && (
+                <div style={{
+                  flexBasis: '100%',
+                  fontSize: '0.74rem',
+                  color: '#6b7280',
+                  borderTop: '1px solid #e5e7eb',
+                  paddingTop: '0.65rem',
+                }}>
+                  Admin reason: {org.public_site_paused_reason}
+                </div>
+              )}
             </div>
           ))}
         </div>
