@@ -8,6 +8,7 @@ import { useAdminOrg }   from '@/contexts/AdminOrgContext'
 import { supabase }      from '@/lib/supabase'
 import PlanBadge         from '@/components/admin/PlanBadge'
 import ExpiredTrialGuard from '@/components/admin/ExpiredTrialGuard'
+import OrganizationPauseGuard from '@/components/admin/OrganizationPauseGuard'
 import HelpDrawer        from '@/components/help/HelpDrawer'
 import AdminBreadcrumb   from '@/components/admin/AdminBreadcrumb'
 import styles            from '@/styles/components/AdminShell.module.scss'
@@ -15,7 +16,7 @@ import styles            from '@/styles/components/AdminShell.module.scss'
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router   = useRouter()
-  const { orgName, role } = useAdminOrg()
+  const { orgName, role, publicSiteEnabled } = useAdminOrg()
   const [helpOpen, setHelpOpen] = useState(false)
 
   if (pathname === '/admin') {
@@ -93,10 +94,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
       <AdminBreadcrumb />
 
       <main className={styles.main}>
-        {pathname?.startsWith('/admin/settings') ? (
-          children
+        {!publicSiteEnabled && role !== 'power_admin' ? (
+          <OrganizationPauseGuard />
         ) : (
-          <ExpiredTrialGuard>{children}</ExpiredTrialGuard>
+          pathname?.startsWith('/admin/settings') ? (
+            children
+          ) : (
+            <ExpiredTrialGuard>{children}</ExpiredTrialGuard>
+          )
         )}
       </main>
     </div>

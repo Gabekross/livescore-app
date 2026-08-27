@@ -26,6 +26,8 @@ interface AdminOrgContextValue {
   orgSlug: string | null
   role:    AdminRole
   orgName: string | null
+  publicSiteEnabled: boolean
+  publicSitePausedReason: string | null
   plan:    PlanAccess | null
   loading: boolean
   error:   Error  | null
@@ -33,12 +35,12 @@ interface AdminOrgContextValue {
 }
 
 const AdminOrgContext = createContext<AdminOrgContextValue>({
-  orgId: null, orgSlug: null, role: null, orgName: null, plan: null, loading: true, error: null, retry: () => {},
+  orgId: null, orgSlug: null, role: null, orgName: null, publicSiteEnabled: true, publicSitePausedReason: null, plan: null, loading: true, error: null, retry: () => {},
 })
 
 export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<Omit<AdminOrgContextValue, 'retry'>>({
-    orgId: null, orgSlug: null, role: null, orgName: null, plan: null, loading: true, error: null,
+    orgId: null, orgSlug: null, role: null, orgName: null, publicSiteEnabled: true, publicSitePausedReason: null, plan: null, loading: true, error: null,
   })
 
   const resolve = useCallback(async () => {
@@ -91,6 +93,8 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
     let orgId: string | null = null
     let orgSlug: string | null = null
     let orgName: string | null = null
+    let publicSiteEnabled = true
+    let publicSitePausedReason: string | null = null
 
     // Strategy A: subdomain or env-var slug resolution
     const slug = (typeof window !== 'undefined' ? getOrgSlugFromHostname(window.location.hostname) : null)
@@ -99,7 +103,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data, error: slugErr } = await supabase
           .from('organizations')
-          .select('id, name, slug')
+          .select('id, name, slug, public_site_enabled, public_site_paused_reason')
           .eq('slug', slug)
           .single()
 
@@ -109,6 +113,8 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
           orgId = data.id
           orgSlug = data.slug
           orgName = data.name
+          publicSiteEnabled = data.public_site_enabled ?? true
+          publicSitePausedReason = data.public_site_paused_reason ?? null
           diagnostics.push(`Strategy A resolved: ${data.name}`)
         }
       } catch (err) {
@@ -123,7 +129,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data, error: profOrgErr } = await supabase
           .from('organizations')
-          .select('id, name, slug')
+          .select('id, name, slug, public_site_enabled, public_site_paused_reason')
           .eq('id', profileOrgId)
           .single()
 
@@ -133,6 +139,8 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
           orgId = data.id
           orgSlug = data.slug
           orgName = data.name
+          publicSiteEnabled = data.public_site_enabled ?? true
+          publicSitePausedReason = data.public_site_paused_reason ?? null
           diagnostics.push(`Strategy B resolved: ${data.name}`)
         }
       } catch (err) {
@@ -145,7 +153,7 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       try {
         const { data, error: firstOrgErr } = await supabase
           .from('organizations')
-          .select('id, name, slug')
+          .select('id, name, slug, public_site_enabled, public_site_paused_reason')
           .order('name')
           .limit(1)
           .single()
@@ -156,6 +164,8 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
           orgId = data.id
           orgSlug = data.slug
           orgName = data.name
+          publicSiteEnabled = data.public_site_enabled ?? true
+          publicSitePausedReason = data.public_site_paused_reason ?? null
           diagnostics.push(`Strategy C resolved: ${data.name}`)
         }
       } catch (err) {
@@ -200,7 +210,17 @@ export function AdminOrgProvider({ children }: { children: React.ReactNode }) {
       finalError = new Error(userMsg + debugInfo)
     }
 
-    setState({ orgId, orgSlug, role, orgName, plan: planAccess, loading: false, error: finalError })
+    setState({
+      orgId,
+      orgSlug,
+      role,
+      orgName,
+      publicSiteEnabled,
+      publicSitePausedReason,
+      plan: planAccess,
+      loading: false,
+      error: finalError,
+    })
   }, [])
 
   useEffect(() => { resolve() }, [resolve])

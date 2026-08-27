@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { href: '/platform',               label: 'Overview' },
   { href: '/platform/organizations', label: 'Organizations' },
   { href: '/platform/admins',        label: 'Admin Users' },
+  { href: '/platform/support',       label: 'Support' },
   { href: '/platform/settings',      label: 'Settings' },
 ]
 
