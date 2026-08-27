@@ -54,7 +54,11 @@ export default function PublicMatchesPage() {
     const orgId = await getOrganizationId()
 
     const [{ data: tourData }, { data: matchData }] = await Promise.all([
-      supabase.from('tournaments').select('id, name').eq('organization_id', orgId),
+      supabase
+        .from('tournaments')
+        .select('id, name')
+        .eq('organization_id', orgId)
+        .eq('is_archived', false),
       supabase
         .from('matches')
         .select(`
@@ -67,11 +71,14 @@ export default function PublicMatchesPage() {
         .order('match_date', { ascending: true }),
     ])
 
+    const activeTournamentIds = new Set((tourData || []).map((t) => t.id))
     setTournaments(tourData || [])
 
     if (matchData) {
       setMatches(
-        matchData.map((m) => ({
+        matchData.filter((m) => (
+          m.match_type === 'friendly' || (m.tournament_id && activeTournamentIds.has(m.tournament_id))
+        )).map((m) => ({
           ...m,
           home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
           away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,
@@ -120,6 +127,15 @@ export default function PublicMatchesPage() {
             setMatches((prev) =>
               prev.map((m) => (m.id === updated.id ? { ...m, ...updated } : m))
             )
+          }
+        )
+        .on(
+          'postgres_changes',
+          { event: 'UPDATE', schema: 'public', table: 'tournaments' },
+          (payload) => {
+            const updated = payload.new
+            if (updated.organization_id !== orgId) return
+            fetchData()
           }
         )
         .subscribe()

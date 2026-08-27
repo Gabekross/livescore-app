@@ -38,8 +38,24 @@ export default function TournamentStandings({
   showStandings: boolean   // data-driven, from tournament_stages.show_standings
 }) {
   const [standings, setStandings] = useState<Standing[]>([])
+  const [available, setAvailable] = useState(true)
 
   const fetchAndSetStandings = async () => {
+    const { data: tournament } = await supabase
+      .from('tournaments')
+      .select('id')
+      .eq('id', tournamentId)
+      .eq('is_archived', false)
+      .single()
+
+    if (!tournament) {
+      setAvailable(false)
+      setStandings([])
+      return
+    }
+
+    setAvailable(true)
+
     const { data: stages } = await supabase
       .from('tournament_stages')
       .select('id')
@@ -142,6 +158,10 @@ export default function TournamentStandings({
 
     return () => { supabase.removeChannel(channel) }
   }, [tournamentId, showStandings])
+
+  if (!available) {
+    return <p style={{ color: 'gray', textAlign: 'center' }}>Tournament unavailable.</p>
+  }
 
   if (standings.length === 0) {
     return <p style={{ color: 'gray', textAlign: 'center' }}>No teams assigned yet.</p>

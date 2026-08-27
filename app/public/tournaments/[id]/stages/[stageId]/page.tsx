@@ -49,6 +49,7 @@ export default function PublicStageDetailPage() {
   const [showToday,       setShowToday]       = useState(true)
   const [showUpcoming,    setShowUpcoming]    = useState(true)
   const [allStages,       setAllStages]       = useState<{ id: string; stage_name: string }[]>([])
+  const [tournamentAvailable, setTournamentAvailable] = useState(true)
   // show_standings comes from tournament_stages.show_standings — replaces the old
   // hardcoded 'selectedStageName === Preliminary' and 'selectedStageName === Group Stage' checks
   const [showStandings,   setShowStandings]   = useState(false)
@@ -61,6 +62,24 @@ export default function PublicStageDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       const orgId = await getOrganizationId()
+
+      const { data: tournament } = await supabase
+        .from('tournaments')
+        .select('id')
+        .eq('id', id)
+        .eq('organization_id', orgId)
+        .eq('is_archived', false)
+        .single()
+
+      if (!tournament) {
+        setTournamentAvailable(false)
+        setGroups([])
+        setMatchesByGroup({})
+        setAllStages([])
+        return
+      }
+
+      setTournamentAvailable(true)
 
       // Fetch all stages for the stage selector dropdown
       const { data: stageData } = await supabase
@@ -168,6 +187,14 @@ export default function PublicStageDetailPage() {
       </div>
     </div>
   )
+
+  if (!tournamentAvailable) {
+    return (
+      <div className={styles.container}>
+        <h1 className={styles.heading}>Tournament unavailable</h1>
+      </div>
+    )
+  }
 
   return (
     <div className={styles.container}>

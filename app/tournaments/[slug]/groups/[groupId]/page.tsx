@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         .select('name')
         .eq('slug', params.slug)
         .eq('organization_id', orgId)
+        .eq('is_archived', false)
         .single(),
       supabase.from('groups').select('name').eq('id', params.groupId).single(),
     ])
@@ -68,6 +69,7 @@ export default async function GroupMatchesPage({ params }: Props) {
       .select('id, name, slug')
       .eq('slug', params.slug)
       .eq('organization_id', orgId)
+      .eq('is_archived', false)
       .single(),
     supabase
       .from('groups')

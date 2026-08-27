@@ -127,7 +127,7 @@ export default async function HomePage() {
       away_team:away_team_id(id, name, logo_url)
     `
 
-    const [settingsRes, fixturesRes, resultsRes, tournamentsRes, newsRes] = await Promise.all([
+    const [settingsRes, activeTournamentsRes, newsRes] = await Promise.all([
       supabase
         .from('site_settings')
         .select('site_name, site_tagline')
@@ -135,28 +135,11 @@ export default async function HomePage() {
         .single(),
 
       supabase
-        .from('matches')
-        .select(MATCH_SELECT)
-        .eq('organization_id', orgId)
-        .eq('status', 'scheduled')
-        .order('match_date')
-        .limit(6),
-
-      supabase
-        .from('matches')
-        .select(MATCH_SELECT)
-        .eq('organization_id', orgId)
-        .eq('status', 'completed')
-        .order('match_date', { ascending: false })
-        .limit(6),
-
-      supabase
         .from('tournaments')
         .select('id, name, slug, cover_image_url, start_date, end_date')
         .eq('organization_id', orgId)
         .eq('is_archived', false)
-        .order('start_date', { ascending: false })
-        .limit(4),
+        .order('start_date', { ascending: false }),
 
       supabase
         .from('posts')
@@ -165,6 +148,32 @@ export default async function HomePage() {
         .eq('status', 'published')
         .order('published_at', { ascending: false })
         .limit(4),
+    ])
+
+    const activeTournaments = (activeTournamentsRes.data || []) as Tournament[]
+    const activeTournamentIds = activeTournaments.map((t) => t.id)
+    const publicMatchScope = activeTournamentIds.length > 0
+      ? `match_type.eq.friendly,tournament_id.in.(${activeTournamentIds.join(',')})`
+      : 'match_type.eq.friendly'
+
+    const [fixturesRes, resultsRes] = await Promise.all([
+      supabase
+        .from('matches')
+        .select(MATCH_SELECT)
+        .eq('organization_id', orgId)
+        .eq('status', 'scheduled')
+        .or(publicMatchScope)
+        .order('match_date')
+        .limit(6),
+
+      supabase
+        .from('matches')
+        .select(MATCH_SELECT)
+        .eq('organization_id', orgId)
+        .eq('status', 'completed')
+        .or(publicMatchScope)
+        .order('match_date', { ascending: false })
+        .limit(6),
     ])
 
     if (settingsRes.data) {
@@ -180,7 +189,7 @@ export default async function HomePage() {
 
     fixtures    = (fixturesRes.data    || []).map(normalise) as MatchRow[]
     results     = (resultsRes.data     || []).map(normalise) as MatchRow[]
-    tournaments = (tournamentsRes.data || []) as Tournament[]
+    tournaments = activeTournaments.slice(0, 4)
     newsPosts   = (newsRes.data        || []) as NewsPost[]
   } catch {
     // No org resolved — render the platform marketing landing page instead.

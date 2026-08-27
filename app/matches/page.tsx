@@ -97,6 +97,7 @@ export default function MatchesPage() {
         .from('tournaments')
         .select('id, name, slug')
         .eq('organization_id', orgId)
+        .eq('is_archived', false)
         .order('name'),
 
       supabase
@@ -118,12 +119,15 @@ export default function MatchesPage() {
         .order('order_number'),
     ])
 
+    const activeTournamentIds = new Set((tData || []).map((t) => t.id))
     setTournaments(tData || [])
     setStages(sData || [])
 
     if (mData) {
       const stageMap = new Map((sData || []).map((s) => [s.id, s]))
-      setMatches(mData.map((m) => {
+      setMatches(mData.filter((m) => (
+        m.match_type === 'friendly' || (m.tournament_id && activeTournamentIds.has(m.tournament_id))
+      )).map((m) => {
         const rawGroup = Array.isArray(m.group) ? m.group[0] : m.group
         const stage    = rawGroup?.stage_id ? stageMap.get(rawGroup.stage_id) ?? null : null
         return {
@@ -155,6 +159,11 @@ export default function MatchesPage() {
         const updated = payload.new
         if (updated.organization_id !== orgIdRef.current) return
         setMatches((prev) => prev.map((m) => m.id === updated.id ? { ...m, ...updated } : m))
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'tournaments' }, (payload) => {
+        const updated = payload.new
+        if (updated.organization_id !== orgIdRef.current) return
+        fetchAll()
       })
       .subscribe()
     return () => { supabase.removeChannel(channel) }

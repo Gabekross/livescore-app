@@ -40,6 +40,7 @@ export default function PublicTournamentDetailPage() {
           .select('id, name, start_date, end_date, venue')
           .eq('id', id)
           .eq('organization_id', orgId)   // org scope added
+          .eq('is_archived', false)
           .single(),
         supabase
           .from('tournament_stages')

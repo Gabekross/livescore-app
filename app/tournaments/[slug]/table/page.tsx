@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const orgId    = await getOrganizationIdServer()
     const supabase = createServerSupabaseClient()
     const { data } = await supabase
-      .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).single()
+      .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).eq('is_archived', false).single()
     return { title: data ? `Table — ${data.name}` : 'Table' }
   } catch {
     return { title: 'Table' }
@@ -40,6 +40,7 @@ export default async function TournamentTablePage({ params, searchParams }: Prop
     .select('id, name, slug')
     .eq('slug', params.slug)
     .eq('organization_id', orgId)
+    .eq('is_archived', false)
     .single()
 
   if (!tournRes.data) notFound()

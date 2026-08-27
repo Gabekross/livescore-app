@@ -53,7 +53,7 @@ export default function PublicSearch({ open, onClose }: Props) {
       const [teams, news, tournaments] = await Promise.all([
         supabase.from('teams').select('id, name').eq('organization_id', orgId).ilike('name', like).limit(4),
         supabase.from('posts').select('id, title, slug').eq('organization_id', orgId).ilike('title', like).limit(4),
-        supabase.from('tournaments').select('id, name, slug').eq('organization_id', orgId).ilike('name', like).limit(4),
+        supabase.from('tournaments').select('id, name, slug').eq('organization_id', orgId).eq('is_archived', false).ilike('name', like).limit(4),
       ])
 
       const out: SearchResult[] = [

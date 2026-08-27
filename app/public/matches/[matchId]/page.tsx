@@ -60,6 +60,7 @@ export default function MatchDetailPage() {
   const [homeBench,  setHomeBench]  = useState<Player[]>([])
   const [awayBench,  setAwayBench]  = useState<Player[]>([])
   const [activeTab,  setActiveTab]  = useState<Tab>('formation')
+  const [unavailable, setUnavailable] = useState(false)
 
   const fetchMatch = useCallback(async () => {
     const { data } = await supabase
@@ -68,6 +69,7 @@ export default function MatchDetailPage() {
         id, match_date, venue, status, match_type,
         home_score, away_score, home_formation, away_formation,
         home_coach, away_coach,
+        tournament:tournament_id(is_archived),
         home_team:home_team_id(id, name, logo_url, coach_name),
         away_team:away_team_id(id, name, logo_url, coach_name)
       `)
@@ -75,11 +77,21 @@ export default function MatchDetailPage() {
       .single()
 
     if (data) {
+      const tournament = Array.isArray(data.tournament) ? data.tournament[0] : data.tournament
+      if (data.match_type === 'tournament' && tournament?.is_archived) {
+        setUnavailable(true)
+        setMatch(null)
+        return
+      }
+
+      setUnavailable(false)
       setMatch({
         ...data,
         home_team: Array.isArray(data.home_team) ? data.home_team[0] : data.home_team,
         away_team: Array.isArray(data.away_team) ? data.away_team[0] : data.away_team,
       })
+    } else {
+      setUnavailable(true)
     }
   }, [matchId])
 
@@ -162,8 +174,7 @@ export default function MatchDetailPage() {
       <div className={styles.page}>
         <div className={styles.inner}>
           <div className={styles.loading}>
-            <span>⚽</span>
-            <span>Loading match…</span>
+            <span>{unavailable ? 'Match unavailable' : 'Loading match...'}</span>
           </div>
         </div>
       </div>

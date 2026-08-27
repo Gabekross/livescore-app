@@ -76,7 +76,7 @@ export default function AdminTournamentList() {
     const confirmed = window.confirm(
       tournament.is_archived
         ? `Restore "${tournament.name}" to active tournaments?`
-        : `Archive "${tournament.name}"?\n\nIt will move to the archive section and no longer appear under active tournaments. All data is preserved.`
+        : `Archive "${tournament.name}"?\n\nIt will move to the archive section and its scheduled, live, and completed matches will no longer appear on the main website. All data is preserved.`
     )
     if (!confirmed) return
 

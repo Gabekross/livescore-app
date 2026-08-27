@@ -39,14 +39,15 @@ interface Player {
 }
 
 interface MatchRow {
-  id:         string
-  status:     MatchStatus
-  match_date: string
-  match_type: string
-  home_score: number | null
-  away_score: number | null
-  home_team:  { id: string; name: string; logo_url: string | null } | { id: string; name: string; logo_url: string | null }[]
-  away_team:  { id: string; name: string; logo_url: string | null } | { id: string; name: string; logo_url: string | null }[]
+  id:            string
+  status:        MatchStatus
+  match_date:    string
+  match_type:    string
+  tournament_id: string | null
+  home_score:    number | null
+  away_score:    number | null
+  home_team:     { id: string; name: string; logo_url: string | null } | { id: string; name: string; logo_url: string | null }[]
+  away_team:     { id: string; name: string; logo_url: string | null } | { id: string; name: string; logo_url: string | null }[]
 }
 
 // ── Stats helpers ─────────────────────────────────────────────────────────────
@@ -89,7 +90,7 @@ export default async function TeamDetailPage({ params }: Props) {
     notFound()
   }
 
-  const [teamRes, playersRes, allMatchesRes, recentMatchesRes] = await Promise.all([
+  const [teamRes, playersRes, activeTournamentsRes] = await Promise.all([
     supabase
       .from('teams')
       .select('id, name, logo_url')
@@ -103,11 +104,21 @@ export default async function TeamDetailPage({ params }: Props) {
       .eq('team_id', teamId)
       .order('jersey_number', { ascending: true, nullsFirst: false }),
 
+    supabase
+      .from('tournaments')
+      .select('id')
+      .eq('organization_id', orgId)
+      .eq('is_archived', false),
+  ])
+
+  const activeTournamentIds = new Set((activeTournamentsRes.data || []).map((t) => t.id))
+
+  const [allMatchesRes, recentMatchesRes] = await Promise.all([
     // All completed matches for stats
     supabase
       .from('matches')
       .select(`
-        id, status, match_date, match_type, home_score, away_score,
+        id, status, match_date, match_type, tournament_id, home_score, away_score,
         home_team:home_team_id(id, name, logo_url),
         away_team:away_team_id(id, name, logo_url)
       `)
@@ -119,22 +130,24 @@ export default async function TeamDetailPage({ params }: Props) {
     supabase
       .from('matches')
       .select(`
-        id, status, match_date, match_type, home_score, away_score,
+        id, status, match_date, match_type, tournament_id, home_score, away_score,
         home_team:home_team_id(id, name, logo_url),
         away_team:away_team_id(id, name, logo_url)
       `)
       .eq('organization_id', orgId)
       .or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`)
-      .order('match_date', { ascending: false })
-      .limit(10),
+      .order('match_date', { ascending: false }),
   ])
 
   if (!teamRes.data) notFound()
 
   const team    = teamRes.data
   const players = (playersRes.data || []) as Player[]
-  const allMatches = ((allMatchesRes.data || []) as MatchRow[])
-  const matches = ((recentMatchesRes.data || []) as MatchRow[]).map((m) => ({
+  const isPublicMatch = (m: MatchRow) =>
+    m.match_type === 'friendly' || (m.tournament_id !== null && activeTournamentIds.has(m.tournament_id))
+
+  const allMatches = ((allMatchesRes.data || []) as MatchRow[]).filter(isPublicMatch)
+  const matches = ((recentMatchesRes.data || []) as MatchRow[]).filter(isPublicMatch).slice(0, 10).map((m) => ({
     ...m,
     home_team: Array.isArray(m.home_team) ? m.home_team[0] : m.home_team,
     away_team: Array.isArray(m.away_team) ? m.away_team[0] : m.away_team,

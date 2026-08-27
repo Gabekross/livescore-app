@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       .select('name, cover_image_url')
       .eq('slug', params.slug)
       .eq('organization_id', orgId)
+      .eq('is_archived', false)
       .single()
     return {
       title:     data?.name ?? 'Tournament',
@@ -83,6 +84,7 @@ export default async function TournamentDetailPage({ params }: Props) {
     .select('id, name, slug, cover_image_url, start_date, end_date')
     .eq('slug', params.slug)
     .eq('organization_id', orgId)
+    .eq('is_archived', false)
     .single()
 
   if (!tournRes.data) notFound()
