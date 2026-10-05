@@ -2,7 +2,7 @@
 
 // app/admin/tournaments/[id]/stages/edit/[stageId/page.tsx
 // Note: directory name has a pre-existing Windows filesystem issue (missing ]).
-// Edit stage — includes show_standings toggle added in Phase 3 cleanup.
+// Edit stage - includes show_standings toggle added in Phase 3 cleanup.
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'

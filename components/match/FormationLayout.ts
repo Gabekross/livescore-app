@@ -1,5 +1,5 @@
 // components/match/FormationLayout.ts
-// Legacy compatibility layer — re-exports formation coordinates
+// Legacy compatibility layer - re-exports formation coordinates
 // from the new centralised formation definitions.
 // Components that import formationLayouts from here will continue to work.
 

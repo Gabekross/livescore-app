@@ -1,5 +1,5 @@
 // data/help/index.ts
-// Central help content registry — structured by module and context.
+// Central help content registry - structured by module and context.
 
 export interface HelpArticle {
   id:           string
@@ -116,7 +116,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
     summary:  'Register teams in your organization.',
     body: [
       'Navigate to Teams from the admin dashboard and click "New Team". Enter the team name and optionally upload a logo.',
-      'Teams are shared across your organization — once created, a team can be assigned to any tournament group.',
+      'Teams are shared across your organization - once created, a team can be assigned to any tournament group.',
       'On the Basic plan, you can add up to the team limit. Upgrade to Pro for unlimited teams.',
     ],
     category: 'teams',
@@ -216,7 +216,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
     title:    'Site Branding & Theme',
     summary:  'Customize your site name, logo, and visual theme.',
     body: [
-      'Go to Settings from the admin dashboard to configure your site identity — name, logo, and description.',
+      'Go to Settings from the admin dashboard to configure your site identity - name, logo, and description.',
       'Choose a theme to change the look of your public site. Themes control colors, typography, and overall visual style.',
       'Your site name and logo appear in the public navigation bar, browser tab, and social media previews.',
     ],
@@ -274,7 +274,7 @@ export const HELP_ARTICLES: HelpArticle[] = [
     body: [
       'Operators can update match scores and events but cannot access other admin functions.',
       'Add operators from the "Match Operators" section in the dashboard. Each operator signs in with their own email.',
-      'Operators use the dedicated Operator View — a streamlined panel designed for fast score updates on match day.',
+      'Operators use the dedicated Operator View - a streamlined panel designed for fast score updates on match day.',
     ],
     category:    'operators',
     roles:       ['org_admin', 'power_admin'],
@@ -312,7 +312,7 @@ export const CONTEXTUAL_TIPS: ContextualTip[] = [
   { id: 'tip-friendly-new',      context: 'admin/matches/friendly/new',           tip: 'Friendly matches never affect tournament standings.' },
   { id: 'tip-news-new',          context: 'admin/news/new',                       tip: 'Add a featured image to make your article stand out in the news feed.' },
   { id: 'tip-settings',          context: 'admin/settings',                       tip: 'Changes to site name and theme are applied to your public site immediately.' },
-  { id: 'tip-operators',         context: 'admin/operators',                      tip: 'Operators can only update live match scores — they cannot access other admin features.' },
+  { id: 'tip-operators',         context: 'admin/operators',                      tip: 'Operators can only update live match scores - they cannot access other admin features.' },
   { id: 'tip-media',             context: 'admin/media',                          tip: 'Drag and drop images to upload. Supported formats: JPG, PNG, WebP.' },
   { id: 'tip-assign-teams',      context: 'admin/tournaments/assign-teams',       tip: 'Select teams to include in this group. They must be created first under Teams.' },
   { id: 'tip-formation',         context: 'admin/matches/formation-editor',       tip: 'Drag players to position them on the pitch. Choose a formation preset to start.' },

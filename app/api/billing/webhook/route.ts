@@ -1,5 +1,5 @@
 // app/api/billing/webhook/route.ts
-// Stripe webhook handler — processes subscription lifecycle events.
+// Stripe webhook handler - processes subscription lifecycle events.
 // Configure in Stripe Dashboard:
 //   Endpoint URL: https://www.kolusports.com/api/billing/webhook
 //   Events: checkout.session.completed, invoice.paid, invoice.payment_failed,

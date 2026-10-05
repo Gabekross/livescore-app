@@ -1,5 +1,5 @@
 // app/archive/page.tsx
-// Past tournaments archive — Server Component.
+// Past tournaments archive - Server Component.
 
 import type { Metadata }              from 'next'
 import Image                          from 'next/image'

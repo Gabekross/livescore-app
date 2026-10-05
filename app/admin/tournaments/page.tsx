@@ -17,7 +17,7 @@ interface Tournament {
 }
 
 function formatDate(iso?: string) {
-  if (!iso) return '—'
+  if (!iso) return '-'
   return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
@@ -190,7 +190,7 @@ export default function AdminTournamentList() {
                         {t.name}
                         {t.is_archived && <span className={styles.archivedBadge}>Archived</span>}
                       </h3>
-                      <p>{formatDate(t.start_date)} — {formatDate(t.end_date)}</p>
+                      <p>{formatDate(t.start_date)} - {formatDate(t.end_date)}</p>
                     </div>
                   </Link>
                   <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>

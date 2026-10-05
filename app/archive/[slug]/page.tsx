@@ -1,5 +1,5 @@
 // app/archive/[slug]/page.tsx
-// Archived tournament detail — reuses the same tournament detail logic
+// Archived tournament detail - reuses the same tournament detail logic
 // but sourced from the archive (is_archived = true).
 
 import type { Metadata }              from 'next'

@@ -1,5 +1,5 @@
 // app/table/page.tsx
-// Public standings / league table — Server Component.
+// Public standings / league table - Server Component.
 // Lets user pick a tournament and stage; renders group standings tables.
 
 import type { Metadata }              from 'next'

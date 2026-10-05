@@ -1,7 +1,7 @@
 'use client'
 
 // components/admin/UpgradePrompt.tsx
-// Dynamic trial/upgrade banner — changes messaging based on trial lifecycle.
+// Dynamic trial/upgrade banner - changes messaging based on trial lifecycle.
 // 5 states: early trial, mid trial, final days, last day, expired.
 
 import { useAdminOrg }         from '@/contexts/AdminOrgContext'
@@ -50,7 +50,7 @@ export default function UpgradePrompt({ message }: UpgradePromptProps) {
     urgency = 'info'
   } else if (isTrialing) {
     // ── Early trial (5+ days)
-    text = message ?? `Free trial active — ${trialDaysLeft} days left. You have full access to explore.`
+    text = message ?? `Free trial active - ${trialDaysLeft} days left. You have full access to explore.`
     ctaText = 'View Plans'
     urgency = 'info'
   } else {

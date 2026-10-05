@@ -1,7 +1,7 @@
 'use client'
 
 // components/admin/BillingSection.tsx
-// Billing & Plan section — plan display, usage, interval switching, cancel, reactivate.
+// Billing & Plan section - plan display, usage, interval switching, cancel, reactivate.
 // All pricing values sourced from config/pricing.ts env vars.
 
 import { useState }                          from 'react'
@@ -27,7 +27,7 @@ export default function BillingSection() {
   const [confirmCancel,  setConfirmCancel]  = useState(false)
 
   // In demo mode the entire billing section is replaced with a neutral
-  // placeholder — no plan info, no Stripe links, no Pro/Free comparison.
+  // placeholder - no plan info, no Stripe links, no Pro/Free comparison.
   if (hideBilling) {
     return (
       <div className={styles.section}>
@@ -76,7 +76,7 @@ export default function BillingSection() {
       })
       const data = await res.json()
       if (data.success) {
-        toast.success('Billing interval updated — changes take effect at next renewal')
+        toast.success('Billing interval updated - changes take effect at next renewal')
         setTimeout(() => window.location.reload(), 1200)
       } else {
         toast.error(data.error || 'Could not switch billing interval')
@@ -94,7 +94,7 @@ export default function BillingSection() {
       const res  = await fetch('/api/billing/cancel', { method: 'POST' })
       const data = await res.json()
       if (data.success) {
-        toast.success('Subscription cancelled — you keep Pro until the end of your billing period')
+        toast.success('Subscription cancelled - you keep Pro until the end of your billing period')
         setConfirmCancel(false)
         setTimeout(() => window.location.reload(), 1200)
       } else {
@@ -113,7 +113,7 @@ export default function BillingSection() {
       const res  = await fetch('/api/billing/cancel', { method: 'DELETE' })
       const data = await res.json()
       if (data.success) {
-        toast.success('Subscription reactivated — your plan will renew as normal')
+        toast.success('Subscription reactivated - your plan will renew as normal')
         setTimeout(() => window.location.reload(), 1200)
       } else {
         toast.error(data.error || 'Could not reactivate subscription')
@@ -186,8 +186,8 @@ export default function BillingSection() {
                 {intervalLabel(curInterval)}
               </>
             )}
-            {isTrialing && `Free trial — ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} remaining`}
-            {isExpired && 'Your trial has ended — upgrade to keep managing your league'}
+            {isTrialing && `Free trial - ${trialDaysLeft} day${trialDaysLeft !== 1 ? 's' : ''} remaining`}
+            {isExpired && 'Your trial has ended - upgrade to keep managing your league'}
             {!isPro && !isTrialing && !isExpired && FREE_PLAN.tagline}
           </p>
         </div>
@@ -240,13 +240,13 @@ export default function BillingSection() {
                   cursor: switchLoading ? 'not-allowed' : 'pointer', opacity: switchLoading ? 0.6 : 1,
                 }}
               >
-                {switchLoading ? 'Switching…' : `Switch to ${tier.label} — ${formatPrice(tier.price)}/${intervalLabel(tier.interval)}`}
+                {switchLoading ? 'Switching…' : `Switch to ${tier.label} - ${formatPrice(tier.price)}/${intervalLabel(tier.interval)}`}
                 {tier.savings ? ` (${tier.savings})` : ''}
               </button>
             ))}
           </div>
           <p style={{ fontSize: '0.72rem', color: '#94a3b8', margin: '0.5rem 0 0' }}>
-            Prorated immediately — you only pay the difference.
+            Prorated immediately - you only pay the difference.
           </p>
         </div>
       )}

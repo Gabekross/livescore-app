@@ -1,5 +1,5 @@
 // app/tournaments/[slug]/groups/[groupId]/page.tsx
-// Group detail — shows all matches (every status) for a single group,
+// Group detail - shows all matches (every status) for a single group,
 // plus the group standings table.
 
 import type { Metadata }              from 'next'
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       supabase.from('groups').select('name').eq('id', params.groupId).single(),
     ])
 
-    const title = [group?.name, tourn?.name].filter(Boolean).join(' — ')
+    const title = [group?.name, tourn?.name].filter(Boolean).join(' - ')
     return { title: title || 'Group' }
   } catch {
     return { title: 'Group' }
@@ -126,7 +126,7 @@ export default async function GroupMatchesPage({ params }: Props) {
 
         <SectionHeader
           title={group.name}
-          subtitle={`${stageRes.data.stage_name} — ${tournRes.data.name}`}
+          subtitle={`${stageRes.data.stage_name} - ${tournRes.data.name}`}
         />
 
         {/* Standings */}

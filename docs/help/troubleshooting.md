@@ -5,23 +5,23 @@
 ### "I can't access the admin dashboard"
 
 **Possible causes:**
-- You're not signed in — visit `/login` to authenticate
-- Your account doesn't have admin privileges — contact your organization admin
-- Your trial has expired — go to Settings to upgrade your plan
-- You're on the wrong subdomain — make sure you're on your organization's URL
+- You're not signed in - visit `/login` to authenticate
+- Your account doesn't have admin privileges - contact your organization admin
+- Your trial has expired - go to Settings to upgrade your plan
+- You're on the wrong subdomain - make sure you're on your organization's URL
 
 ### "My public site shows no data"
 
 **Possible causes:**
-- No tournaments or teams have been created yet — use the admin dashboard to add content
-- Matches haven't been scheduled — create matches within tournament groups
-- Data belongs to a different organization — check that you're on the correct subdomain
+- No tournaments or teams have been created yet - use the admin dashboard to add content
+- Matches haven't been scheduled - create matches within tournament groups
+- Data belongs to a different organization - check that you're on the correct subdomain
 
 ### "Standings are not updating"
 
 **Check these:**
 - Match status must be "Completed" for results to count in standings
-- Only tournament matches affect standings — friendly matches are excluded
+- Only tournament matches affect standings - friendly matches are excluded
 - Make sure the match belongs to the correct tournament group
 - Verify that the correct scores have been entered
 
@@ -38,7 +38,7 @@
 **Check these:**
 - Verify the operator account was created correctly in the Match Operators section
 - Ensure the operator is using the correct email address
-- Match Operators is a Pro feature — confirm your plan includes it
+- Match Operators is a Pro feature - confirm your plan includes it
 - The operator should access `/admin/operator` after signing in
 
 ### "Images aren't displaying"

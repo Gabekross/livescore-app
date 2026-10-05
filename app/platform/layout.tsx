@@ -1,5 +1,5 @@
 // app/platform/layout.tsx
-// Power admin layout — provides platform-wide context.
+// Power admin layout - provides platform-wide context.
 // This layout does NOT use AdminOrgProvider (power admin is org-agnostic).
 
 'use client'

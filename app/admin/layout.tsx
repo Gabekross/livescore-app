@@ -1,5 +1,5 @@
 // app/admin/layout.tsx
-// Admin section wrapper — scoped to /admin/* routes.
+// Admin section wrapper - scoped to /admin/* routes.
 // Provides org context + role awareness to all admin pages via AdminOrgProvider.
 
 import { AdminOrgProvider } from '@/contexts/AdminOrgContext'

@@ -74,7 +74,7 @@ export default function SignupPage() {
 
     // Step 2: If user was created but needs email confirmation
     if (authData.user && !authData.session) {
-      // Supabase has email confirmation enabled — user needs to verify first
+      // Supabase has email confirmation enabled - user needs to verify first
       // For now, show a message. The provisioning will happen on first login.
       setError('')
       setLoading(false)
@@ -82,7 +82,7 @@ export default function SignupPage() {
       return
     }
 
-    // Step 3: User is signed in — provision the organization
+    // Step 3: User is signed in - provision the organization
     if (authData.session) {
       const { error: provErr } = await supabase.rpc('provision_organization', {
         p_org_name:  orgName.trim(),
@@ -92,13 +92,13 @@ export default function SignupPage() {
       })
 
       if (provErr) {
-        // Provisioning failed — clean up by signing out
+        // Provisioning failed - clean up by signing out
         setError(provErr.message)
         setLoading(false)
         return
       }
 
-      // Success — go to admin dashboard
+      // Success - go to admin dashboard
       router.push('/admin/dashboard')
       router.refresh()
       return
@@ -115,7 +115,7 @@ export default function SignupPage() {
           <div className={styles.brandIcon}>&#127942;</div>
           <h1 className={styles.brandTitle}>Start Your Free Trial</h1>
           <p className={styles.brandSub}>
-            Launch your league site in minutes. {FREE_PLAN.trialDays} days free — no credit card required.
+            Launch your league site in minutes. {FREE_PLAN.trialDays} days free - no credit card required.
           </p>
         </div>
 

@@ -50,7 +50,7 @@ export default function PublicStageDetailPage() {
   const [showUpcoming,    setShowUpcoming]    = useState(true)
   const [allStages,       setAllStages]       = useState<{ id: string; stage_name: string }[]>([])
   const [tournamentAvailable, setTournamentAvailable] = useState(true)
-  // show_standings comes from tournament_stages.show_standings — replaces the old
+  // show_standings comes from tournament_stages.show_standings - replaces the old
   // hardcoded 'selectedStageName === Preliminary' and 'selectedStageName === Group Stage' checks
   const [showStandings,   setShowStandings]   = useState(false)
   const [showGroupStandings, setShowGroupStandings] = useState(false)

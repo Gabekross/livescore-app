@@ -145,7 +145,7 @@ export default function CombinedFormationField({ home, away }: Props) {
         {/* Centre line indicator */}
         <div className={styles.centreLine} />
 
-        {/* Away team — top half */}
+        {/* Away team - top half */}
         {away.players.map((player, i) => {
           const slot = awaySlots[i]
           if (!slot) return null
@@ -160,7 +160,7 @@ export default function CombinedFormationField({ home, away }: Props) {
           )
         })}
 
-        {/* Home team — bottom half */}
+        {/* Home team - bottom half */}
         {home.players.map((player, i) => {
           const slot = homeSlots[i]
           if (!slot) return null

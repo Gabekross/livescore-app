@@ -44,4 +44,4 @@ The rich text editor includes a **Media Picker** that lets you:
 
 - Featured images make articles stand out in the news feed
 - Consistent image sizing creates a more professional look
-- Write compelling headlines — they appear on the homepage and social shares
+- Write compelling headlines - they appear on the homepage and social shares

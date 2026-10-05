@@ -1,12 +1,12 @@
 // app/privacy/page.tsx
-// Privacy Policy — static legal page. CCPA + general US privacy compliance.
+// Privacy Policy - static legal page. CCPA + general US privacy compliance.
 
 import type { Metadata } from 'next'
 import styles from '@/styles/components/LegalPage.module.scss'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'KoluSports Privacy Policy — how we collect, use, and protect your personal information.',
+  description: 'KoluSports Privacy Policy - how we collect, use, and protect your personal information.',
 }
 
 export default function PrivacyPage() {
@@ -94,10 +94,10 @@ export default function PrivacyPage() {
               <strong>Service providers:</strong> We share data with third-party providers that
               help us operate the Service, including:
               <ul>
-                <li><strong>Stripe</strong> — payment processing</li>
-                <li><strong>Google Analytics</strong> — usage analytics</li>
-                <li><strong>Supabase</strong> — database hosting and authentication</li>
-                <li><strong>Vercel</strong> — application hosting</li>
+                <li><strong>Stripe</strong> - payment processing</li>
+                <li><strong>Google Analytics</strong> - usage analytics</li>
+                <li><strong>Supabase</strong> - database hosting and authentication</li>
+                <li><strong>Vercel</strong> - application hosting</li>
               </ul>
               These providers process data on our behalf and are contractually obligated to
               protect it.

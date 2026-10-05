@@ -1,12 +1,12 @@
 // app/acceptable-use/page.tsx
-// Acceptable Use Policy — static legal page.
+// Acceptable Use Policy - static legal page.
 
 import type { Metadata } from 'next'
 import styles from '@/styles/components/LegalPage.module.scss'
 
 export const metadata: Metadata = {
   title: 'Acceptable Use Policy',
-  description: 'KoluSports Acceptable Use Policy — what you can and cannot do on our platform.',
+  description: 'KoluSports Acceptable Use Policy - what you can and cannot do on our platform.',
 }
 
 export default function AcceptableUsePage() {

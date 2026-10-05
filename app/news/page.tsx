@@ -1,5 +1,5 @@
 // app/news/page.tsx
-// Public news / blog listing — Server Component.
+// Public news / blog listing - Server Component.
 // First post rendered as a featured hero card; rest in a responsive grid.
 
 import type { Metadata }              from 'next'

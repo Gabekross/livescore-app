@@ -185,7 +185,7 @@
 }
 
 /* ── Platform (light) nav overrides ─────────────────────────── */
-/* Applied when isOrgSite=false — replaces dark theme vars with light values */
+/* Applied when isOrgSite=false - replaces dark theme vars with light values */
 
 .navPlatform {
   background-color: rgba(255, 255, 255, 0.95);
@@ -239,7 +239,7 @@
 
 /* ── Mobile sticky subnav ────────────────────────────────── */
 /* Fixed tab bar directly below the main nav bar on mobile.  */
-/* Always visible — no hamburger required.                   */
+/* Always visible - no hamburger required.                   */
 /* Hidden on desktop (links are in the standard nav there).  */
 .mobileStickyNav {
   display: none;

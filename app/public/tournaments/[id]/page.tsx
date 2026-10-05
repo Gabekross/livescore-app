@@ -1,7 +1,7 @@
 'use client'
 
 // app/public/tournaments/[id]/page.tsx
-// Legacy public route — kept for backward compatibility.
+// Legacy public route - kept for backward compatibility.
 // Fetches with org scope. Links to /public/tournaments/[id]/stages/[stageId].
 
 import { useEffect, useState }  from 'react'

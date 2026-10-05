@@ -1,7 +1,7 @@
 'use client'
 
 // app/admin/page.tsx
-// Legacy login route — redirects to /login.
+// Legacy login route - redirects to /login.
 // Middleware already handles this redirect, but this is a fallback
 // in case someone navigates client-side.
 

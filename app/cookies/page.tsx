@@ -1,12 +1,12 @@
 // app/cookies/page.tsx
-// Cookie Policy — static legal page.
+// Cookie Policy - static legal page.
 
 import type { Metadata } from 'next'
 import styles from '@/styles/components/LegalPage.module.scss'
 
 export const metadata: Metadata = {
   title: 'Cookie Policy',
-  description: 'KoluSports Cookie Policy — what cookies we use and why.',
+  description: 'KoluSports Cookie Policy - what cookies we use and why.',
 }
 
 export default function CookiesPage() {
@@ -40,11 +40,11 @@ export default function CookiesPage() {
           </p>
           <ul>
             <li>
-              <strong>Authentication cookies</strong> — managed by Supabase Auth to keep you
+              <strong>Authentication cookies</strong> - managed by Supabase Auth to keep you
               signed in and verify your session.
             </li>
             <li>
-              <strong>Security cookies</strong> — used to prevent cross-site request forgery
+              <strong>Security cookies</strong> - used to prevent cross-site request forgery
               (CSRF) and other security threats.
             </li>
           </ul>
@@ -56,8 +56,8 @@ export default function CookiesPage() {
             navigation patterns. This data is aggregated and anonymized.
           </p>
           <ul>
-            <li><strong>_ga</strong> — distinguishes unique users. Expires after 2 years.</li>
-            <li><strong>_ga_*</strong> — maintains session state. Expires after 2 years.</li>
+            <li><strong>_ga</strong> - distinguishes unique users. Expires after 2 years.</li>
+            <li><strong>_ga_*</strong> - maintains session state. Expires after 2 years.</li>
           </ul>
           <p>
             Google Analytics data is processed by Google LLC. For more information, see{' '}
@@ -74,7 +74,7 @@ export default function CookiesPage() {
           </p>
           <ul>
             <li>
-              <strong>Theme preference</strong> — remembers the active display theme selected
+              <strong>Theme preference</strong> - remembers the active display theme selected
               by the organization administrator.
             </li>
           </ul>

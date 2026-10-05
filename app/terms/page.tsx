@@ -1,12 +1,12 @@
 // app/terms/page.tsx
-// Terms of Service — static legal page.
+// Terms of Service - static legal page.
 
 import type { Metadata } from 'next'
 import styles from '@/styles/components/LegalPage.module.scss'
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'KoluSports Terms of Service — the rules that govern use of our platform.',
+  description: 'KoluSports Terms of Service - the rules that govern use of our platform.',
 }
 
 export default function TermsPage() {
@@ -112,7 +112,7 @@ export default function TermsPage() {
 
           <h2>7. Intellectual Property</h2>
           <p>
-            The Service — including its design, code, branding, and documentation — is owned by
+            The Service - including its design, code, branding, and documentation - is owned by
             KoluSports and protected by intellectual property laws. You may not copy, modify,
             distribute, or create derivative works from any part of the Service without our
             prior written consent.

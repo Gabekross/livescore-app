@@ -227,4 +227,4 @@ Private / Internal Use
 
 ## 👨‍💻 Author
 
-Built by Gabekross — designed for scalable, production-ready sports platforms.
+Built by Gabekross - designed for scalable, production-ready sports platforms.

@@ -270,7 +270,7 @@ export default function PostForm({ postId, initialValues, heading }: Props) {
             />
           </div>
 
-          {/* Body — Rich Text Editor */}
+          {/* Body - Rich Text Editor */}
           <div className={styles.fieldGroup}>
             <label className={styles.label}>
               Content{' '}

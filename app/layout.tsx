@@ -1,5 +1,5 @@
 // app/layout.tsx
-// Root layout — server component.
+// Root layout - server component.
 // Fetches org site settings once per request and passes them down to the
 // client nav / footer.  Falls back gracefully if DB is unreachable.
 
@@ -29,7 +29,7 @@ interface SiteSettings {
   organization_id: string | null
   public_site_enabled: boolean
   public_site_paused_reason: string | null
-  /** Org-wide active sponsors — passed to GlobalSponsorStrip. */
+  /** Org-wide active sponsors - passed to GlobalSponsorStrip. */
   sponsors:     SponsorItem[]
 }
 
@@ -48,7 +48,7 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
     sponsors:      [],
   }
 
-  // Skip DB calls for admin/platform/auth routes — they don't need org settings
+  // Skip DB calls for admin/platform/auth routes - they don't need org settings
   if (headers().get('x-admin-route') === '1') return defaults
 
   try {
@@ -93,7 +93,7 @@ async function fetchSiteSettings(): Promise<SiteSettings> {
       ? { ...defaults, ...settingsRes.data, ...orgStatus, isOrgSite: true, organization_id: orgId, sponsors }
       : { ...defaults, ...orgStatus, isOrgSite: true, organization_id: orgId, sponsors }
   } catch {
-    // Dev mode / DB not yet seeded / no org in context — show platform defaults
+    // Dev mode / DB not yet seeded / no org in context - show platform defaults
     return defaults
   }
 }

@@ -1,5 +1,5 @@
 // app/tournaments/[slug]/page.tsx
-// Tournament overview — Server Component.
+// Tournament overview - Server Component.
 // Fetches by slug (SEO-friendly URL). Shows cover image, stage → group →
 // matches hierarchy (all statuses included).
 

@@ -136,7 +136,7 @@ export default function PlayerStatsPage() {
     }
 
     // When showing a specific tournament (or friendlies), rows are already
-    // per-player-per-team for that tournament — no further aggregation needed.
+    // per-player-per-team for that tournament - no further aggregation needed.
     // When "All Tournaments", aggregate across tournaments.
     if (!tournamentFilter) {
       const map = new Map<string, AggregatedStat>()

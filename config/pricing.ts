@@ -1,7 +1,7 @@
 // config/pricing.ts
 // ─── Single source of truth for all pricing display values ────────────────────
 // ALL prices and limits are driven by environment variables.
-// There are NO hardcoded fallback prices — if an env var is missing the value
+// There are NO hardcoded fallback prices - if an env var is missing the value
 // will be 0 / empty so it is obvious in the UI that something is not configured.
 //
 // Required environment variables (set in .env.local AND Vercel):
@@ -11,7 +11,7 @@
 //   NEXT_PUBLIC_TRIAL_DAYS=7
 //   NEXT_PUBLIC_FREE_TEAM_LIMIT=4
 //
-// Stripe price IDs (server-side only — set in Vercel, NOT needed client-side):
+// Stripe price IDs (server-side only - set in Vercel, NOT needed client-side):
 //   STRIPE_PRICE_PRO_WEEKLY=price_xxx
 //   STRIPE_PRICE_PRO_MONTHLY=price_xxx
 //   STRIPE_PRICE_PRO_YEARLY=price_xxx
@@ -25,7 +25,7 @@ export interface PricingTier {
   currency:  string
   badge?:    string
   savings?:  string
-  // Note: Stripe price IDs are server-only — read via getStripePriceId() in lib/stripe.ts
+  // Note: Stripe price IDs are server-only - read via getStripePriceId() in lib/stripe.ts
 }
 
 // ── Parse env helpers (safe for client + server) ──────────────────────────────
@@ -36,7 +36,7 @@ function envNum(key: string, fallback: number): number {
   return isNaN(n) ? fallback : n
 }
 
-// ── Prices from env — NO hardcoded fallbacks ──────────────────────────────────
+// ── Prices from env - NO hardcoded fallbacks ──────────────────────────────────
 // NEXT_PUBLIC_ prefix makes them available in the browser bundle at build time.
 // Set these in Vercel → Settings → Environment Variables before each deploy.
 const PRICE_WEEKLY  = envNum('NEXT_PUBLIC_PRICE_PRO_WEEKLY',  0)

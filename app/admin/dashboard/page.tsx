@@ -1,7 +1,7 @@
 'use client'
 
 // app/admin/dashboard/page.tsx
-// Organization admin dashboard — org-scoped workspace.
+// Organization admin dashboard - org-scoped workspace.
 // Power admin platform controls have moved to /platform.
 
 import Link                    from 'next/link'
@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
           {orgName || 'Admin Dashboard'} <PlanBadge />
         </h2>
         <p className={styles.subheading}>
-          Manage your sports site — teams, tournaments, matches, and content.
+          Manage your sports site - teams, tournaments, matches, and content.
         </p>
         {orgSlug && (
           <div style={{ marginTop: '0.75rem' }}>

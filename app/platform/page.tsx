@@ -1,7 +1,7 @@
 'use client'
 
 // app/platform/page.tsx
-// Power admin overview — shows platform stats and quick actions.
+// Power admin overview - shows platform stats and quick actions.
 
 import { useEffect, useState } from 'react'
 import Link       from 'next/link'
@@ -87,7 +87,7 @@ export default function PlatformOverviewPage() {
               {s.label}
             </div>
             <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#f0f0ff' }}>
-              {loading ? '—' : s.value}
+              {loading ? '-' : s.value}
             </div>
           </Link>
         ))}

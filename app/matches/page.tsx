@@ -112,7 +112,7 @@ export default function MatchesPage() {
         .eq('organization_id', orgId)
         .order('match_date'),
 
-      // tournament_stages has no organization_id — scope via tournament_id instead
+      // tournament_stages has no organization_id - scope via tournament_id instead
       supabase
         .from('tournament_stages')
         .select('id, stage_name, order_number, tournament_id')
@@ -286,7 +286,7 @@ export default function MatchesPage() {
             const stageGrouped = groupByStageAndGroup(tGroup.matches)
             return (
               <div key={tGroup.key} className={styles.tournamentGroup}>
-                {/* Tournament header — hidden when only one tournament is showing */}
+                {/* Tournament header - hidden when only one tournament is showing */}
                 {!tourney && (
                   <div className={styles.tournamentGroupHeader}>
                     <span className={styles.tournamentGroupName}>{tGroup.name}</span>
@@ -327,7 +327,7 @@ export default function MatchesPage() {
                   </div>
                 ))}
 
-                {/* Orphan matches (no stage/group — friendlies or ungrouped) */}
+                {/* Orphan matches (no stage/group - friendlies or ungrouped) */}
                 {stageGrouped.orphanMatches.length > 0 && (
                   <div className={styles.matchList} style={{ marginTop: stageGrouped.stages.length > 0 ? '0.75rem' : 0 }}>
                     {sortByRelevance(stageGrouped.orphanMatches).map((m) => (

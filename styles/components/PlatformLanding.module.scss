@@ -1,6 +1,6 @@
 // PlatformLanding.module.scss
 // Light-theme SaaS marketing page.
-// Uses direct hex values — does NOT inherit dark globals.css variables.
+// Uses direct hex values - does NOT inherit dark globals.css variables.
 // Note: @extend is avoided due to SCSS modules variable scoping issues.
 
 // ── Shared values ──────────────────────────────────────────────────────────────
@@ -105,21 +105,16 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
 }
 
 .heroInner {
-  max-width:    1120px;
+  max-width:    760px;
   margin:       0 auto;
-  display:      grid;
-  grid-template-columns: 1fr 1fr;
-  align-items:  center;
-  gap:          4rem;
+  text-align:   center;
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr;
-    gap:        3rem;
     text-align: center;
   }
 }
 
-.heroText { max-width: 560px; }
+.heroText { max-width: 760px; }
 
 .heroBadge {
   display:        inline-flex;
@@ -153,13 +148,16 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   color:        $slate;
   line-height:  1.7;
   margin-bottom: 2rem;
-  max-width:    500px;
+  max-width:    620px;
+  margin-left:  auto;
+  margin-right: auto;
 }
 
 .heroCtas {
   display:     flex;
   gap:         0.75rem;
   flex-wrap:   wrap;
+  justify-content: center;
   margin-bottom: 1rem;
 
   @media (max-width: 900px) { justify-content: center; }
@@ -206,213 +204,9 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
 .heroNote {
   font-size: 0.78rem;
   color:     $muted;
+  text-align: center;
 
   @media (max-width: 900px) { text-align: center; }
-}
-
-.heroVisual {
-  position: relative;
-
-  @media (max-width: 900px) {
-    max-width: 480px;
-    margin:    0 auto;
-  }
-}
-
-// ── Browser mockup (hero + demo section) ──────────────────────────────────────
-.browserMockup {
-  background:    #ffffff;
-  border-radius: 12px;
-  border:        1px solid $border;
-  box-shadow:    $shadow-lg;
-  overflow:      hidden;
-}
-
-.browserBar {
-  display:       flex;
-  align-items:   center;
-  gap:           0.6rem;
-  padding:       0.6rem 0.85rem;
-  background:    $bg-light;
-  border-bottom: 1px solid $border;
-}
-
-.browserDots {
-  display: flex;
-  gap:     5px;
-
-  &::before, &::after, span {
-    content:       '';
-    display:       block;
-    width:         10px;
-    height:        10px;
-    border-radius: 50%;
-  }
-
-  &::before { background: #fc5c63; }
-  &::after  { background: #fdc043; }
-  span      { background: #29d063; }
-}
-
-.browserUrl {
-  flex:          1;
-  font-size:     0.7rem;
-  color:         $muted;
-  background:    #ffffff;
-  border:        1px solid $border;
-  border-radius: 6px;
-  padding:       0.2rem 0.65rem;
-  font-family:   monospace;
-  text-align:    center;
-}
-
-.browserContent {
-  background: $navy-card;
-  padding:    1rem;
-  min-height: 280px;
-}
-
-// Mini product preview inside hero browser mockup
-.previewNav {
-  display:         flex;
-  align-items:     center;
-  justify-content: space-between;
-  padding:         0.5rem 0.75rem;
-  background:      rgba(255, 255, 255, 0.06);
-  border-radius:   7px;
-  margin-bottom:   0.85rem;
-}
-
-.previewNavBrand {
-  font-size:  0.72rem;
-  font-weight: 700;
-  color:      #ffffff;
-}
-
-.previewNavLinks {
-  display: flex;
-  gap:     0.6rem;
-
-  span {
-    font-size: 0.6rem;
-    color:     rgba(255, 255, 255, 0.5);
-  }
-}
-
-.previewLiveChip {
-  font-size:      0.55rem;
-  font-weight:    800;
-  color:          #ef4444;
-  background:     rgba(239, 68, 68, 0.12);
-  border:         1px solid rgba(239, 68, 68, 0.3);
-  border-radius:  4px;
-  padding:        0.15rem 0.5rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.previewMatchCard {
-  background:    rgba(255, 255, 255, 0.06);
-  border:        1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding:       0.75rem;
-  margin-bottom: 0.6rem;
-}
-
-.previewMatchMeta {
-  font-size:      0.6rem;
-  color:          rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom:  0.5rem;
-  display:        flex;
-  align-items:    center;
-  justify-content: space-between;
-}
-
-.previewMatchRow {
-  display:     flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.previewTeam {
-  font-size:  0.68rem;
-  font-weight: 600;
-  color:      rgba(255, 255, 255, 0.9);
-  flex:       1;
-}
-
-.previewTeamRight { text-align: right; }
-
-.previewScores {
-  font-size:  1rem;
-  font-weight: 900;
-  color:      #ffffff;
-  display:    flex;
-  align-items: center;
-  gap:        0.35rem;
-  padding:    0 0.5rem;
-
-  span:nth-child(2) {
-    color:     rgba(255, 255, 255, 0.3);
-    font-size: 0.7rem;
-  }
-}
-
-.previewStandings {
-  background:    rgba(255, 255, 255, 0.04);
-  border-radius: 6px;
-  padding:       0.5rem 0.6rem;
-}
-
-.previewStandingsTitle {
-  font-size:      0.58rem;
-  font-weight:    700;
-  color:          rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  margin-bottom:  0.5rem;
-}
-
-.previewStandingsRow {
-  display:     flex;
-  align-items: center;
-  gap:         0.4rem;
-  padding:     0.2rem 0;
-
-  &:not(:last-child) { border-bottom: 1px solid rgba(255, 255, 255, 0.04); }
-}
-
-.previewStandingsPos {
-  font-size: 0.6rem;
-  color:     rgba(255, 255, 255, 0.35);
-  width:     14px;
-}
-
-.previewStandingsTeam {
-  font-size:  0.62rem;
-  color:      rgba(255, 255, 255, 0.8);
-  font-weight: 600;
-  flex:       1;
-}
-
-.previewStandingsStats {
-  display: flex;
-  gap:     0.5rem;
-
-  span {
-    font-size:  0.6rem;
-    color:      rgba(255, 255, 255, 0.4);
-    width:      16px;
-    text-align: right;
-  }
-}
-
-.previewPts {
-  font-size:  0.62rem !important;
-  font-weight: 700 !important;
-  color:      rgba(255, 255, 255, 0.85) !important;
 }
 
 // ── 2. TRUST BAR ──────────────────────────────────────────────────────────────
@@ -911,7 +705,7 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   }
 }
 
-// ── Photo variant (real photograph — cover crop) ──────────────────────────────
+// ── Photo variant (real photograph - cover crop) ──────────────────────────────
 .matchDayImageWrapPhoto {
   width:        100%;
   aspect-ratio: 4 / 3;
@@ -932,7 +726,7 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   }
 }
 
-// ── Device mockup variant (phone screenshot — float up from bottom) ───────────
+// ── Device mockup variant (phone screenshot - float up from bottom) ───────────
 .matchDayImageWrapDevice {
   width:           100%;
   aspect-ratio:    4 / 3;
@@ -1065,7 +859,7 @@ $shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.09), 0 4px 8px rgba(0, 0, 0, 0.04);
   line-height: 1.4;
 }
 
-/* ── Image placeholder — swap-ready containers for future assets ── */
+/* ── Image placeholder - swap-ready containers for future assets ── */
 .imagePlaceholder {
   width:           100%;
   height:          100%;

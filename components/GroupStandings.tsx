@@ -36,7 +36,7 @@ export default function GroupStandings({ groupId }: { groupId: string }) {
     if (!error) {
       setStandings(data)
     } else {
-      // standings load failed silently — empty state shown
+      // standings load failed silently - empty state shown
     }
   }
 
@@ -70,7 +70,7 @@ export default function GroupStandings({ groupId }: { groupId: string }) {
   return (
     <div className={styles.standingsContainer}>
       <h4 className={styles.heading}>Standings</h4>
-      {/* table-scroll is a global utility class from globals.css — gives polished
+      {/* table-scroll is a global utility class from globals.css - gives polished
           horizontal scroll on mobile without breaking the page layout */}
       <div className="table-scroll">
       <table className={styles.table}>

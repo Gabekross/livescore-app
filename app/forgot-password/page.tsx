@@ -1,7 +1,7 @@
 'use client'
 
 // app/forgot-password/page.tsx
-// Password reset request page — sends reset email via Supabase Auth.
+// Password reset request page - sends reset email via Supabase Auth.
 
 import { useState } from 'react'
 import Link         from 'next/link'

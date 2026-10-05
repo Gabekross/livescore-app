@@ -1,5 +1,5 @@
 // app/archive/[slug]/fixtures/page.tsx
-// Archived tournament fixtures — identical logic to active tournament fixtures.
+// Archived tournament fixtures - identical logic to active tournament fixtures.
 
 import type { Metadata }              from 'next'
 import Link                           from 'next/link'
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const supabase = createServerSupabaseClient()
     const { data } = await supabase
       .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).single()
-    return { title: data ? `Fixtures — ${data.name} (Archive)` : 'Fixtures (Archive)' }
+    return { title: data ? `Fixtures - ${data.name} (Archive)` : 'Fixtures (Archive)' }
   } catch {
     return { title: 'Fixtures (Archive)' }
   }

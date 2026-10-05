@@ -1,5 +1,5 @@
 // app/tournaments/page.tsx
-// Public active tournaments listing — Server Component.
+// Public active tournaments listing - Server Component.
 
 import type { Metadata }              from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
@@ -34,7 +34,7 @@ export default async function TournamentsPage() {
 
     tournaments = (data || []) as TournamentItem[]
   } catch {
-    // DB not available — show empty state
+    // DB not available - show empty state
   }
 
   return (

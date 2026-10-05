@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     // If already on Pro with an active subscription, use /api/billing/switch for interval changes
     if (sub?.plan === 'pro' && sub?.status === 'active' && sub?.stripe_subscription_id) {
       return NextResponse.json(
-        { error: 'Already on Pro — use the switch endpoint to change billing interval', code: 'USE_SWITCH' },
+        { error: 'Already on Pro - use the switch endpoint to change billing interval', code: 'USE_SWITCH' },
         { status: 400 }
       )
     }

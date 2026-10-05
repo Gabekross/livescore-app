@@ -3,8 +3,8 @@
 // Uses rounded-rect shapes matching standard football card proportions.
 //
 // Usage:
-//   <YellowCard />             — default 14×18 inline icon
-//   <RedCard size={20} />      — custom size
+//   <YellowCard />             - default 14×18 inline icon
+//   <RedCard size={20} />      - custom size
 //   <YellowCard className={s.icon} />
 
 interface CardIconProps {

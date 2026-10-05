@@ -87,7 +87,7 @@ export default function MatchCard({
         ) : (
           <StatusBadge status={status} matchDate={match_date} />
         )}
-        {/* Friendly label — shown on mobile only (desktop uses badgeCol) */}
+        {/* Friendly label - shown on mobile only (desktop uses badgeCol) */}
         {isFriendly && (
           <span className={styles.friendlyLabelMobile}>Friendly</span>
         )}

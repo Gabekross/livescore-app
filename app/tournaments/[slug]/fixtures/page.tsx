@@ -1,5 +1,5 @@
 // app/tournaments/[slug]/fixtures/page.tsx
-// Tournament fixtures — Server Component.
+// Tournament fixtures - Server Component.
 
 import type { Metadata }              from 'next'
 import Link                           from 'next/link'
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const supabase = createServerSupabaseClient()
     const { data } = await supabase
       .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).eq('is_archived', false).single()
-    return { title: data ? `Fixtures — ${data.name}` : 'Fixtures' }
+    return { title: data ? `Fixtures - ${data.name}` : 'Fixtures' }
   } catch {
     return { title: 'Fixtures' }
   }

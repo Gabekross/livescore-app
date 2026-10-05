@@ -1,5 +1,5 @@
 // app/news/[slug]/page.tsx
-// Article detail page — Server Component.
+// Article detail page - Server Component.
 // Renders article body as HTML (admin-controlled content).
 // Includes JSON-LD structured data, OG metadata, related articles.
 

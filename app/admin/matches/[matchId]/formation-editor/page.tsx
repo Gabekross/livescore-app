@@ -1,6 +1,6 @@
 'use client'
 
-// Admin formation editor — two-team formation assignment on a split pitch.
+// Admin formation editor - two-team formation assignment on a split pitch.
 // Home team (bottom half, blue), Away team (top half, red).
 // Each slot shows the expected position label and a player dropdown.
 
@@ -191,7 +191,7 @@ export default function FormationEditorPage() {
         Assign players to formation positions for both teams. Select a formation and drag players into slots.
       </p>
 
-      {/* Formation selectors — side by side */}
+      {/* Formation selectors - side by side */}
       <div className={styles.formationSelectors}>
         <div className={styles.formationSelect}>
           <label className={styles.label}>
@@ -222,7 +222,7 @@ export default function FormationEditorPage() {
         <div className={styles.pitchLabelTop}>{matchData.away_team.name} ({awayFormation})</div>
         <div className={styles.pitchLabelBottom}>{matchData.home_team.name} ({homeFormation})</div>
 
-        {/* Away team — top half */}
+        {/* Away team - top half */}
         {awaySlots.map((slot, index) => {
           const { x, y } = mapToHalf(slot.x, slot.y, false)
           const key = `away-${index}`
@@ -247,7 +247,7 @@ export default function FormationEditorPage() {
           )
         })}
 
-        {/* Home team — bottom half */}
+        {/* Home team - bottom half */}
         {homeSlots.map((slot, index) => {
           const { x, y } = mapToHalf(slot.x, slot.y, true)
           const key = `home-${index}`

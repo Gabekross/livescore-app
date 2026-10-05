@@ -1,7 +1,7 @@
 'use client'
 
 // app/platform/settings/page.tsx
-// Power-admin platform settings — currently houses the Demo Mode toggle.
+// Power-admin platform settings - currently houses the Demo Mode toggle.
 // Route protection (power_admin only) is enforced upstream by middleware.ts.
 
 import { useContext, useState } from 'react'
@@ -71,7 +71,7 @@ export default function PlatformSettingsPage() {
             }}>
               Hide pricing, billing, upgrade prompts, subscription details, and Stripe
               actions for demos or white-label presentations. Does not change
-              permissions or security — only what is shown in the UI.
+              permissions or security - only what is shown in the UI.
             </p>
           </div>
 
@@ -116,8 +116,8 @@ export default function PlatformSettingsPage() {
           fontWeight: 600,
         }}>
           {demoMode
-            ? 'Demo mode is ACTIVE — pricing & billing UI are hidden across the platform.'
-            : 'Demo mode is OFF — normal SaaS pricing & billing UI is visible.'}
+            ? 'Demo mode is ACTIVE - pricing & billing UI are hidden across the platform.'
+            : 'Demo mode is OFF - normal SaaS pricing & billing UI is visible.'}
         </div>
       </div>
     </div>

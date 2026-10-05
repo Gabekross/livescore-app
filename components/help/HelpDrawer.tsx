@@ -178,7 +178,7 @@ function CategoryList({
               </button>
             ))}
 
-            {/* Pro-locked teaser — only shown when there are locked articles */}
+            {/* Pro-locked teaser - only shown when there are locked articles */}
             {!isPro && lockedCount > 0 && (
               <div className={styles.proLockedTeaser}>
                 <span className={styles.proLockedText}>

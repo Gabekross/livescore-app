@@ -1,7 +1,7 @@
 // components/platform/PlatformLanding.tsx
-// SaaS marketing landing page — rendered when no org is resolved (main platform domain).
+// SaaS marketing landing page - rendered when no org is resolved (main platform domain).
 // Conversion-focused. Sports-agnostic. Light theme with dark-blue accents.
-// Pricing is sourced from config/pricing.ts — never hardcoded here.
+// Pricing is sourced from config/pricing.ts - never hardcoded here.
 
 import Link   from 'next/link'
 import styles from '@/styles/components/PlatformLanding.module.scss'
@@ -9,16 +9,6 @@ import {
   PRO_TIERS, FREE_PLAN, PRO_PLAN, PLAN_FEATURES,
   PRO_VALUE_FEATURES, formatPrice,
 } from '@/config/pricing'
-
-// ── Small static sub-components ───────────────────────────────────────────────
-
-function BrowserDots() {
-  return (
-    <div className={styles.browserDots}>
-      <span />
-    </div>
-  )
-}
 
 // ── Section: Hero ─────────────────────────────────────────────────────────────
 function HeroSection({ demoMode }: { demoMode: boolean }) {
@@ -35,8 +25,8 @@ function HeroSection({ demoMode }: { demoMode: boolean }) {
           </h1>
           <p className={styles.heroSub}>
             {demoMode
-              ? 'Launch a live-updated sports site for your league, tournament, or club — with fixtures, standings, team pages, and real-time match management.'
-              : 'Launch a live-updated sports site for your league, tournament, or club — with fixtures, standings, team pages, and real-time match management. Start free. Scale when you’re ready.'}
+              ? 'Launch a live-updated sports site for your league, tournament, or club, with fixtures, standings, team pages, and real-time match management.'
+              : 'Launch a live-updated sports site for your league, tournament, or club, with fixtures, standings, team pages, and real-time match management. Start free. Scale when you’re ready.'}
           </p>
           <div className={styles.heroCtas}>
             <Link href="/signup" className={styles.ctaPrimary}>
@@ -53,68 +43,6 @@ function HeroSection({ demoMode }: { demoMode: boolean }) {
               {FREE_PLAN.trialDays}-day free trial &middot; No credit card required &middot; Set up in minutes
             </p>
           )}
-        </div>
-
-        {/* Browser mockup — mini preview of the product */}
-        <div className={styles.heroVisual}>
-          <div className={styles.browserMockup} role="presentation" aria-hidden="true">
-            <div className={styles.browserBar}>
-              <BrowserDots />
-              <div className={styles.browserUrl}>yourleague.kolusports.com</div>
-            </div>
-            <div className={styles.browserContent}>
-              {/* Mini nav */}
-              <div className={styles.previewNav}>
-                <span className={styles.previewNavBrand}>&#127942; Spring League</span>
-                <div className={styles.previewNavLinks}>
-                  <span>Fixtures</span>
-                  <span>Table</span>
-                  <span>Teams</span>
-                </div>
-                <div className={styles.previewLiveChip}>&#9679; Live</div>
-              </div>
-
-              {/* Live match card */}
-              <div className={styles.previewMatchCard}>
-                <div className={styles.previewMatchMeta}>
-                  <span>Quarter Final</span>
-                  <span style={{ color: '#ef4444' }}>&#9679; 73&apos;</span>
-                </div>
-                <div className={styles.previewMatchRow}>
-                  <span className={styles.previewTeam}>FC United</span>
-                  <div className={styles.previewScores}>
-                    <span>2</span>
-                    <span>&ndash;</span>
-                    <span>1</span>
-                  </div>
-                  <span className={`${styles.previewTeam} ${styles.previewTeamRight}`}>
-                    City FC
-                  </span>
-                </div>
-              </div>
-
-              {/* Mini standings */}
-              <div className={styles.previewStandings}>
-                <div className={styles.previewStandingsTitle}>Group A</div>
-                {[
-                  { pos: 1, name: 'FC United',  w: 3, d: 1, l: 0, pts: 10 },
-                  { pos: 2, name: 'City FC',    w: 2, d: 0, l: 2, pts:  6 },
-                  { pos: 3, name: 'Athletic',   w: 0, d: 1, l: 3, pts:  1 },
-                ].map((row) => (
-                  <div key={row.pos} className={styles.previewStandingsRow}>
-                    <span className={styles.previewStandingsPos}>{row.pos}</span>
-                    <span className={styles.previewStandingsTeam}>{row.name}</span>
-                    <div className={styles.previewStandingsStats}>
-                      <span>{row.w}</span>
-                      <span>{row.d}</span>
-                      <span>{row.l}</span>
-                      <span className={styles.previewPts}>{row.pts}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -310,11 +238,11 @@ function FaqSection() {
     },
     {
       q: 'Do I need technical skills?',
-      a: 'No. The platform is designed for sports organizers, not developers. Everything is point-and-click — no code, no hosting setup.',
+      a: 'No. The platform is designed for sports organizers, not developers. Everything is point-and-click - no code, no hosting setup.',
     },
     {
       q: 'What happens when my free trial ends?',
-      a: 'Your data is safe — nothing gets deleted. You can still view everything, but creating and editing content requires upgrading to Pro.',
+      a: 'Your data is safe - nothing gets deleted. You can still view everything, but creating and editing content requires upgrading to Pro.',
     },
     {
       q: 'Can I change my billing plan later?',
@@ -356,7 +284,7 @@ function FinalCtaSection({ demoMode }: { demoMode: boolean }) {
         </h2>
         <p className={styles.finalCtaSub}>
           Join sports organizers who trust our platform to power their live scores,
-          standings, and match-day operations — all from one dashboard.
+          standings, and match-day operations - all from one dashboard.
         </p>
         <div className={styles.finalCtaBtns}>
           <Link href="/signup" className={styles.finalCtaBtnPrimary}>
@@ -391,8 +319,8 @@ export default function PlatformLanding({ demoMode = false }: PlatformLandingPro
       <WhoSection />
       <HowSection />
       {!demoMode && <PricingSection />}
-      <FaqSection />
       <FinalCtaSection demoMode={demoMode} />
+      <FaqSection />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-# KoluSports — Brand Guidelines
+# KoluSports - Brand Guidelines
 
 > Internal reference document. Not served as a public page.
 > Last updated: April 7, 2026
@@ -9,7 +9,7 @@
 
 **Name:** KoluSports (one word, capital K and S)
 **Tagline:** The all-in-one sports platform
-**Positioning:** A professional, accessible platform for sports organizers — from community tournaments to regional federations.
+**Positioning:** A professional, accessible platform for sports organizers - from community tournaments to regional federations.
 
 ---
 
@@ -119,10 +119,10 @@
 ## 7. Tone of Voice
 
 ### Principles
-1. **Professional** — We sound competent and trustworthy. No slang, no hype.
-2. **Easy to understand** — Short sentences. Plain language. No jargon unless the audience expects it (e.g., "group stage" is fine for sports organizers).
-3. **Confident, not boastful** — State what the product does clearly. Let features speak for themselves.
-4. **Supportive** — Encourage the user. Assume they're capable but may be new to running a website.
+1. **Professional** - We sound competent and trustworthy. No slang, no hype.
+2. **Easy to understand** - Short sentences. Plain language. No jargon unless the audience expects it (e.g., "group stage" is fine for sports organizers).
+3. **Confident, not boastful** - State what the product does clearly. Let features speak for themselves.
+4. **Supportive** - Encourage the user. Assume they're capable but may be new to running a website.
 
 ### Do
 - Use active voice: "Update scores in real time" (not "Scores can be updated in real time")

@@ -208,7 +208,7 @@ export default function EditMatchPage() {
         .in('player_id', removedIds)
     }
 
-    // Deduplicate rows — a player checked in both starter and bench should only appear once
+    // Deduplicate rows - a player checked in both starter and bench should only appear once
     const seen = new Set<string>()
     const dedupedRows = rows.filter(r => {
       if (seen.has(r.player_id)) return false
@@ -282,7 +282,7 @@ export default function EditMatchPage() {
 
       <h1 className={styles.heading}>Edit Match</h1>
       <p className={styles.subheading}>
-        {homeTeam?.name ?? 'Home'} vs {awayTeam?.name ?? 'Away'} — Update score, status, lineups, and player stats.
+        {homeTeam?.name ?? 'Home'} vs {awayTeam?.name ?? 'Away'} - Update score, status, lineups, and player stats.
       </p>
 
       <form onSubmit={handleSubmit} className={styles.form}>
@@ -427,16 +427,16 @@ export default function EditMatchPage() {
 
         {/* Lineups */}
         <div className={styles.lineupSection}>
-          <h3>{homeTeam?.name} — Starters</h3>
+          <h3>{homeTeam?.name} - Starters</h3>
           {homePlayers.map(p => renderPlayerRow(p, selectedHomeLineup, false, 'home'))}
-          <h3 style={{ marginTop: '1.5rem' }}>{homeTeam?.name} — Bench</h3>
+          <h3 style={{ marginTop: '1.5rem' }}>{homeTeam?.name} - Bench</h3>
           {homePlayers.map(p => renderPlayerRow(p, benchHome, true, 'home'))}
         </div>
 
         <div className={styles.lineupSection}>
-          <h3>{awayTeam?.name} — Starters</h3>
+          <h3>{awayTeam?.name} - Starters</h3>
           {awayPlayers.map(p => renderPlayerRow(p, selectedAwayLineup, false, 'away'))}
-          <h3 style={{ marginTop: '1.5rem' }}>{awayTeam?.name} — Bench</h3>
+          <h3 style={{ marginTop: '1.5rem' }}>{awayTeam?.name} - Bench</h3>
           {awayPlayers.map(p => renderPlayerRow(p, benchAway, true, 'away'))}
         </div>
 

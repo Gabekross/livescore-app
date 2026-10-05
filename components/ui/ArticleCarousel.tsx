@@ -45,7 +45,7 @@ export default function ArticleCarousel({ images, title }: Props) {
       <NewsImage
         key={index}
         src={images[index]}
-        alt={`${title} — image ${index + 1}`}
+        alt={`${title} - image ${index + 1}`}
         fill
         priority={index === 0}
         className={`${styles.heroImage} ${styles.heroImageFade}`}

@@ -139,7 +139,7 @@ export default function UpgradeModal({ open, onClose, headline, subtext }: Upgra
               <span style={{ flexShrink: 0, color: '#2563eb', fontWeight: 800 }}>+</span>
               <div>
                 <span style={{ fontWeight: 700 }}>{f.title}</span>
-                <span style={{ color: '#94a3b8' }}> — {f.text}</span>
+                <span style={{ color: '#94a3b8' }}> - {f.text}</span>
               </div>
             </div>
           ))}
@@ -157,7 +157,7 @@ export default function UpgradeModal({ open, onClose, headline, subtext }: Upgra
             boxShadow: '0 4px 14px rgba(37,99,235,0.25)',
           }}
         >
-          {loading ? 'Opening checkout...' : `${PRO_PLAN.cta} — ${formatPrice(selectedTier.price)}/${selectedTier.interval === 'week' ? 'wk' : selectedTier.interval === 'month' ? 'mo' : 'yr'}`}
+          {loading ? 'Opening checkout...' : `${PRO_PLAN.cta} - ${formatPrice(selectedTier.price)}/${selectedTier.interval === 'week' ? 'wk' : selectedTier.interval === 'month' ? 'mo' : 'yr'}`}
         </button>
 
         <p style={{

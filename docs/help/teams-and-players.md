@@ -5,7 +5,7 @@
 1. From the dashboard, click **Teams**
 2. Click **New Team**
 3. Enter the team name
-4. Upload a logo (optional — square images work best, 200x200px minimum)
+4. Upload a logo (optional - square images work best, 200x200px minimum)
 5. Save
 
 ### Team Limits
@@ -47,5 +47,5 @@ Stats update when match events are recorded. To correct stats, update the match 
 ## Tips
 
 - Create all teams before setting up tournament groups
-- Teams are organization-scoped — they can be reused across tournaments
+- Teams are organization-scoped - they can be reused across tournaments
 - Upload clear, high-contrast logos for best display at small sizes

@@ -1,5 +1,5 @@
 /* ============================================================
-   globals.css — Design Tokens + Base Reset
+   globals.css - Design Tokens + Base Reset
    All public pages and components reference these variables.
    Theme switching is done via [data-theme] on <html>.
    ============================================================ */
@@ -48,7 +48,7 @@
   --color-friendly-bg:    rgba(245, 158, 11, 0.12);
 
   /* Layout */
-  --nav-bar-height:       60px;   /* height of the actual nav bar — never changes */
+  --nav-bar-height:       60px;   /* height of the actual nav bar - never changes */
   --nav-height:           60px;   /* total top offset for page content (desktop) */
   --max-width:            1200px;
   --content-padding:      1.25rem;
@@ -169,36 +169,36 @@
 /* Design family: same as the platform SaaS landing page.     */
 /* Use for: premium, modern, sports-professional org sites.   */
 [data-theme="theme-blue-light"] {
-  /* Backgrounds — light hierarchy (darker = more material)   */
+  /* Backgrounds - light hierarchy (darker = more material)   */
   --color-bg:             #eef4fb;
   --color-surface:        #e4edf6;
   --color-card:           #ffffff;
   --color-card-hover:     #f4f8fd;
   --color-nav:            rgba(255, 255, 255, 0.96);
 
-  /* Borders — visible on white/light surfaces                */
+  /* Borders - visible on white/light surfaces                */
   --color-border:         #cbd5e1;
   --color-border-subtle:  #e2e8f0;
 
-  /* Text — dark navy hierarchy                               */
+  /* Text - dark navy hierarchy                               */
   --color-text:           #0f172a;
   --color-text-muted:     #475569;
   --color-text-dim:       #94a3b8;
 
-  /* Brand accent — dark blue (matches landing page palette)  */
+  /* Brand accent - dark blue (matches landing page palette)  */
   --color-accent:         #2563eb;
   --color-accent-light:   #3b82f6;
   --color-accent-dim:     rgba(37, 99, 235, 0.10);
   --color-accent-glow:    rgba(37, 99, 235, 0.20);
 
-  /* Shadows — more visible on light backgrounds              */
+  /* Shadows - more visible on light backgrounds              */
   --shadow-sm:            0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md:            0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
   --shadow-lg:            0 12px 32px rgba(0, 0, 0, 0.10), 0 4px 8px rgba(0, 0, 0, 0.06);
   --shadow-accent:        0 0 20px rgba(37, 99, 235, 0.20);
   --shadow-live:          0 0 12px rgba(220, 38,  38, 0.22);
 
-  /* Status — tuned for light-bg legibility                   */
+  /* Status - tuned for light-bg legibility                   */
   --color-live:             #dc2626;
   --color-live-bg:          rgba(220,  38,  38, 0.07);
   --color-live-glow:        rgba(220,  38,  38, 0.20);
@@ -270,11 +270,11 @@
 }
 
 /* ── Theme: Luxury Dark (deep ocean · orange accent) ────── */
-/* Inspired by premium mobile sports apps — screenshot ref.  */
+/* Inspired by premium mobile sports apps - screenshot ref.  */
 /* Rich teal-navy backgrounds, warm orange labels, glass     */
 /* cards with hair-thin borders, no harsh outlines.          */
 [data-theme="luxury-dark"] {
-  /* Backgrounds — deep ocean / teal-navy family */
+  /* Backgrounds - deep ocean / teal-navy family */
   --color-bg:             #091A22;
   --color-surface:        #11222A;
   --color-card:           rgba(255, 255, 255, 0.03);
@@ -284,29 +284,29 @@
   /* Solid card fallback (for surfaces that can't use rgba)   */
   --color-card-solid:     #102229;
 
-  /* Borders — hair-thin, barely there                        */
+  /* Borders - hair-thin, barely there                        */
   --color-border:         rgba(255, 255, 255, 0.08);
   --color-border-subtle:  rgba(255, 255, 255, 0.04);
 
-  /* Text — cool white with teal warmth                       */
+  /* Text - cool white with teal warmth                       */
   --color-text:           #E6F1F3;
   --color-text-muted:     #9FB7BB;
   --color-text-dim:       #5C7A80;
 
-  /* Brand accent — warm orange (signature of this theme)     */
+  /* Brand accent - warm orange (signature of this theme)     */
   --color-accent:         #FF8C42;
   --color-accent-light:   #FFB07A;
   --color-accent-dim:     rgba(255, 140, 66, 0.12);
   --color-accent-glow:    rgba(255, 140, 66, 0.25);
 
-  /* Shadows — deep, velvety premium feel                     */
+  /* Shadows - deep, velvety premium feel                     */
   --shadow-sm:            0 1px 4px  rgba(0, 0, 0, 0.40);
   --shadow-md:            0 4px 20px rgba(0, 0, 0, 0.50);
   --shadow-lg:            0 12px 40px rgba(0, 0, 0, 0.60);
   --shadow-accent:        0 0 24px rgba(255, 140, 66, 0.22);
   --shadow-live:          0 0 16px rgba(239,  68,  68, 0.30);
 
-  /* Status — legible on dark teal backgrounds                */
+  /* Status - legible on dark teal backgrounds                */
   --color-live:             #EF4444;
   --color-live-bg:          rgba(239,  68,  68, 0.12);
   --color-live-glow:        rgba(239,  68,  68, 0.30);
@@ -330,7 +330,7 @@
 /* same orange accent, inverted tonal hierarchy.             */
 /* Clean whites, soft teal-grey surfaces, warm orange CTA.  */
 [data-theme="luxury-light"] {
-  /* Backgrounds — soft light with faint teal warmth          */
+  /* Backgrounds - soft light with faint teal warmth          */
   --color-bg:             #F4F8FA;
   --color-surface:        #EAF1F4;
   --color-card:           rgba(255, 255, 255, 0.88);
@@ -340,29 +340,29 @@
   /* Solid card fallback                                      */
   --color-card-solid:     #FFFFFF;
 
-  /* Borders — very soft, barely visible on white             */
+  /* Borders - very soft, barely visible on white             */
   --color-border:         rgba(9, 26, 34, 0.08);
   --color-border-subtle:  rgba(9, 26, 34, 0.04);
 
-  /* Text — deep teal-navy hierarchy                          */
+  /* Text - deep teal-navy hierarchy                          */
   --color-text:           #102229;
   --color-text-muted:     #415860;
   --color-text-dim:       #6E7F86;
 
-  /* Brand accent — same warm orange as luxury-dark           */
+  /* Brand accent - same warm orange as luxury-dark           */
   --color-accent:         #E57A2E;
   --color-accent-light:   #FF8C42;
   --color-accent-dim:     rgba(255, 140, 66, 0.10);
   --color-accent-glow:    rgba(255, 140, 66, 0.20);
 
-  /* Shadows — soft elevation, visible on light backgrounds   */
+  /* Shadows - soft elevation, visible on light backgrounds   */
   --shadow-sm:            0 1px 3px  rgba(9, 26, 34, 0.06), 0 1px 2px rgba(9, 26, 34, 0.04);
   --shadow-md:            0 4px 12px rgba(9, 26, 34, 0.08), 0 2px 4px rgba(9, 26, 34, 0.04);
   --shadow-lg:            0 12px 32px rgba(9, 26, 34, 0.10), 0 4px 8px rgba(9, 26, 34, 0.06);
   --shadow-accent:        0 0 20px rgba(255, 140, 66, 0.20);
   --shadow-live:          0 0 12px rgba(220,  38,  38, 0.20);
 
-  /* Status — tuned for light-bg legibility                   */
+  /* Status - tuned for light-bg legibility                   */
   --color-live:             #DC2626;
   --color-live-bg:          rgba(220,  38,  38, 0.07);
   --color-live-glow:        rgba(220,  38,  38, 0.18);
@@ -388,7 +388,7 @@
 /* Design: deep forest-night backgrounds, vivid Lagos-green   */
 /* accent, cool cream text. Premium dark sports aesthetic.    */
 [data-theme="naija-green"] {
-  /* Backgrounds — deep forest night with green earth tones   */
+  /* Backgrounds - deep forest night with green earth tones   */
   --color-bg:             #050D07;
   --color-surface:        #0B1810;
   --color-card:           #0F2018;
@@ -396,22 +396,22 @@
   --color-nav:            #060F09;
   --color-card-solid:     #0F2018;
 
-  /* Borders — dark green-tinted hairlines                    */
+  /* Borders - dark green-tinted hairlines                    */
   --color-border:         #1D3828;
   --color-border-subtle:  #132518;
 
-  /* Text — cool cream with green warmth                      */
+  /* Text - cool cream with green warmth                      */
   --color-text:           #E5F2E8;
   --color-text-muted:     #6B9A76;
   --color-text-dim:       #3D5E47;
 
-  /* Brand accent — Lagos green (vivid, flag-faithful)        */
+  /* Brand accent - Lagos green (vivid, flag-faithful)        */
   --color-accent:         #00A651;
   --color-accent-light:   #00CC64;
   --color-accent-dim:     rgba(0, 166, 81, 0.15);
   --color-accent-glow:    rgba(0, 166, 81, 0.30);
 
-  /* Shadows — deep forest dark                               */
+  /* Shadows - deep forest dark                               */
   --shadow-sm:            0 1px 4px  rgba(0, 0, 0, 0.50);
   --shadow-md:            0 4px 20px rgba(0, 0, 0, 0.60);
   --shadow-lg:            0 12px 40px rgba(0, 0, 0, 0.70);
@@ -444,7 +444,7 @@
 /* accent. Flag red = live danger. Flag green = success.     */
 /* The most semantically coherent flag theme possible.       */
 [data-theme="ghana-gold"] {
-  /* Backgrounds — dark warm earth / roasted ochre            */
+  /* Backgrounds - dark warm earth / roasted ochre            */
   --color-bg:             #0D0900;
   --color-surface:        #181000;
   --color-card:           #1E1500;
@@ -452,29 +452,29 @@
   --color-nav:            #0D0900;
   --color-card-solid:     #1E1500;
 
-  /* Borders — deep amber-tinted hairlines                    */
+  /* Borders - deep amber-tinted hairlines                    */
   --color-border:         #332500;
   --color-border-subtle:  #221900;
 
-  /* Text — warm cream / parchment                            */
+  /* Text - warm cream / parchment                            */
   --color-text:           #F5EDD0;
   --color-text-muted:     #B89040;
   --color-text-dim:       #7A6020;
 
-  /* Brand accent — Ghanaian gold (flag-exact #FCD116)        */
+  /* Brand accent - Ghanaian gold (flag-exact #FCD116)        */
   --color-accent:         #FCD116;
   --color-accent-light:   #FFE033;
   --color-accent-dim:     rgba(252, 209, 22, 0.12);
   --color-accent-glow:    rgba(252, 209, 22, 0.28);
 
-  /* Shadows — warm velvety dark                              */
+  /* Shadows - warm velvety dark                              */
   --shadow-sm:            0 1px 4px  rgba(0, 0, 0, 0.50);
   --shadow-md:            0 4px 20px rgba(0, 0, 0, 0.60);
   --shadow-lg:            0 12px 40px rgba(0, 0, 0, 0.65);
   --shadow-accent:        0 0 24px rgba(252, 209,  22, 0.32);
   --shadow-live:          0 0 16px rgba(206,  17,  38, 0.35);
 
-  /* Status — flag colours do double-duty here:               */
+  /* Status - flag colours do double-duty here:               */
   /* Ghanaian red = live/danger  → semantic perfection        */
   /* Ghanaian green = success    → semantic perfection        */
   --color-live:             #CE1126;
@@ -710,9 +710,9 @@ textarea {
 /* These are global utility classes imported once here and    */
 /* available in any component as plain className strings.     */
 /* SCSS modules that need these should import globals.css     */
-/* (already done via app/layout.tsx) — no extra imports.      */
+/* (already done via app/layout.tsx) - no extra imports.      */
 
-/* .table-scroll — wraps any wide table so it scrolls         */
+/* .table-scroll - wraps any wide table so it scrolls         */
 /* horizontally on mobile without breaking the page layout.   */
 .table-scroll {
   overflow-x:    auto;
@@ -730,7 +730,7 @@ textarea {
   border-radius: var(--radius-full);
 }
 
-/* .page-heading — consistent fluid h1 across all public pages */
+/* .page-heading - consistent fluid h1 across all public pages */
 .page-heading {
   font-size:      var(--text-heading);
   font-weight:    800;
@@ -739,7 +739,7 @@ textarea {
   letter-spacing: -0.01em;
 }
 
-/* .section-label — small UPPERCASE labels used in card       */
+/* .section-label - small UPPERCASE labels used in card       */
 /* headers, group names, date separators, badge captions      */
 .section-label {
   font-size:      var(--text-xs);
@@ -749,14 +749,14 @@ textarea {
   text-transform: uppercase;
 }
 
-/* .truncate — single-line text truncation with ellipsis      */
+/* .truncate - single-line text truncation with ellipsis      */
 .truncate {
   overflow:      hidden;
   text-overflow: ellipsis;
   white-space:   nowrap;
 }
 
-/* .clamp-2 — clamp to 2 lines with ellipsis                  */
+/* .clamp-2 - clamp to 2 lines with ellipsis                  */
 .clamp-2 {
   display:            -webkit-box;
   -webkit-line-clamp: 2;

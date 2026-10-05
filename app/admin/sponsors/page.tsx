@@ -177,7 +177,7 @@ export default function AdminSponsorsPage() {
   if (orgGate) return orgGate
 
   const scopeLabel = scopeId === '__global__'
-    ? 'Global — shown on all pages'
+    ? 'Global - shown on all pages'
     : (tournaments.find((t) => t.id === scopeId)?.name ?? 'Tournament')
 
   return (
@@ -217,7 +217,7 @@ export default function AdminSponsorsPage() {
       {showForm && (
         <div className={styles.formCard}>
           <div className={styles.formTitle}>
-            {editId ? 'Edit Sponsor' : `Add Sponsor — ${scopeLabel}`}
+            {editId ? 'Edit Sponsor' : `Add Sponsor - ${scopeLabel}`}
           </div>
 
           <div className={styles.formGrid}>
@@ -261,7 +261,7 @@ export default function AdminSponsorsPage() {
           <div className={styles.fieldGroup}>
             <label className={styles.label}>
               Tagline{' '}
-              <span className={styles.hint}>(optional — short description or slogan)</span>
+              <span className={styles.hint}>(optional - short description or slogan)</span>
             </label>
             <input
               className={styles.input}

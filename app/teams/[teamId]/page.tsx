@@ -1,5 +1,5 @@
 // app/teams/[teamId]/page.tsx
-// Team detail — Server Component.
+// Team detail - Server Component.
 // Shows team name/logo, squad list, stats, and recent matches.
 
 import type { Metadata }              from 'next'

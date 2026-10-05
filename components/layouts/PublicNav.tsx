@@ -8,9 +8,9 @@
 // isOrgSite=false → platform marketing light nav with product links
 //
 // Mobile org-site layout:
-//   Row 1 — fixed 60px bar: brand + hamburger
-//   Row 2 — fixed 44px sticky subnav: primary section links (always visible)
-//   Row 3 — hamburger dropdown: full link list (optional secondary access)
+//   Row 1 - fixed 60px bar: brand + hamburger
+//   Row 2 - fixed 44px sticky subnav: primary section links (always visible)
+//   Row 3 - hamburger dropdown: full link list (optional secondary access)
 
 import { useState } from 'react'
 import Image          from 'next/image'
@@ -38,7 +38,7 @@ const ORG_NAV_LINKS = [
   // { href: '/archive', label: 'Archive' }, // hidden until further notice
 ]
 
-// Always-visible sticky tab bar on mobile (no Home — reachable via brand logo)
+// Always-visible sticky tab bar on mobile (no Home - reachable via brand logo)
 const MOBILE_PRIMARY_LINKS = [
   { href: '/matches',     label: 'Matches' },
   { href: '/table',       label: 'Table' },
@@ -106,7 +106,7 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
             ))}
           </ul>
 
-          {/* CTAs — platform marketing only */}
+          {/* CTAs - platform marketing only */}
           {!isOrgSite && (
             <div className={styles.authLinks}>
               <Link href="/login" className={styles.loginLink}>Sign In</Link>
@@ -116,7 +116,7 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
             </div>
           )}
 
-          {/* Search trigger — org site only */}
+          {/* Search trigger - org site only */}
           {isOrgSite && (
             <button
               onClick={() => setSearchOpen(true)}
@@ -183,7 +183,7 @@ export default function PublicNav({ siteName, siteLogo, isOrgSite }: Props) {
             </Link>
           ))}
 
-          {/* Auth CTAs in mobile menu — platform only */}
+          {/* Auth CTAs in mobile menu - platform only */}
           {!isOrgSite && (
             <div style={{ borderTop: '1px solid #e2e8f0', margin: '0.5rem 0', paddingTop: '0.5rem' }}>
               <Link

@@ -3,7 +3,7 @@
  *
  * Phase 3 fixes:
  *  - Migrated all hardcoded colors → CSS variables (theme-aware)
- *  - Removed overflow:hidden + text-overflow:ellipsis from cells — those
+ *  - Removed overflow:hidden + text-overflow:ellipsis from cells - those
  *    silently truncated team names before the user could ever scroll.
  *  - Horizontal scroll is now handled by the .tableScroll wrapper added
  *    in GroupStandings.tsx; keeping overflow-x:auto on .standingsContainer
@@ -44,8 +44,8 @@
   td {
     padding:     var(--sp-3, 0.75rem) var(--sp-3, 0.75rem);
     text-align:  center;
-    white-space: nowrap;   /* keeps columns readable — parent scrolls */
-    /* NOTE: NO overflow:hidden/ellipsis here — that was causing truncation */
+    white-space: nowrap;   /* keeps columns readable - parent scrolls */
+    /* NOTE: NO overflow:hidden/ellipsis here - that was causing truncation */
   }
 
   th {
@@ -58,7 +58,7 @@
     border-bottom:  1px solid var(--color-border-subtle, #1c1c35);
   }
 
-  /* Team name column — left-align for readability */
+  /* Team name column - left-align for readability */
   td:nth-child(2),
   th:nth-child(2) {
     text-align: left;

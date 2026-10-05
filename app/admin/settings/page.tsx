@@ -1,7 +1,7 @@
 'use client'
 
 // app/admin/settings/page.tsx
-// Site settings — branding, theme, SEO defaults, footer.
+// Site settings - branding, theme, SEO defaults, footer.
 // Updates the site_settings row for the current organization.
 
 import { useEffect, useState } from 'react'
@@ -28,7 +28,7 @@ interface ThemeTokens {
 
 // Renders a homepage-style site mockup using the theme's real token values.
 // siteName → pulled from settings (falls back to "Kolusports").
-// All styles inlined — zero CSS leakage, works for dark + light themes.
+// All styles inlined - zero CSS leakage, works for dark + light themes.
 function ThemePreviewMock({
   tokens,
   siteName = 'Kolusports',

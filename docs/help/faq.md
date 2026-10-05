@@ -3,7 +3,7 @@
 ## General
 
 ### What is KoluSports?
-KoluSports is a multi-organization football platform. Each organization gets its own customizable website with live scores, tournaments, standings, teams, and news — all managed through an admin dashboard.
+KoluSports is a multi-organization football platform. Each organization gets its own customizable website with live scores, tournaments, standings, teams, and news - all managed through an admin dashboard.
 
 ### How do I access my admin dashboard?
 Sign in at `/login` with your admin credentials. You'll be redirected to `/admin/dashboard`.
@@ -19,7 +19,7 @@ The platform supports multiple organizations. Each operates independently with i
 Standings are calculated automatically from completed tournament match results:
 - Win = 3 points, Draw = 1, Loss = 0
 - Sorted by points, then goal difference, then goals scored
-- Only tournament matches count — friendly matches are excluded
+- Only tournament matches count - friendly matches are excluded
 
 ### Do friendly matches affect standings?
 No. Friendly matches never affect tournament standings. They appear in match lists but are clearly labeled as "Friendly."

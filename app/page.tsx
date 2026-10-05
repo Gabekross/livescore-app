@@ -1,5 +1,5 @@
 // app/page.tsx
-// Public homepage — Server Component.
+// Public homepage - Server Component.
 //
 // Bifurcates at the top:
 //   orgId resolved → org homepage (fixtures, results, tournaments, news)
@@ -100,7 +100,7 @@ export async function generateMetadata(): Promise<Metadata> {
     }
   } catch {
     return {
-      title:       'KoluSports — The all-in-one sports platform',
+      title:       'KoluSports - The all-in-one sports platform',
       description: 'Launch your league or tournament website with fixtures, results, standings, and tournament updates.',
     }
   }
@@ -192,7 +192,7 @@ export default async function HomePage() {
     tournaments = activeTournaments.slice(0, 4)
     newsPosts   = (newsRes.data        || []) as NewsPost[]
   } catch {
-    // No org resolved — render the platform marketing landing page instead.
+    // No org resolved - render the platform marketing landing page instead.
     // Demo mode hides pricing/CTAs for white-label presentations.
     const { demoMode } = await getPlatformSettings()
     return <PlatformLanding demoMode={demoMode} />

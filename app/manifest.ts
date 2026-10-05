@@ -1,5 +1,5 @@
 // app/manifest.ts
-// PWA Web App Manifest — enables "Add to Home Screen" on mobile devices.
+// PWA Web App Manifest - enables "Add to Home Screen" on mobile devices.
 // Uses site_settings from the org for dynamic naming where possible,
 // but falls back to static defaults since manifest generation is at build time.
 

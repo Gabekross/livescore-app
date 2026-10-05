@@ -1,7 +1,7 @@
 'use client'
 
 // components/admin/FeatureGate.tsx
-// Declarative feature gate — renders children only if the org's plan allows it.
+// Declarative feature gate - renders children only if the org's plan allows it.
 // Shows a value-driven upgrade prompt when the feature is locked.
 
 import { useState }           from 'react'
@@ -20,7 +20,7 @@ const FEATURE_INFO: Record<FeatureKey, { label: string; headline: string; subtex
   canPublishNews:  {
     label:    'News & Articles',
     headline: 'Keep your audience engaged',
-    subtext:  'Publish articles, post updates, and build a following — all from your admin dashboard.',
+    subtext:  'Publish articles, post updates, and build a following - all from your admin dashboard.',
   },
   canManageMedia:  {
     label:    'Media Library',
@@ -55,7 +55,7 @@ export default function FeatureGate({ feature, label, softLock, children }: Feat
 
   // In demo mode every premium feature is presented as available so the
   // presentation can showcase Pro capabilities without paywall friction.
-  // RLS / server permissions are unaffected — this only controls the UI.
+  // RLS / server permissions are unaffected - this only controls the UI.
   if (treatAsPro) return <>{children}</>
 
   const allowed = plan?.[feature] ?? false

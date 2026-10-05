@@ -153,7 +153,7 @@ export default function EditTeamPage() {
         updated[index] = { ...player, _deleted: true }
         return updated
       }
-      // New player (no DB id) — just remove from array
+      // New player (no DB id) - just remove from array
       return prev.filter((_, i) => i !== index)
     })
   }
@@ -283,7 +283,7 @@ export default function EditTeamPage() {
       return
     }
 
-    // 2. Handle players — update existing, insert new, delete removed
+    // 2. Handle players - update existing, insert new, delete removed
     const toUpdate: PlayerInput[] = []
     const toInsert: PlayerInput[] = []
     const toDelete: string[] = []
@@ -383,7 +383,7 @@ export default function EditTeamPage() {
 
           <div className={styles.fieldGroup}>
             <label className={styles.label}>
-              Upload Logo <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 400 }}>(optional — replaces current)</span>
+              Upload Logo <span style={{ fontSize: '0.75rem', color: '#9ca3af', fontWeight: 400 }}>(optional - replaces current)</span>
             </label>
             <input
               type="file"

@@ -45,7 +45,7 @@ const SEGMENT_LABELS: Record<string, string> = {
 
 function humanize(segment: string): string {
   if (SEGMENT_LABELS[segment]) return SEGMENT_LABELS[segment]
-  // UUID — will be resolved async
+  // UUID - will be resolved async
   if (/^[0-9a-f-]{36}$/.test(segment)) return '...'
   return segment
     .split('-')
@@ -139,7 +139,7 @@ export default function AdminBreadcrumb() {
     return crumbs
   }, [pathname])
 
-  // Resolve UUID labels async — MUST run before any conditional return
+  // Resolve UUID labels async - MUST run before any conditional return
   // to satisfy React's Rules of Hooks (every render must call the same hooks)
   useEffect(() => {
     const segments = pathname.split('/').filter(Boolean)
@@ -169,7 +169,7 @@ export default function AdminBreadcrumb() {
 
   // ── Conditional renders AFTER all hooks ──────────────────────────────
 
-  // Hide on dashboard — it's the root, no trail needed
+  // Hide on dashboard - it's the root, no trail needed
   if (
     pathname === '/admin/dashboard' ||
     pathname === '/admin' ||

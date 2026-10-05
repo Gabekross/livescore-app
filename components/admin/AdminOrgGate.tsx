@@ -13,7 +13,7 @@ import { useAdminOrg } from '@/contexts/AdminOrgContext'
 
 /**
  * Returns a JSX element if the admin org context is not ready (loading/error).
- * Returns null if orgId is available — callers can safely use orgId after this.
+ * Returns null if orgId is available - callers can safely use orgId after this.
  */
 export function useAdminOrgGate(): React.ReactElement | null {
   const { orgId, loading, error, retry } = useAdminOrg()

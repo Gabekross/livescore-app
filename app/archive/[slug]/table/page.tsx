@@ -1,5 +1,5 @@
 // app/archive/[slug]/table/page.tsx
-// Archived tournament standings — reuses StandingsView client component.
+// Archived tournament standings - reuses StandingsView client component.
 
 import type { Metadata }              from 'next'
 import Link                           from 'next/link'
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const supabase = createServerSupabaseClient()
     const { data } = await supabase
       .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).single()
-    return { title: data ? `Table — ${data.name} (Archive)` : 'Table (Archive)' }
+    return { title: data ? `Table - ${data.name} (Archive)` : 'Table (Archive)' }
   } catch {
     return { title: 'Table (Archive)' }
   }

@@ -1,6 +1,6 @@
 # UX Improvement Recommendations
 
-> **STATUS: NOT IMPLEMENTED — Awaiting approval**
+> **STATUS: NOT IMPLEMENTED - Awaiting approval**
 >
 > These are documented observations and suggestions. None of these changes
 > have been applied to the codebase. Each requires explicit approval before
@@ -8,7 +8,7 @@
 
 ---
 
-## 1. Admin Dashboard — Missing Visual Hierarchy for Pro Features
+## 1. Admin Dashboard - Missing Visual Hierarchy for Pro Features
 
 **Problem:** Pro-only features (News, Media, Operators) show a small "PRO" text badge inline, but it's easy to miss. Users may click through, hit a paywall, and feel frustrated.
 
@@ -20,7 +20,7 @@
 
 ---
 
-## 2. AdminShell Navigation — No Active State for Current Section
+## 2. AdminShell Navigation - No Active State for Current Section
 
 **Problem:** The admin top nav shows "Sponsors" and "Settings" links but no active indicator for the current major section (Tournaments, Teams, etc.). Users lose context about where they are.
 
@@ -32,7 +32,7 @@
 
 ---
 
-## 3. Empty States — Inconsistent and Missing Across Admin Pages
+## 3. Empty States - Inconsistent and Missing Across Admin Pages
 
 **Problem:** Some admin pages show no feedback when data is empty. For example, an empty tournament list or empty group just shows a blank white area.
 
@@ -44,7 +44,7 @@
 
 ---
 
-## 4. Mobile Admin Experience — Inline Styles Limit Responsiveness
+## 4. Mobile Admin Experience - Inline Styles Limit Responsiveness
 
 **Problem:** The AdminShell nav uses extensive inline styles, which makes responsive behavior hard to control. On small screens, the nav items wrap unpredictably.
 
@@ -56,7 +56,7 @@
 
 ---
 
-## 5. Form Validation — No Inline Error Messages
+## 5. Form Validation - No Inline Error Messages
 
 **Problem:** Admin forms (create team, create tournament, create match) rely on browser-native validation or silent failures. There's no inline error feedback.
 
@@ -68,7 +68,7 @@
 
 ---
 
-## 6. Match Status Flow — No Confirmation for Destructive Actions
+## 6. Match Status Flow - No Confirmation for Destructive Actions
 
 **Problem:** Changing a match status (e.g., from "Live" to "Completed") has no confirmation step. Accidental status changes can't be easily undone.
 
@@ -80,7 +80,7 @@
 
 ---
 
-## 7. Settings Page — No Save Confirmation Feedback
+## 7. Settings Page - No Save Confirmation Feedback
 
 **Problem:** After saving settings, there's no clear visual confirmation that changes were saved successfully.
 
@@ -92,7 +92,7 @@
 
 ---
 
-## 8. Public Site — No "Back to Top" on Long Pages
+## 8. Public Site - No "Back to Top" on Long Pages
 
 **Problem:** Tournament standings, fixture lists, and news feeds can be long. There's no way to quickly return to the top of the page.
 
@@ -104,7 +104,7 @@
 
 ---
 
-## 9. Tournament Setup Workflow — No Progress Indicator
+## 9. Tournament Setup Workflow - No Progress Indicator
 
 **Problem:** Setting up a tournament involves multiple sequential steps (create tournament → add stages → create groups → assign teams → schedule matches). There's no visual guide for this flow.
 
@@ -116,7 +116,7 @@
 
 ---
 
-## 10. Public Navigation — No Search Functionality
+## 10. Public Navigation - No Search Functionality
 
 **Problem:** The public site has no search feature. Visitors can't search for a specific team, match, or player.
 
@@ -144,13 +144,13 @@
 | 10 | Public site search | Medium | High |
 
 ### Recommended Priority Order
-1. #3 — Empty states (high impact, low effort)
-2. #2 — Admin breadcrumbs (high impact, medium effort)
-3. #6 — Match status confirmation (prevents data errors)
-4. #1 — Pro feature visibility (improves conversions)
-5. #5 — Form validation (reduces support burden)
-6. #7 — Settings save feedback (quick win)
-7. #9 — Tournament progress indicator
-8. #8 — Back to top
-9. #4 — Mobile admin (high effort, plan carefully)
-10. #10 — Public search (high effort, plan carefully)
+1. #3 - Empty states (high impact, low effort)
+2. #2 - Admin breadcrumbs (high impact, medium effort)
+3. #6 - Match status confirmation (prevents data errors)
+4. #1 - Pro feature visibility (improves conversions)
+5. #5 - Form validation (reduces support burden)
+6. #7 - Settings save feedback (quick win)
+7. #9 - Tournament progress indicator
+8. #8 - Back to top
+9. #4 - Mobile admin (high effort, plan carefully)
+10. #10 - Public search (high effort, plan carefully)

@@ -1,7 +1,7 @@
 'use client'
 
 // app/matches/[matchId]/page.tsx
-// Public match detail — realtime updates via Supabase postgres_changes.
+// Public match detail - realtime updates via Supabase postgres_changes.
 // Tabbed experience: Formation | Teams
 // Formation: two-team pitch with player dots, stats, events
 // Teams: professional squad view (away left, home right)
@@ -310,7 +310,7 @@ export default function MatchDetailPage() {
             {activeTab === 'teams' && (
               <div className={styles.section}>
                 <div className={styles.squadGrid}>
-                  {/* Away team — left column */}
+                  {/* Away team - left column */}
                   <SquadColumn
                     team={match.away_team}
                     starters={awayLineup}
@@ -320,7 +320,7 @@ export default function MatchDetailPage() {
                     coachName={match.away_coach || match.away_team.coach_name}
                   />
 
-                  {/* Home team — right column */}
+                  {/* Home team - right column */}
                   <SquadColumn
                     team={match.home_team}
                     starters={homeLineup}

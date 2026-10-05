@@ -1,5 +1,5 @@
 // components/ui/SponsorStrip.tsx
-// Public sponsor display — homepage (global sponsors) and tournament pages.
+// Public sponsor display - homepage (global sponsors) and tournament pages.
 // Renders nothing when the sponsors array is empty.
 // Title-tier sponsor gets a featured row above the rest.
 // Gold / Silver / Bronze appear in the same row but at decreasing sizes.
@@ -77,7 +77,7 @@ export default function SponsorStrip({ sponsors, label = 'Our Sponsors' }: Props
     <section className={styles.strip} aria-label={label}>
       <p className={styles.label}>{label}</p>
 
-      {/* Title sponsor — featured */}
+      {/* Title sponsor - featured */}
       {titleSponsor && (
         <div className={styles.titleRow}>
           <Wrap s={titleSponsor} className={styles.titleLink}>
@@ -92,7 +92,7 @@ export default function SponsorStrip({ sponsors, label = 'Our Sponsors' }: Props
         </div>
       )}
 
-      {/* Gold / Silver / Bronze — horizontal row, size decreases by tier */}
+      {/* Gold / Silver / Bronze - horizontal row, size decreases by tier */}
       {otherSponsors.length > 0 && (
         <div className={styles.logosRow}>
           {otherSponsors.map((s) => (

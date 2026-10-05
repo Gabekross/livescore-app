@@ -20,7 +20,7 @@
 2. Click **New Match**
 3. Select home and away teams (from teams assigned to the group)
 4. Set the match date and time
-5. Save — the match appears as "Scheduled"
+5. Save - the match appears as "Scheduled"
 
 ### Friendly Match
 1. From the dashboard, click **Friendly Match**

@@ -1,5 +1,5 @@
 /* ── Public sponsor strip ────────────────────────────────── */
-/* Uses CSS variables — works with all themes.               */
+/* Uses CSS variables - works with all themes.               */
 
 .strip {
   padding:       var(--sp-8, 2rem) var(--content-padding, 1.25rem);
@@ -16,7 +16,7 @@
   margin-bottom:  var(--sp-5, 1.25rem);
 }
 
-/* ── Title sponsor — featured row ────────────────────────── */
+/* ── Title sponsor - featured row ────────────────────────── */
 .titleRow {
   display:         flex;
   justify-content: center;
@@ -92,9 +92,9 @@
 
 /* ── Tier-specific sizing ────────────────────────────────── */
 /*
- *  Gold   — prominent, full size
- *  Silver — one step smaller, slightly more muted
- *  Bronze — smallest, most muted (acknowledgement level)
+ *  Gold   - prominent, full size
+ *  Silver - one step smaller, slightly more muted
+ *  Bronze - smallest, most muted (acknowledgement level)
  *
  *  Structure: <a class="logoLink tierX"><img class="logo"></a>
  *  Tier class sits on the same element as logoLink, so hover

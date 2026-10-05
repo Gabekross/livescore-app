@@ -3,7 +3,7 @@
 // components/layouts/GlobalSponsorStrip.tsx
 // Renders the org-wide sponsor strip on all public pages.
 // Sponsors are fetched once in the root layout (server-side) and passed here
-// as props — same pattern as PublicNav / PublicFooter.
+// as props - same pattern as PublicNav / PublicFooter.
 // Hidden on admin, platform, and auth routes.
 
 import { usePathname }  from 'next/navigation'

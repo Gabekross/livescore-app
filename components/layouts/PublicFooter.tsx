@@ -84,7 +84,7 @@ export default function PublicFooter({ siteName, footerText, contactEmail, logoU
           ))}
         </ul>
 
-        {/* Contact Us — shown on org sites with an email */}
+        {/* Contact Us - shown on org sites with an email */}
         {isOrgSite && contactEmail && (
           <div className={styles.contact}>
             <a href={`mailto:${contactEmail}`} className={styles.contactLink}>

@@ -2,11 +2,11 @@
  * MatchCardShared.module.scss
  *
  * Two-mode layout:
- *   Desktop (>520px): horizontal   — status | Home logo [score] logo Away | badges
- *   Mobile  (≤520px): stacked      — status | logo Team  score
+ *   Desktop (>520px): horizontal   - status | Home logo [score] logo Away | badges
+ *   Mobile  (≤520px): stacked      - status | logo Team  score
  *                                             | logo Team  score
  *
- * Theme colours are NOT changed — only structure & spacing.
+ * Theme colours are NOT changed - only structure & spacing.
  */
 
 /* ── Card shell ─────────────────────────────────────────── */
@@ -55,7 +55,7 @@
   color:       var(--color-text, #e8e8f4);
 }
 
-/* Friendly label inside status col — mobile only */
+/* Friendly label inside status col - mobile only */
 .friendlyLabelMobile {
   display:        none;   /* hidden on desktop */
   font-size:      0.6rem;
@@ -143,7 +143,7 @@
 }
 
 /* ── Centre: MOBILE matchup (stacked rows) ──────────────── */
-/* Hidden on desktop — shown only at ≤520px */
+/* Hidden on desktop - shown only at ≤520px */
 .matchupMobile {
   display: none;
 }
@@ -258,7 +258,7 @@
     align-items: stretch;
   }
 
-  /* Status column — compact */
+  /* Status column - compact */
   .statusCol {
     flex:            0 0 auto;
     min-width:       40px;

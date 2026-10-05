@@ -1,7 +1,7 @@
 'use client'
 
 // app/public/matches/[matchId]/page.tsx
-// Public match detail page — mirrors /matches/[matchId] using the same
+// Public match detail page - mirrors /matches/[matchId] using the same
 // modern tabbed layout. Uses MatchDetailNew styles.
 
 import { useEffect, useState, useCallback } from 'react'

@@ -5,7 +5,7 @@
  * component respects the active org theme (UEFA dark, green-gold, slate,
  * blue-light) and all future themes automatically.
  *
- * Structure preserved — only colors, font-family, and a few sizing values
+ * Structure preserved - only colors, font-family, and a few sizing values
  * have been updated.  Responsive breakpoints are kept.
  */
 
@@ -190,7 +190,7 @@
   }
 }
 
-/* ── Teams — desktop layout ──────────────────────────────── */
+/* ── Teams - desktop layout ──────────────────────────────── */
 .teamsDesktop {
   display:     flex;
   justify-content: space-between;
@@ -228,7 +228,7 @@
   }
 }
 
-/* ── Teams — mobile layout ───────────────────────────────── */
+/* ── Teams - mobile layout ───────────────────────────────── */
 .teamsMobile {
   display: none;
 }

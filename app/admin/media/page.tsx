@@ -1,7 +1,7 @@
 'use client'
 
 // app/admin/media/page.tsx
-// Media library — upload images/videos to Supabase Storage,
+// Media library - upload images/videos to Supabase Storage,
 // record metadata in public.media, copy public URLs.
 //
 // Setup note: Create a Supabase Storage bucket named "media" with public access
@@ -159,7 +159,7 @@ export default function AdminMediaPage() {
         <span className={styles.uploadIcon}></span>
         <div className={styles.uploadTitle}>Drag &amp; drop files here</div>
         <div className={styles.uploadHint}>
-          PNG, JPG, GIF, WebP, MP4 — max {MAX_FILE_MB} MB per file
+          PNG, JPG, GIF, WebP, MP4 - max {MAX_FILE_MB} MB per file
         </div>
         <button
           className={styles.uploadBtn}

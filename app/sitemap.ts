@@ -1,5 +1,5 @@
 // app/sitemap.ts
-// Dynamic XML sitemap — automatically included by Next.js at /sitemap.xml
+// Dynamic XML sitemap - automatically included by Next.js at /sitemap.xml
 // Covers: static pages, published news articles, tournaments, teams
 //
 // Uses CANONICAL_ORIGIN from lib/seo.ts so all URLs consistently point to
@@ -85,7 +85,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...teamEntries,
     ]
   } catch {
-    // DB not yet connected — return only static routes
+    // DB not yet connected - return only static routes
     return staticRoutes
   }
 }

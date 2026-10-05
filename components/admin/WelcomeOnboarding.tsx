@@ -16,7 +16,7 @@ export default function WelcomeOnboarding() {
   const [show, setShow]   = useState(false)
 
   useEffect(() => {
-    // Suppress the trial-themed welcome modal in demo mode — it would
+    // Suppress the trial-themed welcome modal in demo mode - it would
     // surface "free trial" copy that doesn't fit the white-label demo.
     if (demoMode) return
     // Only show once per browser session, on first dashboard load
@@ -132,6 +132,6 @@ const STEPS = [
   },
   {
     title: 'Go live on match day',
-    text:  'Update scores in real time — your site updates instantly.',
+    text:  'Update scores in real time - your site updates instantly.',
   },
 ]

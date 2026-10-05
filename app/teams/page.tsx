@@ -1,5 +1,5 @@
 // app/teams/page.tsx
-// Public teams listing — Server Component.
+// Public teams listing - Server Component.
 
 import type { Metadata }              from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
@@ -37,7 +37,7 @@ export default async function TeamsPage() {
 
     teams = (data || []) as Team[]
   } catch {
-    // DB not available — show empty state
+    // DB not available - show empty state
   }
 
   return (

@@ -10,7 +10,7 @@ KoluSports is a multi-organization football platform that lets you run your own 
 Visit the platform and create an account. You'll start with a free trial that gives you access to all core features.
 
 ### 2. Access Your Dashboard
-After signing in, you'll land on the admin dashboard — your command center for managing everything.
+After signing in, you'll land on the admin dashboard - your command center for managing everything.
 
 ### 3. Create Your First Tournament
 - Click **Tournaments** in the Operations section
@@ -54,9 +54,9 @@ Your organization gets a dedicated subdomain (e.g., `yourleague.kolusports.com`)
 | Tournaments | Yes | Yes |
 | Live Scores | Yes | Yes |
 | Standings | Yes | Yes |
-| News Publishing | — | Yes |
-| Media Library | — | Yes |
-| Match Operators | — | Yes |
+| News Publishing | - | Yes |
+| Media Library | - | Yes |
+| Match Operators | - | Yes |
 | Advanced Branding | Basic | Full |
 
 Upgrade to Pro anytime from **Settings** in the admin dashboard.

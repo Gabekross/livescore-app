@@ -77,7 +77,7 @@ export default function LoginPage() {
       return
     }
 
-    // Auth succeeded — check if user needs provisioning (signed up with email verification)
+    // Auth succeeded - check if user needs provisioning (signed up with email verification)
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       setError('Authentication failed. Please try again.')
@@ -93,7 +93,7 @@ export default function LoginPage() {
       .single()
 
     if (profile) {
-      // Existing profile — route by role
+      // Existing profile - route by role
       if (profile.role === 'power_admin') {
         router.push('/platform')
       } else if (profile.role === 'match_operator') {
@@ -105,7 +105,7 @@ export default function LoginPage() {
       return
     }
 
-    // No profile yet — check if user signed up with org metadata (needs provisioning)
+    // No profile yet - check if user signed up with org metadata (needs provisioning)
     const meta = user.user_metadata
     if (meta?.org_name && meta?.org_slug) {
       const { error: provErr } = await supabase.rpc('provision_organization', {
@@ -126,7 +126,7 @@ export default function LoginPage() {
       return
     }
 
-    // No profile, no metadata — this user has no admin access
+    // No profile, no metadata - this user has no admin access
     setError('No admin account found. Please sign up first or contact your administrator.')
     await supabase.auth.signOut()
     setLoading(false)

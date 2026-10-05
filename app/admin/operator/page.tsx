@@ -132,7 +132,7 @@ export default function OperatorPage() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.heading}>Game Day — {orgName}</h1>
+        <h1 className={styles.heading}>Game Day - {orgName}</h1>
         <p className={styles.subheading}>
           {role === 'match_operator'
             ? 'Manage live scores and stats for your assigned matches.'

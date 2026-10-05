@@ -1,5 +1,5 @@
 // app/tournaments/[slug]/table/page.tsx
-// Tournament-specific standings — Server Component with client picker for stage.
+// Tournament-specific standings - Server Component with client picker for stage.
 
 import type { Metadata }              from 'next'
 import Link                           from 'next/link'
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const supabase = createServerSupabaseClient()
     const { data } = await supabase
       .from('tournaments').select('name').eq('slug', params.slug).eq('organization_id', orgId).eq('is_archived', false).single()
-    return { title: data ? `Table — ${data.name}` : 'Table' }
+    return { title: data ? `Table - ${data.name}` : 'Table' }
   } catch {
     return { title: 'Table' }
   }

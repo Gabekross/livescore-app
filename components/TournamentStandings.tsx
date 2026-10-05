@@ -79,7 +79,7 @@ export default function TournamentStandings({
       .in('status', ['live', 'halftime', 'completed'])
       .eq('affects_standings', true)     // excludes friendly matches
 
-    // Fetch all teams assigned to these groups — used as the base so every
+    // Fetch all teams assigned to these groups - used as the base so every
     // team appears with 0s even before any matches have been played.
     const { data: groupTeamRows } = await supabase
       .from('group_teams')
